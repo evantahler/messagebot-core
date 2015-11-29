@@ -1,6 +1,5 @@
 # MessageBot.io
 
-
 MessageBot.io: A User Relationship Manager.
 
   - Manage all communication with your users:

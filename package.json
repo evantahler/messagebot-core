@@ -7,7 +7,7 @@
     "node": "4.2.0"
   },
   "dependencies" : {
-    "actionhero" : "12.2.0",
+    "actionhero" : "12.3.0",
     "ws"         : "latest",
     "grunt"      : "latest"
   },
