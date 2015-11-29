@@ -46,12 +46,7 @@ exports.default = {
         'plugin':      [ __dirname + '/../node_modules' ] 
       },
       // hash containing chat rooms you wish to be created at server boot
-      startingChatRooms: {
-        // format is {roomName: {authKey, authValue}}
-        //'secureRoom': {authorized: true},
-        'defaultRoom': {},
-        'anotherRoom': {},
-      }
+      startingChatRooms: {}
     }
   }
 }

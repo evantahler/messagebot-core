@@ -1,0 +1,25 @@
+{
+  "settings": {
+    "number_of_shards": 10,
+    "number_of_replicas": 1
+  },
+
+  "mappings": {
+    "event": { 
+      "properties": { 
+        "guid":        { "type": "string"  }, 
+        "userId":      { "type": "string"  }, 
+        
+        "data":        { "type": "object"  },
+        "permissions": { "type": "object"  },
+        
+        "createdAt":   { "type":  "date" },
+        "updatedAt":   { "type":  "date" }
+      }
+    }
+  },
+
+  "warmers" : {},
+
+  "aliases" : {"users": {}}
+}

@@ -1,0 +1,31 @@
+{
+  "settings": {
+    "number_of_shards": 10,
+    "number_of_replicas": 1
+  },
+
+  "mappings": {
+    "message": { 
+      "properties": { 
+        "guid":       { "type": "string"  }, 
+        "userId":     { "type": "string"  }, 
+        "type":       { "type": "string"  }, 
+
+        "simpleBody": { "type": "string"  }, 
+        "fullBody":   { "type": "string"  }, 
+       
+        "data":       { "type": "object"  },
+        
+        "createdAt":       { "type":  "date" },
+        "updatedAt":       { "type":  "date" },
+        "sentAt":          { "type":  "date" },
+        "readAt":          { "type":  "date" },
+        "actionTakenAt":   { "type":  "date" }
+      }
+    }
+  },
+
+  "warmers" : {},
+
+  "aliases" : {"messages": {}}
+}

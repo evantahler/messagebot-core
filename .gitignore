@@ -1,6 +1,11 @@
+.env
+
 node_modules/*
 log/*
 pids/*
+
+public/javascript/actionheroClient.js
+public/javascript/actionheroClient.min.js
 
 npm-debug.log
 .DS_Store

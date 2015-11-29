@@ -1,0 +1,32 @@
+{
+  "settings": {
+    "number_of_shards": 10,
+    "number_of_replicas": 1
+  },
+
+  "mappings": {
+    "event": { 
+      "properties": { 
+        "ip":         { "type": "string"  }, 
+        "guid":       { "type": "string"  }, 
+        "userId":     { "type": "string"  }, 
+        "key":        { "type": "string"  }, 
+        "value":      { "type": "string"  }, 
+        "type":       { "type": "string"  }, 
+
+        "campaign":   { "type": "string"  }, 
+        "source":     { "type": "string"  }, 
+        "medium":     { "type": "string"  }, 
+        "quantity":   { "type": "double"  },
+
+        "data":       { "type": "object"  },
+        
+        "createdAt":  { "type":  "date" }
+      }
+    }
+  },
+
+  "warmers" : {},
+
+  "aliases" : {"events": {}}
+}

@@ -17,3 +17,20 @@ MessageBot.io: A User Relationship Manager.
   - Oh, and its free!*
 
 * we will be selling a hosted version, support, and custom development of enterprise features.  Stay Tuned.
+
+## Requirements
+
+- Node.js
+- mySQL
+- Redis
+- ElasticSearch
+
+## Configuration and Running
+
+### Node Setup
+
+- Configure `.env` with the secrets you need, or ensure that they are already present within the environment
+  - ensure that the databases you listed exist and that the user(s) you have configured can reach & access them
+- npm install && npm update
+- run migrations via `npm run migrate`
+- (source .env && ) `npm start`
