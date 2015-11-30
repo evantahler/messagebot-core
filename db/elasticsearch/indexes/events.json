@@ -8,8 +8,8 @@
     "event": { 
       "properties": { 
         "ip":         { "type": "string"  }, 
-        "guid":       { "type": "string"  }, 
-        "userId":     { "type": "string"  }, 
+        "uuid":       { "type": "string"  }, 
+        "userUuid":   { "type": "string"  }, 
         "key":        { "type": "string"  }, 
         "value":      { "type": "string"  }, 
         "type":       { "type": "string"  }, 

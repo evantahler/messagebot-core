@@ -7,7 +7,7 @@ module.exports = {
   startPriority: 100,
 
   initialize: function(api, next){
-    api.models = {};
+    api.models = api.models || {};
 
     var sequelizeInstance = new Sequelize(
       api.config.sequelize.database,

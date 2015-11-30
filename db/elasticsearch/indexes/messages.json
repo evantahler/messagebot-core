@@ -7,8 +7,8 @@
   "mappings": {
     "message": { 
       "properties": { 
-        "guid":       { "type": "string"  }, 
-        "userId":     { "type": "string"  }, 
+        "uuid":       { "type": "string"  }, 
+        "userUuid":   { "type": "string"  }, 
         "type":       { "type": "string"  }, 
 
         "simpleBody": { "type": "string"  }, 

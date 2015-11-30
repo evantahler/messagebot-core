@@ -24,6 +24,7 @@ module.exports = {
 
           var sessionData = {
             userId:          user.id,
+            status:          user.status,
             csrfToken:       csrfToken,
             sesionCreatedAt: new Date().getTime()
           };

@@ -5,10 +5,9 @@
   },
 
   "mappings": {
-    "event": { 
+    "person": { 
       "properties": { 
-        "guid":        { "type": "string"  }, 
-        "userId":      { "type": "string"  }, 
+        "uuid":        { "type": "string"  }, 
         
         "data":        { "type": "object"  },
         "permissions": { "type": "object"  },
