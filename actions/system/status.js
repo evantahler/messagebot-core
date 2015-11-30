@@ -1,5 +1,5 @@
 exports.status = {
-  name: 'status',
+  name: 'system:status',
   description: 'I will return some basic information about the API',
    
   outputExample:{  
