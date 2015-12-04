@@ -34,7 +34,7 @@ module.exports = {
             index: alias,
             body: {
               query: { 
-                term: terms 
+                wildcard: terms 
               }
             }
         }, function(error, data){
