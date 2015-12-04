@@ -4,6 +4,7 @@ var util              = require('util');
 var uuid              = require('node-uuid');
 var dateformat        = require('dateformat');
 var elasticsearch     = require('elasticsearch');
+var request           = require('request');
 
 module.exports = {
   loadPriority:  100,
@@ -20,6 +21,30 @@ module.exports = {
     api.elasticsearch = {
       client: client,
       indexes: [],
+
+      search: function(alias, searchKeys, searchValues, callback){
+        var terms = {};
+        var results = [];
+
+        for(var i in searchKeys){
+          terms[ searchKeys[i] ] = searchValues[i];
+        }
+
+        api.elasticsearch.client.search({
+            index: alias,
+            body: {
+              query: { 
+                term: terms 
+              }
+            }
+        }, function(error, data){
+          if(error){ return callback(error); }
+          data.hits.hits.forEach(function(hit){
+            results.push(hit._source);
+          });
+          callback(null, results);
+        });
+      },
     };
 
     ////////////////////////
@@ -37,19 +62,24 @@ module.exports = {
 
     elasticsearchModel.prototype.prepareData = function(){
       var self = this;
-      var paylaod = { data: {} };
+      var payload = { data: {} };
 
       for(var key in self.data){
         if(self.requiredFields.indexOf(key) >= 0 && (self.data[key] === null || self.data[key] === undefined)){
           throw new Error(key + ' is required');
         }else if(self.requiredFields.indexOf(key) >= 0){
-          paylaod[key] = self.data[key];
+          payload[key] = self.data[key];
         }else{
-          paylaod.data[key] = self.data[key];
+          payload.data[key] = self.data[key];
         }
       }
 
-      return paylaod;
+      payload.updatedAt = new Date();
+      if(!payload.createdAt){
+        payload.createdAt = payload.updatedAt;
+      }
+
+      return payload;
     };
 
     elasticsearchModel.prototype.create = function(callback){
@@ -57,27 +87,33 @@ module.exports = {
       if(!self.data.uuid){ self.data.uuid = uuid.v4(); }
       if(!self.index){ return callback(new Error('index is required')); }
 
-      var payload = self.prepareData();
+      var payload;
+      try{
+        payload = self.prepareData();
+      }catch(e){ return callback(e); }
 
       api.elasticsearch.client.create({
         index: self.index,
         type: self.type,
-        id: self.uuid,
+        id: self.data.uuid,
         body: payload
       }, callback);
     };
 
-    elasticsearchModel.prototype.update = function(callback){
+    elasticsearchModel.prototype.edit = function(callback){
       var self = this;
       if(!self.data.uuid){ return callback(new Error('uuid is required')); }
       if(!self.index){     return callback(new Error('index is required')); }
 
-      var payload = self.prepareData();
+      var payload;
+      try{
+        payload = self.prepareData();
+      }catch(e){ return callback(e); }
 
       api.elasticsearch.client.update({
         index: self.index,
         type: self.type,
-        id: self.uuid,
+        id: self.data.uuid,
         body: {doc: payload}
       }, function(error, data){
         if(error){ return callback(error); }
@@ -91,14 +127,19 @@ module.exports = {
       if(!self.data.uuid){ return callback(new Error('uuid is required')); }
       if(!self.index){     return callback(new Error('index is required')); }
 
-      api.elasticsearch.client.get({
-        index: self.index,
+      // TODO: Can we use the GET api rather than a search?
+      // You cannot GET over an alias... 
+      api.elasticsearch.client.search({
+        alias: self.index,
         type: self.type,
-        id: self.uuid,
+        body: {
+          query: { ids: { values: [self.data.uuid] } }
+        }
       }, function(error, data){
         if(error){ return callback(error); }
-        self.data = data;
-        callback(null, data);
+        if(data.hits.hits.length === 0){ return callback(new Error('not found')); }
+        self.data = data.hits.hits[0]._source;
+        callback(null, self.data);
       });
     };
 
@@ -110,11 +151,15 @@ module.exports = {
       api.elasticsearch.client.delete({
         index: self.index,
         type: self.type,
-        id: self.uuid,
+        id: self.data.uuid,
       }, function(error){
         callback(error);
       });
     };
+
+    ///////////////////////
+    // INDEXES -> MODELS //
+    ///////////////////////
 
     var dir = path.normalize(api.projectRoot + '/db/elasticsearch/indexes');
     fs.readdirSync(dir).forEach(function(file){
@@ -142,13 +187,20 @@ module.exports = {
   start: function(api, next){
     api.elasticsearch.client.ping({}, function(error){
       if(error){
-        api.log('Cannot connect to ElasticSearch: ', 'crit');
+        api.log('Cannot connect to elasticsearch: ', 'crit');
         api.log(error, 'crit');
         next(error);
       }else{
-        api.log('connected to ElasticSearch');
+        api.log('connected to elasticsearch');
         next();
       }
     });
+  },
+
+  stop: function(api, next){
+    // TODO: disconnect ES client or remove stream listener
+    // api.elasticsearch.client.exit(next);
+
+    next();
   }
 };
