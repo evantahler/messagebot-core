@@ -14,7 +14,7 @@ exports.default = {
         { path: '/session', action: 'session:create' },
         { path: '/user',    action: 'user:create' },
         { path: '/person',  action: 'person:create' },
-        { path: '/people',  action: 'person:search' },
+        { path: '/people',  action: 'people:search' },
       ],
 
       put: [

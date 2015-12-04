@@ -82,26 +82,6 @@ exports.personView = {
   }
 };
 
-exports.search = {
-  name:                   'person:search',
-  description:            'person:search',
-  outputExample:          {},
-  middleware:             [],
-
-  inputs: {
-    searchKeys:   { required: true },
-    searchValues: { required: true },
-  },
-
-  run: function(api, data, next){
-    api.elasticsearch.search(alias(api), data.params.searchKeys, data.params.searchValues, function(error, results){
-      if(error){ return next(error); }
-      data.response.people = results;
-      next();
-    });
-  }
-};
-
 exports.personDelete = {
   name:                   'person:delete',
   description:            'person:delete',
