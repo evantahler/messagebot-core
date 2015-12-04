@@ -75,9 +75,6 @@ module.exports = {
       }
 
       payload.updatedAt = new Date();
-      if(!payload.createdAt){
-        payload.createdAt = payload.updatedAt;
-      }
 
       return payload;
     };
@@ -91,6 +88,12 @@ module.exports = {
       try{
         payload = self.prepareData();
       }catch(e){ return callback(e); }
+
+      if(self.data.createdAt){
+        payload.createdAt = self.data.createdAt;
+      }else{
+        payload.createdAt = payload.updatedAt;
+      }
 
       api.elasticsearch.client.create({
         index: self.index,
