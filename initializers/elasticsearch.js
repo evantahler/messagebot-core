@@ -22,7 +22,7 @@ module.exports = {
       client: client,
       indexes: [],
 
-      search: function(alias, searchKeys, searchValues, callback){
+      search: function(alias, searchKeys, searchValues, from, size, sort, callback){
         var terms = {};
         var results = [];
 
@@ -32,6 +32,9 @@ module.exports = {
 
         api.elasticsearch.client.search({
             index: alias,
+            from: from,
+            size: size,
+            sort: sort,
             body: {
               query: { 
                 wildcard: terms 

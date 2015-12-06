@@ -1,12 +1,12 @@
 var dateformat = require('dateformat');
 
 var alias = function(api){
-  return  'people';
+  return  'messages';
 };
 
-exports.peopleSearch = {
-  name:                   'people:search',
-  description:            'people:search',
+exports.eventsSearch = {
+  name:                   'messages:search',
+  description:            'messages:search',
   outputExample:          {},
   middleware:             [],
 
@@ -29,7 +29,7 @@ exports.peopleSearch = {
   run: function(api, data, next){
     api.elasticsearch.search(alias(api), data.params.searchKeys, data.params.searchValues, data.params.from, data.params.size, data.params.sort, function(error, results){
       if(error){ return next(error); }
-      data.response.people = results;
+      data.response.messages = results;
       next();
     });
   }

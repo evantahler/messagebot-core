@@ -8,8 +8,13 @@ exports['default'] = {
       ignoreRoutes: [ '/swagger' ],
       // Specify how routes are grouped
       routeTags : {
-        'basics' : [],
-        'system' : [ 'documentation', 'status' ],
+        'basics'  : [],
+        'system'  : [ 'documentation', 'status' ],
+        'user'    : [ 'user' ],
+        'session' : [ 'session' ],
+        'person'  : [ 'person', 'people' ],
+        'message' : [ 'message', 'messages' ],
+        'event'   : [ 'event', 'events' ],
       },
       // Generate documentation for simple actions specified by action-name
       documentSimpleRoutes: false,

@@ -7,20 +7,19 @@
   "mappings": {
     "message": { 
       "properties": { 
-        "uuid":       { "type": "string"  }, 
-        "userUuid":   { "type": "string"  }, 
-        "type":       { "type": "string"  }, 
+        "uuid":      { "type": "string"  }, 
+        "userUuid":  { "type": "string"  }, 
+        "type":      { "type": "string"  }, 
 
-        "simpleBody": { "type": "string"  }, 
-        "fullBody":   { "type": "string"  }, 
+        "body":      { "type": "string"  }, 
        
-        "data":       { "type": "object"  },
+        "data":      { "type": "object"  },
         
-        "createdAt":       { "type":  "date" },
-        "updatedAt":       { "type":  "date" },
-        "sentAt":          { "type":  "date" },
-        "readAt":          { "type":  "date" },
-        "actionTakenAt":   { "type":  "date" }
+        "createdAt": { "type":  "date" },
+        "updatedAt": { "type":  "date" },
+        "sentAt":    { "type":  "date" },
+        "readAt":    { "type":  "date" },
+        "actedAt":   { "type":  "date" }
       }
     }
   },

@@ -8,20 +8,15 @@
     "event": { 
       "properties": { 
         "ip":         { "type": "string"  }, 
+        "device":     { "type": "string"  }, 
         "uuid":       { "type": "string"  }, 
         "userUuid":   { "type": "string"  }, 
-        "key":        { "type": "string"  }, 
-        "value":      { "type": "string"  }, 
         "type":       { "type": "string"  }, 
-
-        "campaign":   { "type": "string"  }, 
-        "source":     { "type": "string"  }, 
-        "medium":     { "type": "string"  }, 
-        "quantity":   { "type": "double"  },
 
         "data":       { "type": "object"  },
         
-        "createdAt":  { "type":  "date" }
+        "createdAt":  { "type":  "date" },
+        "updatedAt":  { "type":  "date" }
       }
     }
   },
