@@ -29,7 +29,7 @@ var end = function(error){
 actionhero.initialize({configChanges: configChanges}, function(error, api){
   if(error){ return end(error); }
 
-  console.log('env: ' + api.env);
+  api.log('elasticsearch migration env: ' + api.env);
   
   var dir = path.normalize(api.projectRoot + '/db/elasticsearch/indexes');
   fs.readdirSync(dir).forEach(function(file){
