@@ -18,7 +18,7 @@ exports.test = {
     return {
       "dialect"     : "mysql",
       "database"    : 'messagebot_test',
-      "host"        : 'localhost',
+      "host"        : '127.0.0.1',
       "username"    : 'root',
       "password"    : null,
       "logging"     : false,
