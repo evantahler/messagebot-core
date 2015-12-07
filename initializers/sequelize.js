@@ -45,7 +45,6 @@ module.exports = {
           callback();
         }).catch(function(error){
           api.log('cannot connect to sequelize:', 'crit');
-          api.log(api.config.sequelize);
           api.log(error, 'crit');
           callback(error);
         });

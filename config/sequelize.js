@@ -26,9 +26,3 @@ exports.test = {
     };
   }
 };
-
-// needed for sequelze migrate; refrenced by .sequelizerc
-exports.development = exports.default.sequelize();
-exports.test        = exports.test.sequelize();
-exports.staging     = exports.default.sequelize();
-exports.production  = exports.default.sequelize();

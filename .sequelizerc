@@ -1,8 +1,11 @@
-'use strict'
+var path   = require('path');
+var config = require(__dirname + '/config/sequelize');
 
-var path = require('path');
+var env = 'default';
+if(config[process.env.NODE_ENV]){ env = process.env.NODE_ENV; }
+config = config[env].sequelize();
 
-module.exports = {
-  'config':          path.resolve('config', 'sequelize.js'),
-  'migrations-path': path.resolve('db', 'sequelize', 'migrate'),
-};
+config.config = __filename;
+config['migrations-path'] = path.resolve('db', 'sequelize', 'migrate');
+
+module.exports = config;
