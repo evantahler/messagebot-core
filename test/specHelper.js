@@ -16,7 +16,6 @@ specHelper = {
 
   stopServer: function(callback){
     var self = this;
-
     self.actionhero.stop(callback);
   },
 };
