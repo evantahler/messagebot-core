@@ -28,4 +28,4 @@ services:
   - elasticsearch
 
 before_script:
-  - sh -c "if [ '$DB' = 'mysql' ]; then mysql -e 'create database IF NOT EXISTS doctrine_tests_tmp;create database IF NOT EXISTS messagebot_test;'; fi"
+  - mysql -e 'create database IF NOT EXISTS messagebot_test'
