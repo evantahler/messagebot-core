@@ -27,9 +27,48 @@ exports.peopleSearch = {
   },
 
   run: function(api, data, next){
-    api.elasticsearch.search(alias(api), data.params.searchKeys, data.params.searchValues, data.params.from, data.params.size, data.params.sort, function(error, results){
+    api.elasticsearch.search(alias(api), data.params.searchKeys, data.params.searchValues, data.params.from, data.params.size, data.params.sort, function(error, results, total){
       if(error){ return next(error); }
+      data.response.total  = total;
       data.response.people = results;
+      next();
+    });
+  }
+};
+
+exports.peopleAggregation = {
+  name:                   'people:aggregation',
+  description:            'people:aggregation',
+  outputExample:          {},
+  middleware:             [],
+
+  inputs: {
+    searchKeys:   { required: true },
+    searchValues: { required: true },
+    start:        { 
+      required: false,
+      formatter: function(p){ return new Date(parseInt(p)); },
+      default:   function(p){ return 0; },
+    },
+    end:          {
+      required: false,
+      formatter: function(p){ return new Date(parseInt(p)); },
+      default:   function(p){ return new Date().getTime(); },
+    },
+    dateField:    { 
+      required: true,
+      default: function(){ return 'createdAt'; }
+    },
+    agg:          { 
+      required: true,
+      default: function(){ return 'cardinality'; }
+    },
+  },
+
+  run: function(api, data, next){
+    api.elasticsearch.aggregation(alias(api), data.params.searchKeys, data.params.searchValues, data.params.start, data.params.end, data.params.dateField, data.params.agg, function(error, value){
+      if(error){ return next(error); }
+      data.response.value = value;
       next();
     });
   }

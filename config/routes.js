@@ -13,14 +13,17 @@ exports.default = {
       ],
 
       post: [
-        { path: '/session',  action: 'session:create' },
-        { path: '/user',     action: 'user:create' },
-        { path: '/person',   action: 'person:create' },
-        { path: '/people',   action: 'people:search' },
-        { path: '/event',    action: 'event:create' },
-        { path: '/events',   action: 'events:search' },
-        { path: '/message',  action: 'message:create' },
-        { path: '/messages', action: 'messages:search' },
+        { path: '/session',              action: 'session:create' },
+        { path: '/user',                 action: 'user:create' },
+        { path: '/person',               action: 'person:create' },
+        { path: '/people/search',        action: 'people:search' },
+        { path: '/people/aggregation',   action: 'people:aggregation' },
+        { path: '/event',                action: 'event:create' },
+        { path: '/events/search',        action: 'events:search' },
+        { path: '/events/aggregation',   action: 'events:aggregation' },
+        { path: '/message',              action: 'message:create' },
+        { path: '/messages/search',      action: 'messages:search' },
+        { path: '/messages/aggregation', action: 'messages:aggregation' },
       ],
 
       put: [

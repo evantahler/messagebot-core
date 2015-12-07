@@ -16,21 +16,21 @@ exports.messageCreate = {
   middleware:             [],
 
   inputs: {
-    uuid:     { required: false },
-    userUuid: { required: true  },
-    type:     { required: true  },
-    body:     { required: true  },
-    data:     { required: false },
-    sentAt:   { required: false  },
-    readAt:   { required: false  },
-    actedAt:  { required: false  },
+    guid:      { required: false },
+    userGuid:  { required: true  },
+    type:      { required: true  },
+    body:      { required: true  },
+    data:      { required: false },
+    sentAt:    { required: false  },
+    readAt:    { required: false  },
+    actedAt:   { required: false  },
   },
 
   run: function(api, data, next){
     var message = new api.models.message(index(api));
 
-    if(data.params.uuid){     message.data.uuid = data.params.uuid;         }
-    if(data.params.userUuid){ message.data.userUuid = data.params.userUuid; }
+    if(data.params.guid){     message.data.guid = data.params.guid;         }
+    if(data.params.userGuid){ message.data.userGuid = data.params.userGuid; }
     if(data.params.type){     message.data.type = data.params.type;         }
     if(data.params.body){     message.data.body = data.params.body;         }
     if(data.params.sentAt){   message.data.sentAt = data.params.sentAt;     }
@@ -54,21 +54,21 @@ exports.messageEdit = {
   middleware:             [],
 
   inputs: {
-    uuid:     { required: true  },
-    userUuid: { required: false },
-    type:     { required: false },
-    body:     { required: false },
-    data:     { required: false },
-    sentAt:   { required: false },
-    readAt:   { required: false },
-    actedAt:  { required: false },
+    guid:      { required: true  },
+    userGuid:  { required: false },
+    type:      { required: false },
+    body:      { required: false },
+    data:      { required: false },
+    sentAt:    { required: false },
+    readAt:    { required: false },
+    actedAt:   { required: false },
   },
 
   run: function(api, data, next){
-    var message = new api.models.message(index(api), data.params.uuid);
+    var message = new api.models.message(index(api), data.params.guid);
     
-    if(data.params.uuid){     message.data.uuid = data.params.uuid;         }
-    if(data.params.userUuid){ message.data.userUuid = data.params.userUuid; }
+    if(data.params.guid){     message.data.guid = data.params.guid;         }
+    if(data.params.userGuid){ message.data.userGuid = data.params.userGuid; }
     if(data.params.type){     message.data.type = data.params.type;         }
     if(data.params.body){     message.data.body = data.params.body;         }
     if(data.params.sentAt){   message.data.sentAt = data.params.sentAt;     }
@@ -92,11 +92,11 @@ exports.messageView = {
   middleware:             [],
 
   inputs: {
-    uuid:         { required: true },
+    guid:         { required: true },
   },
 
   run: function(api, data, next){
-    var message = new api.models.message(alias(api), data.params.uuid);
+    var message = new api.models.message(alias(api), data.params.guid);
     message.hydrate(function(error){
       if(error){ return next(error); }
       data.response.message = message.data;
@@ -112,11 +112,11 @@ exports.messageDelete = {
   middleware:             [],
 
   inputs: {
-    uuid:         { required: true },
+    guid:         { required: true },
   },
 
   run: function(api, data, next){
-    var message = new api.models.message(alias(api), data.params.uuid);
+    var message = new api.models.message(alias(api), data.params.guid);
     message.delete(function(error){
       if(error){ return next(error); }
       next();

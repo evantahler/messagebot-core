@@ -7,10 +7,10 @@
   "mappings": {
     "message": { 
       "properties": { 
-        "uuid":      { "type": "string"  }, 
-        "userUuid":  { "type": "string"  }, 
+        "guid":       { "type": "string", "fields": { "hash": { "type": "murmur3" }}}, 
+        
+        "userGuid":  { "type": "string", "fields": { "hash": { "type": "murmur3" }}}, 
         "type":      { "type": "string"  }, 
-
         "body":      { "type": "string"  }, 
        
         "data":      { "type": "object"  },

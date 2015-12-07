@@ -7,10 +7,11 @@
   "mappings": {
     "event": { 
       "properties": { 
+        "guid":       { "type": "string", "fields": { "hash": { "type": "murmur3" }}}, 
+
         "ip":         { "type": "string"  }, 
         "device":     { "type": "string"  }, 
-        "uuid":       { "type": "string"  }, 
-        "userUuid":   { "type": "string"  }, 
+        "userGuid":   { "type": "string", "fields": { "hash": { "type": "murmur3" }}}, 
         "type":       { "type": "string"  }, 
 
         "data":       { "type": "object"  },

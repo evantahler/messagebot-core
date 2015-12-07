@@ -7,7 +7,7 @@
   "mappings": {
     "person": { 
       "properties": { 
-        "uuid":        { "type": "string"  }, 
+        "guid":       { "type": "string", "fields": { "hash": { "type": "murmur3" }}}, 
         
         "data":        { "type": "object"  },
         "permissions": { "type": "object"  },

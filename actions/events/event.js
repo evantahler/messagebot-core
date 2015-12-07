@@ -18,8 +18,8 @@ exports.eventCreate = {
   inputs: {
     ip:           { required: false },
     device:       { required: false },
-    uuid:         { required: false },
-    userUuid:     { required: true  },
+    guid:         { required: false },
+    userGuid:     { required: true  },
     type:         { required: true  },
     data:         { required: true  },
   },
@@ -30,8 +30,8 @@ exports.eventCreate = {
     if(data.params.ip){       event.data.ip = data.params.ip;             }
     if(data.params.device){   event.data.device = data.params.device;     }
     if(data.params.device){   event.data.device = data.params.device;     }
-    if(data.params.uuid){     event.data.uuid = data.params.uuid;         }
-    if(data.params.userUuid){ event.data.userUuid = data.params.userUuid; }
+    if(data.params.guid){     event.data.guid = data.params.guid;         }
+    if(data.params.userGuid){ event.data.userGuid = data.params.userGuid; }
     if(data.params.type){     event.data.type = data.params.type;         }
 
     for(var i in data.params.data){
@@ -53,20 +53,20 @@ exports.eventEdit = {
   inputs: {
     ip:           { required: false  },
     device:       { required: false  },
-    uuid:         { required: true   },
-    userUuid:     { required: false  },
+    guid:         { required: true   },
+    userGuid:     { required: false  },
     type:         { required: false  },
     data:         { required: false  },
   },
 
   run: function(api, data, next){
-    var event = new api.models.event(index(api), data.params.uuid);
+    var event = new api.models.event(index(api), data.params.guid);
     
     if(data.params.ip){       event.data.ip = data.params.ip;             }
     if(data.params.device){   event.data.device = data.params.device;     }
     if(data.params.device){   event.data.device = data.params.device;     }
-    if(data.params.uuid){     event.data.uuid = data.params.uuid;         }
-    if(data.params.userUuid){ event.data.userUuid = data.params.userUuid; }
+    if(data.params.guid){     event.data.guid = data.params.guid;         }
+    if(data.params.userGuid){ event.data.userGuid = data.params.userGuid; }
     if(data.params.type){     event.data.type = data.params.type;         }
 
     for(var i in data.params.data){
@@ -86,11 +86,11 @@ exports.eventView = {
   middleware:             [],
 
   inputs: {
-    uuid:         { required: true },
+    guid:         { required: true },
   },
 
   run: function(api, data, next){
-    var event = new api.models.event(alias(api), data.params.uuid);
+    var event = new api.models.event(alias(api), data.params.guid);
     event.hydrate(function(error){
       if(error){ return next(error); }
       data.response.event = event.data;
@@ -106,11 +106,11 @@ exports.eventDelete = {
   middleware:             [],
 
   inputs: {
-    uuid:         { required: true },
+    guid:         { required: true },
   },
 
   run: function(api, data, next){
-    var event = new api.models.event(alias(api), data.params.uuid);
+    var event = new api.models.event(alias(api), data.params.guid);
     event.delete(function(error){
       if(error){ return next(error); }
       next();

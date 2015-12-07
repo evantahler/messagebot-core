@@ -45,7 +45,39 @@ module.exports = {
           data.hits.hits.forEach(function(hit){
             results.push(hit._source);
           });
-          callback(null, results);
+          callback(null, results, data.hits.total);
+        });
+      },
+
+      aggregation: function(alias, searchKeys, searchValues, start, end, dateField, agg, callback){
+        var terms = {};
+
+        for(var i in searchKeys){
+          terms[ searchKeys[i] ] = searchValues[i];
+        }
+
+        var range = {};
+        range[dateField] = {gte: start, lte: end};
+
+        var aggs = {agg_results: {}};
+        aggs.agg_results[agg] = { field: 'guid.hash' };
+
+        var query = {
+          // size: 0,
+          index: alias,
+          body: {
+            aggs: aggs,
+            filter:{ range: range },
+            query: { wildcard: terms }
+          }
+        };
+
+        console.log(util.inspect(query, true, 999));
+
+        api.elasticsearch.client.search(query, function(error, data){
+          console.log(util.inspect(data, true, 999));
+          if(error){ return callback(error); }
+          callback(null, data.aggregations.agg_results.value);
         });
       },
     };
@@ -54,11 +86,11 @@ module.exports = {
     // elasticsearchModel //
     ////////////////////////
 
-    var elasticsearchModel = function(type, index, uuid){
+    var elasticsearchModel = function(type, index, guid){
       this.type  = type; 
       this.index = index || null;
       this.data  = {
-        uuid: uuid || null
+        guid: guid || null
       };
       this.requiredFields = [];
     };
@@ -84,7 +116,7 @@ module.exports = {
 
     elasticsearchModel.prototype.create = function(callback){
       var self = this;
-      if(!self.data.uuid){ self.data.uuid = uuid.v4(); }
+      if(!self.data.guid){ self.data.guid = uuid.v4(); }
       if(!self.index){ return callback(new Error('index is required')); }
 
       var payload;
@@ -101,14 +133,14 @@ module.exports = {
       api.elasticsearch.client.create({
         index: self.index,
         type: self.type,
-        id: self.data.uuid,
+        id: self.data.guid,
         body: payload
       }, callback);
     };
 
     elasticsearchModel.prototype.edit = function(callback){
       var self = this;
-      if(!self.data.uuid){ return callback(new Error('uuid is required')); }
+      if(!self.data.guid){ return callback(new Error('guid is required')); }
       if(!self.index){     return callback(new Error('index is required')); }
 
       var payload;
@@ -119,7 +151,7 @@ module.exports = {
       api.elasticsearch.client.update({
         index: self.index,
         type: self.type,
-        id: self.data.uuid,
+        id: self.data.guid,
         body: {doc: payload}
       }, function(error, data){
         if(error){ return callback(error); }
@@ -130,7 +162,7 @@ module.exports = {
 
     elasticsearchModel.prototype.hydrate = function(callback){
       var self = this;
-      if(!self.data.uuid){ return callback(new Error('uuid is required')); }
+      if(!self.data.guid){ return callback(new Error('guid is required')); }
       if(!self.index){     return callback(new Error('index is required')); }
 
       // TODO: Can we use the GET api rather than a search?
@@ -139,7 +171,7 @@ module.exports = {
         alias: self.index,
         type: self.type,
         body: {
-          query: { ids: { values: [self.data.uuid] } }
+          query: { ids: { values: [self.data.guid] } }
         }
       }, function(error, data){
         if(error){ return callback(error); }
@@ -151,13 +183,13 @@ module.exports = {
 
     elasticsearchModel.prototype.destroy = function(callback){
       var self = this;
-      if(!self.data.uuid){ return callback(new Error('uuid is required')); }
+      if(!self.data.guid){ return callback(new Error('guid is required')); }
       if(!self.index){     return callback(new Error('index is required')); }
 
       api.elasticsearch.client.delete({
         index: self.index,
         type: self.type,
-        id: self.data.uuid,
+        id: self.data.guid,
       }, function(error){
         callback(error);
       });
@@ -176,9 +208,9 @@ module.exports = {
       var modelName = Object.keys(data.mappings)[0];
       var requiredFields = Object.keys(data.mappings[modelName].properties);
 
-      var thisModel = function(index, uuid){
+      var thisModel = function(index, guid){
         if(!index){ index = api.env + '-' + name + '-' + dateformat(new Date(), 'yyyy-mm'); }
-        elasticsearchModel.call(this, modelName, index, uuid);
+        elasticsearchModel.call(this, modelName, index, guid);
         this.requiredFields = requiredFields;
       };
 

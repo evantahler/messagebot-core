@@ -16,14 +16,14 @@ exports.personCreate = {
   middleware:             [],
 
   inputs: {
-    uuid:         { required: false },
+    guid:         { required: false },
     data:         { required: true  },
     permissions:  { required: false },
   },
 
   run: function(api, data, next){
     var person = new api.models.person(index(api));
-    if(data.params.uuid){        person.data.uuid = data.params.uuid;               }
+    if(data.params.guid){        person.data.guid = data.params.guid;               }
     if(data.params.permissions){ person.data.permissions = data.params.permissions; }
 
     for(var i in data.params.data){
@@ -43,13 +43,13 @@ exports.personEdit = {
   middleware:             [],
 
   inputs: {
-    uuid:         { required: true },
+    guid:         { required: true },
     data:         { required: true  },
     permissions:  { required: false },
   },
 
   run: function(api, data, next){
-    var person = new api.models.person(index(api), data.params.uuid);
+    var person = new api.models.person(index(api), data.params.guid);
     if(data.params.permissions){ person.data.permissions = data.params.permissions; }
 
     for(var i in data.params.data){
@@ -69,11 +69,11 @@ exports.personView = {
   middleware:             [],
 
   inputs: {
-    uuid:         { required: true },
+    guid:         { required: true },
   },
 
   run: function(api, data, next){
-    var person = new api.models.person(alias(api), data.params.uuid);
+    var person = new api.models.person(alias(api), data.params.guid);
     person.hydrate(function(error){
       if(error){ return next(error); }
       data.response.person = person.data;
@@ -89,11 +89,11 @@ exports.personDelete = {
   middleware:             [],
 
   inputs: {
-    uuid:         { required: true },
+    guid:         { required: true },
   },
 
   run: function(api, data, next){
-    var person = new api.models.person(alias(api), data.params.uuid);
+    var person = new api.models.person(alias(api), data.params.guid);
     person.delete(function(error){
       if(error){ return next(error); }
       next();

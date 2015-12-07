@@ -39,7 +39,7 @@
     "test": "mocha",
     "migrate": "npm run migrate-sequelize && npm run migrate-redis && npm run migrate-elasticsearch",
     "migrate-elasticsearch": "node db/elasticsearch/migrate.js",
-    "migrate-redis": "echo 'TODO' && sleep 1",
+    "migrate-redis": "echo 'TODO'",
     "migrate-sequelize": "sequelize db:migrate"
   }
 }
