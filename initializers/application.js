@@ -58,7 +58,7 @@ module.exports = {
       if(count > 0){
         done(); 
       }else{
-        user = api.models.user.build({
+        var user = api.models.user.build({
           email:     'admin@localhost.com',
           status:    'admin',
           firstName: 'admin',
