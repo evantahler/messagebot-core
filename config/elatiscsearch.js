@@ -12,7 +12,7 @@ exports.default = {
 };
 
 exports.test = { 
-  logger: function(api){
+  elasticsearch: function(api){
     return {
       urls: [ 'http://localhost:9200' ],
     };
