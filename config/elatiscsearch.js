@@ -1,7 +1,7 @@
 exports.default = { 
   elasticsearch: function(api){
     return {
-      urls: process.env.ELASTICSEARCH_URLS.split(','),
+      urls: process.env.ELASTICSEARCH_URLS ? process.env.ELASTICSEARCH_URLS.split(',') : null,
       log: {
         type: 'file',
         level: 'trace',
