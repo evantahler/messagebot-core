@@ -1,5 +1,7 @@
 # MessageBot.io
 
+[![Build Status](https://travis-ci.org/evantahler/messagebot.io.svg)](https://travis-ci.org/evantahler/messagebot.io)
+
 MessageBot.io: A User Relationship Manager.
 
   - Manage all communication with your users:
