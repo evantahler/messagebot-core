@@ -7,7 +7,9 @@ node_js:
   - "5.0"
 
 env:
-  - CXX=g++-4.8
+  global:
+    - CXX=g++-4.8
+    - NODE_ENV=true
 addons:
   apt:
     sources:
@@ -17,8 +19,6 @@ addons:
 
 os:
   - linux
-  # - osx
-  # - windows
 
 script: npm run-script test
 
