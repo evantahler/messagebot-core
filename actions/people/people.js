@@ -1,7 +1,7 @@
 var dateformat = require('dateformat');
 
 var alias = function(api){
-  return  'people';
+  return api.env + '-' + 'people';
 };
 
 exports.peopleSearch = {

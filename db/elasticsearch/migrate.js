@@ -28,6 +28,8 @@ var end = function(error){
 
 actionhero.initialize({configChanges: configChanges}, function(error, api){
   if(error){ return end(error); }
+
+  console.log('env: ' + api.env);
   
   var dir = path.normalize(api.projectRoot + '/db/elasticsearch/indexes');
   fs.readdirSync(dir).forEach(function(file){
@@ -36,8 +38,15 @@ actionhero.initialize({configChanges: configChanges}, function(error, api){
     var now = new Date();
     var thisMonth = dateformat(now, 'yyyy-mm');
     var nextMonth = dateformat(new Date( now.getTime() + (1000 * 60 * 60 * 24 * 30) ), 'yyyy-mm');
-    indexes[api.env + '-' + name + '-' + thisMonth] = require(dir + '/' + file);
-    indexes[api.env + '-' + name + '-' + nextMonth] = require(dir + '/' + file);
+    var payload = require(dir + '/' + file);
+
+    for(var alias in payload.aliases){
+      payload.aliases[(api.env + '-' + alias)] = payload.aliases[alias];
+      delete payload.aliases[alias];
+    }
+
+    indexes[api.env + '-' + name + '-' + thisMonth] = payload;
+    indexes[api.env + '-' + name + '-' + nextMonth] = payload;
   });
 
   var migrationJobs = [];

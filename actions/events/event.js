@@ -1,12 +1,12 @@
 var dateformat = require('dateformat');
 
 var alias = function(api){
-  return  'events';
+  return api.env + '-' + 'events';
 };
 
 var index = function(api){
   var thisMonth = dateformat(new Date(), 'yyyy-mm');
-  return api.env + '-' + alias(api) + '-' + thisMonth;
+  return alias(api) + '-' + thisMonth;
 };
 
 exports.eventCreate = {

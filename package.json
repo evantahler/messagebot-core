@@ -36,10 +36,9 @@
     "start": "actionhero start",
     "actionhero": "actionhero",
     "startCluster": "actionhero startCluster",
-    "test": "mocha",
-    "migrate": "npm run migrate-sequelize && npm run migrate-redis && npm run migrate-elasticsearch",
+    "test": "NODE_ENV=test npm run migrate && NODE_ENV=test mocha",
+    "migrate": "npm run migrate-sequelize && npm run migrate-elasticsearch",
     "migrate-elasticsearch": "node db/elasticsearch/migrate.js",
-    "migrate-redis": "echo 'TODO'",
     "migrate-sequelize": "sequelize db:migrate"
   }
 }

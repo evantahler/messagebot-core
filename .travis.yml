@@ -1,0 +1,22 @@
+sudo: false
+
+language: node_js
+
+node_js:
+  - "4.0"
+  - "5.0"
+
+os:
+  - linux
+  # - osx
+  # - windows
+
+script: npm run-script test
+
+services:
+  - redis-server
+  - mysql
+  - elasticsearch
+
+before_script:
+  - sh -c "if [ '$DB' = 'mysql' ]; then mysql -e 'create database IF NOT EXISTS doctrine_tests_tmp;create database IF NOT EXISTS messagebot_test;'; fi"

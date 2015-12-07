@@ -1,7 +1,7 @@
 var dateformat = require('dateformat');
 
 var alias = function(api){
-  return  'messages';
+  return api.env + '-' + 'messages';
 };
 
 exports.messagesSearch = {

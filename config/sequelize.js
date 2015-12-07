@@ -13,4 +13,22 @@ exports.default = {
   }
 };
 
+exports.test = {
+  sequelize: function(api){
+    return {
+      "dialect"     : "mysql",
+      "database"    : 'messagebot_test',
+      "host"        : 'localhost',
+      "username"    : 'root',
+      "password"    : null,
+      "logging"     : false,
+      "toSync"      : false,
+    };
+  }
+};
+
+// needed for sequelze migrate; refrenced by .sequelizerc
 exports.development = exports.default.sequelize();
+exports.test        = exports.test.sequelize();
+exports.staging     = exports.default.sequelize();
+exports.production  = exports.default.sequelize();
