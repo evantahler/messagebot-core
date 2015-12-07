@@ -48,7 +48,17 @@ module.exports = {
           api.log(error, 'crit');
           callback(error);
         });
-      }
+      },
+
+      query: function(q, type, callback){
+        if(typeof type === 'function'){ callback = type; type = null; }
+        if(!type){ type = api.sequelize.sequelize.QueryTypes.SELECT; }
+        
+        api.sequelize.sequelize.query(q, {type: type}).then(function(users){
+          callback(null, users);
+        }).catch(callback);
+      },
+
     };
 
     next();
