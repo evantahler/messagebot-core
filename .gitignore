@@ -3,6 +3,7 @@
 node_modules/*
 log/*
 pids/*
+locales/*
 
 public/javascript/actionheroClient.js
 public/javascript/actionheroClient.min.js

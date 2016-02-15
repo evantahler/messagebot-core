@@ -17,3 +17,15 @@ exports.default = {
     }
   }
 };
+
+exports.test = {
+  servers: {
+    socket: function(api){
+      return {
+        enabled: true,
+        port: 5001,
+        secure: false
+      };
+    }
+  }
+};
