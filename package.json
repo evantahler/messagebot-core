@@ -3,6 +3,7 @@
   "name": "MessageBot.io",
   "description": "MessageBot.io",
   "version": "0.0.1",
+  "license": "Apache-2.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/evantahler/messagebot.io.git"
@@ -11,17 +12,16 @@
     "node": "^4.2.0"
   },
   "dependencies": {
-    "actionhero": "12.3.0",
+    "actionhero": "^13.0.1",
     "ah-swagger-plugin": "latest",
     "async": "^1.5.0",
     "bcrypt": "^0.8.5",
     "dateformat": "^1.0.12",
     "elasticsearch": "^10.0.0",
-    "grunt": "latest",
     "mysql": "^2.9.0",
     "node-uuid": "^1.4.7",
-    "nodemailer": "^1.10.0",
-    "nodemailer-smtp-transport": "^1.0.4",
+    "nodemailer": "^2.1.0",
+    "nodemailer-smtp-transport": "^2.2.1",
     "request": "^2.67.0",
     "sequelize": "^3.14.2",
     "sequelize-cli": "^2.2.1",
