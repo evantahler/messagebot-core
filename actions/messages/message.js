@@ -43,7 +43,11 @@ exports.messageCreate = {
       }
     }
 
-    message.create(next);
+    message.create(function(error, response){
+      if(!error){ data.response.guid = message.data.guid; }
+      next(error);
+      next(error);
+    });
   }
 };
 
@@ -66,7 +70,7 @@ exports.messageEdit = {
 
   run: function(api, data, next){
     var message = new api.models.message(index(api), data.params.guid);
-    
+
     if(data.params.guid){     message.data.guid = data.params.guid;         }
     if(data.params.userGuid){ message.data.userGuid = data.params.userGuid; }
     if(data.params.type){     message.data.type = data.params.type;         }

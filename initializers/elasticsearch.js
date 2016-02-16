@@ -4,7 +4,6 @@ var util              = require('util');
 var uuid              = require('node-uuid');
 var dateformat        = require('dateformat');
 var elasticsearch     = require('elasticsearch');
-var request           = require('request');
 
 module.exports = {
   loadPriority:  100,
@@ -12,7 +11,7 @@ module.exports = {
 
   initialize: function(api, next){
     api.models = api.models || {};
-    
+
     var client = new elasticsearch.Client({
       hosts: api.config.elasticsearch.urls,
       log: api.config.elasticsearch.log,
@@ -21,6 +20,15 @@ module.exports = {
     api.elasticsearch = {
       client: client,
       indexes: [],
+
+      cleanGuid: function(guid){
+        //elasticsearch hates '-'
+        if(!guid){ return null; }
+
+        guid = guid.replace(/-/g, '');
+        guid = guid.replace(/\s/g, '');
+        return guid;
+      },
 
       search: function(alias, searchKeys, searchValues, from, size, sort, callback){
         var terms = {};
@@ -36,8 +44,8 @@ module.exports = {
             size: size,
             sort: sort,
             body: {
-              query: { 
-                wildcard: terms 
+              query: {
+                wildcard: terms
               }
             }
         }, function(error, data){
@@ -60,7 +68,7 @@ module.exports = {
         range[dateField] = {gte: start, lte: end};
 
         var aggs = {agg_results: {}};
-        aggs.agg_results[agg] = { field: 'guid.hash' };
+        aggs.agg_results[agg] = { field: 'guid' };
 
         var query = {
           // size: 0,
@@ -72,10 +80,7 @@ module.exports = {
           }
         };
 
-        console.log(util.inspect(query, true, 999));
-
         api.elasticsearch.client.search(query, function(error, data){
-          console.log(util.inspect(data, true, 999));
           if(error){ return callback(error); }
           callback(null, data.aggregations.agg_results.value);
         });
@@ -87,10 +92,10 @@ module.exports = {
     ////////////////////////
 
     var elasticsearchModel = function(type, index, guid){
-      this.type  = type; 
+      this.type  = type;
       this.index = index || null;
       this.data  = {
-        guid: guid || null
+        guid: api.elasticsearch.cleanGuid(guid) || null
       };
       this.requiredFields = [];
     };
@@ -116,7 +121,7 @@ module.exports = {
 
     elasticsearchModel.prototype.create = function(callback){
       var self = this;
-      if(!self.data.guid){ self.data.guid = uuid.v4(); }
+      if(!self.data.guid){ self.data.guid = api.elasticsearch.cleanGuid( uuid.v4() ); }
       if(!self.index){ return callback(new Error('index is required')); }
 
       var payload;
@@ -166,7 +171,7 @@ module.exports = {
       if(!self.index){     return callback(new Error('index is required')); }
 
       // TODO: Can we use the GET api rather than a search?
-      // You cannot GET over an alias... 
+      // You cannot GET over an alias...
       api.elasticsearch.client.search({
         alias: self.index,
         type: self.type,
@@ -181,7 +186,7 @@ module.exports = {
       });
     };
 
-    elasticsearchModel.prototype.destroy = function(callback){
+    elasticsearchModel.prototype.delete = function(callback){
       var self = this;
       if(!self.data.guid){ return callback(new Error('guid is required')); }
       if(!self.index){     return callback(new Error('index is required')); }

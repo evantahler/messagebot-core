@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 var elasticsearch = require('elasticsearch');
 var path          = require('path');
 var fs            = require('fs');
@@ -16,9 +18,9 @@ var indexes = [];
 
 var end = function(error){
   var returnCode = 0;
-  if(error){ 
-    console.log(error); 
-    returnCode = 1; 
+  if(error){
+    console.log(error);
+    returnCode = 1;
   }
 
   setTimeout(function(){
@@ -30,7 +32,7 @@ actionhero.initialize({configChanges: configChanges}, function(error, api){
   if(error){ return end(error); }
 
   api.log('elasticsearch migration env: ' + api.env);
-  
+
   var dir = path.normalize(api.projectRoot + '/db/elasticsearch/indexes');
   fs.readdirSync(dir).forEach(function(file){
     var nameParts = file.split("/");

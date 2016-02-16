@@ -1,29 +1,29 @@
-exports.default = { 
+exports.default = {
   routes: function(api){
     return {
-      
+
       get: [
         { path: '/swagger',              action: 'swagger' },
         { path: '/system/status',        action: 'system:status' },
         { path: '/system/documentation', action: 'system:documentation' },
         { path: '/user',                 action: 'user:view' },
         { path: '/person',               action: 'person:view' },
+        { path: '/people/search',        action: 'people:search' },
+        { path: '/people/aggregation',   action: 'people:aggregation' },
         { path: '/event',                action: 'event:view' },
+        { path: '/events/search',        action: 'events:search' },
+        { path: '/events/aggregation',   action: 'events:aggregation' },
         { path: '/message',              action: 'message:view' },
+        { path: '/messages/search',      action: 'messages:search' },
+        { path: '/messages/aggregation', action: 'messages:aggregation' },
       ],
 
       post: [
         { path: '/session',              action: 'session:create' },
         { path: '/user',                 action: 'user:create' },
         { path: '/person',               action: 'person:create' },
-        { path: '/people/search',        action: 'people:search' },
-        { path: '/people/aggregation',   action: 'people:aggregation' },
         { path: '/event',                action: 'event:create' },
-        { path: '/events/search',        action: 'events:search' },
-        { path: '/events/aggregation',   action: 'events:aggregation' },
         { path: '/message',              action: 'message:create' },
-        { path: '/messages/search',      action: 'messages:search' },
-        { path: '/messages/aggregation', action: 'messages:aggregation' },
       ],
 
       put: [
@@ -41,7 +41,7 @@ exports.default = {
         { path: '/event',   action: 'event:delete' },
         { path: '/message', action: 'message:delete' },
       ],
-            
+
     };
   }
 };

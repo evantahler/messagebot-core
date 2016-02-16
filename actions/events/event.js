@@ -40,7 +40,10 @@ exports.eventCreate = {
       }
     }
 
-    event.create(next);
+    event.create(function(error){
+      if(!error){ data.response.guid = event.data.guid; }
+      next(error);
+    });
   }
 };
 
@@ -61,7 +64,7 @@ exports.eventEdit = {
 
   run: function(api, data, next){
     var event = new api.models.event(index(api), data.params.guid);
-    
+
     if(data.params.ip){       event.data.ip = data.params.ip;             }
     if(data.params.device){   event.data.device = data.params.device;     }
     if(data.params.device){   event.data.device = data.params.device;     }

@@ -32,7 +32,10 @@ exports.personCreate = {
       }
     }
 
-    person.create(next);
+    person.create(function(error, response){
+      if(!error){ data.response.guid = person.data.guid; }
+      next(error);
+    });
   }
 };
 

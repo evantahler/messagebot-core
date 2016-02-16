@@ -1,11 +1,11 @@
 var should     = require('should');
 var specHelper = require(__dirname + '/../specHelper');
 
-describe('general:users', function(){
+describe('models:users', function(){
 
-  before(function(done){ specHelper.api.sequelize.query('truncate table users', true, done); });
   before(function(done){ specHelper.startServer(done); });
   after(function(done){  specHelper.stopServer(done);  });
+  after(function(done){  specHelper.api.sequelize.query('truncate table users', true, done); });
 
   it('the first admin users should be automatically created', function(done){
     specHelper.api.sequelize.query('select * from users', function(error, rows){

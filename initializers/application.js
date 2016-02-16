@@ -30,7 +30,7 @@ module.exports = {
               data.params.permissions = data.params.permissions.split(',');
             }
           }
-          
+
           if(data.params.data && typeof data.params.data === 'string'){
             try{
               data.params.data = JSON.parse(data.params.data);
@@ -56,7 +56,7 @@ module.exports = {
    jobs.push(function(done){
     api.models.user.count({where: {status: 'admin'}}).then(function(count){
       if(count > 0){
-        done(); 
+        done();
       }else{
         var user = api.models.user.build({
           email:     'admin@localhost.com',
@@ -66,11 +66,14 @@ module.exports = {
         });
 
         user.updatePassword('password', function(error){
-          if(error){ return next(error); }
+          if(error){ return done(error); }
           user.save().then(function(){
             api.log('*** created first admin user `admin@localhost.com` with password `password` ***', 'alert');
             done();
-          }).catch(done);
+          }).catch(function(error){
+            api.log(error, 'error');
+            done(error);
+          });
         });
       }
     }).catch(done);

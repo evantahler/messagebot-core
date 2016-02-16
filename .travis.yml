@@ -18,7 +18,7 @@ addons:
 os:
   - linux
 
-script: npm run test-travis
+script: npm run test
 
 services:
   - redis-server

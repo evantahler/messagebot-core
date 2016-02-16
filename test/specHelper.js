@@ -18,6 +18,11 @@ specHelper = {
     var self = this;
     self.actionhero.stop(callback);
   },
+
+  flushIndices: function(callback){
+    var self = this;
+    self.api.elasticsearch.client.indices.flushSynced({index: '*'}, callback);
+  },
 };
 
 module.exports = specHelper;
