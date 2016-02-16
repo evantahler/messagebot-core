@@ -36,6 +36,7 @@ specHelper = {
       Object.keys(indices).forEach(function(index){
         if(index.indexOf('test-') === 0){
           jobs.push(function(done){
+            console.log("trying to flush: " + index);
             self.api.elasticsearch.client.indices.flushSynced({index: index}, done);
           });
         }

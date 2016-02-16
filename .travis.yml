@@ -27,4 +27,3 @@ services:
 
 before_script:
   - mysql -e 'create database IF NOT EXISTS messagebot_test'
-  - sleep 10 #to allow ES to boot
