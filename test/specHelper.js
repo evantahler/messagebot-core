@@ -1,5 +1,7 @@
 var actionheroPrototype = require('actionhero').actionheroPrototype;
-var async = require('async');
+var elasticsearchMigrator = require(__dirname + '/../db/elasticsearch/migrate.js').migrate
+var async   = require('async');
+var request = require('request');
 
 specHelper = {
   actionhero: new actionheroPrototype(),
@@ -18,6 +20,13 @@ specHelper = {
   stopServer: function(callback){
     var self = this;
     self.actionhero.stop(callback);
+  },
+
+  rebuildElasticsearch: function(callback){
+    var self = this;
+    self.api.elasticsearch.client.indices.delete({index: 'test-*'}, function(){
+      elasticsearchMigrator(self.api, callback);
+    });
   },
 
   flushIndices: function(callback){

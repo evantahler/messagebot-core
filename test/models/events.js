@@ -25,6 +25,7 @@ describe('models:events', function(){
   /// SETUP ///
 
   before(function(done){ specHelper.startServer(done); });
+  before(function(done){ specHelper.rebuildElasticsearch(done); });
   after(function(done){  specHelper.stopServer(done);  });
 
   /// TESTS ///
@@ -37,8 +38,7 @@ describe('models:events', function(){
       indexUrl = specHelper.api.config.elasticsearch.urls[0] + '/test-events-' + thisMonth;
       aliasUrl = specHelper.api.config.elasticsearch.urls[0] + '/events';
 
-      // ensure we start with a clean index
-      request.del(indexUrl + '/event', function(){ specHelper.flushIndices(done); });
+      done();
     });
   });
 

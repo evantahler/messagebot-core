@@ -16,7 +16,11 @@ var configChanges = {
 
 var indexes = [];
 
-var end = function(error){
+var end = function(error, callback){
+  if(typeof callback === 'function'){
+    return callback(error);
+  }
+
   var returnCode = 0;
   if(error){
     console.log(error);
@@ -28,11 +32,13 @@ var end = function(error){
   }, 1000);
 };
 
-actionhero.initialize({configChanges: configChanges}, function(error, api){
-  if(error){ return end(error); }
+var log = function(msg){
+  if(require.main === module){
+    console.log(msg);
+  }
+};
 
-  api.log('elasticsearch migration env: ' + api.env);
-
+var migrate = function(api, callback){
   var dir = path.normalize(api.projectRoot + '/db/elasticsearch/indexes');
   fs.readdirSync(dir).forEach(function(file){
     var nameParts = file.split("/");
@@ -53,14 +59,14 @@ actionhero.initialize({configChanges: configChanges}, function(error, api){
 
   var migrationJobs = [];
   api.elasticsearch.client.indices.get({index: '*'}, function(error, indices){
-    if(error){ return end(error); }
+    if(error){ return end(error, callback); }
 
     indices = Object.keys(indices);
 
     Object.keys(indexes).forEach(function(i){
       if(indices.indexOf(i) < 0){
         migrationJobs.push(function(next){
-          console.log(' -> creating index: ' + i);
+          log(' -> creating index: ' + i);
           var payload = indexes[i];
           // The ES client in v10.0.0 does not suppor much of the medatdat we need :(
           // payload.index = i;
@@ -74,11 +80,23 @@ actionhero.initialize({configChanges: configChanges}, function(error, api){
           });
         });
       }else{
-        console.log(' -> index: ' + i + ' already exists');
+        log(' -> index: ' + i + ' already exists');
       }
     });
 
-    async.series(migrationJobs, end);
+    async.series(migrationJobs, function(error){
+      end(error, callback);
+    });
   });
+};
 
-});
+
+if(require.main === module){
+  actionhero.initialize({configChanges: configChanges}, function(error, api){
+    if(error){ return end(error); }
+    api.log('elasticsearch migration env: ' + api.env);
+    migrate(api);
+  });
+}
+
+exports.migrate = migrate;
