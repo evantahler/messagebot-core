@@ -33,20 +33,21 @@ specHelper = {
     var self = this;
     var jobs = [];
     // TODO: This doesn't work on Travis.ci?
-    
-    // self.api.elasticsearch.client.indices.get({index: '*'}, function(error, indices){
-    //   Object.keys(indices).forEach(function(index){
-    //     if(index.indexOf('test-') === 0){
-    //       jobs.push(function(done){
-    //         self.api.elasticsearch.client.indices.flushSynced({index: index}, done);
-    //       });
-    //     }
-    //   });
-    //
-    //   async.series(jobs, callback);
-    // });
+    if(process.env.TRAVIS){
+      setTimeout(callback, 5001);
+    }else{
+      self.api.elasticsearch.client.indices.get({index: '*'}, function(error, indices){
+        Object.keys(indices).forEach(function(index){
+          if(index.indexOf('test-') === 0){
+            jobs.push(function(done){
+              self.api.elasticsearch.client.indices.flushSynced({index: index}, done);
+            });
+          }
+        });
 
-    setTimeout(callback, 5001);
+        async.series(jobs, callback);
+      });
+    }
   },
 };
 

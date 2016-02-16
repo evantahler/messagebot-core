@@ -45,7 +45,11 @@ module.exports = {
             sort: sort,
             body: {
               query: {
-                wildcard: terms
+                bool: {
+                  must: [
+                    { wildcard: terms }
+                  ]
+                }
               }
             }
         }, function(error, data){
@@ -76,7 +80,13 @@ module.exports = {
           body: {
             aggs: aggs,
             filter:{ range: range },
-            query: { wildcard: terms }
+            query: {
+              bool: {
+                must: [
+                  { wildcard: terms }
+                ]
+              }
+            }
           }
         };
 
