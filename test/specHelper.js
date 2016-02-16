@@ -21,7 +21,7 @@ specHelper = {
 
   flushIndices: function(callback){
     var self = this;
-    self.api.elasticsearch.client.indices.flushSynced({index: '*'}, callback);
+    self.api.elasticsearch.client.indices.flushSynced(callback);
   },
 };
 
