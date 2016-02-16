@@ -68,6 +68,8 @@ actionhero.initialize({configChanges: configChanges}, function(error, api){
 
           request.put(api.config.elasticsearch.urls[0] + '/' + i, {form: JSON.stringify(payload)}, next);
         });
+      }else{
+        console.log(' -> index: ' + i + ' already exists');
       }
     });
 

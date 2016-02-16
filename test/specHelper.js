@@ -1,4 +1,5 @@
 var actionheroPrototype = require('actionhero').actionheroPrototype;
+var async = require('async');
 
 specHelper = {
   actionhero: new actionheroPrototype(),
@@ -21,7 +22,18 @@ specHelper = {
 
   flushIndices: function(callback){
     var self = this;
-    self.api.elasticsearch.client.indices.flushSynced(callback);
+    var jobs = [];
+    self.api.elasticsearch.client.indices.get({index: '*'}, function(error, indices){
+      Object.keys(indices).forEach(function(index){
+        if(index.indexOf('test-') === 0){
+          jobs.push(function(done){
+            self.api.elasticsearch.client.indices.flushSynced({index: index}, done);
+          });
+        }
+      });
+
+      async.series(jobs, callback);
+    });
   },
 };
 
