@@ -5,17 +5,17 @@
   },
 
   "mappings": {
-    "event": { 
-      "properties": { 
-        "guid":       { "type": "string", "fields": { "hash": { "type": "murmur3" }}}, 
+    "event": {
+      "properties": {
+        "guid":       { "type": "string"  },
 
-        "ip":         { "type": "string"  }, 
-        "device":     { "type": "string"  }, 
-        "userGuid":   { "type": "string", "fields": { "hash": { "type": "murmur3" }}}, 
-        "type":       { "type": "string"  }, 
+        "ip":         { "type": "string"  },
+        "device":     { "type": "string"  },
+        "userGuid":   { "type": "string"  }, 
+        "type":       { "type": "string"  },
 
         "data":       { "type": "object"  },
-        
+
         "createdAt":  { "type":  "date" },
         "updatedAt":  { "type":  "date" }
       }

@@ -5,16 +5,16 @@
   },
 
   "mappings": {
-    "message": { 
-      "properties": { 
-        "guid":       { "type": "string", "fields": { "hash": { "type": "murmur3" }}}, 
-        
-        "userGuid":  { "type": "string", "fields": { "hash": { "type": "murmur3" }}}, 
-        "type":      { "type": "string"  }, 
-        "body":      { "type": "string"  }, 
-       
+    "message": {
+      "properties": {
+        "guid":       { "type": "string" },
+
+        "userGuid":  { "type": "string"  }, 
+        "type":      { "type": "string"  },
+        "body":      { "type": "string"  },
+
         "data":      { "type": "object"  },
-        
+
         "createdAt": { "type":  "date" },
         "updatedAt": { "type":  "date" },
         "sentAt":    { "type":  "date" },

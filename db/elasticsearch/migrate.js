@@ -66,7 +66,12 @@ actionhero.initialize({configChanges: configChanges}, function(error, api){
           // payload.index = i;
           // api.elasticsearch.client.indices.create(payload, next);
 
-          request.put(api.config.elasticsearch.urls[0] + '/' + i, {form: JSON.stringify(payload)}, next);
+          request.put(api.config.elasticsearch.urls[0] + '/' + i, {form: JSON.stringify(payload)}, function(error, data){
+            if(error){ return next(error); }
+            var body = JSON.parse(data.body);
+            if(body.error){ return next(body.error); }
+            return next();
+          });
         });
       }else{
         console.log(' -> index: ' + i + ' already exists');

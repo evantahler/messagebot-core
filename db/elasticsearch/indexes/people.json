@@ -5,13 +5,13 @@
   },
 
   "mappings": {
-    "person": { 
-      "properties": { 
-        "guid":       { "type": "string", "fields": { "hash": { "type": "murmur3" }}}, 
-        
+    "person": {
+      "properties": {
+        "guid":        { "type": "string"  }, 
+
         "data":        { "type": "object"  },
         "permissions": { "type": "object"  },
-        
+
         "createdAt":   { "type":  "date" },
         "updatedAt":   { "type":  "date" }
       }
