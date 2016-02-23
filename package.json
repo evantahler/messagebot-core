@@ -6,7 +6,7 @@
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "https://github.com/evantahler/messagebot.io.git"
+    "url": "https://github.com/messagebot/messagebot-core.git"
   },
   "engines": {
     "node": "^4.2.0"
