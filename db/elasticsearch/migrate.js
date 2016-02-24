@@ -46,6 +46,8 @@ var migrate = function(api, callback){
     var now = new Date();
     var thisMonth = dateformat(now, 'yyyy-mm');
     var nextMonth = dateformat(new Date( now.getTime() + (1000 * 60 * 60 * 24 * 30) ), 'yyyy-mm');
+
+    delete require.cache[require.resolve(dir + '/' + file)];
     var payload = require(dir + '/' + file);
 
     for(var alias in payload.aliases){
@@ -68,7 +70,7 @@ var migrate = function(api, callback){
         migrationJobs.push(function(next){
           log(' -> creating index: ' + i);
           var payload = indexes[i];
-          // The ES client in v10.0.0 does not suppor much of the medatdat we need :(
+          // The ES client in v10.0.0 does not suppor much of the metatdata we need :(
           // payload.index = i;
           // api.elasticsearch.client.indices.create(payload, next);
 
