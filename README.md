@@ -1,6 +1,6 @@
 # MessageBot.io
 
-[![Build Status](https://travis-ci.org/messagebot/messagebot.io.svg)](https://travis-ci.org/messagebot/messagebot.io)
+[![Build Status](https://travis-ci.org/messagebot/messagebot-core.svg)](https://travis-ci.org/messagebot/messagebot-core)
 
 MessageBot.io: A User Relationship Manager.
 
