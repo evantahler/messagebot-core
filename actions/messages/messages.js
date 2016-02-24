@@ -13,7 +13,7 @@ exports.messagesSearch = {
   inputs: {
     searchKeys:   { required: true },
     searchValues: { required: true },
-    from:         { 
+    from:         {
       required: false,
       formatter: function(p){ return parseInt(p); },
       default:   function(p){ return 0; },
@@ -45,7 +45,7 @@ exports.messagesAggregation = {
   inputs: {
     searchKeys:   { required: true },
     searchValues: { required: true },
-    start:        { 
+    start:        {
       required: false,
       formatter: function(p){ return new Date(parseInt(p)); },
       default:   function(p){ return 0; },
@@ -55,11 +55,11 @@ exports.messagesAggregation = {
       formatter: function(p){ return new Date(parseInt(p)); },
       default:   function(p){ return new Date().getTime(); },
     },
-    dateField:    { 
+    dateField:    {
       required: true,
       default: function(){ return 'createdAt'; }
     },
-    agg:          { 
+    agg:          {
       required: true,
       default: function(){ return 'cardinality'; }
     },

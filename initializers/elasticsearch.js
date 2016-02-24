@@ -31,11 +31,13 @@ module.exports = {
       },
 
       search: function(alias, searchKeys, searchValues, from, size, sort, callback){
-        var terms = {};
+        var musts = [];
         var results = [];
 
         for(var i in searchKeys){
-          terms[ searchKeys[i] ] = searchValues[i];
+          var q = {};
+          q[searchKeys[i]] = searchValues[i];
+          musts.push({ wildcard: q });
         }
 
         api.elasticsearch.client.search({
@@ -46,9 +48,7 @@ module.exports = {
             body: {
               query: {
                 bool: {
-                  must: [
-                    { wildcard: terms }
-                  ]
+                  must: musts
                 }
               }
             }
@@ -62,10 +62,12 @@ module.exports = {
       },
 
       aggregation: function(alias, searchKeys, searchValues, start, end, dateField, agg, callback){
-        var terms = {};
+        var musts = [];
 
         for(var i in searchKeys){
-          terms[ searchKeys[i] ] = searchValues[i];
+          var q = {};
+          q[searchKeys[i]] = searchValues[i];
+          musts.push({ wildcard: q });
         }
 
         var range = {};
@@ -82,9 +84,7 @@ module.exports = {
             filter:{ range: range },
             query: {
               bool: {
-                must: [
-                  { wildcard: terms }
-                ]
+                must: musts
               }
             }
           }
