@@ -39,6 +39,23 @@ exports.personCreate = {
   }
 };
 
+exports.personCreateDelayed = {
+  name:                   'person:create:delayed',
+  description:            'person:create:delayed',
+  outputExample:          {},
+  middleware:             [],
+
+  inputs: {
+    guid:         { required: false },
+    data:         { required: true  },
+    permissions:  { required: false },
+  },
+
+  run: function(api, data, next){
+    api.cache.push('messagebot:track:people:create', data.params, next);
+  }
+};
+
 exports.personEdit = {
   name:                   'person:edit',
   description:            'person:edit',
@@ -62,6 +79,23 @@ exports.personEdit = {
     }
 
     person.edit(next);
+  }
+};
+
+exports.personEditDelayed = {
+  name:                   'person:edit:delayed',
+  description:            'person:edit:delayed',
+  outputExample:          {},
+  middleware:             [],
+
+  inputs: {
+    guid:         { required: true },
+    data:         { required: true  },
+    permissions:  { required: false },
+  },
+
+  run: function(api, data, next){
+    api.cache.push('messagebot:track:people:edit', data.params, next);
   }
 };
 

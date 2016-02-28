@@ -5,6 +5,25 @@ module.exports = {
 
   initialize: function(api, next){
 
+    api.utils.runAction = function(params, callback){
+      var connection = new api.connection({
+        type: 'task',
+        remotePort: '0',
+        remoteIP: '0',
+        rawConnection: {}
+      });
+
+      connection.params = params;
+
+      var actionProcessor = new api.actionProcessor(connection, function(data){
+        connection.destroy(function(){
+          callback(data.response.error, data.response);
+        });
+      });
+
+      actionProcessor.processAction();
+    };
+
     var middleware = {
       // These actions are restricted to the website (and you need a CSRF token)
       'data-preperation': {

@@ -47,6 +47,26 @@ exports.eventCreate = {
   }
 };
 
+exports.eventCreateDelayed = {
+  name:                   'event:create:delayed',
+  description:            'event:create:delayed',
+  outputExample:          {},
+  middleware:             [],
+
+  inputs: {
+    ip:           { required: false },
+    device:       { required: false },
+    guid:         { required: false },
+    userGuid:     { required: true  },
+    type:         { required: true  },
+    data:         { required: true  },
+  },
+
+  run: function(api, data, next){
+    api.cache.push('messagebot:track:events:create', data.params, next);
+  }
+};
+
 exports.eventEdit = {
   name:                   'event:edit',
   description:            'event:edit',
@@ -79,6 +99,26 @@ exports.eventEdit = {
     }
 
     event.edit(next);
+  }
+};
+
+exports.eventEditDelayed = {
+  name:                   'event:edit:delayed',
+  description:            'event:edit:delayed',
+  outputExample:          {},
+  middleware:             [],
+
+  inputs: {
+    ip:           { required: false  },
+    device:       { required: false  },
+    guid:         { required: true   },
+    userGuid:     { required: false  },
+    type:         { required: false  },
+    data:         { required: false  },
+  },
+
+  run: function(api, data, next){
+    api.cache.push('messagebot:track:events:edit', data.params, next);
   }
 };
 
