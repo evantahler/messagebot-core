@@ -24,29 +24,12 @@ exports.status = {
       data.response.healthy            = true;
       data.response.actionheroVersion  = api.actionheroVersion;
       data.response.uptime             = new Date().getTime() - api.bootTime;
-      data.response.trackingQueues     = {};
       done();
     });
 
-    ['events', 'people', 'messages'].forEach(function(type){
-      ['create', 'edit'].forEach(function(mode){
-        jobs.push(function(done){
-          var key = 'messagebot:track:' + type + ':' + mode;
-          api.cache.listLength(key, function(error, length){
-            data.response.trackingQueues[key] = length;
-            done(error);
-          });
-        });
-      });
-    });
-
     jobs.push(function(done){
-      data.response.totalTrackingEvents = 0;
-      Object.keys(data.response.trackingQueues).forEach(function(key){
-        data.response.totalTrackingEvents = data.response.totalTrackingEvents + data.response.trackingQueues[key];
-      });
-
-      if(data.response.totalTrackingEvents > api.config.messagebot.tracking.maxQueueLength){
+      data.response.pendingOperations = api.elasticsearch.pendingOperations;
+      if(api.elasticsearch.pendingOperations > api.config.messagebot.tracking.maxPendingOperations){
         data.response.healthy = false;
         if(data.connection.type === 'web'){
           data.connection.rawConnection.responseHttpCode = 429; // Too Many Requests

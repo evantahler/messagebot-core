@@ -42,34 +42,15 @@ exports.messageCreate = {
         message.data[i] = data.params.data[i];
       }
     }
-
-    message.create(function(error, response){
-      if(!error){ data.response.guid = message.data.guid; }
-      next(error);
-      next(error);
+    
+    // return without waiting for the crete callback; log errors
+    // this effectivley allows the tracking request to 'buffer' in RAM & returning to the client quickly
+    // guid will be hydrated syncrhonusly before the save operation
+    message.create(function(error){
+      if(error){ api.log('message creation error: ' + error, 'error', data.params); }
     });
-  }
-};
-
-exports.messageCreateDelayed = {
-  name:                   'message:create:delayed',
-  description:            'message:create:delayed',
-  outputExample:          {},
-  middleware:             [],
-
-  inputs: {
-    guid:      { required: false },
-    userGuid:  { required: true  },
-    type:      { required: true  },
-    body:      { required: true  },
-    data:      { required: false },
-    sentAt:    { required: false  },
-    readAt:    { required: false  },
-    actedAt:   { required: false  },
-  },
-
-  run: function(api, data, next){
-    api.cache.push('messagebot:track:messages:create', data.params, next);
+    data.response.guid = message.data.guid;
+    next();
   }
 };
 
@@ -108,28 +89,6 @@ exports.messageEdit = {
     }
 
     message.edit(next);
-  }
-};
-
-exports.messageEditDelayed = {
-  name:                   'message:edit:delayed',
-  description:            'message:edit:delayed',
-  outputExample:          {},
-  middleware:             [],
-
-  inputs: {
-    guid:      { required: true  },
-    userGuid:  { required: false },
-    type:      { required: false },
-    body:      { required: false },
-    data:      { required: false },
-    sentAt:    { required: false },
-    readAt:    { required: false },
-    actedAt:   { required: false },
-  },
-
-  run: function(api, data, next){
-    api.cache.push('messagebot:track:messages:edit', data.params, next);
   }
 };
 

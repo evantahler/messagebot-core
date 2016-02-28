@@ -20,6 +20,7 @@ module.exports = {
     api.elasticsearch = {
       client: client,
       indexes: [],
+      pendingOperations: 0,
 
       cleanGuid: function(guid){
         //elasticsearch hates '-'
@@ -40,6 +41,7 @@ module.exports = {
           musts.push({ wildcard: q });
         }
 
+        api.elasticsearch.pendingOperations++;
         api.elasticsearch.client.search({
             index: alias,
             from: from,
@@ -53,6 +55,7 @@ module.exports = {
               }
             }
         }, function(error, data){
+          api.elasticsearch.pendingOperations--;
           if(error){ return callback(error); }
           data.hits.hits.forEach(function(hit){
             results.push(hit._source);
@@ -90,7 +93,9 @@ module.exports = {
           }
         };
 
+        api.elasticsearch.pendingOperations++;
         api.elasticsearch.client.search(query, function(error, data){
+          api.elasticsearch.pendingOperations--;
           if(error){ return callback(error); }
           callback(null, data.aggregations.agg_results.value);
         });
@@ -145,12 +150,16 @@ module.exports = {
         payload.createdAt = payload.updatedAt;
       }
 
+      api.elasticsearch.pendingOperations++;
       api.elasticsearch.client.create({
         index: self.index,
         type: self.type,
         id: self.data.guid,
         body: payload
-      }, callback);
+      }, function(error, data){
+        api.elasticsearch.pendingOperations--;
+        callback(error, data);
+      });
     };
 
     elasticsearchModel.prototype.edit = function(callback){
@@ -163,12 +172,14 @@ module.exports = {
         payload = self.prepareData();
       }catch(e){ return callback(e); }
 
+      api.elasticsearch.pendingOperations++;
       api.elasticsearch.client.update({
         index: self.index,
         type: self.type,
         id: self.data.guid,
         body: {doc: payload}
       }, function(error, data){
+        api.elasticsearch.pendingOperations--;
         if(error){ return callback(error); }
         self.data = data;
         callback(null, data);
@@ -182,6 +193,7 @@ module.exports = {
 
       // TODO: Can we use the GET api rather than a search?
       // You cannot GET over an alias...
+      api.elasticsearch.pendingOperations++;
       api.elasticsearch.client.search({
         alias: self.index,
         type: self.type,
@@ -189,6 +201,7 @@ module.exports = {
           query: { ids: { values: [self.data.guid] } }
         }
       }, function(error, data){
+        api.elasticsearch.pendingOperations--;
         if(error){ return callback(error); }
         if(data.hits.hits.length === 0){ return callback(new Error('not found')); }
         self.data = data.hits.hits[0]._source;
@@ -201,11 +214,13 @@ module.exports = {
       if(!self.data.guid){ return callback(new Error('guid is required')); }
       if(!self.index){     return callback(new Error('index is required')); }
 
+      api.elasticsearch.pendingOperations++;
       api.elasticsearch.client.delete({
         index: self.index,
         type: self.type,
         id: self.data.guid,
       }, function(error){
+        api.elasticsearch.pendingOperations--;
         callback(error);
       });
     };

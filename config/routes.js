@@ -24,10 +24,6 @@ exports.default = {
         { path: '/person',       action: 'person:create' },
         { path: '/event',        action: 'event:create' },
         { path: '/message',      action: 'message:create' },
-
-        { path: '/track/event',   action: 'event:create:delayed' },
-        { path: '/track/person',  action: 'person:create:delayed' },
-        { path: '/track/message', action: 'message:create:delayed' },
       ],
 
       put: [
@@ -36,10 +32,6 @@ exports.default = {
         { path: '/person',       action: 'person:edit' },
         { path: '/event',        action: 'event:edit' },
         { path: '/message',      action: 'message:edit' },
-
-        { path: '/track/event',   action: 'event:edit:delayed' },
-        { path: '/track/person',  action: 'person:edit:delayed' },
-        { path: '/track/message', action: 'message:edit:delayed' },
       ],
 
       delete: [

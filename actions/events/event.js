@@ -40,30 +40,14 @@ exports.eventCreate = {
       }
     }
 
+    // return without waiting for the crete callback; log errors
+    // this effectivley allows the tracking request to 'buffer' in RAM & returning to the client quickly
+    // guid will be hydrated syncrhonusly before the save operation
     event.create(function(error){
-      if(!error){ data.response.guid = event.data.guid; }
-      next(error);
+      if(error){ api.log('event creation error: ' + error, 'error', data.params); }
     });
-  }
-};
-
-exports.eventCreateDelayed = {
-  name:                   'event:create:delayed',
-  description:            'event:create:delayed',
-  outputExample:          {},
-  middleware:             [],
-
-  inputs: {
-    ip:           { required: false },
-    device:       { required: false },
-    guid:         { required: false },
-    userGuid:     { required: true  },
-    type:         { required: true  },
-    data:         { required: true  },
-  },
-
-  run: function(api, data, next){
-    api.cache.push('messagebot:track:events:create', data.params, next);
+    data.response.guid = event.data.guid;
+    next();
   }
 };
 
@@ -99,26 +83,6 @@ exports.eventEdit = {
     }
 
     event.edit(next);
-  }
-};
-
-exports.eventEditDelayed = {
-  name:                   'event:edit:delayed',
-  description:            'event:edit:delayed',
-  outputExample:          {},
-  middleware:             [],
-
-  inputs: {
-    ip:           { required: false  },
-    device:       { required: false  },
-    guid:         { required: true   },
-    userGuid:     { required: false  },
-    type:         { required: false  },
-    data:         { required: false  },
-  },
-
-  run: function(api, data, next){
-    api.cache.push('messagebot:track:events:edit', data.params, next);
   }
 };
 

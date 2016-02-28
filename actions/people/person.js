@@ -32,27 +32,14 @@ exports.personCreate = {
       }
     }
 
-    person.create(function(error, response){
-      if(!error){ data.response.guid = person.data.guid; }
-      next(error);
+    // return without waiting for the crete callback; log errors
+    // this effectivley allows the tracking request to 'buffer' in RAM & returning to the client quickly
+    // guid will be hydrated syncrhonusly before the save operation
+    person.create(function(error){
+      if(error){ api.log('person creation error: ' + error, 'error', data.params); }
     });
-  }
-};
-
-exports.personCreateDelayed = {
-  name:                   'person:create:delayed',
-  description:            'person:create:delayed',
-  outputExample:          {},
-  middleware:             [],
-
-  inputs: {
-    guid:         { required: false },
-    data:         { required: true  },
-    permissions:  { required: false },
-  },
-
-  run: function(api, data, next){
-    api.cache.push('messagebot:track:people:create', data.params, next);
+    data.response.guid = person.data.guid;
+    next();
   }
 };
 
@@ -79,23 +66,6 @@ exports.personEdit = {
     }
 
     person.edit(next);
-  }
-};
-
-exports.personEditDelayed = {
-  name:                   'person:edit:delayed',
-  description:            'person:edit:delayed',
-  outputExample:          {},
-  middleware:             [],
-
-  inputs: {
-    guid:         { required: true },
-    data:         { required: true  },
-    permissions:  { required: false },
-  },
-
-  run: function(api, data, next){
-    api.cache.push('messagebot:track:people:edit', data.params, next);
   }
 };
 
