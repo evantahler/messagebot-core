@@ -7,7 +7,18 @@ module.exports = {
   initialize: function(api, next){
     var transporter = nodemailer.createTransport(smtpTransport(api.config.smtp));
     api.smtp = {
-      client: transporter
+      client: transporter,
+
+      send: function(to, from, subject, body, callback){
+        var email = {
+          from:    from,
+          to:      to,
+          subject: subject,
+          html:    body,
+        };
+
+        api.smtp.client.sendMail(email, callback);
+      },
     };
 
     next();

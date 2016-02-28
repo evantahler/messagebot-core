@@ -42,15 +42,12 @@ exports.messageCreate = {
         message.data[i] = data.params.data[i];
       }
     }
-    
-    // return without waiting for the crete callback; log errors
-    // this effectivley allows the tracking request to 'buffer' in RAM & returning to the client quickly
-    // guid will be hydrated syncrhonusly before the save operation
+
     message.create(function(error){
-      if(error){ api.log('message creation error: ' + error, 'error', data.params); }
+      if(!error){ data.response.guid = message.data.guid; }
+      next(error);
     });
-    data.response.guid = message.data.guid;
-    next();
+
   }
 };
 
