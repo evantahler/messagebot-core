@@ -7,6 +7,7 @@ exports.default = {
         { path: '/system/status',        action: 'system:status' },
         { path: '/system/documentation', action: 'system:documentation' },
         { path: '/user',                 action: 'user:view' },
+        { path: '/users',                action: 'users:list' },
         { path: '/user/statuses',        action: 'user:statusesList' },
         { path: '/person',               action: 'person:view' },
         { path: '/people/search',        action: 'people:search' },

@@ -8,6 +8,7 @@ var routes = [
   [ '/home',             'pages/home.html',                 'MessageBot',                   false ],
   [ '/dashboard',        'pages/dashboard.html',            'MessageBot: Dashboard',        true ],
   [ '/account',          'pages/account.html',              'MessageBot: Account',          true ],
+  [ '/users',            'pages/users.html',                'MessageBot: Users',            true ],
   [ '/logout',           'pages/session/destroy.html',      'MessageBot: Log Out',          false ],
 ];
 
@@ -49,10 +50,16 @@ app.run(['$rootScope', '$http', 'ngNotify', function($rootScope, $http, ngNotify
     html: false
   });
 
+  $rootScope.clearModals = function(name){
+    $(name).modal('hide');
+    $('body').removeClass('modal-open');
+    $('.modal-backdrop').remove();
+  };
+
   $rootScope.authenticatedActionHelper = function($scope, data, path, verb, successCallback, errorCallback){
     if(!$rootScope.csrfToken){
       setTimeout(function(){
-        console.log('await csrfToken for ' + path)
+        console.log('await csrfToken for ' + path);
         $rootScope.authenticatedActionHelper($scope, data, path, verb, successCallback, errorCallback);
       }, 1000);
     }else{

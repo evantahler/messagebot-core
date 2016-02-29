@@ -17,7 +17,7 @@ exports.userCreate = {
   name:                   'user:create',
   description:            'user:create',
   outputExample:          {},
-  middleware:             [ 'logged-in-session' ],
+  middleware:             [ 'logged-in-session', 'status-required-admin' ],
 
   inputs: {
     email:       { required: true },
@@ -75,7 +75,7 @@ exports.userView = {
 
   run: function(api, data, next){
     var userId = data.session.userId;
-    if(data.params.userId && data.session.satus === 'admin'){
+    if(data.params.userId && data.session.status === 'admin'){
       userId = data.params.userId;
     }
 
@@ -83,9 +83,29 @@ exports.userView = {
       if(!user){ return next(new Error('user not found')); }
       data.response.user = user.apiData(api);
       next();
-    })
-    .catch(next)
+    }).catch(next)
     ;
+  }
+};
+
+exports.usersList = {
+  name:                   'users:list',
+  description:            'users:list',
+  outputExample:          {},
+  middleware:             [ 'logged-in-session' ],
+
+  inputs: {},
+
+  run: function(api, data, next){
+
+    api.models.user.findAll().then(function(users){
+      data.response.users = [];
+      users.forEach(function(user){
+        data.response.users.push( user.apiData(api) );
+      });
+
+      next();
+    }).catch(next);
   }
 };
 
@@ -112,12 +132,17 @@ exports.userEdit = {
 
   run: function(api, data, next){
     var userId = data.session.userId;
-    if(data.params.userId && data.session.satus === 'admin'){
+    if(data.params.userId && data.session.status === 'admin'){
       userId = data.params.userId;
     }
 
     api.models.user.findOne({where: {id: userId}}).then(function(user){
       if(!user){ return next(new Error('user not found')); }
+
+      if(user.status != data.params.status && data.session.status !== 'admin'){
+        return next(new Error('Only admin role can modify status'));
+      }
+
       user.updateAttributes(data.params).then(function(){
         data.response.user = user.apiData(api);
         if(data.params.password){
@@ -131,9 +156,7 @@ exports.userEdit = {
           next();
         }
       }).catch(next);
-    })
-    .catch(next)
-    ;
+    }).catch(next);
   }
 };
 
@@ -151,15 +174,13 @@ exports.userDelete = {
   },
 
   run: function(api, data, next){
-    if(data.session.satus !== 'admin'){
+    if(data.session.status !== 'admin'){
       return next(new Error('only an admin can delete users'));
     }
 
     api.models.user.findOne({where: {id: data.params.userId}}).then(function(user){
       if(!user){ return next(new Error('user not found')); }
       user.destroy().then(function(){ next(); }).catch(next);
-    })
-    .catch(next)
-    ;
+    }).catch(next);
   }
 };
