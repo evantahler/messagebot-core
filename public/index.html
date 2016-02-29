@@ -1,13 +1,50 @@
-<h1>MessageBot.io</h1>
+<!DOCTYPE html>
+<html ng-app="app">
+  <head>
 
-<p>
-  Coming Soon.
-</p>
+    <title ng-bind="pageTitle">MessageBot</title>
 
-<p>
-  Swagger Documentation: <a href="/swagger.html">swagger.html</a>
-</p>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<p>
-  Learn More @ <a href="https://github.com/evantahler/messagebot.io">https://github.com/evantahler/messagebot.io</a>
-</p>
+    <link rel="icon" href="/images/favicon.png">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/simplex.min.css">
+    <link rel="stylesheet" href="/css/messagebot.css">
+    <link rel="stylesheet" href="/css/animate.css">
+    <link rel="stylesheet" href="/css/ng-notify.min.css">
+
+    <!-- Angular -->
+    <script src="/js/jquery/jquery-1.12.1.min.js"></script>
+    <script src="/js/bootstrap/bootstrap.min.js"></script>
+    <script src="/js/angular/angular.min.js"></script>
+    <script src="/js/angular/angular-route.min.js"></script>
+    <script src="/js/angular/ng-notify.min.js"></script>
+    <script src="/js/actionhero/actionheroClient.min.js"></script>
+
+    <!-- App -->
+    <script src="/js/app/app.js"></script>
+    <script src="/js/app/controllers/page.js"></script>
+    <script src="/js/app/controllers/session.js"></script>
+    <script src="/js/app/controllers/user.js"></script>
+
+  </head>
+
+  <body ng-controller="pageController">
+    <p>&nbsp;</p>
+
+    <header id="nav-container" class="container">
+      <div ng-if="$root.user"  ng-include="'pages/shared/nav.html'"></div>
+    </header>
+
+    <div id="main" class="container">
+      <div ng-view></div>
+    </div>
+
+    <footer id="footer-container" class="container">
+      <div ng-include="'pages/shared/footer.html'"></div>
+    </footer>
+
+  </body>
+</html>

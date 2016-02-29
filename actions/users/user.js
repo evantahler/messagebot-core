@@ -1,4 +1,4 @@
-var validStatus = [
+var validStatuses = [
   'new',
   'disabled',
   'admin',
@@ -8,8 +8,8 @@ var validStatus = [
   'designer',
 ];
 
-var validateSatus = function(p){
-  if(validStatus.indexOf(p) < 0){ return false; }
+var validateSatuses = function(p){
+  if(validStatuses.indexOf(p) < 0){ return false; }
   return true;
 };
 
@@ -17,16 +17,16 @@ exports.userCreate = {
   name:                   'user:create',
   description:            'user:create',
   outputExample:          {},
-  middleware:             [],
+  middleware:             [ 'logged-in-session' ],
 
   inputs: {
     email:       { required: true },
     password:    { required: true },
     firstName:   { required: true },
     lastName:    { required: true },
-    status:      { 
+    status:      {
       required: false,
-      validator: validateSatus,
+      validator: validateSatuses,
     },
   },
 
@@ -45,6 +45,18 @@ exports.userCreate = {
         next(errors.errors[0].message);
       });
     });
+  }
+};
+
+exports.userStatuses = {
+  name:                   'user:statusesList',
+  description:            'user:statusesList',
+  outputExample:          {},
+  middleware:             [ 'logged-in-session' ],
+  inputs:                 {},
+  run: function(api, data, next){
+    data.response.validStatuses = validStatuses;
+    next();
   }
 };
 
@@ -88,9 +100,9 @@ exports.userEdit = {
     password:    { required: false },
     firstName:   { required: false },
     lastName:    { required: false },
-    status:      { 
+    status:      {
       required: false,
-      validator: validateSatus,
+      validator: validateSatuses,
     },
     userId: {
       required: false,

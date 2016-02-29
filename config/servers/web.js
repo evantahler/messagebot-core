@@ -34,7 +34,7 @@ exports.default = {
         // queryRouting allows an action to be defined via a URL param, ie: /api?action=:action
         queryRouting : false,
         // The header which will be returned for all flat file served from /public; defined in seconds
-        flatFileCacheDuration : 60,
+        flatFileCacheDuration : 1,
         // How many times should we try to boot the server?
         // This might happen if the port is in use by another process or the socketfile is claimed
         bootAttempts: 1,
@@ -82,6 +82,7 @@ exports.production = {
     web: function(api){
       return {
         padding: null,
+        flatFileCacheDuration: (60 * 5),
         metadataOptions: {
           serverInformation: false,
           requesterInformation: false
