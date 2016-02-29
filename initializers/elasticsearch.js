@@ -266,9 +266,7 @@ module.exports = {
   },
 
   stop: function(api, next){
-    // TODO: disconnect ES client or remove stream listener
-    // api.elasticsearch.client.exit(next);
-
+    api.elasticsearch.client.close();
     next();
   }
 };
