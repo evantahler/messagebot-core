@@ -139,8 +139,12 @@ exports.userEdit = {
     api.models.user.findOne({where: {id: userId}}).then(function(user){
       if(!user){ return next(new Error('user not found')); }
 
-      if(user.status != data.params.status && data.session.status !== 'admin'){
-        return next(new Error('Only admin role can modify status'));
+      if(data.params.status && user.status != data.params.status && data.session.status !== 'admin'){
+        return next(new Error('only admin role can modify status'));
+      }
+
+      if(data.params.userId && data.params.userId !== user.id && data.session.status !== 'admin'){
+        return next(new Error('only admin role can modify other users'));
       }
 
       user.updateAttributes(data.params).then(function(){
@@ -164,7 +168,7 @@ exports.userDelete = {
   name:                   'user:delete',
   description:            'user:delete',
   outputExample:          {},
-  middleware:             [ 'logged-in-session' ],
+  middleware:             [ 'logged-in-session', 'status-required-admin' ],
 
   inputs: {
     userId: {
@@ -174,12 +178,9 @@ exports.userDelete = {
   },
 
   run: function(api, data, next){
-    if(data.session.status !== 'admin'){
-      return next(new Error('only an admin can delete users'));
-    }
-
     api.models.user.findOne({where: {id: data.params.userId}}).then(function(user){
       if(!user){ return next(new Error('user not found')); }
+      if(data.session.userId === user.id){ return next(new Error('you cannot delete yourself')); }
       user.destroy().then(function(){ next(); }).catch(next);
     }).catch(next);
   }

@@ -1,6 +1,7 @@
 var actionheroPrototype = require('actionhero').actionheroPrototype;
 var elasticsearchMigrator = require(__dirname + '/../db/elasticsearch/migrate.js').migrate
 var async   = require('async');
+var should  = require('should');
 var request = require('request');
 
 specHelper = {
@@ -48,6 +49,38 @@ specHelper = {
         async.series(jobs, callback);
       });
     }
+  },
+
+  login: function(jar, email, password, callback){
+    var self = this;
+    request.post({
+      url: 'http://localhost:18080/api/session',
+      jar: jar,
+      form: { email: email, password: password }
+    }, function(error, response){
+      should.not.exist(error);
+      var body = JSON.parse(response.body);
+      body.success.should.equal(true);
+      body.user.email.should.equal(email);
+      callback(body.csrfToken);
+    });
+  },
+
+  requestWithLogin: function(email, password, route, verb, params, callback){
+    var self = this;
+    var jar = request.jar();
+    self.login(jar, email, password, function(csrfToken){
+      params.csrfToken = csrfToken;
+      if(verb === 'get'){
+        route += '?';
+        for(var key in params){ route += key + '=' + params[key] + '&'; }
+      }
+      request[verb]({
+        url: route,
+        jar: jar,
+        form: params
+      }, callback);
+    });
   },
 };
 
