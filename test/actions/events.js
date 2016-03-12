@@ -247,7 +247,7 @@ describe('models:events', function(){
             should.not.exist(error);
             var body = JSON.parse(data.body);
             should.not.exist(body.error);
-            body.value.should.equal(3);
+            body.value.value.should.equal(3);
             done();
           });
         });

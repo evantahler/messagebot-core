@@ -6,7 +6,11 @@ var routes = [
   // ROUTE               PAGE PARTIAL                       PAGE TITLE                      REQUIRE LOGIN
   [ '/',                 'pages/home.html',                 'MessageBot',                   false ],
   [ '/home',             'pages/home.html',                 'MessageBot',                   false ],
+
   [ '/dashboard',        'pages/dashboard.html',            'MessageBot: Dashboard',        true ],
+
+  [ '/people',           'pages/people.html',                'MessageBot: People',          true ],
+
   [ '/account',          'pages/account.html',              'MessageBot: Account',          true ],
   [ '/users',            'pages/users.html',                'MessageBot: Users',            true ],
   [ '/logout',           'pages/session/destroy.html',      'MessageBot: Log Out',          false ],

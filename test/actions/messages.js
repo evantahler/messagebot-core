@@ -245,7 +245,7 @@ describe('models:message', function(){
             should.not.exist(error);
             var body = JSON.parse(data.body);
             should.not.exist(body.error);
-            body.value.should.equal(2);
+            body.value.value.should.equal(2);
             done();
           });
         });

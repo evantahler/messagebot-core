@@ -64,7 +64,7 @@ module.exports = {
         });
       },
 
-      aggregation: function(alias, searchKeys, searchValues, start, end, dateField, agg, callback){
+      aggregation: function(alias, searchKeys, searchValues, start, end, dateField, agg, aggField, interval, callback){
         var musts = [];
 
         for(var i in searchKeys){
@@ -77,7 +77,15 @@ module.exports = {
         range[dateField] = {gte: start, lte: end};
 
         var aggs = {agg_results: {}};
-        aggs.agg_results[agg] = { field: 'guid' };
+        if(interval){
+          aggs.agg_results[agg] = {
+            field: aggField,
+            interval: interval,
+            format: "yyyy-MM-dd",
+          };
+        }else{
+          aggs.agg_results[agg] = { field: aggField };
+        }
 
         var query = {
           // size: 0,
@@ -96,8 +104,7 @@ module.exports = {
         api.elasticsearch.pendingOperations++;
         api.elasticsearch.client.search(query, function(error, data){
           api.elasticsearch.pendingOperations--;
-          if(error){ return callback(error); }
-          callback(null, data.aggregations.agg_results.value);
+          callback(null, data.aggregations.agg_results);
         });
       },
     };

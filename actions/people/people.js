@@ -13,7 +13,7 @@ exports.peopleSearch = {
   inputs: {
     searchKeys:   { required: true },
     searchValues: { required: true },
-    from:         { 
+    from:         {
       required: false,
       formatter: function(p){ return parseInt(p); },
       default:   function(p){ return 0; },
@@ -45,7 +45,7 @@ exports.peopleAggregation = {
   inputs: {
     searchKeys:   { required: true },
     searchValues: { required: true },
-    start:        { 
+    start:        {
       required: false,
       formatter: function(p){ return new Date(parseInt(p)); },
       default:   function(p){ return 0; },
@@ -55,18 +55,23 @@ exports.peopleAggregation = {
       formatter: function(p){ return new Date(parseInt(p)); },
       default:   function(p){ return new Date().getTime(); },
     },
-    dateField:    { 
+    dateField:    {
       required: true,
       default: function(){ return 'createdAt'; }
     },
-    agg:          { 
+    agg:          {
       required: true,
       default: function(){ return 'cardinality'; }
     },
+    aggField: {
+      required: true,
+      default: function(){ return 'guid'; }
+    },
+    interval: { required: false }
   },
 
   run: function(api, data, next){
-    api.elasticsearch.aggregation(alias(api), data.params.searchKeys, data.params.searchValues, data.params.start, data.params.end, data.params.dateField, data.params.agg, function(error, value){
+    api.elasticsearch.aggregation(alias(api), data.params.searchKeys, data.params.searchValues, data.params.start, data.params.end, data.params.dateField, data.params.agg, data.params.aggField, data.params.interval, function(error, value){
       if(error){ return next(error); }
       data.response.value = value;
       next();

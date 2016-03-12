@@ -63,10 +63,15 @@ exports.messagesAggregation = {
       required: true,
       default: function(){ return 'cardinality'; }
     },
+    aggField: {
+      required: true,
+      default: function(){ return 'guid'; }
+    },
+    interval: { required: false }
   },
 
   run: function(api, data, next){
-    api.elasticsearch.aggregation(alias(api), data.params.searchKeys, data.params.searchValues, data.params.start, data.params.end, data.params.dateField, data.params.agg, function(error, value){
+    api.elasticsearch.aggregation(alias(api), data.params.searchKeys, data.params.searchValues, data.params.start, data.params.end, data.params.dateField, data.params.agg, data.params.aggField, data.params.interval, function(error, value){
       if(error){ return next(error); }
       data.response.value = value;
       next();
