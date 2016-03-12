@@ -1,0 +1,23 @@
+<div ng-controller="analytics:recent">
+  <table class="table table-striped table-hover">
+
+    <thead>
+      <tr>
+        <th>guid</th>
+        <th>createdAt</th>
+        <th>updatedAt</th>
+        <th>data</th>
+      </tr>
+    </thead>
+
+    <tbody ng-repeat="record in records">
+      <tr>
+        <td>{{ record.guid }}</td>
+        <td>{{ record.createdAt }}</td>
+        <td>{{ record.updatedAt }}</td>
+        <td>{{ record.data }}</td>
+      </tr>
+    </tbody>
+
+  </table>
+</div>

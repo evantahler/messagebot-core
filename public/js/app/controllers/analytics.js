@@ -1,3 +1,35 @@
+app.controller('analytics:recent', ['$scope', '$rootScope', '$location', 'ngNotify', function($scope, $rootScope, $location, ngNotify){
+  var section = $rootScope.section;
+  $scope.recentOptions = {
+    from: 0,
+    size: 100,
+    // sort: ?
+  };
+
+  $scope.records = [];
+
+  $scope.loadRecent = function(){
+    $rootScope.authenticatedActionHelper($scope, {
+      userId: $rootScope.user.id,
+      searchKeys: 'guid',
+      searchValues: '*',
+      from: $scope.recentOptions.from,
+      size: $scope.recentOptions.size,
+      // sort: $scope.recentOptions.sort,
+    }, '/api/' + section + '/search', 'GET', function(data){
+      $scope.total = data.total;
+      $scope.records = data[section];
+    });
+  };
+
+  $scope.loadRecent();
+
+  // TODO: Why does this fire 2 times?
+  $scope.$watch('recentOptions.from', $scope.loadRecent);
+  $scope.$watch('recentOptions.size', $scope.loadRecent);
+
+}]);
+
 app.controller('analytics:histogram', ['$scope', '$rootScope', '$location', 'ngNotify', function($scope, $rootScope, $location, ngNotify){
 
   var section = $rootScope.section;
@@ -92,10 +124,11 @@ app.controller('analytics:histogram', ['$scope', '$rootScope', '$location', 'ngN
     });
   };
 
-  $scope.loadHistogram();
-
+  // TODO: Why does this fire 3 times?
   $scope.$watch('histogramOptions.interval',  $scope.loadHistogram);
   $scope.$watch('histogramOptions.start',     $scope.loadHistogram);
   $scope.$watch('histogramOptions.end',       $scope.loadHistogram);
+
+  $scope.loadHistogram();
 
 }]);

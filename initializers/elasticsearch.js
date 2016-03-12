@@ -41,13 +41,19 @@ module.exports = {
           musts.push({ wildcard: q });
         }
 
+        if(!sort){
+          sort = [
+            { "createdAt" : "desc"}
+          ];
+        }
+
         api.elasticsearch.pendingOperations++;
         api.elasticsearch.client.search({
             index: alias,
             from: from,
             size: size,
-            sort: sort,
             body: {
+              sort: sort,
               query: {
                 bool: {
                   must: musts
