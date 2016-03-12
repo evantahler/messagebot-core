@@ -78,10 +78,18 @@ module.exports = {
 
         var aggs = {agg_results: {}};
         if(interval){
+          var format = 'yyyy-MM-dd';
+          if(interval === 'year'){ format = 'yyyy'; }
+          if(interval === 'month'){ format = 'yyyy-MM'; }
+          if(interval === 'week'){ format = 'yyyy-MM-dd'; }
+          if(interval === 'day'){ format = 'yyyy-MM-dd'; }
+          if(interval === 'hour'){ format = 'yyyy-MM-dd HH:00'; }
+          if(interval === 'minute'){ format = 'yyyy-MM-dd HH:mm'; }
+
           aggs.agg_results[agg] = {
             field: aggField,
             interval: interval,
-            format: "yyyy-MM-dd",
+            format: format,
           };
         }else{
           aggs.agg_results[agg] = { field: aggField };

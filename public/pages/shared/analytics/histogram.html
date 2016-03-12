@@ -1,0 +1,35 @@
+<div ng-controller="analytics:histogram">
+
+  <div class="row">
+    <form class="form-horizontal">
+
+      <div class="col-md-2">
+        <label for="select" class="control-label">Interval</label>
+        <select class="form-control" ng-model="histogramOptions.interval" ng-options="i for i in possibleIntervals"></select>
+      </div>
+
+      <div class="col-md-2">
+        <label for="select" class="control-label">Start</label>
+        <input id="histogramStartDatePicker" class="form-control" ng-model="histogramOptions.start" data-provide="datepicker">
+      </div>
+
+      <div class="col-md-2">
+        <label for="select" class="control-label">End</label>
+        <input id="histogramEndDatePicker" class="form-control" ng-model="histogramOptions.end" data-provide="datepicker">
+      </div>
+
+    </form>
+  </div>
+
+  <div class="row">
+    <div class="col-md-12">
+      <hr />
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-12">
+      <div id="histogramChart" width="300" height="300" style="width: 100%; height: auto;"></div>
+    </div>
+  </div>
+</div>
