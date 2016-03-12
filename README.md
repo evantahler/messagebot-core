@@ -1,26 +1,7 @@
 # MessageBot.io
+*A modern customer relationship and analytics platform*
 
 [![Build Status](https://travis-ci.org/messagebot/messagebot-core.svg)](https://travis-ci.org/messagebot/messagebot-core)
-
-MessageBot.io: A User Relationship Manager.
-
-- Manage all communication with your users:
-    - On Site
-    - Email
-    - Push
-    - In-App
-- Track all actions that your users take
-    - Page Views
-    - Events
-    - Clicks
-    - Opens
-    - Purchases
-    - Interests
-- Act on your users actions (or lack thereof) in an omni-channel way, automatically
-- Finally, get a wholistic view of your user’s behavior, all in one place with one tool
-- Oh, and its free!*
-
-* we will be selling a hosted version, support, and custom development of enterprise features.  Stay Tuned.
 
 ## Requirements
 
@@ -31,8 +12,11 @@ MessageBot.io: A User Relationship Manager.
 
 ## Configuration and Running
 
-### Node Setup
+`source .env && npm run migrate && npm start`
 
+- start `redis`
+- start `mySQL`
+- start `elasticsearch`
 - Configure `.env` with the secrets you need, or ensure that they are already present within the environment
   - ensure that the databases you listed exist and that the user(s) you have configured can reach & access them
 - npm install && npm update
