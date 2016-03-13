@@ -200,7 +200,7 @@ module.exports = {
           if(error){ return done(error); }
 
           Object.keys(payload).forEach(function(k){
-            if(self.requiredFields.indexOf(k) >= 0){
+            if(self.requiredFields.indexOf(k) >= 0 && k !== 'data'){
               self.data[k] = payload[k];
             }
           });
