@@ -199,6 +199,12 @@ module.exports = {
         self.hydrate(function(error){
           if(error){ return done(error); }
 
+          Object.keys(payload).forEach(function(k){
+            if(self.requiredFields.indexOf(k) >= 0){
+              self.data[k] = payload[k];
+            }
+          });
+
           Object.keys(payload.data).forEach(function(k){
             if(payload.data[k] !== '_delete'){
               self.data.data[k] = payload.data[k];

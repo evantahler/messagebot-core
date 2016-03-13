@@ -125,7 +125,8 @@ describe('models:message', function(){
         should.not.exist(error);
         var update = {
           guid: body.guid,
-          data: JSON.stringify({ readAt: 123456789 })
+          readAt: new Date(1457909383608),
+          data: JSON.stringify({ readBy: 'gmail' })
         };
 
         request.put(route, {form: update}, function(error, data){
@@ -137,7 +138,11 @@ describe('models:message', function(){
               var body = JSON.parse(data.body);
               should.not.exist(body.error);
               body.message.type.should.equal('email');
-              body.message.readAt.should.equal(123456789);
+              body.message.data.readBy.should.equal('gmail');
+
+              var sourceTime = (new Date(body.message.readAt)).getTime();
+              sourceTime.should.equal( new Date(1457909383608).getTime() );
+
               done();
             });
           });
