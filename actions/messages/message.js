@@ -79,13 +79,13 @@ exports.messageEdit = {
     if(data.params.readAt){   message.data.readAt = data.params.readAt;     }
     if(data.params.actedAt){  message.data.actedAt = data.params.actedAt;   }
 
-    for(var i in data.params.data){
-      if(message.data[i] === null || message.data[i] === undefined){
-        message.data[i] = data.params.data[i];
-      }
-    }
+    for(var i in data.params.data){ message.data[i] = data.params.data[i]; }
 
-    message.edit(next);
+    message.edit(function(error){
+      if(error){ return next(error); }
+      data.response.message = message.data;
+      next();
+    });
   }
 };
 
@@ -121,9 +121,12 @@ exports.messageDelete = {
 
   run: function(api, data, next){
     var message = new api.models.message(alias(api), data.params.guid);
-    message.delete(function(error){
+    message.hydrate(function(error){
       if(error){ return next(error); }
-      next();
+      message.delete(function(error){
+        if(error){ return next(error); }
+        next();
+      });
     });
   }
 };

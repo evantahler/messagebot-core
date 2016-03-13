@@ -43,6 +43,7 @@ specHelper = {
             jobs.push(function(done){
               self.api.elasticsearch.client.indices.flushSynced({index: index}, done);
             });
+            // jobs.push(function(done){ setTimeout(done, 1); });
           }
         });
 

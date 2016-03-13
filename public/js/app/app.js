@@ -10,6 +10,11 @@ var routes = [
   [ '/dashboard',        'pages/dashboard.html',            'MessageBot: Dashboard',        true ],
 
   [ '/people',           'pages/people.html',                'MessageBot: People',          true ],
+  [ '/person/:guid',     'pages/person/view.html',           'MessageBot: Person',          true ],
+  [ '/events',           'pages/events.html',                'MessageBot: Events',          true ],
+  [ '/event/:guid',      'pages/event/view.html',            'MessageBot: Event',           true ],
+  [ '/messages',         'pages/messages.html',              'MessageBot: Messages',        true ],
+  [ '/message/:guid',    'pages/message/view.html',          'MessageBot: Message',         true ],
 
   [ '/account',          'pages/account.html',              'MessageBot: Account',          true ],
   [ '/users',            'pages/users.html',                'MessageBot: Users',            true ],

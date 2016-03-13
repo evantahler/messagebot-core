@@ -164,7 +164,7 @@ describe('models:events', function(){
             request.get(route + '?guid=' + body.guid, function(error, data){
               should.not.exist(error);
               var body = JSON.parse(data.body);
-              should.not.exist(body.error);
+              body.error.should.equal('not found');
               done();
             });
           });

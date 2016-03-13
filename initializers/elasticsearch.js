@@ -1,6 +1,7 @@
 var path              = require('path');
 var fs                = require('fs');
 var util              = require('util');
+var async             = require('async');
 var uuid              = require('node-uuid');
 var dateformat        = require('dateformat');
 var elasticsearch     = require('elasticsearch');
@@ -145,7 +146,7 @@ module.exports = {
           throw new Error(key + ' is required');
         }else if(self.requiredFields.indexOf(key) >= 0){
           payload[key] = self.data[key];
-        }else{
+        }else if(key !== '_index'){
           payload.data[key] = self.data[key];
         }
       }
@@ -185,25 +186,52 @@ module.exports = {
 
     elasticsearchModel.prototype.edit = function(callback){
       var self = this;
+      var jobs = [];
       if(!self.data.guid){ return callback(new Error('guid is required')); }
       if(!self.index){     return callback(new Error('index is required')); }
 
-      var payload;
-      try{
-        payload = self.prepareData();
-      }catch(e){ return callback(e); }
+      jobs.push(function(done){
+        var payload;
+        try{
+          payload = self.prepareData();
+        }catch(e){ return callback(e); }
 
-      api.elasticsearch.pendingOperations++;
-      api.elasticsearch.client.update({
-        index: self.index,
-        type: self.type,
-        id: self.data.guid,
-        body: {doc: payload}
-      }, function(error, data){
-        api.elasticsearch.pendingOperations--;
+        self.hydrate(function(error){
+          if(error){ return done(error); }
+
+          Object.keys(payload.data).forEach(function(k){
+            if(payload.data[k] !== '_delete'){
+              self.data.data[k] = payload.data[k];
+            }else{
+              delete self.data.data[k];
+            }
+          });
+
+          done();
+        });
+      });
+
+      jobs.push(function(done){
+        var payload;
+        try{
+          payload = self.prepareData();
+        }catch(e){ return callback(e); }
+
+        api.elasticsearch.pendingOperations++;
+        api.elasticsearch.client.index({
+          index: self.index,
+          type: self.type,
+          id: self.data.guid,
+          body: payload
+        }, function(error){
+          api.elasticsearch.pendingOperations--;
+          done(error);
+        });
+      });
+
+      async.series(jobs, function(error){
         if(error){ return callback(error); }
-        self.data = data;
-        callback(null, data);
+        return callback(null, self.data);
       });
     };
 
@@ -226,6 +254,7 @@ module.exports = {
         if(error){ return callback(error); }
         if(data.hits.hits.length === 0){ return callback(new Error('not found')); }
         self.data = data.hits.hits[0]._source;
+        self.data._index = data.hits.hits[0]._index;
         callback(null, self.data);
       });
     };
@@ -237,7 +266,7 @@ module.exports = {
 
       api.elasticsearch.pendingOperations++;
       api.elasticsearch.client.delete({
-        index: self.index,
+        index: self.data._index,
         type: self.type,
         id: self.data.guid,
       }, function(error){

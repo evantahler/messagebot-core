@@ -1,3 +1,62 @@
+app.controller('analytics:search', ['$scope', '$rootScope', '$location', 'ngNotify', function($scope, $rootScope, $location, ngNotify){
+  var section = $rootScope.section;
+
+  $scope.searchResults = [];
+  $scope.searchString = '';
+  $scope.searchOptions = {
+    from: 0,
+    size: 100,
+    // sort: ?
+  };
+
+  $scope.singular = function(thing){
+    if(thing === 'people'){ return 'person'; }
+    if(thing === 'events'){ return 'event'; }
+    if(thing === 'messages'){ return 'message'; }
+  };
+
+  $scope.doSearch = function(){
+    var searchKeys = [];
+    var searchValues = [];
+    var parts = $scope.searchString.split(' ');
+    parts.forEach(function(part){
+      if(part !== ''){
+        var words = part.split(':');
+        searchKeys.push('data.' + words[0]);
+        searchValues.push(words[1]);
+      }
+    });
+
+    if(searchKeys.length === searchValues.length && searchValues.length > 0){
+      $scope.loadSearchResults(searchKeys, searchValues);
+    }else{
+      ngNotify.set('search query error, try again', 'error');
+    }
+  };
+
+  $scope.loadSearchResults = function(searchKeys, searchValues){
+    $scope.searchResults = [];
+
+    $rootScope.authenticatedActionHelper($scope, {
+      userId: $rootScope.user.id,
+      searchKeys: searchKeys,
+      searchValues: searchValues,
+      from: $scope.searchOptions.from,
+      size: $scope.searchOptions.size,
+      // sort: $scope.searchOptions.sort,
+    }, '/api/' + section + '/search', 'GET', function(data){
+      if(data.total === 0){
+        ngNotify.set('no matching records found', 'error');
+      }
+      else{
+        $scope.searchResults = data[section];
+      }
+    });
+  };
+
+}]);
+
+
 app.controller('analytics:recent', ['$scope', '$rootScope', '$location', 'ngNotify', function($scope, $rootScope, $location, ngNotify){
   var section = $rootScope.section;
   $scope.recentOptions = {

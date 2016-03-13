@@ -76,13 +76,13 @@ exports.eventEdit = {
     if(data.params.userGuid){ event.data.userGuid = data.params.userGuid; }
     if(data.params.type){     event.data.type = data.params.type;         }
 
-    for(var i in data.params.data){
-      if(event.data[i] === null || event.data[i] === undefined){
-        event.data[i] = data.params.data[i];
-      }
-    }
+    for(var i in data.params.data){ event.data[i] = data.params.data[i]; }
 
-    event.edit(next);
+    event.edit(function(error){
+      if(error){ return next(error); }
+      data.response.event = event.data;
+      next();
+    });
   }
 };
 
@@ -118,9 +118,12 @@ exports.eventDelete = {
 
   run: function(api, data, next){
     var event = new api.models.event(alias(api), data.params.guid);
-    event.delete(function(error){
+    event.hydrate(function(error){
       if(error){ return next(error); }
-      next();
+      event.delete(function(error){
+        if(error){ return next(error); }
+        next();
+      });
     });
   }
 };
