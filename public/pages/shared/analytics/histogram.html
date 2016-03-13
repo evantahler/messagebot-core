@@ -3,9 +3,9 @@
   <h2>{{ $root.section }} histogram:</h2>
 
   <div class="row">
-    <form class="form-horizontal">
+    <form class="form-horizontal" ng-submit="loadHistogram()">
 
-      <div class="col-md-4">
+      <div class="col-md-3">
         <label for="select" class="control-label">Interval</label>
         <select class="form-control" ng-model="histogramOptions.interval" ng-options="i for i in possibleIntervals"></select>
       </div>
@@ -18,6 +18,11 @@
       <div class="col-md-4">
         <label for="select" class="control-label">End</label>
         <input id="histogramEndDatePicker" class="form-control" ng-model="histogramOptions.end" data-provide="datepicker">
+      </div>
+
+      <div class="col-md-1">
+        <label class="control-label">&nbsp;</label>
+        <button type="submit" class="form-control btn btn-primary">Update</button>
       </div>
 
     </form>

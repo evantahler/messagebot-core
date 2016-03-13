@@ -55,7 +55,7 @@ app.controller('analytics:recent', ['$scope', '$rootScope', '$location', 'ngNoti
   var section = $rootScope.section;
   $scope.recentOptions = {
     from: 0,
-    size: 100,
+    size: 30,
     // sort: ?
   };
 
@@ -77,9 +77,7 @@ app.controller('analytics:recent', ['$scope', '$rootScope', '$location', 'ngNoti
 
   $scope.loadRecent();
 
-  // TODO: Why does this fire 2 times?
-  $scope.$watch('recentOptions.from', $scope.loadRecent);
-  $scope.$watch('recentOptions.size', $scope.loadRecent);
+  // TODO: Deal with "from" and "size"
 
 }]);
 
@@ -177,11 +175,5 @@ app.controller('analytics:histogram', ['$scope', '$rootScope', '$location', 'ngN
     });
   };
 
-  // TODO: Why does this fire 3 times?
-  $scope.$watch('histogramOptions.interval',  $scope.loadHistogram);
-  $scope.$watch('histogramOptions.start',     $scope.loadHistogram);
-  $scope.$watch('histogramOptions.end',       $scope.loadHistogram);
-
   $scope.loadHistogram();
-
 }]);
