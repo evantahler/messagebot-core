@@ -1,0 +1,61 @@
+<div ng-controller="person:view" class="row">
+  <div class="col-md-12">
+
+    <h1>Person #{{ guid }}</h1>
+    <p>Delete this person: <span ng-click="deletePerson()" class="glyphicon glyphicon-remove">&nbsp;</span></p>
+
+    <ul>
+      <li><strong>Created At: </strong>{{ person.createdAt }}</li>
+      <li><strong>Updated At: </strong>{{ person.updatedAt }}</li>
+      <li><strong>Index: </strong>{{ person.index }}</li>
+      <li><strong>Permissions: </strong>{{ person.permissions }}</li>
+    </ul>
+
+    <table class="table table-striped table-hover">
+
+      <thead>
+        <tr>
+          <th>Key</th>
+          <th>Value</th>
+        </tr>
+      </thead>
+
+      <tbody ng-repeat="(key, value) in person.data">
+        <tr>
+          <td><span ng-click="deleteAttribute(key)" class="glyphicon glyphicon-remove">&nbsp;</span> {{ key }}</td>
+          <td>
+            <form ng-submit="updateAttribute(key)">
+              <span class="glyphicon glyphicon-edit">&nbsp;</span><input ng-model="person.data[key]" type="text" style="width:90%" >
+            </form>
+          </td>
+        </tr>
+      </tbody>
+
+    </table>
+
+    <div class="row">
+      <form class="form-horizontal" ng-submit="addAttribute()">
+        <div class="col-md-12">
+          <h3>Add a key:</h3>
+        </div>
+
+        <div class="col-md-5">
+          <label class="control-label">Key</label>
+          <input type="text" class="form-control" id="newKey" placeholder="firstName" ng-model="newAttribute.key">
+        </div>
+
+        <div class="col-md-5">
+          <label class="control-label">Value</label>
+          <input type="text" class="form-control" id="newKey" placeholder="firstName" ng-model="newAttribute.value">
+        </div>
+
+        <div class="col-md-1">
+          <label class="control-label">&nbsp;</label>
+          <button type="submit" class="form-control btn btn-primary">Add</button>
+        </div>
+
+      </form>
+    </div>
+
+  </div>
+</div>
