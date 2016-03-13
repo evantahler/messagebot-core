@@ -9,12 +9,6 @@ app.controller('analytics:search', ['$scope', '$rootScope', '$location', 'ngNoti
     // sort: ?
   };
 
-  $scope.singular = function(thing){
-    if(thing === 'people'){ return 'person'; }
-    if(thing === 'events'){ return 'event'; }
-    if(thing === 'messages'){ return 'message'; }
-  };
-
   $scope.doSearch = function(){
     var searchKeys = [];
     var searchValues = [];

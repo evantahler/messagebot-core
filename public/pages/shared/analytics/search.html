@@ -34,7 +34,7 @@
 
         <tbody ng-repeat="record in searchResults">
           <tr>
-            <td><a href="/#/{{ singular($root.section) }}/{{ record.guid  }}"><span class="glyphicon glyphicon-pencil">&nbsp;</span></a></td>
+            <td><a href="/#/{{ $root.singular($root.section) }}/{{ record.guid  }}"><span class="glyphicon glyphicon-pencil">&nbsp;</span></a></td>
             <td>{{ record.guid }}</td>
             <td>{{ record.createdAt }}</td>
             <td>{{ record.updatedAt }}</td>

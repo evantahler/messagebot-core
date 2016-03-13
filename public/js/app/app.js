@@ -9,15 +9,16 @@ var routes = [
 
   [ '/dashboard',        'pages/dashboard.html',            'MessageBot: Dashboard',        true ],
 
-  [ '/people',           'pages/people.html',                'MessageBot: People',          true ],
-  [ '/person/:guid',     'pages/person/view.html',           'MessageBot: Person',          true ],
-  [ '/events',           'pages/events.html',                'MessageBot: Events',          true ],
-  [ '/event/:guid',      'pages/event/view.html',            'MessageBot: Event',           true ],
-  [ '/messages',         'pages/messages.html',              'MessageBot: Messages',        true ],
-  [ '/message/:guid',    'pages/message/view.html',          'MessageBot: Message',         true ],
+  [ '/people',           'pages/people.html',               'MessageBot: People',           true ],
+  [ '/person/:guid',     'pages/person/view.html',          'MessageBot: Person',           true ],
+  [ '/events',           'pages/events.html',               'MessageBot: Events',           true ],
+  [ '/event/:guid',      'pages/event/view.html',           'MessageBot: Event',            true ],
+  [ '/messages',         'pages/messages.html',             'MessageBot: Messages',         true ],
+  [ '/message/:guid',    'pages/message/view.html',         'MessageBot: Message',          true ],
 
   [ '/account',          'pages/account.html',              'MessageBot: Account',          true ],
   [ '/users',            'pages/users.html',                'MessageBot: Users',            true ],
+
   [ '/logout',           'pages/session/destroy.html',      'MessageBot: Log Out',          false ],
 ];
 
@@ -124,6 +125,12 @@ app.run(['$rootScope', '$http', 'ngNotify', function($rootScope, $http, ngNotify
         $('button').prop('disabled', false);
       }, 500);
     });
+  };
+
+  $rootScope.singular = function(thing){
+    if(thing === 'people'){ return 'person'; }
+    if(thing === 'events'){ return 'event'; }
+    if(thing === 'messages'){ return 'message'; }
   };
 
   $rootScope.$on('$routeChangeSuccess', function (event, current, previous){

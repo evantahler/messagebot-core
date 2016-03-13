@@ -6,7 +6,7 @@
 
     <thead>
       <tr>
-        <th>guid</th>
+        <th>&nbsp;</th>
         <th>createdAt</th>
         <th>updatedAt</th>
         <th>data</th>
@@ -15,7 +15,7 @@
 
     <tbody ng-repeat="record in records">
       <tr>
-        <td>{{ record.guid }}</td>
+        <td><a href="/#/{{ $root.singular($root.section) }}/{{ record.guid  }}"><span class="glyphicon glyphicon-pencil">&nbsp;</span></a></td>
         <td>{{ record.createdAt }}</td>
         <td>{{ record.updatedAt }}</td>
         <td>{{ record.data }}</td>
