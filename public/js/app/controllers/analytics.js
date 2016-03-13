@@ -88,7 +88,7 @@ app.controller('analytics:histogram', ['$scope', '$rootScope', '$location', 'ngN
   var section = $rootScope.section;
 
   $scope.histogramOptions = {
-    interval: 'month',
+    interval: 'day',
     start: new Date().setYear( new Date().getFullYear() - 1 ),
     end: new Date().getTime(),
   };

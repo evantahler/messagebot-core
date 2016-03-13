@@ -1,19 +1,21 @@
 <div ng-controller="analytics:histogram">
 
+  <h2>{{ $root.section }} histogram:</h2>
+
   <div class="row">
     <form class="form-horizontal">
 
-      <div class="col-md-2">
+      <div class="col-md-4">
         <label for="select" class="control-label">Interval</label>
         <select class="form-control" ng-model="histogramOptions.interval" ng-options="i for i in possibleIntervals"></select>
       </div>
 
-      <div class="col-md-2">
+      <div class="col-md-4">
         <label for="select" class="control-label">Start</label>
         <input id="histogramStartDatePicker" class="form-control" ng-model="histogramOptions.start" data-provide="datepicker">
       </div>
 
-      <div class="col-md-2">
+      <div class="col-md-4">
         <label for="select" class="control-label">End</label>
         <input id="histogramEndDatePicker" class="form-control" ng-model="histogramOptions.end" data-provide="datepicker">
       </div>
