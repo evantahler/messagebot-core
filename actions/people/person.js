@@ -16,6 +16,7 @@ exports.personCreate = {
   middleware:             [],
 
   inputs: {
+    sync:         { required: true, default: false },
     guid:         { required: false },
     data:         { required: true  },
     permissions:  { required: false },
@@ -35,11 +36,18 @@ exports.personCreate = {
     // return without waiting for the crete callback; log errors
     // this effectivley allows the tracking request to 'buffer' in RAM & returning to the client quickly
     // guid will be hydrated syncrhonusly before the save operation
-    person.create(function(error){
-      if(error){ api.log('person creation error: ' + error, 'error', data.params); }
-    });
-    data.response.guid = person.data.guid;
-    next();
+    if(data.params.sync === false){
+      person.create(function(error){
+        if(error){ api.log('person creation error: ' + error, 'error', data.params); }
+      });
+      data.response.guid = person.data.guid;
+      next();
+    }else{
+      person.create(function(error){
+        if(!error){ data.response.guid = person.data.guid; }
+        next(error);
+      });
+    }
   }
 };
 
