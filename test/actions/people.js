@@ -12,12 +12,20 @@ describe('models:person', function(){
   /// HELPERS ///
 
   var createAndSync = function(payload, callback){
+    payload.sync = true;
     request.post(route, {form: payload}, function(error, data){
       should.not.exist(error);
       var body = JSON.parse(data.body);
       specHelper.flushIndices(function(error){
-        should.not.exist(error);
-        callback(null, body);
+        if(error){
+          if(error.displayName === 'Conflict'){
+            setTimeout(createAndSync, 1000, payload, callback);
+          }else{
+            should.not.exit(error);
+          }
+        }else{
+          callback(null, body);
+        }
       });
     });
   };

@@ -7,14 +7,19 @@
   "mappings": {
     "event": {
       "properties": {
-        "guid":       { "type": "string"  },
+        "guid":       { "type": "string"   },
 
-        "ip":         { "type": "string"  },
-        "device":     { "type": "string"  },
-        "userGuid":   { "type": "string"  }, 
-        "type":       { "type": "string"  },
+        "ip":         { "type": "string"   },
+        "device":     { "type": "string"   },
+        "userGuid":   { "type": "string"   },
+        "type":       { "type": "string"   },
 
-        "data":       { "type": "object"  },
+        "data":       { "type": "object"   },
+
+        "location":   {
+          "type": "geo_point",
+          "precision": "1km"
+        },
 
         "createdAt":  { "type":  "date" },
         "updatedAt":  { "type":  "date" }

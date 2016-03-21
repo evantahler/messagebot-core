@@ -12,12 +12,20 @@ describe('models:events', function(){
   /// HELPERS ///
 
   var createAndSync = function(payload, callback){
+    payload.sync = true;
     request.post(route, {form: payload}, function(error, data){
       should.not.exist(error);
       var body = JSON.parse(data.body);
       specHelper.flushIndices(function(error){
-        should.not.exist(error);
-        callback(null, body);
+        if(error){
+          if(error.displayName === 'Conflict'){
+            setTimeout(createAndSync, 1000, payload, callback);
+          }else{
+            should.not.exit(error);
+          }
+        }else{
+          callback(null, body);
+        }
       });
     });
   };
@@ -69,6 +77,27 @@ describe('models:events', function(){
         var body = JSON.parse(data.body);
         body.error.should.equal('userGuid is a required parameter for this action');
         done();
+      });
+    });
+
+    it('will populate lat/lon from IP if not present', function(done){
+      var payload = {
+        userGuid: 'user_abc123',
+        type: 'pageview',
+        data: JSON.stringify({page: '/'}),
+        ip: '8.8.8.8'
+      };
+
+      createAndSync(payload, function(error, body){
+        should.not.exist(error);
+        request.get(route + '?guid=' + body.guid, function(error, data){
+          should.not.exist(error);
+          var body = JSON.parse(data.body);
+          should.not.exist(body.error);
+          body.event.location.lat.should.equal(37.3845);
+          body.event.location.lon.should.equal(-122.0881);
+          done();
+        });
       });
     });
   });

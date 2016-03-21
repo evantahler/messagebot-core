@@ -34,7 +34,7 @@ specHelper = {
     var self = this;
     var jobs = [];
     // TODO: This doesn't work on Travis.ci?
-    if(process.env.TRAVIS){
+    if(process.env.TRAVIS || process.env.SLOW){
       setTimeout(callback, 5001);
     }else{
       self.api.elasticsearch.client.indices.get({index: '*'}, function(error, indices){
