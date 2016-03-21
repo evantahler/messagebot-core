@@ -1,4 +1,5 @@
 var async = require('async');
+var qs    = require('qs');
 
 module.exports = {
   startPriority: 9999,
@@ -55,6 +56,20 @@ module.exports = {
               data.params.data = JSON.parse(data.params.data);
             }catch(e){
               return callback('cannot parse `data`. Are you sure that it is JSON?');
+            }
+          }
+
+          // Allow for sloppy parsing of the data object in forms
+          // IE: `curl -X POST -d 'userGuid=evan&type=pageView&data[page]=index.html' http://localhost:8080/api/event`
+          var d;
+          for(var key in data.params){
+            if(key.indexOf('data[') === 0){
+              if(!data.params.data){ data.params.data = {}; }
+              d = qs.parse(key + '=' + data.params[key], api.config.servers.web.queryParseOptions);
+              for(var newKey in d.data){
+                data.params.data[newKey] = d.data[newKey];
+              }
+              delete data.params[key];
             }
           }
 
