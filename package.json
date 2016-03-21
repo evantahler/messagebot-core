@@ -42,6 +42,6 @@
     "migrate": "npm run migrate:maxmind && npm run migrate:sequelize && npm run migrate:elasticsearch",
     "migrate:elasticsearch": "node db/elasticsearch/migrate.js",
     "migrate:sequelize": "sequelize db:migrate",
-    "migrate:maxmind": "mkdir -p ./tmp/maxmind && cd ./tmp/maxmind && wget http://geolite.maxmind.com/download/geoip/database/GeoLiteCity.dat.gz && gunzip GeoLiteCity.dat.gz -f"
+    "migrate:maxmind": "./db/maxmind/download.sh"
   }
 }
