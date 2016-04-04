@@ -1,13 +1,21 @@
-app.controller('analytics:search', ['$scope', '$rootScope', '$location', 'ngNotify', function($scope, $rootScope, $location, ngNotify){
+app.controller('analytics:search', ['$scope', '$rootScope', '$location', 'ngNotify', '$routeParams', function($scope, $rootScope, $location, ngNotify, $routeParams){
   var section = $rootScope.section;
+
+  var topLevelSearchTerms = [
+    'type',
+    'userGuid',
+    'guid',
+    'type',
+    'createdAt',
+    'updatedAt',
+  ];
 
   $scope.searchResults = [];
   $scope.searchString = '';
-  $scope.searchOptions = {
-    from: 0,
-    size: 100,
-    // sort: ?
-  };
+  $scope.pagination = {};
+
+  var currentPage = $routeParams.page || 0;
+  var perPage = 50;
 
   $scope.doSearch = function(){
     var searchKeys = [];
@@ -16,7 +24,11 @@ app.controller('analytics:search', ['$scope', '$rootScope', '$location', 'ngNoti
     parts.forEach(function(part){
       if(part !== ''){
         var words = part.split(':');
-        searchKeys.push('data.' + words[0]);
+        if(topLevelSearchTerms.indexOf(words[0]) >= 0){
+          searchKeys.push(words[0]);
+        }else{
+          searchKeys.push('data.' + words[0]);
+        }
         searchValues.push(words[1]);
       }
     });
@@ -35,15 +47,16 @@ app.controller('analytics:search', ['$scope', '$rootScope', '$location', 'ngNoti
       userId: $rootScope.user.id,
       searchKeys: searchKeys,
       searchValues: searchValues,
-      from: $scope.searchOptions.from,
-      size: $scope.searchOptions.size,
-      // sort: $scope.searchOptions.sort,
+      from: (currentPage * perPage),
+      size: perPage,
     }, '/api/' + section + '/search', 'GET', function(data){
       if(data.total === 0){
         ngNotify.set('no matching records found', 'error');
       }
       else{
+        $scope.total = data.total;
         $scope.searchResults = data[section];
+        $scope.pagination = $rootScope.genratePagination(currentPage, perPage, $scope.total);
       }
     });
   };
@@ -51,34 +64,29 @@ app.controller('analytics:search', ['$scope', '$rootScope', '$location', 'ngNoti
 }]);
 
 
-app.controller('analytics:recent', ['$scope', '$rootScope', '$location', 'ngNotify', function($scope, $rootScope, $location, ngNotify){
+app.controller('analytics:recent', ['$scope', '$rootScope', '$location', 'ngNotify', '$routeParams', function($scope, $rootScope, $location, ngNotify, $routeParams){
   var section = $rootScope.section;
-  $scope.recentOptions = {
-    from: 0,
-    size: 30,
-    // sort: ?
-  };
-
   $scope.records = [];
+  $scope.pagination = {};
+
+  var currentPage = $routeParams.page || 0;
+  var perPage = 50;
 
   $scope.loadRecent = function(){
     $rootScope.authenticatedActionHelper($scope, {
       userId: $rootScope.user.id,
       searchKeys: 'guid',
       searchValues: '*',
-      from: $scope.recentOptions.from,
-      size: $scope.recentOptions.size,
-      // sort: $scope.recentOptions.sort,
+      from: (currentPage * perPage),
+      size: perPage,
     }, '/api/' + section + '/search', 'GET', function(data){
       $scope.total = data.total;
       $scope.records = data[section];
+      $scope.pagination = $rootScope.genratePagination(currentPage, perPage, $scope.total);
     });
   };
 
   $scope.loadRecent();
-
-  // TODO: Deal with "from" and "size"
-
 }]);
 
 app.controller('analytics:histogram', ['$scope', '$rootScope', '$location', 'ngNotify', function($scope, $rootScope, $location, ngNotify){
@@ -155,7 +163,7 @@ app.controller('analytics:histogram', ['$scope', '$rootScope', '$location', 'ngN
             enableMouseTracking: true
           }
         },
-        tooltip: { valueSuffix: (section + ' created') },
+        // tooltip: { valueSuffix: (section + ' created') },
         legend: {
           layout: 'vertical',
           align: 'right',

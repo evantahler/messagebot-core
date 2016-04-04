@@ -28,6 +28,7 @@
             <th>guid</th>
             <th>createdAt</th>
             <th>updatedAt</th>
+            <th ng-if="records[0].type !== undefined">type</th>
             <th>data</th>
           </tr>
         </thead>
@@ -38,6 +39,7 @@
             <td>{{ record.guid }}</td>
             <td>{{ record.createdAt }}</td>
             <td>{{ record.updatedAt }}</td>
+            <td ng-if="record.type !== undefined">{{ record.type }}</td>
             <td>{{ record.data }}</td>
           </tr>
         </tbody>

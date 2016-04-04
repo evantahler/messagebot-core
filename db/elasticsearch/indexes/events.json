@@ -18,7 +18,7 @@
 
         "location":   {
           "type": "geo_point",
-          "precision": "1km"
+          "geohash_precision": "1km"
         },
 
         "createdAt":  { "type":  "date" },

@@ -58,7 +58,7 @@ exports.eventCreate = {
     }else if(data.params.ip){
       try{
         var location = api.maxmind.getLocation(data.params.ip);
-        if(location.latitude && location.longitude){
+        if(location && location.latitude && location.longitude){
           event.data.location = {
             lat: location.latitude,
             lon: location.longitude

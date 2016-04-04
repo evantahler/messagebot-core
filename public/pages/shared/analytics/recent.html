@@ -1,6 +1,6 @@
 <div ng-controller="analytics:recent">
 
-  <h2>recently created {{ $root.section }}:</h2>
+  <h2>recently created {{ $root.section }} ({{ total }} total):</h2>
 
   <table class="table table-striped table-hover">
 
@@ -9,6 +9,7 @@
         <th>&nbsp;</th>
         <th>createdAt</th>
         <th>updatedAt</th>
+        <th ng-if="records[0].type !== undefined">type</th>
         <th>data</th>
       </tr>
     </thead>
@@ -18,9 +19,21 @@
         <td><a href="/#/{{ $root.singular($root.section) }}/{{ record.guid  }}"><span class="glyphicon glyphicon-pencil">&nbsp;</span></a></td>
         <td>{{ record.createdAt }}</td>
         <td>{{ record.updatedAt }}</td>
+        <td ng-if="record.type !== undefined">{{ record.type }}</td>
         <td>{{ record.data }}</td>
       </tr>
     </tbody>
 
   </table>
+
+  <ul class="pagination pagination-sm">
+    <li ng-class="pagination.showBack ? '' : 'disabled'" ><a href="/#/{{ $root.section }}/recent/{{ pagination.firstPage }}">&laquo;</a></li>
+
+    <li ng-repeat="p in pagination.pages" ng-class="p.active ? 'active' : ''">
+      <a href="/#/{{ $root.section }}/recent/{{ p.page }}">{{ p.page }}</a>
+    </li>
+
+    <li ng-class="pagination.showForward ? '' : 'disabled'"><a href="/#/{{ $root.section }}/recent/{{ pagination.lastPage }}">&raquo;</a></li>
+  </ul>
+
 </div>

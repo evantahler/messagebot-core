@@ -54,7 +54,6 @@ var seed = function(api, callback){
 
         var payload = {
           createdAt: time.getTime(),
-          updatedAt: time.getTime(),
           data: JSON.stringify({
             firstName: firstName,
             lastName: lastName,
@@ -79,7 +78,6 @@ var seed = function(api, callback){
 
               var payload = {
                 createdAt: (new Date(time.getTime() + (1000 * 60 * counter))).getTime(),
-                updatedAt: (new Date(time.getTime() + (1000 * 60 * counter))).getTime(),
                 userGuid: person.guid,
                 type: 'pageview',
                 ip: ip,
@@ -90,7 +88,23 @@ var seed = function(api, callback){
 
               request.post(routeBase + '/api/event', {form: payload}, function(error){
                 if(!error){ pages.push(page); }
-                next(error);
+
+                if(page === 'thank-you.html'){
+                  var payload = {
+                    createdAt: (new Date(time.getTime() + (1000 * 60 * counter))).getTime(),
+                    userGuid: person.guid,
+                    type: 'purchase',
+                    ip: ip,
+                    data: JSON.stringify({
+                      page: page,
+                      value: Math.round(Math.random() * 100)
+                    })
+                  };
+
+                  request.post(routeBase + '/api/event', {form: payload}, next);
+                }else{
+                  next(error);
+                }
               });
             });
           })(counter);

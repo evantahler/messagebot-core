@@ -3,23 +3,34 @@
 /////////////
 
 var routes = [
-  // ROUTE               PAGE PARTIAL                       PAGE TITLE                      REQUIRE LOGIN
-  [ '/',                 'pages/home.html',                 'MessageBot',                   false ],
-  [ '/home',             'pages/home.html',                 'MessageBot',                   false ],
+  // ROUTE                    PAGE PARTIAL                       PAGE TITLE                      REQUIRE LOGIN
+  [ '/',                      'pages/home.html',                 'MessageBot',                   false ],
+  [ '/home',                  'pages/home.html',                 'MessageBot',                   false ],
 
-  [ '/dashboard',        'pages/dashboard.html',            'MessageBot: Dashboard',        true ],
+  [ '/dashboard',             'pages/dashboard.html',            'MessageBot: Dashboard',        true ],
 
-  [ '/people',           'pages/people.html',               'MessageBot: People',           true ],
-  [ '/person/:guid',     'pages/person/view.html',          'MessageBot: Person',           true ],
-  [ '/events',           'pages/events.html',               'MessageBot: Events',           true ],
-  [ '/event/:guid',      'pages/event/view.html',           'MessageBot: Event',            true ],
-  [ '/messages',         'pages/messages.html',             'MessageBot: Messages',         true ],
-  [ '/message/:guid',    'pages/message/view.html',         'MessageBot: Message',          true ],
+  [ '/people/recent',   'pages/people/recent.html',               'MessageBot: People',           true ],
+  [ '/people/recent/:page',   'pages/people/recent.html',               'MessageBot: People',           true ],
+  [ '/people/search',   'pages/people/search.html',               'MessageBot: People',           true ],
+  [ '/people/search/:page',   'pages/people/search.html',               'MessageBot: People',           true ],
+  [ '/person/:guid',          'pages/person/view.html',          'MessageBot: Person',           true ],
 
-  [ '/account',          'pages/account.html',              'MessageBot: Account',          true ],
-  [ '/users',            'pages/users.html',                'MessageBot: Users',            true ],
+  [ '/events/recent',   'pages/events/recent.html',               'MessageBot: Events',           true ],
+  [ '/events/recent/:page',   'pages/events/recent.html',               'MessageBot: Events',           true ],
+  [ '/events/search',   'pages/events/search.html',               'MessageBot: Events',           true ],
+  [ '/events/search/:page',   'pages/events/search.html',               'MessageBot: Events',           true ],
+  [ '/event/:guid',           'pages/event/view.html',           'MessageBot: Event',            true ],
 
-  [ '/logout',           'pages/session/destroy.html',      'MessageBot: Log Out',          false ],
+  [ '/messages/recent', 'pages/messages/recent.html',             'MessageBot: Messages',         true ],
+  [ '/messages/recent/:page', 'pages/messages/recent.html',             'MessageBot: Messages',         true ],
+  [ '/messages/search', 'pages/messages/search.html',             'MessageBot: Messages',         true ],
+  [ '/messages/search/:page', 'pages/messages/search.html',             'MessageBot: Messages',         true ],
+  [ '/message/:guid',         'pages/message/view.html',         'MessageBot: Message',          true ],
+
+  [ '/account',               'pages/account.html',              'MessageBot: Account',          true ],
+  [ '/users',                 'pages/users.html',                'MessageBot: Users',            true ],
+
+  [ '/logout',                'pages/session/destroy.html',      'MessageBot: Log Out',          false ],
 ];
 
 /////////////////
@@ -131,6 +142,45 @@ app.run(['$rootScope', '$http', 'ngNotify', function($rootScope, $http, ngNotify
     if(thing === 'people'){ return 'person'; }
     if(thing === 'events'){ return 'event'; }
     if(thing === 'messages'){ return 'message'; }
+  };
+
+  $rootScope.genratePagination = function(currentPage, perPage, totalRecords){
+    var pageCount = 9; // should be an odd number
+    currentPage = parseInt(currentPage);
+    var currentId = currentPage * perPage;
+    var i;
+
+    var pagination = {
+      showBack    : (currentId - (Math.ceil(pageCount/2) * perPage) <= 0) ? false : true,
+      showForward : (currentId + (Math.ceil(pageCount/2) * perPage) >= totalRecords) ? false : true,
+      firstPage   : 0,
+      lastPage    : Math.floor(totalRecords / perPage),
+      pages: []
+    };
+
+    pagination.pages.push({
+      page: currentPage, active: true,
+    });
+
+    // forward
+    for (i = 1; i < Math.ceil(pageCount/2); i++) {
+      if((currentPage + i) * perPage <= totalRecords){
+        pagination.pages.push({
+          page: (currentPage + i), active: false,
+        });
+      }
+    }
+
+    // backwards
+    for (i = 1; i < Math.ceil(pageCount/2); i++) {
+      if((currentPage - i) >= 0){
+        pagination.pages.unshift({
+          page: (currentPage - i), active: false,
+        });
+      }
+    }
+
+    return pagination;
   };
 
   $rootScope.$on('$routeChangeSuccess', function (event, current, previous){
