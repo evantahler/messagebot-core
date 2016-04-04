@@ -13,6 +13,7 @@ app.controller('people:recentBehavior', ['$scope', '$rootScope', '$location', 'n
 
     var prepareData = function(){
       var sort = function(a,b){ return(a.createdAt > b.createdAt); };
+      
       $scope.messages.sort(sort);
       $scope.events.sort(sort);
 

@@ -9,5 +9,58 @@
     <div class="col-md-12">
       <div id="histogramChart" width="300" height="300" style="width: 100%; height: auto;"></div>
     </div>
+
+    <div class="col-md-6">
+      <h2>Events</h2>
+
+      <table class="table table-striped table-hover">
+
+        <thead>
+          <tr>
+            <th>&nbsp;</th>
+            <th>createdAt</th>
+            <th>type</th>
+            <th>data</th>
+          </tr>
+        </thead>
+
+        <tbody ng-repeat="record in events">
+          <tr>
+            <td><a href="/#/event/{{ record.guid  }}"><span class="glyphicon glyphicon-pencil">&nbsp;</span></a></td>
+            <td>{{ record.createdAt }}</td>
+            <td>{{ record.type }}</td>
+            <td>{{ record.data }}</td>
+          </tr>
+        </tbody>
+
+      </table>
+    </div>
+
+    <div class="col-md-6">
+      <h2>Messages</h2>
+
+      <table class="table table-striped table-hover">
+
+        <thead>
+          <tr>
+            <th>&nbsp;</th>
+            <th>createdAt</th>
+            <th>type</th>
+            <th>data</th>
+          </tr>
+        </thead>
+
+        <tbody ng-repeat="record in messages">
+          <tr>
+            <td><a href="/#/event/{{ record.guid  }}"><span class="glyphicon glyphicon-pencil">&nbsp;</span></a></td>
+            <td>{{ record.createdAt }}</td>
+            <td>{{ record.type }}</td>
+            <td>{{ record.data }}</td>
+          </tr>
+        </tbody>
+
+      </table>
+    </div>
+
   </div>
 </div>
