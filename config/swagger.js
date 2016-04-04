@@ -1,4 +1,4 @@
-exports['default'] = { 
+exports['default'] = {
   swagger: function(api){
     return {
       // Should be changed to hit www.yourserver.com.  If this is null, defaults to ip:port from
@@ -15,6 +15,7 @@ exports['default'] = {
         'person'  : [ 'person', 'people' ],
         'message' : [ 'message', 'messages' ],
         'event'   : [ 'event', 'events' ],
+        'list'    : [ 'list', 'lists' ],
       },
       // Generate documentation for simple actions specified by action-name
       documentSimpleRoutes: false,

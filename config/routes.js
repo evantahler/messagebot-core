@@ -9,6 +9,8 @@ exports.default = {
         { path: '/user',                 action: 'user:view' },
         { path: '/users',                action: 'users:list' },
         { path: '/user/statuses',        action: 'user:statusesList' },
+        { path: '/list',                 action: 'list:view' },
+        { path: '/lists',                action: 'lists:list' },
         { path: '/person',               action: 'person:view' },
         { path: '/people/search',        action: 'people:search' },
         { path: '/people/aggregation',   action: 'people:aggregation' },
@@ -23,6 +25,7 @@ exports.default = {
       post: [
         { path: '/session',      action: 'session:create' },
         { path: '/user',         action: 'user:create' },
+        { path: '/list',         action: 'list:create' },
         { path: '/person',       action: 'person:create' },
         { path: '/event',        action: 'event:create' },
         { path: '/message',      action: 'message:create' },
@@ -31,6 +34,7 @@ exports.default = {
       put: [
         { path: '/session',      action: 'session:check' },
         { path: '/user',         action: 'user:edit' },
+        { path: '/list',         action: 'list:edit' },
         { path: '/person',       action: 'person:edit' },
         { path: '/event',        action: 'event:edit' },
         { path: '/message',      action: 'message:edit' },
@@ -39,6 +43,7 @@ exports.default = {
       delete: [
         { path: '/session', action: 'session:destroy' },
         { path: '/user',    action: 'user:delete' },
+        { path: '/list',    action: 'list:delete' },
         { path: '/person',  action: 'person:delete' },
         { path: '/event',   action: 'event:delete' },
         { path: '/message', action: 'message:delete' },
