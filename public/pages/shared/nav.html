@@ -25,10 +25,6 @@
           </ul>
         </li>
 
-        <li ng-class="getNavigationHighlight('lists')"><a href="/#/lists"><span class="glyphicon glyphicon-folder-open">&nbsp;</span>Lists</a></li>
-
-        <li ng-class="getNavigationHighlight('campaigns')"><a href="/#/campaigns"><span class="glyphicon glyphicon-send">&nbsp;</span>Campaigns</a></li>
-
         <li class="dropdown" ng-class="getNavigationHighlight('events')">
           <a id="navDropdown-events" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><span class="glyphicon glyphicon-equalizer">&nbsp;</span>Events</a>
           <ul class="dropdown-menu" role="menu">
@@ -36,6 +32,10 @@
             <li ng-class="getNavigationHighlight('events/search')"><a href="/#/events/search">Search</a></li>
           </ul>
         </li>
+
+        <li ng-class="getNavigationHighlight('lists')"><a href="/#/lists"><span class="glyphicon glyphicon-folder-open">&nbsp;</span>Lists</a></li>
+
+        <li ng-class="getNavigationHighlight('campaigns')"><a href="/#/campaigns"><span class="glyphicon glyphicon-send">&nbsp;</span>Campaigns</a></li>
 
         <li class="dropdown" ng-class="getNavigationHighlight('messages')">
           <a id="navDropdown-messages" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><span class="glyphicon glyphicon-envelope">&nbsp;</span>Messages</a>
