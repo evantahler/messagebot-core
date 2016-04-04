@@ -35,13 +35,14 @@ exports.messageCreate = {
   run: function(api, data, next){
     var message = new api.models.message(index(api));
 
-    if(data.params.guid){     message.data.guid = data.params.guid;         }
-    if(data.params.userGuid){ message.data.userGuid = data.params.userGuid; }
-    if(data.params.type){     message.data.type = data.params.type;         }
-    if(data.params.body){     message.data.body = data.params.body;         }
-    if(data.params.sentAt){   message.data.sentAt = data.params.sentAt;     }
-    if(data.params.readAt){   message.data.readAt = data.params.readAt;     }
-    if(data.params.actedAt){  message.data.actedAt = data.params.actedAt;   }
+    if(data.params.guid){      message.data.guid = data.params.guid;           }
+    if(data.params.userGuid){  message.data.userGuid = data.params.userGuid;   }
+    if(data.params.type){      message.data.type = data.params.type;           }
+    if(data.params.body){      message.data.body = data.params.body;           }
+    if(data.params.createdAt){ message.data.createdAt = data.params.createdAt; }
+    if(data.params.sentAt){    message.data.sentAt = data.params.sentAt;       }
+    if(data.params.readAt){    message.data.readAt = data.params.readAt;       }
+    if(data.params.actedAt){   message.data.actedAt = data.params.actedAt;     }
 
     for(var i in data.params.data){
       if(message.data[i] === null || message.data[i] === undefined){

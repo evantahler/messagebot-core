@@ -31,7 +31,8 @@
   },
   "devDependencies": {
     "mocha": "latest",
-    "should": "latest"
+    "should": "latest",
+    "faker": "^3.1.0"
   },
   "scripts": {
     "help": "actionhero help",
@@ -42,6 +43,7 @@
     "migrate": "npm run migrate:maxmind && npm run migrate:sequelize && npm run migrate:elasticsearch",
     "migrate:elasticsearch": "node db/elasticsearch/migrate.js",
     "migrate:sequelize": "sequelize db:migrate",
-    "migrate:maxmind": "./db/maxmind/download.sh"
+    "migrate:maxmind": "./db/maxmind/download.sh",
+    "faker:seed": "node db/seed/seed.js"
   }
 }

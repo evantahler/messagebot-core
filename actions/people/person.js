@@ -32,6 +32,7 @@ exports.personCreate = {
     var person = new api.models.person(index(api));
     if(data.params.guid){        person.data.guid = data.params.guid;               }
     if(data.params.permissions){ person.data.permissions = data.params.permissions; }
+    if(data.params.createdAt){ person.data.createdAt = data.params.createdAt; }
 
     for(var i in data.params.data){
       if(person.data[i] === null || person.data[i] === undefined){

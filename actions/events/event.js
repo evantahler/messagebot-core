@@ -42,12 +42,13 @@ exports.eventCreate = {
   run: function(api, data, next){
     var event = new api.models.event(index(api));
 
-    if(data.params.ip){       event.data.ip = data.params.ip;             }
-    if(data.params.device){   event.data.device = data.params.device;     }
-    if(data.params.device){   event.data.device = data.params.device;     }
-    if(data.params.guid){     event.data.guid = data.params.guid;         }
-    if(data.params.userGuid){ event.data.userGuid = data.params.userGuid; }
-    if(data.params.type){     event.data.type = data.params.type;         }
+    if(data.params.ip){        event.data.ip = data.params.ip;               }
+    if(data.params.device){    event.data.device = data.params.device;       }
+    if(data.params.device){    event.data.device = data.params.device;       }
+    if(data.params.guid){      event.data.guid = data.params.guid;           }
+    if(data.params.userGuid){  event.data.userGuid = data.params.userGuid;   }
+    if(data.params.type){      event.data.type = data.params.type;           }
+    if(data.params.createdAt){ event.data.createdAt = data.params.createdAt; }
 
     if(data.params.lat && data.params.lon){
       event.data.location = {
@@ -64,7 +65,7 @@ exports.eventCreate = {
           };
         }
       }catch(e){
-        api.log(e, 'error');
+        api.log('Geocoding Error: ' +  String(e), 'error');
       }
     }
 
