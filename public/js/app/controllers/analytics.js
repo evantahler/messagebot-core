@@ -11,16 +11,18 @@ app.controller('analytics:search', ['$scope', '$rootScope', '$location', 'ngNoti
   ];
 
   $scope.searchResults = [];
-  $scope.searchString = '';
+  $scope.query = $routeParams.query || '';
   $scope.pagination = {};
 
   var currentPage = $routeParams.page || 0;
   var perPage = 50;
 
   $scope.doSearch = function(){
+    $location.path( '/' + section + '/search/' + $scope.query + '/' + currentPage );
+
     var searchKeys = [];
     var searchValues = [];
-    var parts = $scope.searchString.split(' ');
+    var parts = $scope.query.split(' ');
     parts.forEach(function(part){
       if(part !== ''){
         var words = part.split(':');
@@ -57,9 +59,17 @@ app.controller('analytics:search', ['$scope', '$rootScope', '$location', 'ngNoti
         $scope.total = data.total;
         $scope.searchResults = data[section];
         $scope.pagination = $rootScope.genratePagination(currentPage, perPage, $scope.total);
+
+        if($scope.total > 0 && $scope.searchResults.length === 0){
+          $location.path( '/' + section + '/search/' + $scope.query );
+        }
       }
     });
   };
+
+  if($scope.query && $scope.query != ''){
+    $scope.doSearch();
+  }
 
 }]);
 
