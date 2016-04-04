@@ -31,6 +31,12 @@ exports.eventCreate = {
       required: false,
       formatter: function(p){ return parseFloat(p); }
     },
+    createdAt:    {
+      required: false,
+      formatter: function(p){
+        return new Date(parseInt(p));
+      }
+    },
   },
 
   run: function(api, data, next){

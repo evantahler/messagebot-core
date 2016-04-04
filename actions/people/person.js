@@ -20,6 +20,12 @@ exports.personCreate = {
     guid:         { required: false },
     data:         { required: true  },
     permissions:  { required: false },
+    createdAt:    {
+      required: false,
+      formatter: function(p){
+        return new Date(parseInt(p));
+      }
+    },
   },
 
   run: function(api, data, next){

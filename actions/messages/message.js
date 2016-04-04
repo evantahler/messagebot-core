@@ -24,6 +24,12 @@ exports.messageCreate = {
     sentAt:    { required: false  },
     readAt:    { required: false  },
     actedAt:   { required: false  },
+    createdAt:    {
+      required: false,
+      formatter: function(p){
+        return new Date(parseInt(p));
+      }
+    },
   },
 
   run: function(api, data, next){
