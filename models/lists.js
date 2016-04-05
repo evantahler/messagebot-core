@@ -14,7 +14,7 @@ module.exports = function(sequelize, DataTypes){
       defaultValue: 'default',
     },
 
-    'userQuery': {
+    'personQuery': {
       type: DataTypes.TEXT,
       allowNull: true,
     },
@@ -34,7 +34,7 @@ module.exports = function(sequelize, DataTypes){
           type:         this.type,
           name:         this.name,
           folder:       this.folder,
-          userQuery:    this.userQuery,
+          personQuery:  this.personQuery,
           eventQuery:   this.eventQuery,
           messageQuery: this.messageQuery,
           createdAt:    this.createdAt,

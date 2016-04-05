@@ -30,7 +30,7 @@ module.exports = {
           defaultValue: 'default',
         },
 
-        'userQuery': {
+        'personQuery': {
           type: Sequelize.TEXT,
           allowNull: true,
         },

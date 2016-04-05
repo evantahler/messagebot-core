@@ -71,6 +71,40 @@ module.exports = {
         });
       },
 
+      scroll: function(alias, query, callback){
+        // TODO: This should be sharded to not fill all results into RAM on one node...
+        
+        var scroll = '30s';
+        var fields = ['guid', 'userGuid'];
+        var results = [];
+
+        api.elasticsearch.pendingOperations++;
+        api.elasticsearch.client.search({
+            index: alias,
+            scroll: scroll,
+            fields: fields,
+            body: {
+              query: query
+            }
+        }, function getMoreUntilDone(error, data){
+          api.elasticsearch.pendingOperations--;
+          if(error){ return callback(error); }
+
+          data.hits.hits.forEach(function(hit){
+            results.push(hit._source);
+          });
+
+          if(data.hits.total !== results.length && data.hits.hits.length > 0){
+            client.scroll({
+              scrollId: response._scroll_id,
+              scroll: scroll
+            }, getMoreUntilDone);
+          }else{
+            callback(null, results, data.hits.total);
+          }
+        });
+      },
+
       aggregation: function(alias, searchKeys, searchValues, start, end, dateField, agg, aggField, interval, callback){
         var musts = [];
 

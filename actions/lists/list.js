@@ -18,7 +18,7 @@ exports.listCreate = {
     name:   { required: true },
     folder: { required: true },
 
-    userQuery:    {
+    personQuery:    {
       required: true,
       validator: JSONValidator
     },
@@ -57,6 +57,10 @@ exports.listView = {
     listId: {
       required: true,
       formatter: function(p){ return parseInt(p); }
+    },
+    includeGuids: {
+      required: true,
+      default: false,
     }
   },
 
@@ -64,28 +68,18 @@ exports.listView = {
     api.models.list.findOne({where: {id: data.params.listId}}).then(function(list){
       if(!list){ return next(new Error('list not found')); }
       data.response.list = list.apiData(api);
-      next();
-    }).catch(next);
-  }
-};
 
-exports.listsList = {
-  name:                   'lists:list',
-  description:            'lists:list',
-  outputExample:          {},
-  middleware:             [ 'logged-in-session' ],
-
-  inputs: {},
-
-  run: function(api, data, next){
-
-    api.models.list.findAll().then(function(lists){
-      data.response.lists = [];
-      lists.forEach(function(list){
-        data.response.lists.push( list.apiData(api) );
+      api.lists.getPeople(list.id, function(error, guids){
+        if(!error){
+          data.response.countOfMembers = guids.length;
+          if(data.paraks.includeGuids === true){
+            data.response.members = guids;
+          }
+        }
+        next(error);
       });
 
-      next();
+
     }).catch(next);
   }
 };
@@ -101,7 +95,7 @@ exports.listEdit = {
     name:   { required: true },
     folder: { required: true },
 
-    userQuery:    {
+    personQuery:    {
       required: true,
       validator: JSONValidator
     },
