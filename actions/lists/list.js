@@ -1,10 +1,21 @@
 var JSONValidator = function(p){
+  if(p === null){ return true; }
+  if(p.indexOf())
   try{
-    JSON.parse(p);
-    return true;
+    var o =JSON.parse(p);
+    if (o && typeof o === "object" && o !== null){
+      return true;
+    }else{
+      return new Error('not valid JSON');
+    }
   }catch(e){
     return new Error('not valid JSON');
   }
+}
+
+var JSONFormatter = function(p){
+  if(p === '' || p === null){ return null; }
+  else{ return p; }
 }
 
 exports.listCreate = {
@@ -22,15 +33,18 @@ exports.listCreate = {
 
     personQuery:    {
       required: false,
-      validator: JSONValidator
+      validator: JSONValidator,
+      formatter: JSONFormatter,
     },
     eventQuery:    {
       required: false,
-      validator: JSONValidator
+      validator: JSONValidator,
+      formatter: JSONFormatter,
     },
     messageQuery:    {
       required: false,
-      validator: JSONValidator
+      validator: JSONValidator,
+      formatter: JSONFormatter,
     },
   },
 
@@ -98,15 +112,18 @@ exports.listEdit = {
 
     personQuery:    {
       required: false,
-      validator: JSONValidator
+      validator: JSONValidator,
+      formatter: JSONFormatter,
     },
     eventQuery:    {
       required: false,
-      validator: JSONValidator
+      validator: JSONValidator,
+      formatter: JSONFormatter,
     },
     messageQuery:    {
       required: false,
-      validator: JSONValidator
+      validator: JSONValidator,
+      formatter: JSONFormatter,
     },
     listId: {
       required: true,

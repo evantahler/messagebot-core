@@ -72,8 +72,6 @@ module.exports = {
       },
 
       scroll: function(alias, query, callback){
-        // TODO: This should be sharded to not fill all results into RAM on one node...
-        
         var scroll = '30s';
         var fields = ['guid', 'userGuid'];
         var results = [];
@@ -91,12 +89,16 @@ module.exports = {
           if(error){ return callback(error); }
 
           data.hits.hits.forEach(function(hit){
-            results.push(hit._source);
+            if(hit.fields.userGuid){
+              results = results.concat(hit.fields.userGuid);
+            }else if(hit.fields.guid){
+              results = results.concat(hit.fields.guid);
+            }
           });
 
           if(data.hits.total !== results.length && data.hits.hits.length > 0){
             client.scroll({
-              scrollId: response._scroll_id,
+              scrollId: data._scroll_id,
               scroll: scroll
             }, getMoreUntilDone);
           }else{

@@ -16,40 +16,38 @@ module.exports = {
 
       // load the collection of people which would match the `peopleQuery`, `eventQuery`, and `messageQuery`
       // and then take the goup of folks who match all sections
+      // TODO: We'll need to parallelize this one day, store the GUIDs in redis or something, as to not store all the data in RAM
       api.models.list.findOne({where: {id: listId}}).then(function(list){
         if(!list){ return callback(new Error('list not found')); }
 
-        if(list.personQuery && list.personQuery != ''){
+        if(list.personQuery && list.personQuery !== ''){
           jobs.push(function(done){
             var alias = api.env + '-people';
             api.elasticsearch.scroll(alias, list.personQuery, function(error, data, count){
               if(error){ return done(error); }
-              queryResults.people = [];
-              data.forEach(function(d){ queryResults.people.push(p.guid); });
+              queryResults.people = data;
               done();
             });
           });
         }
 
-        if(list.eventQuery && list.eventQuery != ''){
+        if(list.eventQuery && list.eventQuery !== ''){
           jobs.push(function(done){
             var alias = api.env + '-events';
             api.elasticsearch.scroll(alias, list.eventQuery, function(error, data, count){
               if(error){ return done(error); }
-              queryResults.events = [];
-              data.forEach(function(d){ queryResults.events.push(p.userGuid); });
+              queryResults.events = data;
               done();
             });
           });
         }
 
-        if(list.messageQuery && list.messageQuery != ''){
+        if(list.messageQuery && list.messageQuery !== ''){
           jobs.push(function(done){
             var alias = api.env + '-messages';
             api.elasticsearch.scroll(alias, list.messageQuery, function(error, data, count){
               if(error){ return done(error); }
-              queryResults.messages = [];
-              data.forEach(function(d){ queryResults.messages.push(p.userGuid); });
+              queryResults.messages = data;
               done();
             });
           });
@@ -57,8 +55,9 @@ module.exports = {
 
         jobs.push(function(done){
           var uniqueGuids = [];
+
           ['people', 'events', 'messages'].forEach(function(type){
-            if(queryResults[type] !== false){ uniqueGuids.concat(queryResults[type]); }
+            if(queryResults[type] !== false){ uniqueGuids = uniqueGuids.concat(queryResults[type]); }
           });
 
           uniqueGuids = api.utils.arrayUniqueify(uniqueGuids);
@@ -68,7 +67,7 @@ module.exports = {
           ['people', 'events', 'messages'].forEach(function(type){
             if(queryResults[type] !== false){
               uniqueGuids.forEach(function(guid){
-                if(queryResults[type].indexOf(guid) < 1){
+                if(queryResults[type].indexOf(guid) < -1){
                   uniqueGuids.splice( uniqueGuids.indexOf(guid), 1 );
                 }
               });

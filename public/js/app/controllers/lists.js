@@ -4,6 +4,12 @@ app.controller('lists:list', ['$scope', '$rootScope', '$location', 'ngNotify', f
   $scope.forms.createList = {};
   $scope.forms.editlist   = {};
 
+  var prettyPrintJSON = function(j){
+    if(j && typeof j !== 'string'){
+      return JSON.stringify(j, undefined, 4);
+    }
+  };
+
   $scope.loadLists = function(){
     $rootScope.authenticatedActionHelper($scope, {}, '/api/lists', 'GET', function(data){
       $scope.lists = data.lists;
@@ -28,6 +34,9 @@ app.controller('lists:list', ['$scope', '$rootScope', '$location', 'ngNotify', f
     $scope.forms.editList = {};
     $('#editListModal').modal('show');
     $rootScope.authenticatedActionHelper($scope, {listId: listId}, '/api/list', 'GET', function(data){
+      data.list.personQuery  = prettyPrintJSON(data.list.personQuery);
+      data.list.eventQuery   = prettyPrintJSON(data.list.eventQuery);
+      data.list.messageQuery = prettyPrintJSON(data.list.messageQuery);
       $scope.forms.editList = data.list;
     });
   };
