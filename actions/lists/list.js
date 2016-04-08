@@ -21,15 +21,15 @@ exports.listCreate = {
     },
 
     personQuery:    {
-      required: true,
+      required: false,
       validator: JSONValidator
     },
     eventQuery:    {
-      required: true,
+      required: false,
       validator: JSONValidator
     },
     messageQuery:    {
-      required: true,
+      required: false,
       validator: JSONValidator
     },
   },
@@ -41,10 +41,9 @@ exports.listCreate = {
       api.models.list.findOne({where: {name: data.params.name}})
     ).then(function(listObj){
       data.response.list = listObj.apiData(api);
-      next(error);
-    })
-    .catch(function(errors){
-      next(errors.errors[0].message);
+      next();
+    }).catch(function(errors){
+       next(errors.errors[0].message);
     });
   }
 };
@@ -71,10 +70,11 @@ exports.listView = {
       if(!list){ return next(new Error('list not found')); }
       data.response.list = list.apiData(api);
 
+      // TODO: Cache this to speed it up (or only use the cache here)
       api.lists.getPeople(list.id, function(error, guids){
         if(!error){
           data.response.countOfMembers = guids.length;
-          if(data.paraks.includeGuids === true){
+          if(data.params.includeGuids === true){
             data.response.members = guids;
           }
         }
@@ -97,15 +97,15 @@ exports.listEdit = {
     folder: { required: false },
 
     personQuery:    {
-      required: true,
+      required: false,
       validator: JSONValidator
     },
     eventQuery:    {
-      required: true,
+      required: false,
       validator: JSONValidator
     },
     messageQuery:    {
-      required: true,
+      required: false,
       validator: JSONValidator
     },
     listId: {

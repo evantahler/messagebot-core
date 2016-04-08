@@ -79,8 +79,13 @@ module.exports = {
           process.nextTick(done);
         });
 
+        jobs.push(function(done){
+          // TODO: Update the 'people' and note what lists they fall into
+          done();
+        });
+
         async.series(jobs, function(error){
-          return(error, queryResults.final);
+          callback(error, queryResults.final);
         });
 
       });

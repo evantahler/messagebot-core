@@ -1,0 +1,136 @@
+<div ng-controller="lists:list">
+
+  <div id="createListModal" class="modal fade" tabindex="-1" role="dialog" >
+    <div class="modal-dialog">
+      <div class="modal-content">
+
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title">Create List</h4>
+        </div>
+
+        <div class="modal-body">
+          <form ng-submit="processCreateListForm()">
+
+            <div class="form-group">
+              <label>Name</label>
+              <input type="text" name="name" class="form-control" placeholder="new users" ng-model="forms.createList.name">
+            </div>
+
+            <div class="form-group">
+              <label>folder</label>
+              <input type="text" name="folder" class="form-control" placeholder="default" ng-model="forms.createList.folder">
+            </div>
+
+            <div class="form-group">
+              <label>Person Query</label>
+              <textarea type="text" name="personQuery" class="form-control" ng-model="forms.createList.personQuery"></textarea>
+            </div>
+
+            <div class="form-group">
+              <label>Event Query</label>
+              <textarea type="text" name="eventQuery" class="form-control" ng-model="forms.createList.eventQuery"></textarea>
+            </div>
+
+            <div class="form-group">
+              <label>Message Query</label>
+              <textarea type="text" name="messageQuery" class="form-control" ng-model="forms.createList.messageQuery"></textarea>
+            </div>
+
+            <div class="row">
+              <div class="col-md-12">
+                <button type="submit" class="btn btn-success btn-lg btn-block">
+                  <span class="glyphicon glyphicon-flash"></span> Submit
+                </button>
+              </div>
+            </div>
+
+          </form>
+        </div>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+  </div><!-- /.modal -->
+
+
+
+  <div id="editListModal" class="modal fade" tabindex="-1" role="dialog" >
+    <div class="modal-dialog">
+      <div class="modal-content">
+
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title">Edit List</h4>
+        </div>
+
+        <div class="modal-body">
+          <form ng-submit="processEditListForm()">
+
+            <div class="form-group">
+              <label>Name</label>
+              <input type="text" name="name" class="form-control" placeholder="new users" ng-model="forms.editList.name">
+            </div>
+
+            <div class="form-group">
+              <label>folder</label>
+              <input type="text" name="folder" class="form-control" placeholder="default" ng-model="forms.editList.folder">
+            </div>
+
+            <div class="form-group">
+              <label>Person Query</label>
+              <textarea type="text" name="personQuery" class="form-control"  ng-model="forms.editList.personQuery"></textarea>
+            </div>
+
+            <div class="form-group">
+              <label>Event Query</label>
+              <textarea type="text" name="eventQuery" class="form-control" ng-model="forms.editList.eventQuery"></textarea>
+            </div>
+
+            <div class="form-group">
+              <label>Message Query</label>
+              <textarea type="text" name="messageQuery" class="form-control" ng-model="forms.editList.messageQuery"></textarea>
+            </div>
+
+            <div class="row">
+              <div class="col-md-12">
+                <button type="submit" class="btn btn-success btn-lg btn-block">
+                  <span class="glyphicon glyphicon-flash"></span> Submit
+                </button>
+              </div>
+            </div>
+
+          </form>
+        </div>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+  </div><!-- /.modal -->
+
+
+  <a ng-click="createList();" class="btn btn-primary">Create List</a>
+
+
+  <table class="table table-striped table-hover">
+
+    <thead>
+      <tr>
+        <th>createdAt</th>
+        <th>updatedAt</th>
+        <th>name</th>
+        <th>folder</th>
+        <th>&nbsp;</th>
+        <th>&nbsp;</th>
+      </tr>
+    </thead>
+
+    <tbody ng-repeat="list in lists">
+      <tr>
+        <td>{{ list.createdAt }}</td>
+        <td>{{ list.updatedAt }}</td>
+        <td><strong>{{ list.name }}</strong></td>
+        <td>{{ list.folder }}</td>
+        <td ng-click="editList(list.id);"><span class="glyphicon glyphicon-pencil">&nbsp;</span></td>
+        <td ng-click="deleteList(list.id);"><span class="glyphicon glyphicon-remove">&nbsp;</span></td>
+      </tr>
+    </tbody>
+
+  </table>
+</div>

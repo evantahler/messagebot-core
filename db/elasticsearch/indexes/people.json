@@ -7,7 +7,9 @@
   "mappings": {
     "person": {
       "properties": {
-        "guid":        { "type": "string"  }, 
+        "guid":        { "type": "string"  },
+
+        "lists":       { "type": "string"  }, 
 
         "data":        { "type": "object"  },
         "permissions": { "type": "object"  },
