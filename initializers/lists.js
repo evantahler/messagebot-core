@@ -22,36 +22,36 @@ module.exports = {
         if(list.personQuery && list.personQuery != ''){
           jobs.push(function(done){
             var alias = api.env + '-people';
-            api.elasticsearch.scroll(alias, list.personQuery, function(error, data, count)){
+            api.elasticsearch.scroll(alias, list.personQuery, function(error, data, count){
               if(error){ return done(error); }
               queryResults.people = [];
               data.forEach(function(d){ queryResults.people.push(p.guid); });
               done();
-            };
+            });
           });
         }
 
         if(list.eventQuery && list.eventQuery != ''){
           jobs.push(function(done){
             var alias = api.env + '-events';
-            api.elasticsearch.scroll(alias, list.eventQuery, function(error, data, count)){
+            api.elasticsearch.scroll(alias, list.eventQuery, function(error, data, count){
               if(error){ return done(error); }
               queryResults.events = [];
               data.forEach(function(d){ queryResults.events.push(p.userGuid); });
               done();
-            };
+            });
           });
         }
 
         if(list.messageQuery && list.messageQuery != ''){
           jobs.push(function(done){
             var alias = api.env + '-messages';
-            api.elasticsearch.scroll(alias, list.messageQuery, function(error, data, count)){
+            api.elasticsearch.scroll(alias, list.messageQuery, function(error, data, count){
               if(error){ return done(error); }
               queryResults.messages = [];
               data.forEach(function(d){ queryResults.messages.push(p.userGuid); });
               done();
-            };
+            });
           });
         }
 
@@ -59,7 +59,7 @@ module.exports = {
           var uniqueGuids = [];
           ['people', 'events', 'messages'].forEach(function(type){
             if(queryResults[type] !== false){ uniqueGuids.concat(queryResults[type]); }
-          }
+          });
 
           uniqueGuids = api.utils.arrayUniqueify(uniqueGuids);
 
