@@ -64,6 +64,16 @@ module.exports = function(sequelize, DataTypes){
         this.setDataValue('messageQuery', q);
       }
     },
+
+    'peopleCount': {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      defaultValue: 0,
+    },
+    'peopleCountedAt': {
+      type: DataTypes.DATE,
+      allowNull: true,
+    },
   }, {
     instanceMethods: {
       apiData: function(api){
@@ -71,9 +81,14 @@ module.exports = function(sequelize, DataTypes){
           id:           this.id,
           name:         this.name,
           folder:       this.folder,
+
           personQuery:  this.personQuery,
           eventQuery:   this.eventQuery,
           messageQuery: this.messageQuery,
+
+          peopleCount:     this.peopleCount,
+          peopleCountedAt: this.peopleCountedAt,
+
           createdAt:    this.createdAt,
           updatedAt:    this.updatedAt,
         };

@@ -3,6 +3,7 @@ app.controller('lists:list', ['$scope', '$rootScope', '$location', 'ngNotify', f
   $scope.forms = {};
   $scope.forms.createList = {};
   $scope.forms.editlist   = {};
+  var refreshTimer;
 
   var prettyPrintJSON = function(j){
     if(j && typeof j !== 'string'){
@@ -51,6 +52,12 @@ app.controller('lists:list', ['$scope', '$rootScope', '$location', 'ngNotify', f
     });
   };
 
+  $scope.peopleCount = function(listId){
+    $rootScope.authenticatedActionHelper($scope, {listId: listId}, '/api/list/peopleCount', 'POST', function(data){
+      ngNotify.set('recount enqueued...', 'success');
+    });
+  };
+
   $scope.deleteList = function(listId){
     if(confirm('Are you sure?')){
       $rootScope.authenticatedActionHelper($scope, {listId: listId}, '/api/list', 'DELETE', function(data){
@@ -60,5 +67,10 @@ app.controller('lists:list', ['$scope', '$rootScope', '$location', 'ngNotify', f
     }
   };
 
+  $scope.$on("$destroy", function(event){
+    clearTimeout(refreshTimer);
+  });
+
   $scope.loadLists();
+  setInterval($scope.loadLists, (1000 * 10));
 }]);

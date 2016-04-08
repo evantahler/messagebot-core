@@ -31,7 +31,6 @@ var routes = [
   [ '/message/:guid',                'pages/message/view.html',     'MessageBot: Message',    true ],
 
   [ '/lists/list',                   'pages/lists/list.html',       'MessageBot: Lists',      true ],
-  [ '/lists/:id',                    'pages/lists/view.html',       'MessageBot: List',       true ],
 
   [ '/account',                      'pages/account.html',          'MessageBot: Account',    true ],
   [ '/users',                        'pages/users.html',            'MessageBot: Users',      true ],

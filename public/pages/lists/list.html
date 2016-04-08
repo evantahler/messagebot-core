@@ -116,6 +116,9 @@
         <th>updatedAt</th>
         <th>name</th>
         <th>folder</th>
+        <th>people count</th>
+        <th>people counted at</th>
+        <th>&nbsp;</th>
         <th>&nbsp;</th>
         <th>&nbsp;</th>
       </tr>
@@ -127,6 +130,9 @@
         <td>{{ list.updatedAt }}</td>
         <td><strong>{{ list.name }}</strong></td>
         <td>{{ list.folder }}</td>
+        <td>{{ list.peopleCount }}</td>
+        <td>{{ list.peopleCountedAt }}</td>
+        <td ng-click="peopleCount(list.id);"><span class="glyphicon glyphicon-refresh">&nbsp;</span></td>
         <td ng-click="editList(list.id);"><span class="glyphicon glyphicon-pencil">&nbsp;</span></td>
         <td ng-click="deleteList(list.id);"><span class="glyphicon glyphicon-remove">&nbsp;</span></td>
       </tr>

@@ -23,12 +23,13 @@ exports.default = {
       ],
 
       post: [
-        { path: '/session',      action: 'session:create' },
-        { path: '/user',         action: 'user:create' },
-        { path: '/list',         action: 'list:create' },
-        { path: '/person',       action: 'person:create' },
-        { path: '/event',        action: 'event:create' },
-        { path: '/message',      action: 'message:create' },
+        { path: '/session',          action: 'session:create' },
+        { path: '/user',             action: 'user:create' },
+        { path: '/list',             action: 'list:create' },
+        { path: '/list/peopleCount', action: 'list:peopleCount' },
+        { path: '/person',           action: 'person:create' },
+        { path: '/event',            action: 'event:create' },
+        { path: '/message',          action: 'message:create' },
       ],
 
       put: [

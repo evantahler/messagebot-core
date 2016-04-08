@@ -37,6 +37,15 @@ module.exports = {
           type: Sequelize.TEXT,
           allowNull: true,
         },
+
+        'peopleCount': {
+          type: Sequelize.INTEGER,
+          allowNull: false,
+          default: 0,
+        },
+        'peopleCountedAt': {
+          type: Sequelize.DATE
+        },
       }
     );
 

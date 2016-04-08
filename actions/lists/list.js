@@ -55,7 +55,7 @@ exports.listCreate = {
       api.models.list.findOne({where: {name: data.params.name}})
     ).then(function(listObj){
       data.response.list = listObj.apiData(api);
-      next();
+      api.tasks.enqueue('lists:peopleCount', {listId: listObj.id}, 'default', next);
     }).catch(function(errors){
        next(errors.errors[0].message);
     });
@@ -83,19 +83,30 @@ exports.listView = {
     api.models.list.findOne({where: {id: data.params.listId}}).then(function(list){
       if(!list){ return next(new Error('list not found')); }
       data.response.list = list.apiData(api);
+      next();
+    }).catch(next);
+  }
+};
 
-      // TODO: Cache this to speed it up (or only use the cache here)
-      api.lists.getPeople(list.id, function(error, guids){
-        if(!error){
-          data.response.countOfMembers = guids.length;
-          if(data.params.includeGuids === true){
-            data.response.members = guids;
-          }
-        }
-        next(error);
-      });
+exports.listPeopleCount = {
+  name:                   'list:peopleCount',
+  description:            'list:peopleCount',
+  outputExample:          {},
+  middleware:             [ 'logged-in-session', 'status-required-admin' ],
 
+  inputs: {
+    listId: {
+      required: true,
+      formatter: function(p){ return parseInt(p); }
+    }
+  },
 
+  run: function(api, data, next){
+    api.models.list.findOne({where: {id: data.params.listId}}).then(function(list){
+      if(!list){ return next(new Error('list not found')); }
+
+      data.response.list = list.apiData(api);
+      api.tasks.enqueue('lists:peopleCount', {listId: list.id}, 'default', next);
     }).catch(next);
   }
 };
@@ -137,7 +148,7 @@ exports.listEdit = {
 
       list.updateAttributes(data.params).then(function(){
         data.response.list = list.apiData(api);
-        next();
+        api.tasks.enqueue('lists:peopleCount', {listId: list.id}, 'default', next);
       }).catch(next);
     }).catch(next);
   }
