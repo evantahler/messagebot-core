@@ -1,9 +1,5 @@
 module.exports = function(sequelize, DataTypes){
   return sequelize.define("list", {
-    'type': {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
     'name': {
       type: DataTypes.STRING,
       allowNull: false,
@@ -31,7 +27,6 @@ module.exports = function(sequelize, DataTypes){
       apiData: function(api){
         return {
           id:           this.id,
-          type:         this.type,
           name:         this.name,
           folder:       this.folder,
           personQuery:  this.personQuery,

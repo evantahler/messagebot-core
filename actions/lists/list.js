@@ -14,9 +14,11 @@ exports.listCreate = {
   middleware:             [ 'logged-in-session', 'status-required-admin' ],
 
   inputs: {
-    type:   { required: true },
     name:   { required: true },
-    folder: { required: true },
+    folder: {
+      required: true,
+      defualt: function(){ return 'default'; }
+    },
 
     personQuery:    {
       required: true,
@@ -91,9 +93,8 @@ exports.listEdit = {
   middleware:             [ 'logged-in-session', 'status-required-admin' ],
 
   inputs: {
-    type:   { required: true },
-    name:   { required: true },
-    folder: { required: true },
+    name:   { required: false },
+    folder: { required: false },
 
     personQuery:    {
       required: true,
