@@ -1,7 +1,7 @@
-{
+module.exports = {
   "settings": {
-    "number_of_shards": 10,
-    "number_of_replicas": 1
+    "number_of_shards": parseInt(process.env.NUMBER_OF_SHARDS || 10),
+    "number_of_replicas": parseInt(process.env.NUMBER_OF_REPLICAS || 0)
   },
 
   "mappings": {
@@ -30,4 +30,4 @@
   "warmers" : {},
 
   "aliases" : {"events": {}}
-}
+};
