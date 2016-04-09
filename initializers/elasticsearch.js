@@ -71,6 +71,52 @@ module.exports = {
         });
       },
 
+      mget: function(alias, ids, callback){
+        var indexes = []; // we meed to scan each index directly, not the alias
+        var jobs = [];
+        var results = [];
+
+        api.elasticsearch.pendingOperations++;
+        api.elasticsearch.client.cat.aliases({
+          name: alias
+        }, function(error, data){
+          api.elasticsearch.pendingOperations--;
+          if(error){ return callback(error); }
+          data = data.split('\n');
+          data.forEach(function(d){
+            var words = d.split(' ');
+            if(words.length > 1){ indexes.push(words[1]); }
+          });
+
+          if(indexes.length === 0){ indexes = [alias]; }
+
+          indexes.forEach(function(index){
+            jobs.push(function(done){
+              api.elasticsearch.pendingOperations++;
+              api.elasticsearch.client.mget({
+                  index: index,
+                  body: {
+                    ids: ids
+                  }
+              }, function(error, data){
+                api.elasticsearch.pendingOperations--;
+                if(error){ return done(error); }
+                data.docs.forEach(function(doc){
+                  if(doc.found === true){
+                    results.push(doc._source);
+                  }
+                });
+                done();
+              });
+            })
+          });
+
+          async.parallelLimit(jobs, 10, function(error){
+            return callback(null, results);
+          });
+        });
+      },
+
       scroll: function(alias, query, callback){
         var scroll = '30s';
         var fields = ['guid', 'userGuid'];

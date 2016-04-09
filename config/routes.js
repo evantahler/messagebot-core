@@ -10,6 +10,7 @@ exports.default = {
         { path: '/users',                action: 'users:list' },
         { path: '/user/statuses',        action: 'user:statusesList' },
         { path: '/list',                 action: 'list:view' },
+        { path: '/list/people',          action: 'list:people:view' },
         { path: '/lists',                action: 'lists:list' },
         { path: '/person',               action: 'person:view' },
         { path: '/people/search',        action: 'people:search' },
@@ -23,13 +24,13 @@ exports.default = {
       ],
 
       post: [
-        { path: '/session',          action: 'session:create' },
-        { path: '/user',             action: 'user:create' },
-        { path: '/list',             action: 'list:create' },
-        { path: '/list/peopleCount', action: 'list:peopleCount' },
-        { path: '/person',           action: 'person:create' },
-        { path: '/event',            action: 'event:create' },
-        { path: '/message',          action: 'message:create' },
+        { path: '/session',     action: 'session:create' },
+        { path: '/user',        action: 'user:create' },
+        { path: '/list',        action: 'list:create' },
+        { path: '/list/people', action: 'list:people:count' },
+        { path: '/person',      action: 'person:create' },
+        { path: '/event',       action: 'event:create' },
+        { path: '/message',     action: 'message:create' },
       ],
 
       put: [

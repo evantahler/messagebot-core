@@ -79,9 +79,30 @@ module.exports = {
         });
 
         jobs.push(function(done){
-          // TODO: Update the 'people' and note what lists they fall into
-          done();
+          api.models.listPerson.destroy({where: {listId: list.id}}).then(function(){
+            done();
+          });
         });
+
+        jobs.push(function(done){
+          var listPersonJobs = [];
+
+          queryResults.final.forEach(function(userGuid){
+            listPersonJobs.push(function(cb){
+              var listPerson = api.models.listPerson.build({
+                userGuid: userGuid,
+                listId: list.id,
+              });
+
+              listPerson.save().then(function(){
+                cb();
+              }).catch(done);
+            });
+          });
+
+          async.parallelLimit(listPersonJobs, 10, done);
+        });
+
 
         async.series(jobs, function(error){
           callback(error, queryResults.final);

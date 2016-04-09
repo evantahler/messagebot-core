@@ -112,6 +112,7 @@
 
     <thead>
       <tr>
+        <th>&nbsp;</th>
         <th>createdAt</th>
         <th>updatedAt</th>
         <th>name</th>
@@ -126,6 +127,7 @@
 
     <tbody ng-repeat="list in lists">
       <tr>
+        <td><a href="/#/list/{{ list.id }}/people"><span class="glyphicon glyphicon-user">&nbsp;</span></a></td>
         <td>{{ list.createdAt }}</td>
         <td>{{ list.updatedAt }}</td>
         <td><strong>{{ list.name }}</strong></td>
@@ -139,4 +141,15 @@
     </tbody>
 
   </table>
+
+  <ul class="pagination pagination-sm" ng-if="lists.length > 0">
+    <li ng-class="pagination.showBack ? '' : 'disabled'" ><a href="/#/lists/list/{{ pagination.firstPage }}">&laquo;</a></li>
+
+    <li ng-repeat="p in pagination.pages" ng-class="p.active ? 'active' : ''">
+      <a href="/#/lists/list/{{ p.page }}">{{ p.page }}</a>
+    </li>
+
+    <li ng-class="pagination.showForward ? '' : 'disabled'"><a href="/#/lists/list/{{ pagination.lastPage }}">&raquo;</a></li>
+  </ul>
+
 </div>

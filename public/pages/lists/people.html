@@ -1,0 +1,41 @@
+<div ng-controller="lists:people:view">
+
+  <div class="col-md-12">
+    <h2>People in "<strong>{{ list.name }}</strong>" ({{ total }} total):</h2>
+
+    <table class="table table-striped table-hover">
+
+      <thead>
+        <tr>
+          <th>&nbsp;</th>
+          <th>guid</th>
+          <th>createdAt</th>
+          <th>updatedAt</th>
+          <th>data</th>
+        </tr>
+      </thead>
+
+      <tbody ng-repeat="person in people">
+        <tr>
+          <td><a href="/#/person/{{ person.guid  }}"><span class="glyphicon glyphicon-pencil">&nbsp;</span></a></td>
+          <td>{{ person.guid }}</td>
+          <td>{{ person.createdAt }}</td>
+          <td>{{ person.updatedAt }}</td>
+          <td>{{ person.data }}</td>
+        </tr>
+      </tbody>
+
+    </table>
+  </div>
+
+  <ul class="pagination pagination-sm" ng-if="people.length > 0">
+    <li ng-class="pagination.showBack ? '' : 'disabled'" ><a href="/#/list/{{ list.id }}/people/{{ pagination.firstPage }}">&laquo;</a></li>
+
+    <li ng-repeat="p in pagination.pages" ng-class="p.active ? 'active' : ''">
+      <a href="/#/list/{{ list.id }}/people/{{ p.page }}">{{ p.page }}</a>
+    </li>
+
+    <li ng-class="pagination.showForward ? '' : 'disabled'"><a href="/#/list/{{ list.id }}/people/{{ pagination.lastPage }}">&raquo;</a></li>
+  </ul>
+
+</div>

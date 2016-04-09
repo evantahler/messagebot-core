@@ -30,7 +30,10 @@ var routes = [
   [ '/messages/search/:query/:page', 'pages/messages/search.html',  'MessageBot: Messages',   true ],
   [ '/message/:guid',                'pages/message/view.html',     'MessageBot: Message',    true ],
 
-  [ '/lists/list',                   'pages/lists/list.html',       'MessageBot: Lists',      true ],
+  [ '/lists/list',                   'pages/lists/list.html',       'MessageBot: Lists',       true ],
+  [ '/lists/list/:page',             'pages/lists/list.html',       'MessageBot: Lists',       true ],
+  [ '/list/:listId/people',          'pages/lists/people.html',     'MessageBot: List People', true ],
+  [ '/list/:listId/people/:page',    'pages/lists/people.html',     'MessageBot: List People', true ],
 
   [ '/account',                      'pages/account.html',          'MessageBot: Account',    true ],
   [ '/users',                        'pages/users.html',            'MessageBot: Users',      true ],

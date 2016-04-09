@@ -4,13 +4,30 @@ exports.listsList = {
   outputExample:          {},
   middleware:             [ 'logged-in-session' ],
 
-  inputs: {},
+  inputs: {
+    from:         {
+      required: false,
+      formatter: function(p){ return parseInt(p); },
+      default:   function(p){ return 0; },
+    },
+    size:         {
+      required: false,
+      formatter: function(p){ return parseInt(p); },
+      default:   function(p){ return 100; },
+    },
+  },
 
   run: function(api, data, next){
 
-    api.models.list.findAll({order: 'folder asc, name asc'}).then(function(lists){
+    api.models.list.findAndCountAll({
+      order: 'folder asc, name asc',
+      offset: data.params.from,
+      limit: data.params.size,
+    }).then(function(response){
+      data.response.total = response.count;
       data.response.lists = [];
-      lists.forEach(function(list){
+
+      response.rows.forEach(function(list){
         data.response.lists.push( list.apiData(api) );
       });
 

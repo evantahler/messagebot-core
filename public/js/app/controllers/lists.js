@@ -1,9 +1,13 @@
-app.controller('lists:list', ['$scope', '$rootScope', '$location', 'ngNotify', function($scope, $rootScope, $location, ngNotify){
+app.controller('lists:list', ['$scope', '$rootScope', '$location', 'ngNotify', '$routeParams', function($scope, $rootScope, $location, ngNotify, $routeParams){
   $scope.lists = [];
   $scope.forms = {};
+  $scope.pagination = {};
   $scope.forms.createList = {};
   $scope.forms.editlist   = {};
+
   var refreshTimer;
+  var currentPage = $routeParams.page || 0;
+  var perPage = 50;
 
   var prettyPrintJSON = function(j){
     if(j && typeof j !== 'string'){
@@ -12,8 +16,13 @@ app.controller('lists:list', ['$scope', '$rootScope', '$location', 'ngNotify', f
   };
 
   $scope.loadLists = function(){
-    $rootScope.authenticatedActionHelper($scope, {}, '/api/lists', 'GET', function(data){
+    $rootScope.authenticatedActionHelper($scope, {
+      from: (currentPage * perPage),
+      size: perPage
+    }, '/api/lists', 'GET', function(data){
       $scope.lists = data.lists;
+      $scope.total = data.total;
+      $scope.pagination = $rootScope.genratePagination(currentPage, perPage, $scope.total);
     });
   };
 
@@ -53,7 +62,7 @@ app.controller('lists:list', ['$scope', '$rootScope', '$location', 'ngNotify', f
   };
 
   $scope.peopleCount = function(listId){
-    $rootScope.authenticatedActionHelper($scope, {listId: listId}, '/api/list/peopleCount', 'POST', function(data){
+    $rootScope.authenticatedActionHelper($scope, {listId: listId}, '/api/list/people', 'POST', function(data){
       ngNotify.set('recount enqueued...', 'success');
     });
   };
@@ -72,5 +81,31 @@ app.controller('lists:list', ['$scope', '$rootScope', '$location', 'ngNotify', f
   });
 
   $scope.loadLists();
-  setInterval($scope.loadLists, (1000 * 10));
+  refreshTimer = setInterval($scope.loadLists, (1000 * 10));
+}]);
+
+app.controller('lists:people:view', ['$scope', '$rootScope', '$location', 'ngNotify', '$routeParams', function($scope, $rootScope, $location, ngNotify, $routeParams){
+  $scope.list;
+  $scope.people = [];
+  $scope.pagination = {};
+  var currentPage = $routeParams.page || 0;
+  var perPage = 50;
+
+  $rootScope.authenticatedActionHelper($scope, {listId: $routeParams.listId}, '/api/list', 'GET', function(data){
+    $scope.list = data.list;
+  });
+
+  $scope.loadPeople = function(){
+    $rootScope.authenticatedActionHelper($scope, {
+      from: (currentPage * perPage),
+      size: perPage,
+      listId: $routeParams.listId,
+    }, '/api/list/people', 'GET', function(data){
+      $scope.people = data.people;
+      $scope.total = data.total;
+      $scope.pagination = $rootScope.genratePagination(currentPage, perPage, $scope.total);
+    });
+  };
+
+  $scope.loadPeople();
 }]);
