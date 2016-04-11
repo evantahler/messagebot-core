@@ -82,16 +82,31 @@ app.controller('lists:list', ['$scope', '$rootScope', '$location', 'ngNotify', '
   refreshTimer = setInterval($scope.loadLists, (1000 * 10));
 }]);
 
-app.controller('lists:people:view', ['$scope', '$rootScope', '$location', 'ngNotify', '$routeParams', function($scope, $rootScope, $location, ngNotify, $routeParams){
+app.controller('lists:people:view', ['$scope', '$rootScope', '$location', 'ngNotify', '$routeParams', 'FileUploader', function($scope, $rootScope, $location, ngNotify, $routeParams, FileUploader){
   $scope.list;
   $scope.forms = {
     addListPeopleViaUserGuids: {},
-    addListPeopleViafile: {},
   };
   $scope.people = [];
   $scope.pagination = {};
   var currentPage = $routeParams.page || 0;
   var perPage = 50;
+
+  $scope.uploader = new FileUploader({
+    url: '/api/list/people',
+    method: 'PUT',
+    formData: [
+      {listId: $routeParams.listId},
+      {csrfToken: $rootScope.csrfToken},
+    ]
+  });
+
+  window.uploader = $scope.uploader
+
+  $scope.uploader.onAfterAddingFile = function(item){
+    item.removeAfterUpload = true;
+    while($scope.uploader.queue.length > 1){ $scope.uploader.removeFromQueue(0); }
+  };
 
   $rootScope.authenticatedActionHelper($scope, {listId: $routeParams.listId}, '/api/list', 'GET', function(data){
     $scope.list = data.list;
@@ -113,13 +128,36 @@ app.controller('lists:people:view', ['$scope', '$rootScope', '$location', 'ngNot
     $('#addListPeopleViaUserGuidModal').modal('show');
   };
 
+  $scope.addListPeopleViaFile = function(){
+    $('#addListPeopleViaFileModal').modal('show');
+  };
+
   $scope.processAddListPeopleViaUserGuid = function(){
     $scope.forms.addListPeopleViaUserGuids.listId = $scope.list.id;
     $rootScope.authenticatedActionHelper($scope, $scope.forms.addListPeopleViaUserGuids, '/api/list/people', 'PUT', function(data){
       $rootScope.clearModals('#addListPeopleViaUserGuidModal');
       $scope.loadPeople();
+      $scope.forms.addListPeopleViaUserGuids = {};
       ngNotify.set('People Updated', 'success');
     });
+  };
+
+  $scope.processAddListPeopleViaFile = function(){
+    $scope.uploader.uploadAll();
+    var errored = false;
+
+    $scope.uploader.onCompleteAll = function(){
+      if(errored !== true){
+        $rootScope.clearModals('#addListPeopleViaFileModal');
+        $scope.loadPeople();
+        ngNotify.set('People Updated', 'success');
+      }
+    };
+
+    $scope.uploader.onErrorItem = function(item, response, status, headers){
+      errored = true;
+      ngNotify.set('error uploading ' + item.file.name + ' => ' + response.error, 'error');
+    };
   };
 
   $scope.removeListPerson = function(userGuid){

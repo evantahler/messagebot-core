@@ -53,7 +53,7 @@ app.controller('record:view', ['$scope', '$rootScope', '$location', 'ngNotify', 
         userId: $rootScope.user.id,
         guid: $scope.guid,
       }, '/api/' + $scope.recordType, 'DELETE', function(data){
-        $location.path('/' + $scope.section);
+        $location.path('/' + $scope.section + '/recent');
       });
     }
   };

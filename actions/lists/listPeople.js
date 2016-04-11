@@ -1,7 +1,15 @@
-var async = require('async');
+var async        = require('async');
+var fs           = require('fs');
+var csv          = require('fast-csv');
+var dateformat   = require('dateformat');
 
 var alias = function(api){
   return api.env + '-' + 'people';
+};
+
+var index = function(api){
+  var thisMonth = dateformat(new Date(), 'yyyy-mm');
+  return alias(api) + '-' + thisMonth;
 };
 
 var guidListFormatter = function(p){
@@ -36,6 +44,15 @@ exports.listPeopleAdd = {
       if(!list){ return next(new Error('list not found')); }
       if(list.type !== 'static'){ return next(new Error('you can only modify static list membership via this method')); }
 
+      var complete = function(){
+        if(jobs.length === 0){ return next(new Error('nothing to edit')); }
+
+        async.series(jobs, function(error){
+          if(!error){ api.tasks.enqueue('lists:peopleCount', {listId: list.id}, 'default', next); }
+          else{ return next(error); }
+        });
+      };
+
       if(data.params.userGuids){
         data.params.userGuids.forEach(function(userGuid){
           jobs.push(function(done){
@@ -49,18 +66,47 @@ exports.listPeopleAdd = {
               }).catch(done);
             });
           });
+
+          complete();
         });
       }
 
       else if(data.params.file){
-        // TODO: this
+        var file = data.params.file.path;
+        var fileStream = fs.createReadStream(file).on('error', next);;
+        var csvStream = csv({
+          headers: true,
+          ignoreEmpty: true,
+          trim: true,
+        }).on('data', function(d){
+          jobs.push(function(done){
+            var person = new api.models.person(index(api));
+
+            if(d.guid){        person.data.guid = d.guid;               }
+            if(d.createdAt){   person.data.createdAt = d.createdAt;     }
+
+            for(var i in d){
+              if(person.data[i] === null || person.data[i] === undefined){
+                person.data[i] = d[i];
+              }
+            }
+
+            person.create(function(error){
+              if(error){ return done(new Error('Error adding person ' + JSON.stringify(d) + ' | ' + error)); }
+              console.log(person)
+              api.models.listPerson.findOrCreate({
+                where:{ userGuid: person.data.guid, listId: list.id }
+              }).then(function(){
+                done();
+              }).catch(done);
+            });
+          });
+        }).on('end', complete);
+
+        fileStream.pipe(csvStream);
       }
 
-      if(jobs.length === 0){ return next(new Error('nothing to edit')); }
-      async.series(jobs, function(error){
-        if(!error){ api.tasks.enqueue('lists:peopleCount', {listId: list.id}, 'default', next); }
-        else{ return next(error); }
-      });
+      else{ return next(new Error('no people provided')); }
     }).catch(next);
   }
 };
