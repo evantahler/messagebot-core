@@ -118,10 +118,14 @@ exports.personDelete = {
     var person = new api.models.person(alias(api), data.params.guid);
     person.hydrate(function(error){
       if(error){ return next(error); }
-      person.delete(function(error){
-        if(error){ return next(error); }
-        next();
-      });
+      api.models.listPerson.destroy({
+        where: {userGuid: person.data.guid}
+      }).then(function(){
+        person.delete(function(error){
+          if(error){ return next(error); }
+          next();
+        });
+      }).catch(next);
     });
   }
 };
