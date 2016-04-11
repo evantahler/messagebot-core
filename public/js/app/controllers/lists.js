@@ -84,6 +84,10 @@ app.controller('lists:list', ['$scope', '$rootScope', '$location', 'ngNotify', '
 
 app.controller('lists:people:view', ['$scope', '$rootScope', '$location', 'ngNotify', '$routeParams', function($scope, $rootScope, $location, ngNotify, $routeParams){
   $scope.list;
+  $scope.forms = {
+    addListPeopleViaUserGuids: {},
+    addListPeopleViafile: {},
+  };
   $scope.people = [];
   $scope.pagination = {};
   var currentPage = $routeParams.page || 0;
@@ -103,6 +107,31 @@ app.controller('lists:people:view', ['$scope', '$rootScope', '$location', 'ngNot
       $scope.total = data.total;
       $scope.pagination = $rootScope.genratePagination(currentPage, perPage, $scope.total);
     });
+  };
+
+  $scope.addListPeopleViaUserGuid = function(){
+    $('#addListPeopleViaUserGuidModal').modal('show');
+  };
+
+  $scope.processAddListPeopleViaUserGuid = function(){
+    $scope.forms.addListPeopleViaUserGuids.listId = $scope.list.id;
+    $rootScope.authenticatedActionHelper($scope, $scope.forms.addListPeopleViaUserGuids, '/api/list/people', 'PUT', function(data){
+      $rootScope.clearModals('#addListPeopleViaUserGuidModal');
+      $scope.loadPeople();
+      ngNotify.set('People Updated', 'success');
+    });
+  };
+
+  $scope.removeListPerson = function(userGuid){
+    if(confirm('Are you sure?')){
+      $rootScope.authenticatedActionHelper($scope, {
+        listId: $scope.list.id,
+        userGuids: userGuid
+      }, '/api/list/people', 'DELETE', function(data){
+        ngNotify.set('Person removed from list', 'success');
+        $scope.loadPeople();
+      });
+    }
   };
 
   $scope.loadPeople();
