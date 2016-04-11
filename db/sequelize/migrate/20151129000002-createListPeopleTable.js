@@ -37,6 +37,13 @@ module.exports = {
         indexName: 'listIdIndex'
       }
     );
+
+    queryInterface.addIndex(
+      'listPeople', ['listId', 'userGuid'],{
+        indexName: 'listIdIndexLock',
+        indicesType: 'UNIQUE'
+      }
+    );
   },
 
   down: function (queryInterface, Sequelize) {
