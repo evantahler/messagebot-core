@@ -2,8 +2,8 @@ app.controller('lists:list', ['$scope', '$rootScope', '$location', 'ngNotify', '
   $scope.lists = [];
   $scope.forms = {};
   $scope.pagination = {};
-  $scope.forms.createList = {};
-  $scope.forms.editlist   = {};
+  $scope.forms.createList  = {};
+  $scope.forms.editList   = {};
 
   var refreshTimer;
   var currentPage = $routeParams.page || 0;
@@ -26,15 +26,14 @@ app.controller('lists:list', ['$scope', '$rootScope', '$location', 'ngNotify', '
     });
   };
 
-  $scope.createList = function(){
-    $scope.forms.createList = {};
+  $scope.createList = function(type){
+    $scope.forms.createList = {type: type};
     $('#createListModal').modal('show');
   };
 
   $scope.processCreateListForm = function(){
     $rootScope.authenticatedActionHelper($scope, $scope.forms.createList, '/api/list', 'POST', function(data){
       $rootScope.clearModals('#createListModal');
-      $scope.forms.createList = {};
       $scope.loadLists();
       ngNotify.set('List Created', 'success');
     });
@@ -44,9 +43,9 @@ app.controller('lists:list', ['$scope', '$rootScope', '$location', 'ngNotify', '
     $scope.forms.editList = {};
     $('#editListModal').modal('show');
     $rootScope.authenticatedActionHelper($scope, {listId: listId}, '/api/list', 'GET', function(data){
-      data.list.personQuery  = prettyPrintJSON(data.list.personQuery);
-      data.list.eventQuery   = prettyPrintJSON(data.list.eventQuery);
-      data.list.messageQuery = prettyPrintJSON(data.list.messageQuery);
+      if(data.list.personQuery){  data.list.personQuery  = prettyPrintJSON(data.list.personQuery); }
+      if(data.list.eventQuery){   data.list.eventQuery   = prettyPrintJSON(data.list.eventQuery); }
+      if(data.list.messageQuery){ data.list.messageQuery = prettyPrintJSON(data.list.messageQuery); }
       $scope.forms.editList = data.list;
     });
   };
@@ -55,7 +54,6 @@ app.controller('lists:list', ['$scope', '$rootScope', '$location', 'ngNotify', '
     $scope.forms.editList.listId = $scope.forms.editList.id;
     $rootScope.authenticatedActionHelper($scope, $scope.forms.editList, '/api/list', 'PUT', function(data){
       $rootScope.clearModals('#editListModal');
-      $scope.forms.editList = {};
       $scope.loadLists();
       ngNotify.set('List Updated', 'success');
     });

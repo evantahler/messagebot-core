@@ -9,6 +9,10 @@ module.exports = function(sequelize, DataTypes){
       allowNull: false,
       defaultValue: 'default',
     },
+    'type': {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
 
     'personQuery': {
       type: DataTypes.TEXT,
@@ -81,6 +85,7 @@ module.exports = function(sequelize, DataTypes){
           id:           this.id,
           name:         this.name,
           folder:       this.folder,
+          type:         this.type,
 
           personQuery:  this.personQuery,
           eventQuery:   this.eventQuery,

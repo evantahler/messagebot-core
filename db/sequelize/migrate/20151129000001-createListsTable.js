@@ -24,6 +24,10 @@ module.exports = {
           allowNull: false,
           defaultValue: 'default',
         },
+        'type': {
+          type: Sequelize.STRING,
+          allowNull: false,
+        },
 
         'personQuery': {
           type: Sequelize.TEXT,
