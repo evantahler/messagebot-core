@@ -38,9 +38,16 @@ module.exports = {
 
         for(var i in searchKeys){
           var q = {};
+          var container = {};
+          var type = 'term';
+          if( searchValues[i].indexOf('*') >=0 ){ type = 'wildcard'; }
           q[searchKeys[i]] = searchValues[i];
-          musts.push({ wildcard: q });
+          // q['analyze_wildcard'] = true;
+          container[type] = q;
+          musts.push(container);
         }
+
+        console.log(musts)
 
         if(!sort){
           sort = [
@@ -210,9 +217,10 @@ module.exports = {
     // elasticsearchModel //
     ////////////////////////
 
-    var elasticsearchModel = function(type, index, guid){
+    var elasticsearchModel = function(type, index, alias, guid){
       this.type  = type;
       this.index = index || null;
+      this.alias = alias || null;
       this.data  = {
         guid: api.elasticsearch.cleanGuid(guid) || null
       };
@@ -240,6 +248,9 @@ module.exports = {
 
     elasticsearchModel.prototype.create = function(callback){
       var self = this;
+      var searchKey;
+      var searchValue;
+
       if(!self.data.guid){ self.data.guid = api.elasticsearch.cleanGuid( uuid.v4() ); }
       if(!self.index){ return callback(new Error('index is required')); }
 
@@ -254,16 +265,38 @@ module.exports = {
         payload.createdAt = payload.updatedAt;
       }
 
-      api.elasticsearch.pendingOperations++;
-      api.elasticsearch.client.create({
-        index: self.index,
-        type: self.type,
-        id: self.data.guid,
-        body: payload
-      }, function(error, data){
-        api.elasticsearch.pendingOperations--;
-        callback(error, data);
+      var doCreate = function(){
+        api.elasticsearch.pendingOperations++;
+        api.elasticsearch.client.create({
+          index: self.index,
+          type: self.type,
+          id: self.data.guid,
+          body: payload
+        }, function(error, data){
+          api.elasticsearch.pendingOperations--;
+          callback(error, data);
+        });
+      }
+
+      // we need to ensure that none of the params this new instance has match an existing person
+      // if they do, we need to turn this into a merge operation.
+      // to match as loosely as possible, we'll only work with the first matching param
+      api.config.messagebot.uniqueFields[self.type].forEach(function(k){
+        if(payload[k] && !searchKey){ searchKey = k; searchValue = payload[k]; }
+        if(payload.data[k] && !searchKey){ searchKey = ('data.' + k); searchValue = payload.data[k]; }
       });
+
+      if(!searchKey){ doCreate(); }
+      else{
+        api.elasticsearch.search(self.alias, [searchKey], [searchValue], 0, 1, null, function(error, results){
+          console.log(error)
+          console.log(results)
+
+          if(error){ return callback(error); }
+          if(results.length === 0){ doCreate(); }
+          else{ self.edit(callback); }
+        });
+      }
     };
 
     elasticsearchModel.prototype.edit = function(callback){
@@ -307,7 +340,7 @@ module.exports = {
 
         api.elasticsearch.pendingOperations++;
         api.elasticsearch.client.index({
-          index: self.index,
+          index: self.data._index,
           type: self.type,
           id: self.data.guid,
           body: payload
@@ -332,7 +365,7 @@ module.exports = {
       // You cannot GET over an alias...
       api.elasticsearch.pendingOperations++;
       api.elasticsearch.client.search({
-        alias: self.index,
+        alias: self.alias,
         type: self.type,
         body: {
           query: { ids: { values: [self.data.guid] } }
@@ -376,9 +409,10 @@ module.exports = {
       var modelName = Object.keys(data.mappings)[0];
       var requiredFields = Object.keys(data.mappings[modelName].properties);
 
-      var thisModel = function(index, guid){
+      var thisModel = function(index, alias, guid){
         if(!index){ index = api.env + '-' + name + '-' + dateformat(new Date(), 'yyyy-mm'); }
-        elasticsearchModel.call(this, modelName, index, guid);
+        if(!alias){ alias = api.env + '-' + name; }
+        elasticsearchModel.call(this, modelName, index, alias, guid);
         this.requiredFields = requiredFields;
       };
 

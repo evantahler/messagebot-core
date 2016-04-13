@@ -33,7 +33,7 @@ exports.messageCreate = {
   },
 
   run: function(api, data, next){
-    var message = new api.models.message(index(api));
+    var message = new api.models.message(index(api), alias(api));
 
     if(data.params.guid){      message.data.guid = data.params.guid;           }
     if(data.params.userGuid){  message.data.userGuid = data.params.userGuid;   }
@@ -76,7 +76,7 @@ exports.messageEdit = {
   },
 
   run: function(api, data, next){
-    var message = new api.models.message(index(api), data.params.guid);
+    var message = new api.models.message(index(api), alias(api), data.params.guid);
 
     if(data.params.guid){     message.data.guid = data.params.guid;         }
     if(data.params.userGuid){ message.data.userGuid = data.params.userGuid; }
@@ -107,7 +107,7 @@ exports.messageView = {
   },
 
   run: function(api, data, next){
-    var message = new api.models.message(alias(api), data.params.guid);
+    var message = new api.models.message(index(api), alias(api), data.params.guid);
     message.hydrate(function(error){
       if(error){ return next(error); }
       data.response.message = message.data;
@@ -127,7 +127,7 @@ exports.messageDelete = {
   },
 
   run: function(api, data, next){
-    var message = new api.models.message(alias(api), data.params.guid);
+    var message = new api.models.message(index(api), alias(api), data.params.guid);
     message.hydrate(function(error){
       if(error){ return next(error); }
       message.delete(function(error){

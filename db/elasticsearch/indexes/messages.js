@@ -6,6 +6,19 @@ module.exports = {
 
   "mappings": {
     "message": {
+
+      "dynamic_templates": [
+        {
+          "strings": {
+            "match_mapping_type": "string",
+            "mapping": {
+              "type": "string",
+              "index": "not_analyzed",
+            }
+          }
+        }
+      ],
+      
       "properties": {
         "guid":       { "type": "string" },
 
@@ -13,7 +26,7 @@ module.exports = {
         "type":      { "type": "string"  },
         "body":      { "type": "string"  },
 
-        "data":      { "type": "object"  },
+        "data":      { "type": "object", "index": "not_analyzed" },
 
         "createdAt": { "type":  "date" },
         "updatedAt": { "type":  "date" },

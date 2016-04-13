@@ -91,6 +91,7 @@ exports.listPeopleAdd = {
               }
             }
 
+            // TODO: This should be using the action?  To help with de-duping?
             person.create(function(error){
               if(error){ return done(new Error('Error adding person ' + JSON.stringify(d) + ' | ' + error)); }
               console.log(person)

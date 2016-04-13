@@ -6,13 +6,26 @@ module.exports = {
 
   "mappings": {
     "person": {
+
+      "dynamic_templates": [
+        {
+          "strings": {
+            "match_mapping_type": "string",
+            "mapping": {
+              "type": "string",
+              "index": "not_analyzed",
+            }
+          }
+        }
+      ],
+
       "properties": {
         "guid":        { "type": "string"  },
 
         "lists":       { "type": "string"  },
 
-        "data":        { "type": "object"  },
-        "permissions": { "type": "object"  },
+        "data":        { "type": "object", "index": "not_analyzed" },
+        "permissions": { "type": "object", "index": "not_analyzed" },
 
         "createdAt":   { "type":  "date" },
         "updatedAt":   { "type":  "date" }

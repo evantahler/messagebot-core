@@ -6,6 +6,19 @@ module.exports = {
 
   "mappings": {
     "event": {
+
+      "dynamic_templates": [
+        {
+          "strings": {
+            "match_mapping_type": "string",
+            "mapping": {
+              "type": "string",
+              "index": "not_analyzed",
+            }
+          }
+        }
+      ],
+
       "properties": {
         "guid":       { "type": "string"   },
 
@@ -14,7 +27,7 @@ module.exports = {
         "userGuid":   { "type": "string"   },
         "type":       { "type": "string"   },
 
-        "data":       { "type": "object"   },
+        "data":       { "type": "object", "index": "not_analyzed" },
 
         "location":   {
           "type": "geo_point",

@@ -40,7 +40,7 @@ exports.eventCreate = {
   },
 
   run: function(api, data, next){
-    var event = new api.models.event(index(api));
+    var event = new api.models.event(index(api), alias(api));
 
     if(data.params.ip){        event.data.ip = data.params.ip;               }
     if(data.params.device){    event.data.device = data.params.device;       }
@@ -109,7 +109,7 @@ exports.eventEdit = {
   },
 
   run: function(api, data, next){
-    var event = new api.models.event(index(api), data.params.guid);
+    var event = new api.models.event(index(api), alias(api), data.params.guid);
 
     if(data.params.ip){       event.data.ip = data.params.ip;             }
     if(data.params.device){   event.data.device = data.params.device;     }
@@ -139,7 +139,7 @@ exports.eventView = {
   },
 
   run: function(api, data, next){
-    var event = new api.models.event(alias(api), data.params.guid);
+    var event = new api.models.event(index(api), alias(api), data.params.guid);
     event.hydrate(function(error){
       if(error){ return next(error); }
       data.response.event = event.data;
@@ -159,7 +159,7 @@ exports.eventDelete = {
   },
 
   run: function(api, data, next){
-    var event = new api.models.event(alias(api), data.params.guid);
+    var event = new api.models.event(index(api), alias(api), data.params.guid);
     event.hydrate(function(error){
       if(error){ return next(error); }
       event.delete(function(error){

@@ -29,7 +29,7 @@ exports.personCreate = {
   },
 
   run: function(api, data, next){
-    var person = new api.models.person(index(api));
+    var person = new api.models.person(index(api), alias(api));
     if(data.params.guid){        person.data.guid = data.params.guid;               }
     if(data.params.permissions){ person.data.permissions = data.params.permissions; }
     if(data.params.createdAt){ person.data.createdAt = data.params.createdAt; }
@@ -71,7 +71,7 @@ exports.personEdit = {
   },
 
   run: function(api, data, next){
-    var person = new api.models.person(index(api), data.params.guid);
+    var person = new api.models.person(index(api), alias(api), data.params.guid);
     if(data.params.permissions){ person.data.permissions = data.params.permissions; }
 
     for(var i in data.params.data){ person.data[i] = data.params.data[i]; }
@@ -91,11 +91,11 @@ exports.personView = {
   middleware:             [],
 
   inputs: {
-    guid:         { required: true },
+    guid: { required: true },
   },
 
   run: function(api, data, next){
-    var person = new api.models.person(alias(api), data.params.guid);
+    var person = new api.models.person(index(api), alias(api), data.params.guid);
     person.hydrate(function(error){
       if(error){ return next(error); }
       data.response.person = person.data;
@@ -115,7 +115,7 @@ exports.personDelete = {
   },
 
   run: function(api, data, next){
-    var person = new api.models.person(alias(api), data.params.guid);
+    var person = new api.models.person(index(api), alias(api), data.params.guid);
     person.hydrate(function(error){
       if(error){ return next(error); }
       api.models.listPerson.destroy({
