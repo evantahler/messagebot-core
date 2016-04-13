@@ -47,8 +47,6 @@ module.exports = {
           musts.push(container);
         }
 
-        console.log(musts)
-
         if(!sort){
           sort = [
             { "createdAt" : "desc"}
@@ -289,12 +287,12 @@ module.exports = {
       if(!searchKey){ doCreate(); }
       else{
         api.elasticsearch.search(self.alias, [searchKey], [searchValue], 0, 1, null, function(error, results){
-          console.log(error)
-          console.log(results)
-
           if(error){ return callback(error); }
           if(results.length === 0){ doCreate(); }
-          else{ self.edit(callback); }
+          else{
+            self.data.guid = results[0].guid;
+            self.edit(callback);
+          }
         });
       }
     };
