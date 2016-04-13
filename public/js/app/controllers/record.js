@@ -12,6 +12,7 @@ app.controller('record:view', ['$scope', '$rootScope', '$location', 'ngNotify', 
       guid: $scope.guid
     }, '/api/' + $scope.recordType, 'GET', function(data){
       $scope.record = data[$scope.recordType];
+      if(data.lists){ $scope.lists = data.lists; }
     });
   };
 

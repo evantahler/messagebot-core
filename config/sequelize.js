@@ -8,7 +8,6 @@ exports.default = {
       "username"    : process.env.MYSQL_USER,
       "password"    : process.env.MYSQL_PASS,
       "logging"     : false,
-      "toSync"      : false,
     };
   }
 };
@@ -22,7 +21,6 @@ exports.test = {
       "username"    : 'root',
       "password"    : null,
       "logging"     : false,
-      "toSync"      : false,
     };
   }
 };

@@ -28,15 +28,11 @@ module.exports = {
           api.models[name] = api.sequelize.sequelize.import(dir + '/' + file);
         });
 
-        if(api.config.sequelize.toSync === true){
-          api.sequelize.sequelize.sync().then(function(){
-            callback();
-          }).catch(function(error){
-            callback(error);
-          });
-        }else{
-          callback();
-        }
+        // associations
+        api.models.list.hasMany(api.models.listPerson);
+        api.models.listPerson.belongsTo(api.models.list);
+
+        callback();
       },
 
       test: function(callback){
@@ -53,7 +49,7 @@ module.exports = {
       query: function(q, type, callback){
         if(typeof type === 'function'){ callback = type; type = null; }
         if(!type){ type = api.sequelize.sequelize.QueryTypes.SELECT; }
-        
+
         api.sequelize.sequelize.query(q, {type: type}).then(function(users){
           callback(null, users);
         }).catch(callback);

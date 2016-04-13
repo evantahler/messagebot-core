@@ -99,7 +99,18 @@ exports.personView = {
     person.hydrate(function(error){
       if(error){ return next(error); }
       data.response.person = person.data;
-      next();
+      data.response.lists = [];
+
+      api.models.listPerson.findAll({where: {
+        userGuid: person.data.guid
+      }, include: [api.models.list]}).then(function(listPeople){
+        listPeople.forEach(function(listPerson){
+          var d = listPerson.list.apiData(api);
+          d.joinedAt = listPerson.createdAt;
+          data.response.lists.push(d);
+        })
+        next();
+      }).catch(next);
     });
   }
 };
