@@ -36,7 +36,7 @@ module.exports = {
         "type":      { "type": "string"  },
         "body":      { "type": "string"  },
 
-        "data":      { "type": "object", "index": "not_analyzed" },
+        "data":      { "type": "object"  },
 
         "createdAt": { "type":  "date" },
         "updatedAt": { "type":  "date" },

@@ -6,6 +6,8 @@ module.exports = {
 
   initialize: function(api, next){
 
+    api.transports = [];
+
     var middleware = {
       // These actions are restricted to the website (and you need a CSRF token)
       'data-preperation': {

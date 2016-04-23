@@ -37,7 +37,7 @@ module.exports = {
         "userGuid":   { "type": "string"   },
         "type":       { "type": "string"   },
 
-        "data":       { "type": "object", "index": "not_analyzed" },
+        "data":       { "type": "object" },
 
         "location":   {
           "type": "geo_point",

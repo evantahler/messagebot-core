@@ -34,8 +34,8 @@ module.exports = {
 
         "lists":       { "type": "string"  },
 
-        "data":        { "type": "object", "index": "not_analyzed" },
-        "permissions": { "type": "object", "index": "not_analyzed" },
+        "data":        { "type": "object" },
+        "permissions": { "type": "object" },
 
         "createdAt":   { "type":  "date" },
         "updatedAt":   { "type":  "date" }
