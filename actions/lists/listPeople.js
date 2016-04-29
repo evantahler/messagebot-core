@@ -56,9 +56,9 @@ exports.listPeopleAdd = {
       if(data.params.userGuids){
         data.params.userGuids.forEach(function(userGuid){
           jobs.push(function(done){
-            var person = new api.models.person(alias(api), userGuid);
+            var person = new api.models.person(index(api), alias(api), userGuid);
             person.hydrate(function(error){
-              if(error){ return done(new Error('Error adding guid #' + userGuid)); }
+              if(error){ return done(new Error('Error adding guid #' + userGuid + ': ' + String(error))); }
               api.models.listPerson.findOrCreate({
                 where:{ userGuid: userGuid, listId: list.id }
               }).then(function(){
@@ -80,7 +80,7 @@ exports.listPeopleAdd = {
           trim: true,
         }).on('data', function(d){
           jobs.push(function(done){
-            var person = new api.models.person(index(api));
+            var person = new api.models.person(index(api), alias(api));
 
             if(d.guid){        person.data.guid = d.guid;               }
             if(d.createdAt){   person.data.createdAt = d.createdAt;     }
