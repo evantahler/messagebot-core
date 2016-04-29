@@ -1,0 +1,30 @@
+{
+  "name": "messagebot-core",
+  "description": "messagebot-core",
+  "directory": "./public/js/bower/",
+  "main": "",
+  "authors": [
+    "Evan Tahler <evan@messagebot.io>"
+  ],
+  "license": "Apache-2.0",
+  "homepage": "https://github.com/messagebot/messagebot-core",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular": "^1.5.5",
+    "highcharts": "^4.2.4",
+    "ng-notify": "^0.8.0",
+    "angular-route": "^1.5.5",
+    "angular-file-upload": "^2.2.0",
+    "bootstrap": "^3.3.6",
+    "jquery": "^2.2.3",
+    "bootstrap-datepicker": "^1.6.0",
+    "bootswatch-dist": "simplex"
+  }
+}

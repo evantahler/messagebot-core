@@ -8,6 +8,7 @@ tmp/*
 
 public/javascript/actionheroClient.js
 public/javascript/actionheroClient.min.js
+public/bower_components/*
 
 npm-debug.log
 .DS_Store

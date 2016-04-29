@@ -10,6 +10,10 @@
 - Redis
 - ElasticSearch
 
+## Install
+
+- `npm install`
+
 ## Configuration and Running
 
 `source .env && npm run migrate && npm start`
