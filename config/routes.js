@@ -21,6 +21,7 @@ exports.default = {
         { path: '/message',              action: 'message:view' },
         { path: '/messages/search',      action: 'messages:search' },
         { path: '/messages/aggregation', action: 'messages:aggregation' },
+        { path: '/transports',           action: 'transports:list' },
       ],
 
       post: [

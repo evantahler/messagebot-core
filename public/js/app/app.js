@@ -37,6 +37,7 @@ var routes = [
 
   [ '/account',                      'pages/account.html',          'MessageBot: Account',    true ],
   [ '/users',                        'pages/users.html',            'MessageBot: Users',      true ],
+  [ '/settings',                     'pages/settings.html',         'MessageBot: Settings',   true ],
 
   [ '/logout',                       'pages/session/destroy.html',  'MessageBot: Log Out',    false ],
 ];
