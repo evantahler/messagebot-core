@@ -1,7 +1,7 @@
 {
   "author": "Evan Tahler <evan@messagebot.io>",
-  "name": "MessageBot.io",
-  "description": "MessageBot.io",
+  "name": "messagebot-core",
+  "description": "messagebot-core",
   "version": "0.0.1",
   "license": "Apache-2.0",
   "repository": {
@@ -30,6 +30,7 @@
     "ws": "latest"
   },
   "devDependencies": {
+    "bower": "^1.7.9",
     "mocha": "latest",
     "should": "latest",
     "faker": "^3.1.0"
@@ -40,10 +41,11 @@
     "actionhero": "actionhero",
     "startCluster": "actionhero startCluster",
     "test": "NODE_ENV=test npm run migrate && NODE_ENV=test mocha",
-    "migrate": "npm run migrate:maxmind && npm run migrate:sequelize && npm run migrate:elasticsearch",
+    "migrate": "npm run migrate:bower && npm run migrate:maxmind && npm run migrate:sequelize && npm run migrate:elasticsearch",
     "migrate:elasticsearch": "node db/elasticsearch/migrate.js",
     "migrate:sequelize": "sequelize db:migrate",
     "migrate:maxmind": "./db/maxmind/download.sh",
+    "migrate:bower": "bower install",
     "faker:seed": "node db/seed/seed.js"
   }
 }
