@@ -23,6 +23,7 @@
     "maxmind": "^0.6.0",
     "messagebot-transport-smtp": "messagebot/messagebot-transport-smtp",
     "mkdirp": "^0.5.1",
+    "mustache": "^2.2.1",
     "mysql": "^2.9.0",
     "node-uuid": "^1.4.7",
     "qs": "^6.1.0",

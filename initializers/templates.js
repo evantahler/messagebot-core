@@ -4,6 +4,7 @@ var fs         = require('fs');
 var glob       = require('glob');
 var path       = require('path');
 var uuid       = require('node-uuid');
+var mustache   = require('mustache');
 
 var personAlias = function(api){
   return api.env + '-' + 'people';
@@ -50,10 +51,14 @@ module.exports = {
         var person = new api.models.person(personIndex(api), personAlias(api), userGuid);
         person.hydrate(function(error){
           if(error){ return callback(error); }
+          var view = {};
+          view.person = person.data;
+          view.template = template;
+          view.now = new Date;
 
           var fileBase = 'render/' + uuid.v4() + '.html';
           var file = path.normalize(api.config.messagebot.tmpPath) + '/' + fileBase;
-          var html = template.template;
+          var html = mustache.render(template.template, view);
 
           fs.writeFile(file, html, function(error){
             if(error){ return callback(error); }
