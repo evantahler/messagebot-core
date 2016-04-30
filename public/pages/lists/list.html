@@ -18,7 +18,7 @@
             </div>
 
             <div class="form-group">
-              <label>folder</label>
+              <label>Folder</label>
               <input type="text" name="folder" class="form-control" placeholder="default" ng-model="forms.createList.folder">
             </div>
 
@@ -72,7 +72,7 @@
             </div>
 
             <div class="form-group">
-              <label>folder</label>
+              <label>Folder</label>
               <input type="text" name="folder" class="form-control" placeholder="default" ng-model="forms.editList.folder">
             </div>
 
@@ -127,6 +127,7 @@
         <th>&nbsp;</th>
         <th>&nbsp;</th>
         <th>&nbsp;</th>
+        <th>&nbsp;</th>
       </tr>
     </thead>
 
@@ -141,6 +142,7 @@
         <td>{{ list.peopleCount }}</td>
         <td>{{ list.peopleCountedAt }}</td>
         <td><span ng-click="peopleCount(list.id);" class="glyphicon glyphicon-refresh">&nbsp;</span></td>
+        <td><span ng-click="copyList(list.id);" class="glyphicon glyphicon-duplicate">&nbsp;</span></td>
         <td><span ng-click="editList(list.id);" class="glyphicon glyphicon-pencil">&nbsp;</span></td>
         <td><span ng-click="deleteList(list.id);" class="glyphicon glyphicon-remove">&nbsp;</span></td>
       </tr>

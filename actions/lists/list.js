@@ -1,3 +1,5 @@
+var async = require('async');
+
 var JSONValidator = function(p){
   if(p === null){ return true; }
   if(p.indexOf())
@@ -98,6 +100,66 @@ exports.listView = {
       if(!list){ return next(new Error('list not found')); }
       data.response.list = list.apiData(api);
       next();
+    }).catch(next);
+  }
+};
+
+exports.listCopy = {
+  name:                   'list:copy',
+  description:            'list:copy',
+  outputExample:          {},
+  middleware:             [ 'logged-in-session', 'status-required-admin' ],
+
+  inputs: {
+    name: { required: true },
+    listId: {
+      required: true,
+      formatter: function(p){ return parseInt(p); }
+    }
+  },
+
+  run: function(api, data, next){
+    api.models.list.findOne({where: {id: data.params.listId}}).then(function(list){
+      if(!list){ return next(new Error('list not found')); }
+      var newList = api.models.list.build({
+        name:         data.params.name,
+        folder:       list.folder,
+        type:         list.type,
+        personQuery:  list.personQuery,
+        eventQuery:   list.eventQuery,
+        messageQuery: list.messageQuery,
+      });
+      newList.save().then(function(){
+        data.response.list = newList.apiData(api);
+
+        // TODO: Paginate this or do in batches.
+        // https://github.com/sequelize/sequelize/issues/2454
+        api.models.listPerson.findAll({where: {listId: list.id}}).then(function(listPeople){
+          var jobs = [];
+
+          listPeople.forEach(function(listPerson){
+            jobs.push(function(done){
+              var newListPerson = api.models.listPerson.build({
+                userGuid: listPerson.userGuid,
+                listId: newList.id
+              });
+              newListPerson.save().then(function(){
+                done();
+              }).catch(function(errors){
+                done(errors.errors[0].message);
+              });
+            });
+          });
+
+          jobs.push(function(done){
+            api.tasks.enqueue('lists:peopleCount', {listId: newList.id}, 'default', done);
+          });
+
+          async.series(jobs, next);
+        });
+      }).catch(function(errors){
+        next(errors.errors[0].message);
+      });
     }).catch(next);
   }
 };

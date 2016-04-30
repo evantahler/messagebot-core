@@ -21,6 +21,8 @@ exports.default = {
         { path: '/message',              action: 'message:view' },
         { path: '/messages/search',      action: 'messages:search' },
         { path: '/messages/aggregation', action: 'messages:aggregation' },
+        { path: '/template',             action: 'template:view' },
+        { path: '/templates',            action: 'templates:list' },
         { path: '/transports',           action: 'transports:list' },
       ],
 
@@ -28,10 +30,13 @@ exports.default = {
         { path: '/session',              action: 'session:create' },
         { path: '/user',                 action: 'user:create' },
         { path: '/list',                 action: 'list:create' },
+        { path: '/list/copy',            action: 'list:copy' },
         { path: '/list/people',          action: 'list:people:count' },
         { path: '/person',               action: 'person:create' },
         { path: '/event',                action: 'event:create' },
         { path: '/message',              action: 'message:create' },
+        { path: '/template',             action: 'template:create' },
+        { path: '/template/copy',        action: 'template:copy' },
       ],
 
       put: [
@@ -42,16 +47,18 @@ exports.default = {
         { path: '/person',               action: 'person:edit' },
         { path: '/event',                action: 'event:edit' },
         { path: '/message',              action: 'message:edit' },
+        { path: '/template',             action: 'template:edit' },
       ],
 
       delete: [
-        { path: '/session',              action: 'session:destroy' },
+        { path: '/session',              action: 'session:delete' },
         { path: '/user',                 action: 'user:delete' },
         { path: '/list',                 action: 'list:delete' },
-        { path: '/list/people',          action: 'list:people:destroy' },
+        { path: '/list/people',          action: 'list:people:delete' },
         { path: '/person',               action: 'person:delete' },
         { path: '/event',                action: 'event:delete' },
         { path: '/message',              action: 'message:delete' },
+        { path: '/template',             action: 'template:delete' },
       ],
 
     };

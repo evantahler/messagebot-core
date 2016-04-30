@@ -1,6 +1,6 @@
-exports.listsList = {
-  name:                   'lists:list',
-  description:            'lists:list',
+exports.templatesList = {
+  name:                   'templates:list',
+  description:            'templates:list',
   outputExample:          {},
   middleware:             [ 'logged-in-session' ],
 
@@ -23,17 +23,17 @@ exports.listsList = {
 
   run: function(api, data, next){
 
-    api.models.list.findAndCountAll({
+    api.models.template.findAndCountAll({
       where: {folder: data.params.folder},
       order: 'folder asc, name asc',
       offset: data.params.from,
       limit: data.params.size,
     }).then(function(response){
       data.response.total = response.count;
-      data.response.lists = [];
+      data.response.templates = [];
 
-      response.rows.forEach(function(list){
-        data.response.lists.push( list.apiData(api) );
+      response.rows.forEach(function(template){
+        data.response.templates.push( template.apiData(api) );
       });
 
       next();

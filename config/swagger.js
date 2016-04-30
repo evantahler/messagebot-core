@@ -9,7 +9,7 @@ exports['default'] = {
       // Specify how routes are grouped
       routeTags : {
         'basics'  : [],
-        'system'  : [ 'documentation', 'status' ],
+        'system'  : [ 'documentation', 'status', 'transports' ],
         'user'    : [ 'user' ],
         'session' : [ 'session' ],
         'person'  : [ 'person', 'people' ],

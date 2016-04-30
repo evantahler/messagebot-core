@@ -59,6 +59,19 @@ app.controller('lists:list', ['$scope', '$rootScope', '$location', 'ngNotify', '
     });
   };
 
+  $scope.copyList = function(listId){
+    var input = prompt("Please enter a name for the new list");
+    if(input){
+      $rootScope.authenticatedActionHelper($scope, {
+        listId: listId,
+        name: input
+      }, '/api/list/copy', 'POST', function(data){
+        $scope.loadLists();
+        ngNotify.set('List Coppied', 'success');
+      });
+    }
+  };
+
   $scope.peopleCount = function(listId){
     $rootScope.authenticatedActionHelper($scope, {listId: listId}, '/api/list/people', 'POST', function(data){
       ngNotify.set('recount enqueued...', 'success');

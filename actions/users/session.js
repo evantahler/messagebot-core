@@ -31,9 +31,9 @@ exports.sessionCreate = {
   }
 };
 
-exports.sessionDestroy = {
-  name:                   'session:destroy',
-  description:            'session:destroy',
+exports.sessionDelete = {
+  name:                   'session:delete',
+  description:            'session:delete',
   outputExample:          {},
 
   inputs: {},
@@ -53,9 +53,9 @@ exports.sessionCheck = {
   run: function(api, data, next){
     api.session.load(data.connection, function(error, sessionData){
       if(error){ return next(error); }
-      else if(!sessionData){ 
-        return next(new Error('Please log in to continue')); 
-      }else{ 
+      else if(!sessionData){
+        return next(new Error('Please log in to continue'));
+      }else{
         api.models.user.findOne({where: {id: sessionData.userId}}).then(function(user){
           if(!user){ return next(new Error('user not found')); }
           data.response.user      = user.apiData(api);

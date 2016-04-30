@@ -110,9 +110,9 @@ exports.listPeopleAdd = {
   }
 };
 
-exports.listPeopleDestroy = {
-  name:                   'list:people:destroy',
-  description:            'list:people:destroy',
+exports.listPeopleDelete = {
+  name:                   'list:people:delete',
+  description:            'list:people:delete',
   outputExample:          {},
   middleware:             [ 'logged-in-session', 'status-required-admin' ],
 

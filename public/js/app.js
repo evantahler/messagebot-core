@@ -35,9 +35,12 @@ var routes = [
   [ '/list/:listId/people',          'pages/lists/people.html',     'MessageBot: List People', true ],
   [ '/list/:listId/people/:page',    'pages/lists/people.html',     'MessageBot: List People', true ],
 
-  [ '/account',                      'pages/account.html',          'MessageBot: Account',    true ],
-  [ '/users',                        'pages/users.html',            'MessageBot: Users',      true ],
-  [ '/settings',                     'pages/settings.html',         'MessageBot: Settings',   true ],
+  [ '/templates/list',               'pages/templates/list.html',   'MessageBot: Templates',   true ],
+  [ '/templates/list/:page',         'pages/templates/list.html',   'MessageBot: Templates',   true ],
+
+  [ '/account',                      'pages/account.html',          'MessageBot: Account',     true ],
+  [ '/users',                        'pages/users.html',            'MessageBot: Users',       true ],
+  [ '/settings',                     'pages/settings.html',         'MessageBot: Settings',    true ],
 
   [ '/logout',                       'pages/session/destroy.html',  'MessageBot: Log Out',    false ],
 ];
