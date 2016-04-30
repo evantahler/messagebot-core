@@ -1,11 +1,14 @@
-(function UMDish(name, context, definition) {
+(function UMDish(name, context, definition, plugins) {
   context[name] = definition.call(context);
+  for (var i = 0; i < plugins.length; i++) {
+    plugins[i](context[name])
+  }
   if (typeof module !== "undefined" && module.exports) {
     module.exports = context[name];
   } else if (typeof define === "function" && define.amd) {
     define(function reference() { return context[name]; });
   }
-})("Primus", this, function wrapper() {
+})("Primus", this || {}, function wrapper() {
   var define, module, exports
     , Primus = (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
 'use strict';
@@ -2962,7 +2965,7 @@ Primus.prototype.uri = function uri(options) {
   //
   // Optionally add a search query.
   //
-  if (qsa) server.push('?'+ options.query);
+  if (qsa) server[server.length - 1] += '?'+ options.query;
   else delete options.query;
 
   if (options.object) return options;
@@ -3145,7 +3148,7 @@ Primus.prototype.decoder = function decoder(data, fn) {
 
   fn(err, data);
 };
-Primus.prototype.version = "5.1.0";
+Primus.prototype.version = "5.2.0";
 
 if (
      'undefined' !== typeof document
@@ -3196,8 +3199,10 @@ module.exports = Primus;
 
 },{"demolish":1,"emits":2,"eventemitter3":3,"querystringify":6,"recovery":7,"tick-tock":10,"url-parse":11,"yeast":13}]},{},[14])(14);
   return Primus;
-});
+},
+[
 
+]);
 
 
 ;;;

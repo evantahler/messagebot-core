@@ -67,23 +67,6 @@ app.config(function($routeProvider, $locationProvider){
   // $locationProvider.html5Mode(true);
 });
 
-// // to help with the file upload picker
-// // http://stackoverflow.com/questions/17922557/angularjs-how-to-check-for-changes-in-file-input-fields
-// app.directive('file', function() {
-//   return {
-//     require:"ngModel",
-//     restrict: 'A',
-//     link: function($scope, el, attrs, ngModel){
-//       el.bind('change', function(event){
-//         var files = event.target.files;
-//         var file = files[0];
-//         ngModel.$setViewValue(file);
-//         $scope.$apply();
-//       });
-//     }
-//   };
-// });
-
 app.run(['$rootScope', '$http', 'ngNotify', function($rootScope, $http, ngNotify){
 
   $rootScope.user    = null;
