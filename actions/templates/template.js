@@ -1,6 +1,3 @@
-var fs   = require('fs');
-var uuid = require('node-uuid');
-
 var transportValidator = function(p){
   var api = this;
   var transportNames = [];
@@ -74,6 +71,7 @@ exports.templateRender = {
   middleware:             [ 'logged-in-session' ],
 
   inputs: {
+    userGuid: { required: true },
     templateId: {
       required: true,
       formatter: function(p){ return parseInt(p); }
@@ -81,27 +79,13 @@ exports.templateRender = {
   },
 
   run: function(api, data, next){
-    api.models.template.findOne({where: {id: data.params.templateId}}).then(function(template){
-      if(!template){ return next(new Error('template not found')); }
-
-      var fileBase = 'render/' + uuid.v4() + '.html';
-      var file = '/tmp/messagebot/' + fileBase;
-      var html = template.template; // TODO: Rendering...
-
-      fs.writeFile(file, html, function(error){
-        if(error){ return next(error); }
-        data.toRender = false;
-        data.connection.rawConnection.responseHttpCode = 200;
-        data.connection.sendFile(fileBase);
-        api.log('rendered template #' + template.id + ' to ' + file);
-
-        data.connection.rawConnection.res.on('finish', function(){
-          fs.unlink(file);
-        });
-
-        next();
-      });
-    }).catch(next);
+    api.template.renderToDisk(data.params.templateId, data.params.userGuid, function(error, file, fileBase){
+      if(error){ return next(error); }
+      data.toRender = false;
+      data.connection.rawConnection.responseHttpCode = 200;
+      data.connection.sendFile(fileBase);
+      next();
+    });
   }
 };
 

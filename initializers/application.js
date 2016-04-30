@@ -1,6 +1,5 @@
 var async  = require('async');
 var qs     = require('qs');
-var mkdirp = require('mkdirp');
 
 module.exports = {
   startPriority: 9999,
@@ -8,8 +7,6 @@ module.exports = {
   initialize: function(api, next){
 
     api.transports = [];
-
-    mkdirp.sync('/tmp/messagebot/render');
 
     var middleware = {
       // These actions are restricted to the website (and you need a CSRF token)

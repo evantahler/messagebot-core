@@ -4,6 +4,7 @@ app.controller('template:edit', ['$scope', '$rootScope', '$location', 'ngNotify'
   $scope.prepareRender = function(){
     $scope.template.url = '/api/template/render.html?' +
       'templateId=' + $scope.template.id +
+      '&userGuid=' + 'xxx' +
       '&csrfToken=' + $rootScope.csrfToken +
       '&r=' + Math.random();
   };
