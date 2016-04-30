@@ -1,3 +1,6 @@
+var fs   = require('fs');
+var uuid = require('node-uuid');
+
 var transportValidator = function(p){
   var api = this;
   var transportNames = [];
@@ -59,6 +62,45 @@ exports.templateView = {
       if(!template){ return next(new Error('template not found')); }
       data.response.template = template.apiData(api);
       next();
+    }).catch(next);
+  }
+};
+
+exports.templateRender = {
+  name:                   'template:render',
+  description:            'template:render',
+  matchExtensionMimeType: true,
+  outputExample:          {},
+  middleware:             [ 'logged-in-session' ],
+
+  inputs: {
+    templateId: {
+      required: true,
+      formatter: function(p){ return parseInt(p); }
+    }
+  },
+
+  run: function(api, data, next){
+    api.models.template.findOne({where: {id: data.params.templateId}}).then(function(template){
+      if(!template){ return next(new Error('template not found')); }
+
+      var fileBase = 'render/' + uuid.v4() + '.html';
+      var file = '/tmp/messagebot/' + fileBase;
+      var html = template.template; // TODO: Rendering...
+
+      fs.writeFile(file, html, function(error){
+        if(error){ return next(error); }
+        data.toRender = false;
+        data.connection.rawConnection.responseHttpCode = 200;
+        data.connection.sendFile(fileBase);
+        api.log('rendered template #' + template.id + ' to ' + file);
+
+        data.connection.rawConnection.res.on('finish', function(){
+          fs.unlink(file);
+        });
+
+        next();
+      });
     }).catch(next);
   }
 };

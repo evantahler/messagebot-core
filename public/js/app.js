@@ -35,6 +35,7 @@ var routes = [
   [ '/list/:listId/people',          'pages/lists/people.html',     'MessageBot: List People', true ],
   [ '/list/:listId/people/:page',    'pages/lists/people.html',     'MessageBot: List People', true ],
 
+  [ '/template/:templateId',         'pages/templates/edit.html',   'MessageBot: Template',    true ],
   [ '/templates/list',               'pages/templates/list.html',   'MessageBot: Templates',   true ],
   [ '/templates/list/:page',         'pages/templates/list.html',   'MessageBot: Templates',   true ],
 
@@ -49,7 +50,7 @@ var routes = [
 // APPLICATION //
 /////////////////
 
-var app = angular.module('app', ['ngRoute', 'ngNotify', 'angularFileUpload']);
+var app = angular.module('app', ['ngRoute', 'ngNotify', 'angularFileUpload', 'ui.ace']);
 
 app.config(function($routeProvider, $locationProvider){
 

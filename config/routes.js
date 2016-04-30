@@ -22,6 +22,7 @@ exports.default = {
         { path: '/messages/search',      action: 'messages:search' },
         { path: '/messages/aggregation', action: 'messages:aggregation' },
         { path: '/template',             action: 'template:view' },
+        { path: '/template/render.html', action: 'template:render' },
         { path: '/templates',            action: 'templates:list' },
         { path: '/transports',           action: 'transports:list' },
       ],

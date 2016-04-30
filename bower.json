@@ -25,6 +25,7 @@
     "bootstrap": "^3.3.6",
     "jquery": "^2.2.3",
     "bootstrap-datepicker": "^1.6.0",
-    "bootswatch-dist": "simplex"
+    "bootswatch-dist": "simplex",
+    "angular-ui-ace": "bower"
   }
 }

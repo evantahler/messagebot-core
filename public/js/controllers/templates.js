@@ -1,3 +1,43 @@
+app.controller('template:edit', ['$scope', '$rootScope', '$location', 'ngNotify', '$routeParams', function($scope, $rootScope, $location, ngNotify, $routeParams){
+  $scope.template = {};
+
+  $scope.prepareRender = function(){
+    $scope.template.url = '/api/template/render.html?' +
+      'templateId=' + $scope.template.id +
+      '&csrfToken=' + $rootScope.csrfToken +
+      '&r=' + Math.random();
+  };
+
+  $scope.loadTemplate = function(){
+    $rootScope.authenticatedActionHelper($scope, {templateId: $routeParams.templateId}, '/api/template', 'GET', function(data){
+      $scope.template = data.template;
+      $scope.template.templateId = $scope.template.id;
+      $scope.prepareRender();
+    });
+  };
+
+  $scope.editTemplate = function(){
+    $rootScope.authenticatedActionHelper($scope, $scope.template, '/api/template', 'PUT', function(data){
+      $scope.template = data.template;
+      $scope.template.templateId = $scope.template.id;
+      $scope.prepareRender();
+      ngNotify.set('Template Updated', 'success');
+    });
+  };
+
+  $scope.deleteTemplate = function(){
+    if(confirm('Are you sure?')){
+      $rootScope.authenticatedActionHelper($scope, $scope.template, '/api/template', 'DELETE', function(data){
+        ngNotify.set('Template Deleted', 'success');
+        $location.path('/templates/list');
+      });
+    }
+  };
+
+  $scope.loadTemplate();
+}]);
+
+
 app.controller('templates:list', ['$scope', '$rootScope', '$location', 'ngNotify', '$routeParams', function($scope, $rootScope, $location, ngNotify, $routeParams){
   $scope.lists = [];
   $scope.transports = [];

@@ -1,0 +1,70 @@
+<div ng-controller="template:edit">
+
+  <row>
+    <div class="col-md-12">
+      <h1>Edit Template: <input type="text" ng-model="template.name"></h1>
+      <p><input size="50" type="text" ng-model="template.description"></p>
+
+      <a ng-click="editTemplate();" class="btn btn-primary">Save</a>
+      <a ng-click="deleteTemplate();" class="btn btn-danger">Delete</a>
+
+      <hr />
+    </div>
+  </row>
+
+  <row>
+    <div class="col-md-6">
+      <h3>Template</h3>
+      <p><a onclick="$('#fullScreenCode').modal('show');" class="btn btn-primary btn-xs">View FullScreen</a> (click + esc to close)</p>
+      <p>You can use mustache templates to render person or event attributes</p>
+
+      <!-- <pre><span ng-model="template.template"></span></pre> -->
+      <div ng-model="template.template" ui-ace="{
+        useWrapMode : false,
+        showGutter: true,
+        theme:'twilight',
+        mode: 'html',
+        onLoad: aceLoaded,
+        onChange: aceChanged
+      }" style="height: 600px">
+      </div>
+
+      <div id="fullScreenCode" class="modal modal-fullscreen fade" tabindex='-1'>
+        <div ng-model="template.template" ui-ace="{
+          useWrapMode : false,
+          showGutter: true,
+          theme:'twilight',
+          mode: 'html',
+          onLoad: aceLoaded,
+          onChange: aceChanged
+        }" style="height: 100%">
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <h3>Preview</h3>
+      <p><a onclick="$('#fullScreenPreview').modal('show');" class="btn btn-primary btn-xs">View FullScreen</a></p>
+      Link: <input ng-model="template.url" readonly></input>
+
+      <hr />
+
+      <!-- <iframe ng-src="{{ templateRenderUrl }}"></iframe> -->
+      <div ng-include="template.url" />
+
+      <div id="fullScreenPreview" class="modal modal-fullscreen fade" tabindex='-1' aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-body">
+              <div ng-include="template.url" />
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </row>
+
+</div>
