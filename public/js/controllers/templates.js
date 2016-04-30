@@ -1,12 +1,24 @@
 app.controller('template:edit', ['$scope', '$rootScope', '$location', 'ngNotify', '$routeParams', function($scope, $rootScope, $location, ngNotify, $routeParams){
   $scope.template = {};
+  $scope.options = {
+    userGuid: 'XXX',
+  };
+
+  var lastSave = new Date().getTime() - 1000;
+
+  $scope.aceLoaded = function(_editor){
+    // This is to remove following warning message on console:
+    // Automatically scrolling cursor into view after selection change this will be disabled in the next version
+    // set editor.$blockScrolling = Infinity to disable this message
+    _editor.$blockScrolling = Infinity;
+  };
 
   $scope.prepareRender = function(){
     $scope.template.url = '/api/template/render.html?' +
       'templateId=' + $scope.template.id +
-      '&userGuid=' + 'xxx' +
+      '&userGuid=' + $scope.options.userGuid +
       '&csrfToken=' + $rootScope.csrfToken +
-      '&r=' + Math.random();
+      '&r=' + Math.floor(new Date().getTime() / 1000);
   };
 
   $scope.loadTemplate = function(){
@@ -36,6 +48,15 @@ app.controller('template:edit', ['$scope', '$rootScope', '$location', 'ngNotify'
   };
 
   $scope.loadTemplate();
+
+  $scope.$watch('options.userGuid', function(){ $scope.prepareRender(); });
+  $scope.$watch('template.template', function(){
+    var now = new Date().getTime();
+    if(now > lastSave + (1000 * 10)){
+      lastSave = now;
+      $scope.editTemplate();
+    }
+  });
 }]);
 
 

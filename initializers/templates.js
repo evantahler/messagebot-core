@@ -11,7 +11,7 @@ var personAlias = function(api){
 
 var personIndex = function(api){
   var thisMonth = dateformat(new Date(), 'yyyy-mm');
-  return alias(api) + '-' + thisMonth;
+  return personAlias(api) + '-' + thisMonth;
 };
 
 module.exports = {
@@ -47,14 +47,19 @@ module.exports = {
       api.models.template.findOne({where: {id: templateId}}).then(function(template){
         if(!template){ return callback(new Error('template not found')); }
 
-        var fileBase = 'render/' + uuid.v4() + '.html';
-        var file = path.normalize(api.config.messagebot.tmpPath) + '/' + fileBase;
-        var html = template.template;
-
-        fs.writeFile(file, html, function(error){
+        var person = new api.models.person(personIndex(api), personAlias(api), userGuid);
+        person.hydrate(function(error){
           if(error){ return callback(error); }
-          api.log('rendered template #' + template.id + ' to ' + file);
-          callback(null, file, fileBase);
+
+          var fileBase = 'render/' + uuid.v4() + '.html';
+          var file = path.normalize(api.config.messagebot.tmpPath) + '/' + fileBase;
+          var html = template.template;
+
+          fs.writeFile(file, html, function(error){
+            if(error){ return callback(error); }
+            api.log('rendered template #' + template.id + ' to ' + file);
+            callback(null, file, fileBase);
+          });
         });
       }).catch(callback);
     }
