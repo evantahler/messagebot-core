@@ -14,7 +14,7 @@ module.exports = {
         updatedAt: {
           type: Sequelize.DATE
         },
-        
+
 
         'email': {
           type: Sequelize.STRING,
@@ -25,6 +25,10 @@ module.exports = {
           allowNull: false,
         },
         'passwordSalt': {
+          type: Sequelize.TEXT,
+          allowNull: false,
+        },
+        'userGuid': {
           type: Sequelize.TEXT,
           allowNull: false,
         },
@@ -51,6 +55,10 @@ module.exports = {
     queryInterface.addIndex(
       'users', ['email'],{
         indexName: 'emailUniqueIndex',
+        indicesType: 'UNIQUE'
+      },
+      'users', ['userGuid'],{
+        indexName: 'userGuidUniqueIndex',
         indicesType: 'UNIQUE'
       }
     );

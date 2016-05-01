@@ -6,13 +6,17 @@ module.exports = function(sequelize, DataTypes){
     'email': {
       type: DataTypes.STRING,
       allowNull: false,
-      validate: { isEmail: true }, 
+      validate: { isEmail: true },
     },
     'passwordHash': {
       type: DataTypes.TEXT,
       allowNull: false,
     },
     'passwordSalt': {
+      type: DataTypes.TEXT,
+      allowNull: false,
+    },
+    'userGuid': {
       type: DataTypes.TEXT,
       allowNull: false,
     },
@@ -60,6 +64,7 @@ module.exports = function(sequelize, DataTypes){
       apiData: function(api){
         return {
           id:        this.id,
+          userGuid:  this.userGuid,
           email:     this.email,
           status:    this.status,
           firstName: this.firstName,

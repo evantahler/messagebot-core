@@ -1,7 +1,7 @@
 app.controller('template:edit', ['$scope', '$rootScope', '$location', 'ngNotify', '$routeParams', function($scope, $rootScope, $location, ngNotify, $routeParams){
   $scope.template = {};
   $scope.options = {
-    userGuid: 'XXX',
+    userGuid: $rootScope.user.userGuid,
   };
 
   var lastSave = new Date().getTime() - 1000;

@@ -51,6 +51,9 @@ module.exports = {
         var person = new api.models.person(personIndex(api), personAlias(api), userGuid);
         person.hydrate(function(error){
           if(error){ return callback(error); }
+
+          //TODO: Do we load in the events?  How many?  
+
           var view = {};
           view.person = person.data;
           view.template = template;

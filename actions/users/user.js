@@ -1,3 +1,14 @@
+var dateformat = require('dateformat');
+
+var alias = function(api){
+  return api.env + '-' + 'people';
+};
+
+var index = function(api){
+  var thisMonth = dateformat(new Date(), 'yyyy-mm');
+  return alias(api) + '-' + thisMonth;
+};
+
 var validStatuses = [
   'new',
   'disabled',
@@ -35,14 +46,23 @@ exports.userCreate = {
     user.updatePassword(data.params.password, function(error){
       if(error){ return next(error); }
 
-      user.save().then(
-        api.models.user.findOne({where: {email: data.params.email}})
-      ).then(function(userObj){
-        data.response.user = userObj.apiData(api);
-        next(error);
-      })
-      .catch(function(errors){
-        next(errors.errors[0].message);
+      var person = new api.models.person(index(api), alias(api));
+
+      ['email', 'firstName', 'lastName', 'status'].forEach(function(p){
+        person.data[p] = user[p];
+      });
+
+      person.create(function(error){
+        if(error){ api.log('person creation error: ' + error, 'error', data.params); }
+        console.log(person)
+
+        user.userGuid = person.data.guid;
+        user.save().then(function(){
+          data.response.user = user.apiData(api);
+            next(error);
+        }).catch(function(errors){
+          next(errors.errors[0].message);
+        });
       });
     });
   }
@@ -128,16 +148,27 @@ exports.userEdit = {
 
       user.updateAttributes(data.params).then(function(){
         data.response.user = user.apiData(api);
-        if(data.params.password){
-          user.updatePassword(data.params.password, function(error){
-            if(error){ return callback(error); }
-            user.save().then(function(){
-              next();
-            }).catch(next);
-          });
-        }else{
-          next();
-        }
+
+        var person = new api.models.person(index(api), alias(api), user.userGuid);
+
+        ['email', 'firstName', 'lastName', 'status'].forEach(function(p){
+          person.data[p] = user[p];
+        });
+
+        person.edit(function(error){
+          if(error){ api.log('person edit error: ' + error, 'error', data.params); }
+
+          if(data.params.password){
+            user.updatePassword(data.params.password, function(error){
+              if(error){ return callback(error); }
+              user.save().then(function(){
+                next();
+              }).catch(next);
+            });
+          }else{
+            next();
+          }
+        });
       }).catch(next);
     }).catch(next);
   }
