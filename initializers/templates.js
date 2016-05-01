@@ -1,19 +1,9 @@
-var dateformat = require('dateformat');
-var mkdirp     = require('mkdirp');
-var fs         = require('fs');
-var glob       = require('glob');
-var path       = require('path');
-var uuid       = require('node-uuid');
-var mustache   = require('mustache');
-
-var personAlias = function(api){
-  return api.env + '-' + 'people';
-};
-
-var personIndex = function(api){
-  var thisMonth = dateformat(new Date(), 'yyyy-mm');
-  return personAlias(api) + '-' + thisMonth;
-};
+var mkdirp   = require('mkdirp');
+var fs       = require('fs');
+var glob     = require('glob');
+var path     = require('path');
+var uuid     = require('node-uuid');
+var mustache = require('mustache');
 
 module.exports = {
   initialize: function(api, next){
@@ -48,11 +38,11 @@ module.exports = {
       api.models.template.findOne({where: {id: templateId}}).then(function(template){
         if(!template){ return callback(new Error('template not found')); }
 
-        var person = new api.models.person(personIndex(api), personAlias(api), userGuid);
+        var person = new api.models.person(userGuid);
         person.hydrate(function(error){
           if(error){ return callback(error); }
 
-          //TODO: Do we load in the events?  How many?  
+          //TODO: Do we load in the events?  How many?
 
           var view = {};
           view.person = person.data;

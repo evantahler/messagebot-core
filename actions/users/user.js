@@ -1,14 +1,3 @@
-var dateformat = require('dateformat');
-
-var alias = function(api){
-  return api.env + '-' + 'people';
-};
-
-var index = function(api){
-  var thisMonth = dateformat(new Date(), 'yyyy-mm');
-  return alias(api) + '-' + thisMonth;
-};
-
 var validStatuses = [
   'new',
   'disabled',
@@ -46,7 +35,7 @@ exports.userCreate = {
     user.updatePassword(data.params.password, function(error){
       if(error){ return next(error); }
 
-      var person = new api.models.person(index(api), alias(api));
+      var person = new api.models.person();
 
       ['email', 'firstName', 'lastName', 'status'].forEach(function(p){
         person.data[p] = user[p];
@@ -149,7 +138,7 @@ exports.userEdit = {
       user.updateAttributes(data.params).then(function(){
         data.response.user = user.apiData(api);
 
-        var person = new api.models.person(index(api), alias(api), user.userGuid);
+        var person = new api.models.person(user.userGuid);
 
         ['email', 'firstName', 'lastName', 'status'].forEach(function(p){
           person.data[p] = user[p];

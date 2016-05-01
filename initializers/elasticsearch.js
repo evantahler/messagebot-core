@@ -215,10 +215,10 @@ module.exports = {
     // elasticsearchModel //
     ////////////////////////
 
-    var elasticsearchModel = function(type, index, alias, guid){
+    var elasticsearchModel = function(type, guid, index, alias){
       this.type  = type;
-      this.index = index || null;
-      this.alias = alias || null;
+      this.index = index;
+      this.alias = alias;
       this.data  = {
         guid: api.elasticsearch.cleanGuid(guid) || null
       };
@@ -407,10 +407,10 @@ module.exports = {
       var modelName = Object.keys(data.mappings)[0];
       var requiredFields = Object.keys(data.mappings[modelName].properties);
 
-      var thisModel = function(index, alias, guid){
+      var thisModel = function(guid, index, alias){
         if(!index){ index = api.env + '-' + name + '-' + dateformat(new Date(), 'yyyy-mm'); }
         if(!alias){ alias = api.env + '-' + name; }
-        elasticsearchModel.call(this, modelName, index, alias, guid);
+        elasticsearchModel.call(this, modelName, guid, index, alias);
         this.requiredFields = requiredFields;
       };
 

@@ -1,14 +1,3 @@
-var dateformat = require('dateformat');
-
-var alias = function(api){
-  return api.env + '-' + 'people';
-};
-
-var index = function(api){
-  var thisMonth = dateformat(new Date(), 'yyyy-mm');
-  return alias(api) + '-' + thisMonth;
-};
-
 exports.personCreate = {
   name:                   'person:create',
   description:            'person:create',
@@ -29,7 +18,7 @@ exports.personCreate = {
   },
 
   run: function(api, data, next){
-    var person = new api.models.person(index(api), alias(api));
+    var person = new api.models.person();
     if(data.params.guid){        person.data.guid = data.params.guid;               }
     if(data.params.permissions){ person.data.permissions = data.params.permissions; }
     if(data.params.createdAt){ person.data.createdAt = data.params.createdAt; }
@@ -71,7 +60,7 @@ exports.personEdit = {
   },
 
   run: function(api, data, next){
-    var person = new api.models.person(index(api), alias(api), data.params.guid);
+    var person = new api.models.person(data.params.guid);
     if(data.params.permissions){ person.data.permissions = data.params.permissions; }
 
     for(var i in data.params.data){ person.data[i] = data.params.data[i]; }
@@ -95,7 +84,7 @@ exports.personView = {
   },
 
   run: function(api, data, next){
-    var person = new api.models.person(index(api), alias(api), data.params.guid);
+    var person = new api.models.person(data.params.guid);
     person.hydrate(function(error){
       if(error){ return next(error); }
       data.response.person = person.data;
@@ -126,7 +115,7 @@ exports.personDelete = {
   },
 
   run: function(api, data, next){
-    var person = new api.models.person(index(api), alias(api), data.params.guid);
+    var person = new api.models.person(data.params.guid);
     person.hydrate(function(error){
       if(error){ return next(error); }
       api.models.listPerson.destroy({

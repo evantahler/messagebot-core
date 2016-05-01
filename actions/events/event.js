@@ -1,14 +1,3 @@
-var dateformat = require('dateformat');
-
-var alias = function(api){
-  return api.env + '-' + 'events';
-};
-
-var index = function(api){
-  var thisMonth = dateformat(new Date(), 'yyyy-mm');
-  return alias(api) + '-' + thisMonth;
-};
-
 exports.eventCreate = {
   name:                   'event:create',
   description:            'event:create',
@@ -40,7 +29,7 @@ exports.eventCreate = {
   },
 
   run: function(api, data, next){
-    var event = new api.models.event(index(api), alias(api));
+    var event = new api.models.event();
 
     if(data.params.ip){        event.data.ip = data.params.ip;               }
     if(data.params.device){    event.data.device = data.params.device;       }
@@ -109,7 +98,7 @@ exports.eventEdit = {
   },
 
   run: function(api, data, next){
-    var event = new api.models.event(index(api), alias(api), data.params.guid);
+    var event = new api.models.event(data.params.guid);
 
     if(data.params.ip){       event.data.ip = data.params.ip;             }
     if(data.params.device){   event.data.device = data.params.device;     }
@@ -139,7 +128,7 @@ exports.eventView = {
   },
 
   run: function(api, data, next){
-    var event = new api.models.event(index(api), alias(api), data.params.guid);
+    var event = new api.models.event(data.params.guid);
     event.hydrate(function(error){
       if(error){ return next(error); }
       data.response.event = event.data;
@@ -159,7 +148,7 @@ exports.eventDelete = {
   },
 
   run: function(api, data, next){
-    var event = new api.models.event(index(api), alias(api), data.params.guid);
+    var event = new api.models.event(data.params.guid);
     event.hydrate(function(error){
       if(error){ return next(error); }
       event.delete(function(error){

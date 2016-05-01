@@ -1,16 +1,6 @@
 var async        = require('async');
 var fs           = require('fs');
 var csv          = require('fast-csv');
-var dateformat   = require('dateformat');
-
-var alias = function(api){
-  return api.env + '-' + 'people';
-};
-
-var index = function(api){
-  var thisMonth = dateformat(new Date(), 'yyyy-mm');
-  return alias(api) + '-' + thisMonth;
-};
 
 var guidListFormatter = function(p){
   if(Array.isArray(p)){ return p; }
@@ -56,7 +46,7 @@ exports.listPeopleAdd = {
       if(data.params.userGuids){
         data.params.userGuids.forEach(function(userGuid){
           jobs.push(function(done){
-            var person = new api.models.person(index(api), alias(api), userGuid);
+            var person = new api.models.person(userGuid);
             person.hydrate(function(error){
               if(error){ return done(new Error('Error adding guid #' + userGuid + ': ' + String(error))); }
               api.models.listPerson.findOrCreate({
@@ -80,7 +70,7 @@ exports.listPeopleAdd = {
           trim: true,
         }).on('data', function(d){
           jobs.push(function(done){
-            var person = new api.models.person(index(api), alias(api));
+            var person = new api.models.person();
 
             if(d.guid){        person.data.guid = d.guid;               }
             if(d.createdAt){   person.data.createdAt = d.createdAt;     }
