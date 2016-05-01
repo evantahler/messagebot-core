@@ -37,6 +37,7 @@ module.exports = {
     api.template.renderToDisk = function(templateId, userGuid, callback){
       api.models.template.findOne({where: {id: templateId}}).then(function(template){
         if(!template){ return callback(new Error('template not found')); }
+        if(!template.template || template.template.length === 0 ){ return callback(new Error('template empty')); }
 
         var person = new api.models.person(userGuid);
         person.hydrate(function(error){
@@ -56,7 +57,7 @@ module.exports = {
           fs.writeFile(file, html, function(error){
             if(error){ return callback(error); }
             api.log('rendered template #' + template.id + ' to ' + file);
-            callback(null, file, fileBase);
+            callback(null, file, fileBase, view);
           });
         });
       }).catch(callback);

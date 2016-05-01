@@ -79,12 +79,17 @@ exports.templateRender = {
   },
 
   run: function(api, data, next){
-    api.template.renderToDisk(data.params.templateId, data.params.userGuid, function(error, file, fileBase){
+    api.template.renderToDisk(data.params.templateId, data.params.userGuid, function(error, file, fileBase, view){
       if(error){ return next(error); }
-      data.toRender = false;
-      data.connection.rawConnection.responseHttpCode = 200;
-      data.connection.sendFile(fileBase);
-      next();
+      if(data.connection.extension === 'html'){
+        data.toRender = false;
+        data.connection.rawConnection.responseHttpCode = 200;
+        data.connection.sendFile(fileBase);
+        next();
+      }else{
+        data.response.view = view;
+        next();
+      }
     });
   }
 };

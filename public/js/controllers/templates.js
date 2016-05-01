@@ -29,6 +29,15 @@ app.controller('template:edit', ['$scope', '$rootScope', '$location', 'ngNotify'
     });
   };
 
+  $scope.loadView = function(){
+    $rootScope.authenticatedActionHelper($scope, {
+      templateId: $routeParams.templateId,
+      userGuid: $scope.options.userGuid,
+    }, '/api/template/render', 'GET', function(data){
+      $scope.view = data.view;
+    });
+  };
+
   $scope.editTemplate = function(){
     $rootScope.authenticatedActionHelper($scope, $scope.template, '/api/template', 'PUT', function(data){
       $scope.template = data.template;
@@ -48,8 +57,12 @@ app.controller('template:edit', ['$scope', '$rootScope', '$location', 'ngNotify'
   };
 
   $scope.loadTemplate();
+  $scope.loadView();
 
-  $scope.$watch('options.userGuid', function(){ $scope.prepareRender(); });
+  $scope.$watch('options.userGuid', function(){
+    $scope.prepareRender();
+    $scope.loadView();
+  });
   $scope.$watch('template.template', function(){
     var now = new Date().getTime();
     if(now > lastSave + (1000 * 10)){
