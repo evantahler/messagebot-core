@@ -50,9 +50,13 @@ module.exports = {
           view.template = template;
           view.now = new Date;
 
-          var fileBase = 'render/' + uuid.v4() + '.html';
-          var file = path.normalize(api.config.messagebot.tmpPath) + '/' + fileBase;
-          var html = mustache.render(template.template, view);
+          try{
+            var fileBase = 'render/' + uuid.v4() + '.html';
+            var file = path.normalize(api.config.messagebot.tmpPath) + '/' + fileBase;
+            var html = mustache.render(template.template, view);
+          }catch(e){
+            return callback(e);
+          }
 
           fs.writeFile(file, html, function(error){
             if(error){ return callback(error); }

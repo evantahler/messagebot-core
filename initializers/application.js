@@ -80,6 +80,7 @@ module.exports = {
           status:    'admin',
           firstName: 'admin',
           lastName:  'admin',
+          userGuid:  '0',
         });
 
         user.updatePassword('password', function(error){

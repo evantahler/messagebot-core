@@ -80,13 +80,14 @@ exports.templateRender = {
 
   run: function(api, data, next){
     api.template.renderToDisk(data.params.templateId, data.params.userGuid, function(error, file, fileBase, view){
-      if(error){ return next(error); }
       if(data.connection.extension === 'html'){
+        if(error){ return next(error); }
         data.toRender = false;
         data.connection.rawConnection.responseHttpCode = 200;
         data.connection.sendFile(fileBase);
         next();
       }else{
+        if(error && !view){ return next(error); }
         data.response.view = view;
         next();
       }
