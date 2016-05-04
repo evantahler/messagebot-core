@@ -72,6 +72,7 @@ exports.campaignCreate = {
 
     campaign.save().then(function(){
       data.response.campaign = campaign.apiData(api);
+      next();
     }).catch(function(errors){
        next(errors.errors[0].message);
     });
@@ -220,7 +221,9 @@ exports.campaignDelete = {
   run: function(api, data, next){
     api.models.campaign.findOne({where: {id: data.params.campaignId}}).then(function(campaign){
       if(!campaign){ return next(new Error('campaign not found')); }
-      next();
+      campaign.destroy().then(function(){
+        next();
+      });
     }).catch(next);
   }
 };

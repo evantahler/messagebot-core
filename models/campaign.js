@@ -40,7 +40,7 @@ module.exports = function(sequelize, DataTypes){
     },
     'sendOnce': {
       type: DataTypes.BOOLEAN,
-      allowNull: false,
+      allowNull: true,
     },
     'triggerDelay': {
       type: DataTypes.INTEGER,

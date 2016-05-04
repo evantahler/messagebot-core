@@ -55,7 +55,7 @@ module.exports = {
         },
         'sendOnce': {
           type: Sequelize.BOOLEAN,
-          allowNull: false,
+          allowNull: true,
         },
         'triggerDelay': {
           type: Sequelize.INTEGER,

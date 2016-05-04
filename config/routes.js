@@ -37,6 +37,7 @@ exports.default = {
         { path: '/list/copy',            action: 'list:copy' },
         { path: '/list/people',          action: 'list:people:count' },
         { path: '/campaign',             action: 'campaign:create' },
+        { path: '/campaign/copy',        action: 'campaign:copy' },
         { path: '/person',               action: 'person:create' },
         { path: '/event',                action: 'event:create' },
         { path: '/message',              action: 'message:create' },
