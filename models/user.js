@@ -16,7 +16,7 @@ module.exports = function(sequelize, DataTypes){
       type: DataTypes.TEXT,
       allowNull: false,
     },
-    'userGuid': {
+    'personGuid': {
       type: DataTypes.TEXT,
       allowNull: false,
     },
@@ -64,7 +64,7 @@ module.exports = function(sequelize, DataTypes){
       apiData: function(api){
         return {
           id:        this.id,
-          userGuid:  this.userGuid,
+          personGuid:  this.personGuid,
           email:     this.email,
           status:    this.status,
           firstName: this.firstName,

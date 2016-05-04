@@ -4,7 +4,7 @@ module.exports = function(sequelize, DataTypes){
       type: DataTypes.INTEGER,
       allowNull: false,
     },
-    'userGuid': {
+    'personGuid': {
       type: DataTypes.STRING,
       allowNull: false,
     },
@@ -14,7 +14,7 @@ module.exports = function(sequelize, DataTypes){
         return {
           id:           this.id,
           listId:       this.listId,
-          userGuid:     this.userGuid,
+          personGuid:     this.personGuid,
           createdAt:    this.createdAt,
           updatedAt:    this.updatedAt,
         };

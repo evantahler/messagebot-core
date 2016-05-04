@@ -98,7 +98,7 @@ app.controller('lists:list', ['$scope', '$rootScope', '$location', 'ngNotify', '
 app.controller('lists:people:view', ['$scope', '$rootScope', '$location', 'ngNotify', '$routeParams', 'FileUploader', function($scope, $rootScope, $location, ngNotify, $routeParams, FileUploader){
   $scope.list;
   $scope.forms = {
-    addListPeopleViaUserGuids: {},
+    addListPeopleViapersonGuids: {},
   };
   $scope.people = [];
   $scope.pagination = {};
@@ -137,20 +137,20 @@ app.controller('lists:people:view', ['$scope', '$rootScope', '$location', 'ngNot
     });
   };
 
-  $scope.addListPeopleViaUserGuid = function(){
-    $('#addListPeopleViaUserGuidModal').modal('show');
+  $scope.addListPeopleViapersonGuid = function(){
+    $('#addListPeopleViapersonGuidModal').modal('show');
   };
 
   $scope.addListPeopleViaFile = function(){
     $('#addListPeopleViaFileModal').modal('show');
   };
 
-  $scope.processAddListPeopleViaUserGuid = function(){
-    $scope.forms.addListPeopleViaUserGuids.listId = $scope.list.id;
-    $rootScope.authenticatedActionHelper($scope, $scope.forms.addListPeopleViaUserGuids, '/api/list/people', 'PUT', function(data){
-      $rootScope.clearModals('#addListPeopleViaUserGuidModal');
+  $scope.processAddListPeopleViapersonGuid = function(){
+    $scope.forms.addListPeopleViapersonGuids.listId = $scope.list.id;
+    $rootScope.authenticatedActionHelper($scope, $scope.forms.addListPeopleViapersonGuids, '/api/list/people', 'PUT', function(data){
+      $rootScope.clearModals('#addListPeopleViapersonGuidModal');
       $scope.loadPeople();
-      $scope.forms.addListPeopleViaUserGuids = {};
+      $scope.forms.addListPeopleViapersonGuids = {};
       ngNotify.set('People Updated', 'success');
     });
   };
@@ -173,11 +173,11 @@ app.controller('lists:people:view', ['$scope', '$rootScope', '$location', 'ngNot
     };
   };
 
-  $scope.removeListPerson = function(userGuid){
+  $scope.removeListPerson = function(personGuid){
     if(confirm('Are you sure?')){
       $rootScope.authenticatedActionHelper($scope, {
         listId: $scope.list.id,
-        userGuids: userGuid
+        personGuids: personGuid
       }, '/api/list/people', 'DELETE', function(data){
         ngNotify.set('Person removed from list', 'success');
         $scope.loadPeople();

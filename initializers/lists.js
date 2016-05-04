@@ -87,10 +87,10 @@ module.exports = {
         jobs.push(function(done){
           var listPersonJobs = [];
 
-          queryResults.final.forEach(function(userGuid){
+          queryResults.final.forEach(function(personGuid){
             listPersonJobs.push(function(cb){
               var listPerson = api.models.listPerson.build({
-                userGuid: userGuid,
+                personGuid: personGuid,
                 listId: list.id,
               });
 

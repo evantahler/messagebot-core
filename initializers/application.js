@@ -43,7 +43,7 @@ module.exports = {
           }
 
           // Allow for sloppy parsing of the data object in forms
-          // IE: `curl -X POST -d 'userGuid=evan&type=pageView&data[page]=index.html' http://localhost:8080/api/event`
+          // IE: `curl -X POST -d 'personGuid=evan&type=pageView&data[page]=index.html' http://localhost:8080/api/event`
           var d;
           for(var key in data.params){
             if(key.indexOf('data[') === 0){
@@ -80,7 +80,7 @@ module.exports = {
           status:    'admin',
           firstName: 'admin',
           lastName:  'admin',
-          userGuid:  '0',
+          personGuid:  '0',
         });
 
         user.updatePassword('password', function(error){

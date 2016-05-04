@@ -53,7 +53,7 @@ describe('models:message', function(){
   describe('create', function(){
     it('happy', function(done){
       var payload = {
-        userGuid: 'abc123',
+        personGuid: 'abc123',
         type: 'email',
         body: '<h1>Sups.</h1><p>Welcome to the site!</p>',
       };
@@ -75,7 +75,7 @@ describe('models:message', function(){
       request.post(route, {form: payload}, function(error, data){
         should.not.exist(error);
         var body = JSON.parse(data.body);
-        body.error.should.equal('userGuid is a required parameter for this action');
+        body.error.should.equal('personGuid is a required parameter for this action');
         done();
       });
     });
@@ -84,7 +84,7 @@ describe('models:message', function(){
   describe('view', function(){
     it('happy', function(done){
       var payload = {
-        userGuid: 'abc123',
+        personGuid: 'abc123',
         type: 'email',
         body: '<h1>Sups.</h1><p>Welcome to the site!</p>',
       };
@@ -95,7 +95,7 @@ describe('models:message', function(){
           should.not.exist(error);
           var body = JSON.parse(data.body);
           should.not.exist(body.error);
-          body.message.userGuid.should.equal('abc123');
+          body.message.personGuid.should.equal('abc123');
           body.message.type.should.equal('email');
           done();
         });
@@ -104,7 +104,7 @@ describe('models:message', function(){
 
     it('sad', function(done){
       var payload = {
-        userGuid: 'abc123',
+        personGuid: 'abc123',
         type: 'email',
         body: '<h1>Sups.</h1><p>Welcome to the site!</p>',
       };
@@ -124,7 +124,7 @@ describe('models:message', function(){
   describe('edit', function(){
     it('happy', function(done){
       var payload = {
-        userGuid: 'abc123',
+        personGuid: 'abc123',
         type: 'email',
         body: '<h1>Sups.</h1><p>Welcome to the site!</p>',
       };
@@ -162,7 +162,7 @@ describe('models:message', function(){
   describe('delete', function(){
     it('happy', function(done){
       var payload = {
-        userGuid: 'abc123',
+        personGuid: 'abc123',
         type: 'email',
         body: '<h1>Sups.</h1><p>Welcome to the site!</p>',
       };
@@ -189,21 +189,21 @@ describe('models:message', function(){
       var jobs = [];
       jobs.push(function(next){
         request.post(route, {form: {
-          userGuid: 'search_user_guid',
+          personGuid: 'search_user_guid',
           type: 'email',
           body: '<h1>Sups.</h1><p>Welcome to the site!</p>',
         }}, next);
       });
       jobs.push(function(next){
         request.post(route, {form: {
-          userGuid: 'search_user_guid',
+          personGuid: 'search_user_guid',
           type: 'email',
           body: '<h1>Where have you been?</h1><p>We miss you :(</p>',
         }}, next);
       });
       jobs.push(function(next){
         request.post(route, {form: {
-          userGuid: 'search_user_guid',
+          personGuid: 'search_user_guid',
           type: 'push',
           body: 'a thing you love is on sale',
         }}, next);
@@ -213,7 +213,7 @@ describe('models:message', function(){
         should.not.exist(error);
         specHelper.flushIndices(function(error){
           should.not.exist(error);
-          request.get("http://localhost:18080/api/messages/search?searchKeys[]=userGuid&searchKeys[]=type&searchValues[]=search_user_guid&&searchValues[]=email", function(error, data){
+          request.get("http://localhost:18080/api/messages/search?searchKeys[]=personGuid&searchKeys[]=type&searchValues[]=search_user_guid&&searchValues[]=email", function(error, data){
             should.not.exist(error);
             var body = JSON.parse(data.body);
             should.not.exist(body.error);
@@ -230,21 +230,21 @@ describe('models:message', function(){
       var jobs = [];
       jobs.push(function(next){
         request.post(route, {form: {
-          userGuid: 'agg_user_guid',
+          personGuid: 'agg_user_guid',
           type: 'ios_push',
           body: '...',
         }}, next);
       });
       jobs.push(function(next){
         request.post(route, {form: {
-          userGuid: 'agg_user_guid',
+          personGuid: 'agg_user_guid',
           type: 'ios_push',
           body: '...',
         }}, next);
       });
       jobs.push(function(next){
         request.post(route, {form: {
-          userGuid: 'agg_user_guid',
+          personGuid: 'agg_user_guid',
           type: 'android_push',
           body: '...',
         }}, next);
@@ -254,7 +254,7 @@ describe('models:message', function(){
         should.not.exist(error);
         specHelper.flushIndices(function(error){
           should.not.exist(error);
-          request.get("http://localhost:18080/api/messages/aggregation?searchKeys[]=userGuid&searchKeys[]=type&searchValues[]=agg_user_guid&&searchValues[]=ios_push", function(error, data){
+          request.get("http://localhost:18080/api/messages/aggregation?searchKeys[]=personGuid&searchKeys[]=type&searchValues[]=agg_user_guid&&searchValues[]=ios_push", function(error, data){
             should.not.exist(error);
             var body = JSON.parse(data.body);
             should.not.exist(body.error);

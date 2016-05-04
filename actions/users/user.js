@@ -44,7 +44,7 @@ exports.userCreate = {
       person.create(function(error){
         if(error){ api.log('person creation error: ' + error, 'error', data.params); }
 
-        user.userGuid = person.data.guid;
+        user.personGuid = person.data.guid;
         user.save().then(function(){
           data.response.user = user.apiData(api);
             next(error);
@@ -137,7 +137,7 @@ exports.userEdit = {
       user.updateAttributes(data.params).then(function(){
         data.response.user = user.apiData(api);
 
-        var person = new api.models.person(user.userGuid);
+        var person = new api.models.person(user.personGuid);
 
         ['email', 'firstName', 'lastName', 'status'].forEach(function(p){
           person.data[p] = user[p];

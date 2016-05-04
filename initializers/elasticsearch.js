@@ -124,7 +124,7 @@ module.exports = {
 
       scroll: function(alias, query, callback){
         var scroll = '30s';
-        var fields = ['guid', 'userGuid'];
+        var fields = ['guid', 'personGuid'];
         var results = [];
 
         api.elasticsearch.pendingOperations++;
@@ -140,8 +140,8 @@ module.exports = {
           if(error){ return callback(error); }
 
           data.hits.hits.forEach(function(hit){
-            if(hit.fields.userGuid){
-              results = results.concat(hit.fields.userGuid);
+            if(hit.fields.personGuid){
+              results = results.concat(hit.fields.personGuid);
             }else if(hit.fields.guid){
               results = results.concat(hit.fields.guid);
             }

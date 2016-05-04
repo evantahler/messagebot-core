@@ -5,8 +5,8 @@
     <p>Delete this {{ recordType }}: <span ng-click="deleteRecord()" class="glyphicon glyphicon-remove">&nbsp;</span></p>
 
     <ul>
-      <li ng-repeat="(key, value) in record" ng-if="key == 'userGuid'"><a href="/#/person/{{ value }}"><strong>{{ key }}: </strong>{{ value }}</a></li>
-      <li ng-repeat="(key, value) in record" ng-if="key != 'data' && key != 'userGuid'"><strong>{{ key }}: </strong>{{ value }}</li>
+      <li ng-repeat="(key, value) in record" ng-if="key == 'personGuid'"><a href="/#/person/{{ value }}"><strong>{{ key }}: </strong>{{ value }}</a></li>
+      <li ng-repeat="(key, value) in record" ng-if="key != 'data' && key != 'personGuid'"><strong>{{ key }}: </strong>{{ value }}</li>
     </ul>
 
     <table class="table table-striped table-hover">

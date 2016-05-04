@@ -3,7 +3,7 @@ app.controller('analytics:search', ['$scope', '$rootScope', '$location', 'ngNoti
 
   var topLevelSearchTerms = [
     'type',
-    'userGuid',
+    'personGuid',
     'guid',
     'type',
     'createdAt',

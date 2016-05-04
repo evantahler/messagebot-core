@@ -91,7 +91,7 @@ exports.personView = {
       data.response.lists = [];
 
       api.models.listPerson.findAll({where: {
-        userGuid: person.data.guid
+        personGuid: person.data.guid
       }, include: [api.models.list]}).then(function(listPeople){
         listPeople.forEach(function(listPerson){
           var d = listPerson.list.apiData(api);
@@ -119,7 +119,7 @@ exports.personDelete = {
     person.hydrate(function(error){
       if(error){ return next(error); }
       api.models.listPerson.destroy({
-        where: {userGuid: person.data.guid}
+        where: {personGuid: person.data.guid}
       }).then(function(){
         person.delete(function(error){
           if(error){ return next(error); }

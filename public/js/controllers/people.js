@@ -81,7 +81,7 @@ app.controller('people:recentBehavior', ['$scope', '$rootScope', '$location', 'n
 
     $rootScope.authenticatedActionHelper($scope, {
       userId: $rootScope.user.id,
-      searchKeys: 'userGuid',
+      searchKeys: 'personGuid',
       searchValues: $scope.guid,
       from: $scope.recentOptions.from,
       size: $scope.recentOptions.size,
@@ -92,7 +92,7 @@ app.controller('people:recentBehavior', ['$scope', '$rootScope', '$location', 'n
 
     $rootScope.authenticatedActionHelper($scope, {
       userId: $rootScope.user.id,
-      searchKeys: 'userGuid',
+      searchKeys: 'personGuid',
       searchValues: $scope.guid,
       from: $scope.recentOptions.from,
       size: $scope.recentOptions.size,

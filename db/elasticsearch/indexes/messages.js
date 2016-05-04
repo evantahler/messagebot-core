@@ -32,7 +32,7 @@ module.exports = {
       "properties": {
         "guid":       { "type": "string" },
 
-        "userGuid":  { "type": "string"  },
+        "personGuid":  { "type": "string"  },
         "type":      { "type": "string"  },
         "body":      { "type": "string"  },
 

@@ -19,7 +19,7 @@ exports.listPeopleAdd = {
       required: true,
       formatter: function(p){ return parseInt(p); }
     },
-    userGuids: {
+    personGuids: {
       required: false,
       formatter: guidListFormatter
     },
@@ -43,14 +43,14 @@ exports.listPeopleAdd = {
         });
       };
 
-      if(data.params.userGuids){
-        data.params.userGuids.forEach(function(userGuid){
+      if(data.params.personGuids){
+        data.params.personGuids.forEach(function(personGuid){
           jobs.push(function(done){
-            var person = new api.models.person(userGuid);
+            var person = new api.models.person(personGuid);
             person.hydrate(function(error){
-              if(error){ return done(new Error('Error adding guid #' + userGuid + ': ' + String(error))); }
+              if(error){ return done(new Error('Error adding guid #' + personGuid + ': ' + String(error))); }
               api.models.listPerson.findOrCreate({
-                where:{ userGuid: userGuid, listId: list.id }
+                where:{ personGuid: personGuid, listId: list.id }
               }).then(function(){
                 done();
               }).catch(done);
@@ -84,7 +84,7 @@ exports.listPeopleAdd = {
             person.create(function(error){
               if(error){ return done(new Error('Error adding person ' + JSON.stringify(d) + ' | ' + error)); }
               api.models.listPerson.findOrCreate({
-                where:{ userGuid: person.data.guid, listId: list.id }
+                where:{ personGuid: person.data.guid, listId: list.id }
               }).then(function(){
                 done();
               }).catch(done);
@@ -111,7 +111,7 @@ exports.listPeopleDelete = {
       required: true,
       formatter: function(p){ return parseInt(p); }
     },
-    userGuids: {
+    personGuids: {
       required: false,
       formatter: guidListFormatter
     },
@@ -126,11 +126,11 @@ exports.listPeopleDelete = {
       if(!list){ return next(new Error('list not found')); }
       if(list.type !== 'static'){ return next(new Error('you can only modify static list membership via this method')); }
 
-      if(data.params.userGuids){
-        data.params.userGuids.forEach(function(userGuid){
+      if(data.params.personGuids){
+        data.params.personGuids.forEach(function(personGuid){
           jobs.push(function(done){
             api.models.listPerson.find({
-              where:{ userGuid: userGuid, listId: list.id }
+              where:{ personGuid: personGuid, listId: list.id }
             }).then(function(listPerson){
               if(!listPerson){ return done(); }
               listPerson.destroy().then(function(){
@@ -206,18 +206,18 @@ exports.listPeopleView = {
 
       api.models.listPerson.findAndCountAll({
         where: { listId: data.params.listId },
-        order: 'userGuid asc',
+        order: 'personGuid asc',
         offset: data.params.from,
         limit: data.params.size,
       }).then(function(response){
         data.response.total = response.count;
-        var userGuids = [];
+        var personGuids = [];
 
         response.rows.forEach(function(listPerson){
-          userGuids.push( listPerson.userGuid );
+          personGuids.push( listPerson.personGuid );
         });
 
-        api.elasticsearch.mget((api.env + '-people'), userGuids, function(error, results){
+        api.elasticsearch.mget((api.env + '-people'), personGuids, function(error, results){
           if(error){ return next(error); }
           data.response.people = results;
           next();
