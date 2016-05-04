@@ -1,7 +1,7 @@
 app.controller('template:edit', ['$scope', '$rootScope', '$location', 'ngNotify', '$routeParams', function($scope, $rootScope, $location, ngNotify, $routeParams){
   $scope.template = {};
   $scope.options = {
-    userGuid: $rootScope.user.userGuid,
+    personGuid: $rootScope.user.personGuid,
   };
 
   var lastSave = new Date().getTime() - 1000;
@@ -16,7 +16,7 @@ app.controller('template:edit', ['$scope', '$rootScope', '$location', 'ngNotify'
   $scope.prepareRender = function(){
     $scope.template.url = '/api/template/render.html?' +
       'templateId=' + $scope.template.id +
-      '&userGuid=' + $scope.options.userGuid +
+      '&personGuid=' + $scope.options.personGuid +
       '&csrfToken=' + $rootScope.csrfToken +
       '&r=' + Math.floor(new Date().getTime() / 1000);
   };
@@ -32,7 +32,7 @@ app.controller('template:edit', ['$scope', '$rootScope', '$location', 'ngNotify'
   $scope.loadView = function(){
     $rootScope.authenticatedActionHelper($scope, {
       templateId: $routeParams.templateId,
-      userGuid: $scope.options.userGuid,
+      personGuid: $scope.options.personGuid,
     }, '/api/template/render', 'GET', function(data){
       $scope.view = data.view;
     });
@@ -59,17 +59,21 @@ app.controller('template:edit', ['$scope', '$rootScope', '$location', 'ngNotify'
   $scope.loadTemplate();
   $scope.loadView();
 
-  $scope.$watch('options.userGuid', function(){
+  $scope.$watch('options.personGuid', function(){
     $scope.prepareRender();
     $scope.loadView();
   });
-  $scope.$watch('template.template', function(){
-    var now = new Date().getTime();
-    if(now > lastSave + (1000 * 10)){
-      lastSave = now;
-      $scope.editTemplate();
-    }
-  });
+
+  // TODO: we need a toggle for autosaving
+  // as it might be dangerous for an active campaign
+
+  // $scope.$watch('template.template', function(){
+  //   var now = new Date().getTime();
+  //   if(now > lastSave + (1000 * 10)){
+  //     lastSave = now;
+  //     $scope.editTemplate();
+  //   }
+  // });
 }]);
 
 

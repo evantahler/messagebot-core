@@ -28,7 +28,7 @@ module.exports = {
           type: Sequelize.TEXT,
           allowNull: false,
         },
-        'userGuid': {
+        'personGuid': {
           type: Sequelize.TEXT,
           allowNull: false,
         },
@@ -57,8 +57,8 @@ module.exports = {
         indexName: 'emailUniqueIndex',
         indicesType: 'UNIQUE'
       },
-      'users', ['userGuid'],{
-        indexName: 'userGuidUniqueIndex',
+      'users', ['personGuid'],{
+        indexName: 'personGuidUniqueIndex',
         indicesType: 'UNIQUE'
       }
     );

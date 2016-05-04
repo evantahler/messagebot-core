@@ -55,7 +55,6 @@ module.exports = {
 
     queryInterface.addIndex(
       'lists', ['name'],{
-        indexName: 'nameUniqueIndex',
         indicesType: 'UNIQUE'
       }
     );

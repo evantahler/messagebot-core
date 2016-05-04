@@ -79,7 +79,7 @@ var seed = function(api, callback){
 
               var payload = {
                 createdAt: (new Date(time.getTime() + (1000 * 60 * counter))).getTime(),
-                userGuid: person.guid,
+                personGuid: person.guid,
                 type: 'pageview',
                 ip: ip,
                 data: JSON.stringify({
@@ -93,7 +93,7 @@ var seed = function(api, callback){
                 if(page === 'thank-you.html'){
                   var payload = {
                     createdAt: (new Date(time.getTime() + (1000 * 60 * counter))).getTime(),
-                    userGuid: person.guid,
+                    personGuid: person.guid,
                     type: 'purchase',
                     ip: ip,
                     data: JSON.stringify({

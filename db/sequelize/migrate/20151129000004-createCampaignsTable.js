@@ -71,7 +71,6 @@ module.exports = {
 
     queryInterface.addIndex(
       'campaigns', ['name'],{
-        indexName: 'nameUniqueIndex',
         indicesType: 'UNIQUE'
       }
     );

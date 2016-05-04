@@ -71,7 +71,7 @@ exports.templateRender = {
   middleware:             [ 'logged-in-session' ],
 
   inputs: {
-    userGuid: { required: true },
+    personGuid: { required: true },
     templateId: {
       required: true,
       formatter: function(p){ return parseInt(p); }
@@ -79,7 +79,7 @@ exports.templateRender = {
   },
 
   run: function(api, data, next){
-    api.template.renderToDisk(data.params.templateId, data.params.userGuid, function(error, file, fileBase, view){
+    api.template.renderToDisk(data.params.templateId, data.params.personGuid, function(error, file, fileBase, view){
       if(data.connection.extension === 'html'){
         if(error){ return next(error); }
         data.toRender = false;

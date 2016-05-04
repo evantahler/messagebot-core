@@ -6,7 +6,7 @@ exports.messageCreate = {
 
   inputs: {
     guid:      { required: false },
-    userGuid:  { required: true  },
+    personGuid:  { required: true  },
     type:      { required: true  },
     body:      { required: true  },
     data:      { required: false },
@@ -25,7 +25,7 @@ exports.messageCreate = {
     var message = new api.models.message();
 
     if(data.params.guid){      message.data.guid = data.params.guid;           }
-    if(data.params.userGuid){  message.data.userGuid = data.params.userGuid;   }
+    if(data.params.personGuid){  message.data.personGuid = data.params.personGuid;   }
     if(data.params.type){      message.data.type = data.params.type;           }
     if(data.params.body){      message.data.body = data.params.body;           }
     if(data.params.createdAt){ message.data.createdAt = data.params.createdAt; }
@@ -55,7 +55,7 @@ exports.messageEdit = {
 
   inputs: {
     guid:      { required: true  },
-    userGuid:  { required: false },
+    personGuid:  { required: false },
     type:      { required: false },
     body:      { required: false },
     data:      { required: false },
@@ -68,7 +68,7 @@ exports.messageEdit = {
     var message = new api.models.message(data.params.guid);
 
     if(data.params.guid){     message.data.guid = data.params.guid;         }
-    if(data.params.userGuid){ message.data.userGuid = data.params.userGuid; }
+    if(data.params.personGuid){ message.data.personGuid = data.params.personGuid; }
     if(data.params.type){     message.data.type = data.params.type;         }
     if(data.params.body){     message.data.body = data.params.body;         }
     if(data.params.sentAt){   message.data.sentAt = data.params.sentAt;     }

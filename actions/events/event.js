@@ -9,7 +9,7 @@ exports.eventCreate = {
     ip:           { required: false },
     device:       { required: false },
     guid:         { required: false },
-    userGuid:     { required: true  },
+    personGuid:     { required: true  },
     type:         { required: true  },
     data:         { required: true  },
     lat: {
@@ -35,7 +35,7 @@ exports.eventCreate = {
     if(data.params.device){    event.data.device = data.params.device;       }
     if(data.params.device){    event.data.device = data.params.device;       }
     if(data.params.guid){      event.data.guid = data.params.guid;           }
-    if(data.params.userGuid){  event.data.userGuid = data.params.userGuid;   }
+    if(data.params.personGuid){  event.data.personGuid = data.params.personGuid;   }
     if(data.params.type){      event.data.type = data.params.type;           }
     if(data.params.createdAt){ event.data.createdAt = data.params.createdAt; }
 
@@ -92,7 +92,7 @@ exports.eventEdit = {
     ip:           { required: false  },
     device:       { required: false  },
     guid:         { required: true   },
-    userGuid:     { required: false  },
+    personGuid:     { required: false  },
     type:         { required: false  },
     data:         { required: false  },
   },
@@ -104,7 +104,7 @@ exports.eventEdit = {
     if(data.params.device){   event.data.device = data.params.device;     }
     if(data.params.device){   event.data.device = data.params.device;     }
     if(data.params.guid){     event.data.guid = data.params.guid;         }
-    if(data.params.userGuid){ event.data.userGuid = data.params.userGuid; }
+    if(data.params.personGuid){ event.data.personGuid = data.params.personGuid; }
     if(data.params.type){     event.data.type = data.params.type;         }
 
     for(var i in data.params.data){ event.data[i] = data.params.data[i]; }

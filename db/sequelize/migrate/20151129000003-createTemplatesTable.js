@@ -41,7 +41,6 @@ module.exports = {
 
     queryInterface.addIndex(
       'templates', ['name'],{
-        indexName: 'nameUniqueIndex',
         indicesType: 'UNIQUE'
       }
     );

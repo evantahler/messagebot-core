@@ -19,7 +19,7 @@ module.exports = {
           type: Sequelize.INTEGER,
           allowNull: false,
         },
-        'userGuid': {
+        'personGuid': {
           type: Sequelize.STRING,
           allowNull: false,
         },
@@ -27,8 +27,8 @@ module.exports = {
     );
 
     queryInterface.addIndex(
-      'listPeople', ['userGuid'],{
-        indexName: 'userGuidIndex'
+      'listPeople', ['personGuid'],{
+        indexName: 'personGuidIndex'
       }
     );
 
@@ -39,7 +39,7 @@ module.exports = {
     );
 
     queryInterface.addIndex(
-      'listPeople', ['listId', 'userGuid'],{
+      'listPeople', ['listId', 'personGuid'],{
         indexName: 'listIdIndexLock',
         indicesType: 'UNIQUE'
       }

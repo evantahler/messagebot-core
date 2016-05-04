@@ -53,7 +53,7 @@ describe('models:events', function(){
   describe('create', function(){
     it('happy', function(done){
       var payload = {
-        userGuid: 'user_abc123',
+        personGuid: 'user_abc123',
         type: 'pageview',
         data: JSON.stringify({page: '/'}),
       };
@@ -75,14 +75,14 @@ describe('models:events', function(){
       request.post(route, {form: payload}, function(error, data){
         should.not.exist(error);
         var body = JSON.parse(data.body);
-        body.error.should.equal('userGuid is a required parameter for this action');
+        body.error.should.equal('personGuid is a required parameter for this action');
         done();
       });
     });
 
     it('will populate lat/lon from IP if not present', function(done){
       var payload = {
-        userGuid: 'user_abc123',
+        personGuid: 'user_abc123',
         type: 'pageview',
         data: JSON.stringify({page: '/'}),
         ip: '8.8.8.8'
@@ -105,7 +105,7 @@ describe('models:events', function(){
   describe('view', function(){
     it('happy', function(done){
       var payload = {
-        userGuid: 'user_abc123',
+        personGuid: 'user_abc123',
         type: 'pageview',
         data: JSON.stringify({page: '/'}),
       };
@@ -117,7 +117,7 @@ describe('models:events', function(){
           var body = JSON.parse(data.body);
           should.not.exist(body.error);
           body.event.data.page.should.equal('/');
-          body.event.userGuid.should.equal('user_abc123');
+          body.event.personGuid.should.equal('user_abc123');
           body.event.type.should.equal('pageview');
           done();
         });
@@ -126,7 +126,7 @@ describe('models:events', function(){
 
     it('sad', function(done){
       var payload = {
-        userGuid: 'user_abc123',
+        personGuid: 'user_abc123',
         type: 'pageview',
         data: JSON.stringify({page: '/'}),
       };
@@ -146,7 +146,7 @@ describe('models:events', function(){
   describe('edit', function(){
     it('happy', function(done){
       var payload = {
-        userGuid: 'user_abc123',
+        personGuid: 'user_abc123',
         type: 'pageview',
         data: JSON.stringify({page: '/'}),
       };
@@ -167,7 +167,7 @@ describe('models:events', function(){
               var body = JSON.parse(data.body);
               should.not.exist(body.error);
               body.event.data.page.should.equal('/other-page');
-              body.event.userGuid.should.equal('user_abc123');
+              body.event.personGuid.should.equal('user_abc123');
               body.event.type.should.equal('pageview');
               done();
             });
@@ -180,7 +180,7 @@ describe('models:events', function(){
   describe('delete', function(){
     it('happy', function(done){
       var payload = {
-        userGuid: 'user_abc123',
+        personGuid: 'user_abc123',
         type: 'pageview',
         data: JSON.stringify({page: '/'}),
       };
@@ -207,21 +207,21 @@ describe('models:events', function(){
       var jobs = [];
       jobs.push(function(next){
         request.post(route, {form: {
-          userGuid: 'user_for_search',
+          personGuid: 'user_for_search',
           type: 'pageview',
           data: JSON.stringify({page: '/'}),
         }}, next);
       });
       jobs.push(function(next){
         request.post(route, {form: {
-          userGuid: 'user_for_search',
+          personGuid: 'user_for_search',
           type: 'pageview',
           data: JSON.stringify({page: '/other-page'}),
         }}, next);
       });
       jobs.push(function(next){
         request.post(route, {form: {
-          userGuid: 'user_for_search',
+          personGuid: 'user_for_search',
           type: 'pageview',
           data: JSON.stringify({page: '/about'}),
         }}, next);
@@ -231,7 +231,7 @@ describe('models:events', function(){
         should.not.exist(error);
         specHelper.flushIndices(function(error){
           should.not.exist(error);
-          request.get(route + 's/search?searchKeys=userGuid&searchValues=user_for_search', function(error, data){
+          request.get(route + 's/search?searchKeys=personGuid&searchValues=user_for_search', function(error, data){
             should.not.exist(error);
             var body = JSON.parse(data.body);
             should.not.exist(body.error);
@@ -248,21 +248,21 @@ describe('models:events', function(){
       var jobs = [];
       jobs.push(function(next){
         request.post(route, {form: {
-          userGuid: 'user_for_agg',
+          personGuid: 'user_for_agg',
           type: 'pageview',
           data: JSON.stringify({page: '/'}),
         }}, next);
       });
       jobs.push(function(next){
         request.post(route, {form: {
-          userGuid: 'user_for_agg',
+          personGuid: 'user_for_agg',
           type: 'pageview',
           data: JSON.stringify({page: '/other-page'}),
         }}, next);
       });
       jobs.push(function(next){
         request.post(route, {form: {
-          userGuid: 'user_for_agg',
+          personGuid: 'user_for_agg',
           type: 'pageview',
           data: JSON.stringify({page: '/about'}),
         }}, next);
@@ -272,7 +272,7 @@ describe('models:events', function(){
         should.not.exist(error);
         specHelper.flushIndices(function(error){
           should.not.exist(error);
-          request.get(route + 's/aggregation?searchKeys=userGuid&searchValues=user_for_agg', function(error, data){
+          request.get(route + 's/aggregation?searchKeys=personGuid&searchValues=user_for_agg', function(error, data){
             should.not.exist(error);
             var body = JSON.parse(data.body);
             should.not.exist(body.error);

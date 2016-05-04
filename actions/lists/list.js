@@ -140,7 +140,7 @@ exports.listCopy = {
           listPeople.forEach(function(listPerson){
             jobs.push(function(done){
               var newListPerson = api.models.listPerson.build({
-                userGuid: listPerson.userGuid,
+                personGuid: listPerson.personGuid,
                 listId: newList.id
               });
               newListPerson.save().then(function(){

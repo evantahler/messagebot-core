@@ -15,15 +15,15 @@ exports.task = {
       if(!list){ return next(new Error('list not found')); }
 
       if(list.type === 'dynamic'){
-        api.lists.getPeople(params.listId, function(error, userGuids){
+        api.lists.getPeople(params.listId, function(error, personGuids){
           if(error){ return next(error); }
           list.updateAttributes({
-            peopleCount: userGuids.length,
+            peopleCount: personGuids.length,
             peopleCountedAt: (new Date()),
           }).then(function(){
             next(null, {
               listId: list.id,
-              count: userGuids.length
+              count: personGuids.length
             });
           }).catch(next);
         });

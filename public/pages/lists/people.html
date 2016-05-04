@@ -2,21 +2,21 @@
 
 
 
-  <div id="addListPeopleViaUserGuidModal" class="modal fade" tabindex="-1" role="dialog" >
+  <div id="addListPeopleViapersonGuidModal" class="modal fade" tabindex="-1" role="dialog" >
     <div class="modal-dialog">
       <div class="modal-content">
 
         <div class="modal-header">
           <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-          <h4 class="modal-title">Add List People via userGuid</h4>
+          <h4 class="modal-title">Add List People via personGuid</h4>
         </div>
 
         <div class="modal-body">
-          <form ng-submit="processAddListPeopleViaUserGuid()">
+          <form ng-submit="processAddListPeopleViapersonGuid()">
 
             <div class="form-group">
               <label>User Guids (seperate by commas)</label>
-              <textarea rows="5" name="personQuery" class="form-control" ng-model="forms.addListPeopleViaUserGuids.userGuids"></textarea>
+              <textarea rows="5" name="personQuery" class="form-control" ng-model="forms.addListPeopleViapersonGuids.personGuids"></textarea>
             </div>
 
             <div class="row">
@@ -90,7 +90,7 @@ guid, firstName, lastName, email
     <h2>People in "<strong>{{ list.name }}</strong>" ({{ total }} total):</h2>
 
     <div ng-if="list.type === 'static'">
-      <a ng-click="addListPeopleViaUserGuid();" class="btn btn-primary">Add List People via userGuid</a>
+      <a ng-click="addListPeopleViapersonGuid();" class="btn btn-primary">Add List People via personGuid</a>
       <a ng-click="addListPeopleViaFile();" class="btn btn-primary">Add List People via file</a>
     </div>
 

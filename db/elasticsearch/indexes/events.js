@@ -34,7 +34,7 @@ module.exports = {
 
         "ip":         { "type": "string"   },
         "device":     { "type": "string"   },
-        "userGuid":   { "type": "string"   },
+        "personGuid":   { "type": "string"   },
         "type":       { "type": "string"   },
 
         "data":       { "type": "object" },

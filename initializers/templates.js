@@ -34,12 +34,12 @@ module.exports = {
       });
     };
 
-    api.template.renderToDisk = function(templateId, userGuid, callback){
+    api.template.renderToDisk = function(templateId, personGuid, callback){
       api.models.template.findOne({where: {id: templateId}}).then(function(template){
         if(!template){ return callback(new Error('template not found')); }
         if(!template.template || template.template.length === 0 ){ return callback(new Error('template empty')); }
 
-        var person = new api.models.person(userGuid);
+        var person = new api.models.person(personGuid);
         person.hydrate(function(error){
           if(error){ return callback(error); }
 
