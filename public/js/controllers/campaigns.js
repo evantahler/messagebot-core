@@ -31,6 +31,9 @@ app.controller('campaign:edit', ['$scope', '$rootScope', '$location', 'ngNotify'
     $rootScope.authenticatedActionHelper($scope, {campaignId: $routeParams.campaignId}, '/api/campaign', 'GET', function(data){
       $scope.campaign = data.campaign;
       $scope.campaign.campaignId = data.campaign.id;
+
+      if($scope.campaign.sendAt){ $scope.campaign.sendAt = new Date($scope.campaign.sendAt); }
+
       $rootScope.authenticatedActionHelper($scope, {listId: $scope.campaign.listId}, '/api/list', 'GET', function(data){
         $scope.list = data.list;
       });
@@ -41,6 +44,9 @@ app.controller('campaign:edit', ['$scope', '$rootScope', '$location', 'ngNotify'
   };
 
   $scope.editCampaign = function(){
+    if($scope.campaign.sendAt){ $scope.campaign.sendAt = $scope.campaign.sendAt.getTime(); }
+
+    console.log($scope.campaign)
     $rootScope.authenticatedActionHelper($scope, $scope.campaign, '/api/campaign', 'PUT', function(data){
       $scope.loadCampaign();
       ngNotify.set('Template Updated', 'success');

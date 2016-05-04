@@ -29,6 +29,18 @@
 
       <div ng-if="campaign.type === 'simple'">
         <h2>Options for a Simple Campaign:</h2>
+
+        <label for="select" class="control-label">Send At</label>
+        <div class="dropdown">
+          <a class="dropdown-toggle" id="sendAt" role="button" data-toggle="dropdown">
+            <div class="input-group">
+              <input type="text" class="form-control" ng-model="campaign.sendAt"><span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
+            </div>
+          </a>
+          <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+            <datetimepicker ng-model="campaign.sendAt" data-datetimepicker-config="{ dropdownSelector: '#sendAt' }"/>
+          </ul>
+        </div>
       </div>
 
       <div ng-if="campaign.type === 'recurring'">

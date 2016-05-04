@@ -52,7 +52,7 @@ exports.campaignCreate = {
     },
     sendAt: {
       required: false,
-      formatter: function(p){ return new Date(p); }
+      formatter: function(p){ return new Date(parseInt(p)); }
     },
     sendOnce: {
       required: false,
@@ -174,7 +174,7 @@ exports.campaignEdit = {
     },
     sendAt: {
       required: false,
-      formatter: function(p){ return new Date(p); }
+      formatter: function(p){ return new Date(parseInt(p)); }
     },
     sendOnce: {
       required: false,

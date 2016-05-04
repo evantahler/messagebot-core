@@ -112,7 +112,6 @@ app.controller('analytics:histogram', ['$scope', '$rootScope', '$location', 'ngN
   $scope.possibleIntervals = [ 'year', 'month', 'week', 'day', 'hour', 'minute' ];
 
   $scope.loadHistogram = function(){
-    console.log($scope.histogramOptions)
     $rootScope.authenticatedActionHelper($scope, {
       userId: $rootScope.user.id,
       searchKeys: 'guid',
