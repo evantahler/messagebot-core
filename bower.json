@@ -24,8 +24,9 @@
     "angular-file-upload": "^2.2.0",
     "bootstrap": "^3.3.6",
     "jquery": "^2.2.3",
-    "bootstrap-datepicker": "^1.6.0",
     "bootswatch-dist": "simplex",
-    "angular-ui-ace": "bower"
+    "angular-ui-ace": "bower",
+    "angular-bootstrap-datetimepicker": "^1.0.1",
+    "moment": "^2.13.0"
   }
 }

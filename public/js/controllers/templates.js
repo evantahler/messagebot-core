@@ -114,8 +114,8 @@ app.controller('templates:list', ['$scope', '$rootScope', '$location', 'ngNotify
   $scope.processCreateTemplateForm = function(){
     $rootScope.authenticatedActionHelper($scope, $scope.forms.createTemplate, '/api/template', 'POST', function(data){
       $rootScope.clearModals('#createTemplateModal');
-      $scope.loadTemplates();
       ngNotify.set('Template Created', 'success');
+      $location.path('/template/' + data.template.id);
     });
   };
 
@@ -143,8 +143,8 @@ app.controller('templates:list', ['$scope', '$rootScope', '$location', 'ngNotify
         templateId: templateId,
         name: input
       }, '/api/template/copy', 'POST', function(data){
-        $scope.loadTemplates();
         ngNotify.set('Template Coppied', 'success');
+        $location.path('/template/' + data.template.id);
       });
     }
   };

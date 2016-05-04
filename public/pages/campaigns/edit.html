@@ -1,0 +1,46 @@
+<div ng-controller="campaign:edit">
+
+  <row>
+    <div class="col-md-12">
+      <h1>Edit Campaign: <input type="text" ng-model="campaign.name"></h1>
+      <p><input size="50" type="text" ng-model="campaign.description"></p>
+      <p>
+        This is a
+        <select name="type" ng-model="campaign.type">
+          <option ng-repeat="t in types" value="{{t}}">{{t}}</option>
+        </select>
+        campaign using the
+        <select name="listId" ng-model="campaign.listId">
+          <option ng-repeat="l in lists" value="{{l.id}}" ng-selected="campaign.listId === l.id">{{l.folder}} / {{l.name}}</option>
+        </select>
+        list and
+        <select name="templateId" ng-model="campaign.templateId">
+          <option ng-repeat="t in templates" value="{{t.id}}" ng-selected="campaign.templateId === t.id">{{t.folder}} / {{t.name}}</option>
+        </select>
+        template.
+      </p>
+
+      <p>This list currently will send to {{ list.peopleCount }} people</p>
+
+      <a ng-click="editCampaign();" class="btn btn-primary">Save</a>
+      <a ng-click="deleteCampaign();" class="btn btn-danger">Delete</a>
+
+      <hr />
+
+      <div ng-if="campaign.type === 'simple'">
+        <h2>Options for a Simple Campaign:</h2>
+      </div>
+
+      <div ng-if="campaign.type === 'recurring'">
+        <h2>Options for a Recurring Campaign:</h2>
+      </div>
+
+      <div ng-if="campaign.type === 'trigger'">
+        <h2>Options for a Trigger Campaign:</h2>
+      </div>
+
+    </div>
+
+  </row>
+
+</div>

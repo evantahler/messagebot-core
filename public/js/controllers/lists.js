@@ -34,8 +34,8 @@ app.controller('lists:list', ['$scope', '$rootScope', '$location', 'ngNotify', '
   $scope.processCreateListForm = function(){
     $rootScope.authenticatedActionHelper($scope, $scope.forms.createList, '/api/list', 'POST', function(data){
       $rootScope.clearModals('#createListModal');
-      $scope.loadLists();
       ngNotify.set('List Created', 'success');
+      $location.path('/list/' + data.list.id + '/people');
     });
   };
 
@@ -66,8 +66,8 @@ app.controller('lists:list', ['$scope', '$rootScope', '$location', 'ngNotify', '
         listId: listId,
         name: input
       }, '/api/list/copy', 'POST', function(data){
-        $scope.loadLists();
         ngNotify.set('List Coppied', 'success');
+        $location.path('/list/' + data.list.id + '/people');
       });
     }
   };

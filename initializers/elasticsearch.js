@@ -168,7 +168,8 @@ module.exports = {
         }
 
         var range = {};
-        range[dateField] = {gte: start, lte: end};
+        range[dateField] = {gte: start.getTime(), lte: end.getTime()};
+        musts.push({range: range});
 
         var aggs = {agg_results: {}};
         if(interval){
@@ -194,7 +195,6 @@ module.exports = {
           index: alias,
           body: {
             aggs: aggs,
-            filter:{ range: range },
             query: {
               bool: {
                 must: musts
@@ -206,6 +206,7 @@ module.exports = {
         api.elasticsearch.pendingOperations++;
         api.elasticsearch.client.search(query, function(error, data){
           api.elasticsearch.pendingOperations--;
+          if(error){ return callback(error); }
           callback(null, data.aggregations.agg_results);
         });
       },

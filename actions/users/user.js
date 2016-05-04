@@ -43,7 +43,6 @@ exports.userCreate = {
 
       person.create(function(error){
         if(error){ api.log('person creation error: ' + error, 'error', data.params); }
-        console.log(person)
 
         user.userGuid = person.data.guid;
         user.save().then(function(){

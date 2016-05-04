@@ -5,22 +5,40 @@
   <div class="row">
     <form class="form-horizontal" ng-submit="loadHistogram()">
 
-      <div class="col-md-3">
+      <div class="col-md-2">
         <label for="select" class="control-label">Interval</label>
         <select class="form-control" ng-model="histogramOptions.interval" ng-options="i for i in possibleIntervals"></select>
       </div>
 
       <div class="col-md-4">
         <label for="select" class="control-label">Start</label>
-        <input id="histogramStartDatePicker" class="form-control" ng-model="histogramOptions.start" data-provide="datepicker">
+        <div class="dropdown">
+          <a class="dropdown-toggle" id="histogramOptions-start" role="button" data-toggle="dropdown">
+            <div class="input-group">
+              <input type="text" class="form-control" ng-model="histogramOptions.start"><span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
+            </div>
+          </a>
+          <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+            <datetimepicker ng-model="histogramOptions.start" data-datetimepicker-config="{ dropdownSelector: '#histogramOptions-start' }"/>
+          </ul>
+        </div>
       </div>
 
       <div class="col-md-4">
         <label for="select" class="control-label">End</label>
-        <input id="histogramEndDatePicker" class="form-control" ng-model="histogramOptions.end" data-provide="datepicker">
+        <div class="dropdown">
+          <a class="dropdown-toggle" id="histogramOptions-end" role="button" data-toggle="dropdown">
+            <div class="input-group">
+              <input type="text" class="form-control" ng-model="histogramOptions.end"><span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
+            </div>
+          </a>
+          <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+            <datetimepicker ng-model="histogramOptions.end" data-datetimepicker-config="{ dropdownSelector: '#histogramOptions-end' }"/>
+          </ul>
+        </div>
       </div>
 
-      <div class="col-md-1">
+      <div class="col-md-2">
         <label class="control-label">&nbsp;</label>
         <button type="submit" class="form-control btn btn-primary">Update</button>
       </div>

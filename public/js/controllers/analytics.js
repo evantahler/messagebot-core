@@ -105,39 +105,14 @@ app.controller('analytics:histogram', ['$scope', '$rootScope', '$location', 'ngN
 
   $scope.histogramOptions = {
     interval: 'day',
-    start: new Date().setYear( new Date().getFullYear() - 1 ),
-    end: new Date().getTime(),
+    start: new Date(new Date().setMonth( new Date().getMonth() - 1 )),
+    end: new Date(),
   };
 
   $scope.possibleIntervals = [ 'year', 'month', 'week', 'day', 'hour', 'minute' ];
 
-  $('.histogramStartDatePicker').datepicker({
-    format: {
-      toDisplay: function (date, format, language) {
-          var d = new Date(date);
-          return d.toISOString();
-      },
-      toValue: function (date, format, language) {
-          var d = new Date(date);
-          return d.getTime();
-      }
-    }
-  });
-
-  $('.histogramEndDatePicker').datepicker({
-    format: {
-      toDisplay: function (date, format, language) {
-          var d = new Date(date);
-          return d.toISOString();
-      },
-      toValue: function (date, format, language) {
-          var d = new Date(date);
-          return d.getTime();
-      }
-    }
-  });
-
   $scope.loadHistogram = function(){
+    console.log($scope.histogramOptions)
     $rootScope.authenticatedActionHelper($scope, {
       userId: $rootScope.user.id,
       searchKeys: 'guid',
@@ -145,8 +120,8 @@ app.controller('analytics:histogram', ['$scope', '$rootScope', '$location', 'ngN
       agg: 'date_histogram',
       interval: $scope.histogramOptions.interval,
       aggField: 'createdAt',
-      start: $scope.histogramOptions.start,
-      end: $scope.histogramOptions.end,
+      start: $scope.histogramOptions.start.getTime(),
+      end: $scope.histogramOptions.end.getTime(),
     }, '/api/' + section + '/aggregation', 'GET', function(data){
 
       var times = [];

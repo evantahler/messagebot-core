@@ -1,3 +1,67 @@
+app.controller('campaign:edit', ['$scope', '$rootScope', '$location', 'ngNotify', '$routeParams', function($scope, $rootScope, $location, ngNotify, $routeParams){
+  $scope.campaign = {};
+  $scope.types = ['simple', 'recurring', 'trigger'];
+  $scope.lists = [];
+  $scope.templates = [];
+  $scope.transports = [];
+  $scope.list = {};
+  $scope.template = {};
+
+  $scope.loadTransports = function(){
+    $rootScope.authenticatedActionHelper($scope, {}, '/api/transports', 'GET', function(data){
+      $scope.transports = data.transports;
+    });
+  };
+
+  $scope.loadLists = function(){
+    //TODO: Pagination
+    $rootScope.authenticatedActionHelper($scope, {}, '/api/lists', 'GET', function(data){
+      $scope.lists = data.lists;
+    });
+  };
+
+  $scope.loadTemplates = function(){
+    //TODO: Pagination
+    $rootScope.authenticatedActionHelper($scope, {}, '/api/templates', 'GET', function(data){
+      $scope.templates = data.templates;
+    });
+  };
+
+  $scope.loadCampaign = function(){
+    $rootScope.authenticatedActionHelper($scope, {campaignId: $routeParams.campaignId}, '/api/campaign', 'GET', function(data){
+      $scope.campaign = data.campaign;
+      $scope.campaign.campaignId = data.campaign.id;
+      $rootScope.authenticatedActionHelper($scope, {listId: $scope.campaign.listId}, '/api/list', 'GET', function(data){
+        $scope.list = data.list;
+      });
+      $rootScope.authenticatedActionHelper($scope, {templateId: $scope.campaign.templateId}, '/api/template', 'GET', function(data){
+        $scope.template = data.template;
+      });
+    });
+  };
+
+  $scope.editCampaign = function(){
+    $rootScope.authenticatedActionHelper($scope, $scope.campaign, '/api/campaign', 'PUT', function(data){
+      $scope.loadCampaign();
+      ngNotify.set('Template Updated', 'success');
+    });
+  };
+
+  $scope.deleteCampaign = function(){
+    if(confirm('Are you sure?')){
+      $rootScope.authenticatedActionHelper($scope, $scope.campaign, '/api/campaign', 'DELETE', function(data){
+        ngNotify.set('Campaign Deleted', 'success');
+        $location.path('/campaigns/list');
+      });
+    }
+  };
+
+  $scope.loadCampaign();
+  $scope.loadTemplates();
+  $scope.loadLists();
+  $scope.loadTransports();
+}]);
+
 app.controller('campaigns:list', ['$scope', '$rootScope', '$location', 'ngNotify', '$routeParams', function($scope, $rootScope, $location, ngNotify, $routeParams){
   $scope.campaigns = [];
   $scope.lists = [];
@@ -51,8 +115,8 @@ app.controller('campaigns:list', ['$scope', '$rootScope', '$location', 'ngNotify
   $scope.processCreateCampaignForm = function(){
     $rootScope.authenticatedActionHelper($scope, $scope.forms.createCampaign, '/api/campaign', 'POST', function(data){
       $rootScope.clearModals('#createCampaignModal');
-      $scope.loadCampaigns();
       ngNotify.set('Campaign Created', 'success');
+      $location.path('/campaign/' + data.campaign.id);
     });
   };
 
@@ -80,8 +144,8 @@ app.controller('campaigns:list', ['$scope', '$rootScope', '$location', 'ngNotify
         campaignId: campaignId,
         name: input
       }, '/api/campaign/copy', 'POST', function(data){
-        $scope.loadCampaigns();
         ngNotify.set('Campaign Coppied', 'success');
+        $location.path('/campaign/' + data.campaign.id);
       });
     }
   };

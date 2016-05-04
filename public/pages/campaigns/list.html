@@ -150,6 +150,7 @@
     <thead>
       <tr>
         <th>&nbsp;</th>
+        <th>&nbsp;</th>
         <th>createdAt</th>
         <th>updatedAt</th>
         <th>name</th>
@@ -166,6 +167,7 @@
     <tbody ng-repeat="campaign in campaigns">
       <tr>
         <td><a href="/#/campaign/{{ campaign.id }}"><span class="glyphicon glyphicon-edit">&nbsp;</span></a></td>
+        <td><a href="/#/campaign/{{ campaign.id }}/stats"><span class="glyphicon glyphicon-signal">&nbsp;</span></a></td>
         <td>{{ campaign.createdAt }}</td>
         <td>{{ campaign.updatedAt }}</td>
         <td><strong>{{ campaign.name }}</strong></td>
