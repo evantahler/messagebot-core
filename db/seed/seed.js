@@ -63,6 +63,7 @@ var seed = function(api, callback){
         };
 
         request.post(routeBase + '/api/person', {form: payload}, function(error, data){
+          if(error){ throw(error); }
           person = JSON.parse(data.body);
           message += 'creted `' + firstName + ' ' + lastName + '` + ['
           next(error);

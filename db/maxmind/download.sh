@@ -11,5 +11,9 @@ if [ $condition -eq 0 ] ; then
     exit 1
 fi
 
-wget http://geolite.maxmind.com/download/geoip/database/GeoLiteCity.dat.gz
-gunzip GeoLiteCity.dat.gz -f
+if [ -f GeoLiteCity.dat ]; then
+  echo "GeoLiteCity.dat present"
+else
+  wget http://geolite.maxmind.com/download/geoip/database/GeoLiteCity.dat.gz
+  gunzip GeoLiteCity.dat.gz -f
+fi
