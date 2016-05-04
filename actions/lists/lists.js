@@ -15,20 +15,22 @@ exports.listsList = {
       formatter: function(p){ return parseInt(p); },
       default:   function(p){ return 100; },
     },
-    folder: {
-      required: true,
-      default:   function(){ return 'default'; },
-    },
+    folder: { required: false },
   },
 
   run: function(api, data, next){
 
-    api.models.list.findAndCountAll({
-      where: {folder: data.params.folder},
+    var query = {
       order: 'folder asc, name asc',
       offset: data.params.from,
       limit: data.params.size,
-    }).then(function(response){
+    }
+
+    if(data.params.folder){
+      query.where = { folder: data.params.folder };
+    }
+
+    api.models.list.findAndCountAll(query).then(function(response){
       data.response.total = response.count;
       data.response.lists = [];
 

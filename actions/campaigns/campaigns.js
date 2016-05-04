@@ -1,6 +1,6 @@
-exports.templatesList = {
-  name:                   'templates:list',
-  description:            'templates:list',
+exports.campaignsList = {
+  name:                   'campaigns:list',
+  description:            'campaigns:list',
   outputExample:          {},
   middleware:             [ 'logged-in-session' ],
 
@@ -30,12 +30,12 @@ exports.templatesList = {
       query.where = { folder: data.params.folder };
     }
 
-    api.models.template.findAndCountAll(query).then(function(response){
+    api.models.campaign.findAndCountAll(query).then(function(response){
       data.response.total = response.count;
-      data.response.templates = [];
+      data.response.campaigns = [];
 
-      response.rows.forEach(function(template){
-        data.response.templates.push( template.apiData(api) );
+      response.rows.forEach(function(campaign){
+        data.response.campaigns.push( campaign.apiData(api) );
       });
 
       next();
