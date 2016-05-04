@@ -56,7 +56,7 @@ module.exports = {
 
           fs.writeFile(file, html, function(error){
             if(error){ return callback(error); }
-            api.log('rendered template #' + template.id + ' to ' + file);
+            api.log('rendered template #' + template.id + ' for person #' + person.data.guid + ' to ' + file);
             callback(null, file, fileBase, view);
           });
         });
