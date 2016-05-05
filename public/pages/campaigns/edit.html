@@ -11,11 +11,12 @@
         </select>
         campaign using the
         <select name="listId" ng-model="campaign.listId">
-          <option ng-repeat="l in lists" value="{{l.id}}" ng-selected="campaign.listId === l.id">{{l.folder}} / {{l.name}}</option>
+          <!--  I don't know why the parseInt() is required here... but it is! -->
+          <option ng-repeat="l in lists" value="{{l.id}}" ng-selected="parseInt(campaign.listId) === parseInt(l.id)">{{l.folder}} / {{l.name}}</option>
         </select>
         list and
         <select name="templateId" ng-model="campaign.templateId">
-          <option ng-repeat="t in templates" value="{{t.id}}" ng-selected="campaign.templateId === t.id">{{t.folder}} / {{t.name}}</option>
+          <option ng-repeat="t in templates" value="{{t.id}}" ng-selected="parseInt(campaign.templateId) === parseInt(t.id)">{{t.folder}} / {{t.name}}</option>
         </select>
         template.
       </p>
