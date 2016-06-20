@@ -1,0 +1,33 @@
+version: '2'
+services:
+  redis:
+    image: redis
+  elasticsearch:
+    image: elasticsearch
+  mysql:
+    image: percona
+    environment:
+      MYSQL_DATABASE: messagebot_development
+      MYSQL_USER: messagebot
+      MYSQL_PASSWORD: messagebot
+  messagebot:
+    build: .
+    ports:
+     - "8080"
+     - "5000"
+    depends_on:
+      - redis
+      - elasticsearch
+      - mysql
+    links:
+      - redis
+      - elasticsearch
+      - mysql
+    environment:
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_DB: 0
+      MYSQL_DATABASE: messagebot_development
+      MYSQL_USER: messagebot
+      MYSQL_PASSWORD: messagebot
+      ELASTICSEARCH_URLS: elasticsearch
