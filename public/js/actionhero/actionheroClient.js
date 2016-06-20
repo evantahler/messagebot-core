@@ -3148,7 +3148,7 @@ Primus.prototype.decoder = function decoder(data, fn) {
 
   fn(err, data);
 };
-Primus.prototype.version = "5.2.0";
+Primus.prototype.version = "5.2.2";
 
 if (
      'undefined' !== typeof document
@@ -3273,8 +3273,8 @@ ActionheroClient.prototype.connect = function(callback){
     });
   })
 
-  self.client.on('error', function(err){
-    self.emit('error', err);
+  self.client.on('error', function(error){
+    self.emit('error', error);
   });
 
   self.client.on('reconnect', function(){

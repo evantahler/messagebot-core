@@ -41,7 +41,7 @@ module.exports = {
           var container = {};
           var type = 'term';
           if( searchValues[i].indexOf('*') >=0 ){ type = 'wildcard'; }
-          q[searchKeys[i]] = searchValues[i];
+          q[ searchKeys[i] ] = searchValues[i].toLowerCase();
           // q['analyze_wildcard'] = true;
           container[type] = q;
           musts.push(container);
@@ -191,10 +191,11 @@ module.exports = {
         }
 
         var query = {
-          // size: 0,
+          size: 0,
           index: alias,
           body: {
             aggs: aggs,
+            size: 0,
             query: {
               bool: {
                 must: musts
