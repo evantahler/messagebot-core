@@ -3,13 +3,15 @@ var crypto = require('crypto');
 module.exports = {
   initialize: function (api, next) {
 
+    var redis = api.redis.clients.client;
+
     api.session = {
       prefix: 'session:',
       ttl: 60 * 60 * 24, // 1 day
 
       load: function(connection, callback){
         var key = api.session.prefix + connection.fingerprint;
-        api.redis.client.get(key, function(error, data){
+        redis.get(key, function(error, data){
           if(error){     return callback(error);       }
           else if(data){ return callback(null, JSON.parse(data));  }
           else{          return callback(null, false); }
@@ -30,9 +32,9 @@ module.exports = {
           };
 
           user.updateAttributes({lastLoginAt: new Date()}).then(function(){
-            api.redis.client.set(key, JSON.stringify(sessionData), function(error, data){
+            redis.set(key, JSON.stringify(sessionData), function(error, data){
               if(error){ return callback(error); }
-              api.redis.client.expire(key, api.session.ttl, function(error){
+              redis.expire(key, api.session.ttl, function(error){
                 callback(error, sessionData);
               });
             });
@@ -42,7 +44,7 @@ module.exports = {
 
       destroy: function(connection, callback){
         var key = api.session.prefix + connection.fingerprint;
-        api.redis.client.del(key, callback);
+        redis.del(key, callback);
       },
 
       middleware: {
@@ -61,7 +63,7 @@ module.exports = {
               }else{
                 data.session = sessionData;
                 var key = api.session.prefix + data.connection.fingerprint;
-                api.redis.client.expire(key, api.session.ttl, callback);
+                redis.expire(key, api.session.ttl, callback);
               }
             });
           }

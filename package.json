@@ -12,7 +12,7 @@
     "node": "^4.2.0"
   },
   "dependencies": {
-    "actionhero": "^13.1.0",
+    "actionhero": "^14.0.2",
     "ah-swagger-plugin": "latest",
     "async": "^1.5.0",
     "bcrypt": "^0.8.5",
@@ -20,6 +20,7 @@
     "elasticsearch": "^11.0.1",
     "fast-csv": "^2.0.0",
     "glob": "^7.0.3",
+    "ioredis": "^2.1.0",
     "maxmind": "^0.6.0",
     "messagebot-transport-smtp": "messagebot/messagebot-transport-smtp",
     "mkdirp": "^0.5.1",
