@@ -20,7 +20,7 @@
     "elasticsearch": "^11.0.1",
     "fast-csv": "^2.0.0",
     "glob": "^7.0.3",
-    "ioredis": "^2.1.0",
+    "ioredis": "^2.2.0",
     "maxmind": "^0.6.0",
     "messagebot-transport-smtp": "messagebot/messagebot-transport-smtp",
     "mkdirp": "^0.5.1",
