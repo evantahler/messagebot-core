@@ -375,6 +375,12 @@ module.exports = {
         if(error){ return callback(error); }
         if(data.hits.hits.length === 0){ return callback(new Error('not found')); }
         self.data = data.hits.hits[0]._source;
+
+        if(self.data.createdAt){ self.data.createdAt = new Date(self.data.createdAt); }
+        if(self.data.updatedAt){ self.data.updatedAt = new Date(self.data.updatedAt); }
+
+        //TODO: date-ify all hash data in the response.  We can do a regexp match?
+
         self.data._index = data.hits.hits[0]._index;
         callback(null, self.data);
       });

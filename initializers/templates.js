@@ -34,11 +34,46 @@ module.exports = {
       });
     };
 
+    api.template.expandDate = function(d){
+      var monthNames = ["January", "February", "March", "April", "May", "June","July", "August", "September", "October", "November", "December"];
+
+      return {
+        string: d.toString(),
+        date: d.getDate(),
+        day: d.getDay(),
+        fullYear: d.getFullYear(),
+        hours: d.getHours(),
+        milisseconds: d.getMilliseconds(),
+        minutes: d.getMinutes(),
+        monthName: monthNames[d.getMonth()],
+        month: (d.getMonth() + 1),
+        seconds: d.getSeconds(),
+        time: d.getTime(),
+        timezoneOffset: d.getTimezoneOffset(),
+        // UTCDate: d.getUTCDate(),
+        // UTCDay: d.getUTCDay(),
+        // UTCFullYear: d.getUTCFullYear(),
+        // UTCHours: d.getUTCHours(),
+        // UTCMilliseconds: d.getUTCMilliseconds(),
+        // UTCMinutes: d.getUTCMinutes(),
+        // UTCMonth: d.getUTCMonth(),
+        // UTCSeconds: d.getUTCSeconds(),
+        // year: d.getYear(),
+      }
+    };
+
     api.template.buildView = function(person, events, template){
       var view = {}
 
       // person
       view.person = person.data;
+      view.person.createdAt = api.template.expandDate(view.person.createdAt);
+      view.person.updatedAt = api.template.expandDate(view.person.updatedAt);
+      Object.keys(view.person.data).forEach(function(k){
+        if(view.person.data[k] instanceof Date){
+          view.person.data[k] = api.template.expandDate(view.person.data[k]);
+        }
+      });
 
       // events
       view.events = events;
@@ -46,32 +81,11 @@ module.exports = {
       // template
       view.template = template.apiData(api);
       delete view.template.template;
+      view.template.createdAt = api.template.expandDate(view.template.createdAt);
+      view.template.updatedAt = api.template.expandDate(view.template.updatedAt);
 
       // time
-      var now = new Date();
-      view.now = {
-        string: now.toString(),
-        date: now.getDate(),
-        day: now.getDay(),
-        fullYear: now.getFullYear(),
-        hours: now.getHours(),
-        milisseconds: now.getMilliseconds(),
-        minutes: now.getMinutes(),
-        mont: now.getMonth(),
-        seconds: now.getSeconds(),
-        time: now.getTime(),
-        timezoneOffset: now.getTimezoneOffset(),
-        UTCDate: now.getUTCDate(),
-        UTCDay: now.getUTCDay(),
-        UTCFullYear: now.getUTCFullYear(),
-        UTCHours: now.getUTCHours(),
-        UTCMilliseconds: now.getUTCMilliseconds(),
-        UTCMinutes: now.getUTCMinutes(),
-        UTCMonth: now.getUTCMonth(),
-        UTCSeconds: now.getUTCSeconds(),
-        year: now.getYear(),
-      }
-
+      view.now = api.template.expandDate(new Date());
       return view;
     };
 
