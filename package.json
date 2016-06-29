@@ -54,6 +54,7 @@
     "prepare:maxmind": "./db/maxmind/download.sh",
     "prepare:bower": "bower install",
     "prepare:kibana": "./kibana/kibana.sh",
+    "kibana": "./kibana/kibana.sh -run",
     "faker:seed": "node db/seed/seed.js"
   }
 }

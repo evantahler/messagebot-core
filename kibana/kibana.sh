@@ -19,10 +19,15 @@ if [ $condition -eq 0 ] ; then
 fi
 
 if [ -f "$VERSION/package.json" ]; then
-  echo "Kibana downloaded"
+  echo "kibana downloaded"
 else
   wget "https://download.elastic.co/kibana/kibana/$VERSION.tar.gz"
   tar -xvf $VERSION.tar.gz
 fi
 
-./$VERSION/bin/kibana
+if [ "$1" == "-run" ]; then
+  echo "launching kibana $VERSION"
+  ./$VERSION/bin/kibana
+else
+  echo "to run kibana from this project, use 'npm run kibana'"
+fi
