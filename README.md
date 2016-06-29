@@ -24,5 +24,6 @@
 - Configure `.env` with the secrets you need, or ensure that they are already present within the environment
   - ensure that the databases you listed exist and that the user(s) you have configured can reach & access them
 - npm install && npm update
-- run migrations (elasticsearch, mysql, and even maxmind) via `npm run migrate`
+- prepare `this` host (bower, maxmind, etc) via `npm run prepare`
+- run migrations (elasticsearch + mysql) via `npm run migrate`
 - (source .env && ) `npm start`

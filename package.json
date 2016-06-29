@@ -47,12 +47,13 @@
     "startCluster": "actionhero startCluster",
     "console": "actionhero console",
     "test": "NODE_ENV=test npm run migrate && NODE_ENV=test mocha",
-    "kibana": "./kibana/kibana.sh",
-    "migrate": "npm run migrate:bower && npm run migrate:maxmind && npm run migrate:sequelize && npm run migrate:elasticsearch",
+    "migrate": "npm run migrate:sequelize && npm run migrate:elasticsearch",
+    "prepare": "npm run prepare:bower && npm run prepare:maxmind && npm run prepare:kibana",
     "migrate:elasticsearch": "node db/elasticsearch/migrate.js",
     "migrate:sequelize": "sequelize db:migrate",
-    "migrate:maxmind": "./db/maxmind/download.sh",
-    "migrate:bower": "bower install",
+    "prepare:maxmind": "./db/maxmind/download.sh",
+    "prepare:bower": "bower install",
+    "prepare:kibana": "./kibana/kibana.sh",
     "faker:seed": "node db/seed/seed.js"
   }
 }
