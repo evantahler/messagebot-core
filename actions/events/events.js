@@ -8,7 +8,7 @@ exports.eventsSearch = {
   name:                   'events:search',
   description:            'events:search',
   outputExample:          {},
-  middleware:             [],
+  middleware:             ['logged-in-session', 'status-required-admin' ],
 
   inputs: {
     searchKeys:   { required: true },
@@ -40,7 +40,7 @@ exports.eventsAggregation = {
   name:                   'events:aggregation',
   description:            'events:aggregation',
   outputExample:          {},
-  middleware:             [],
+  middleware:             ['logged-in-session', 'status-required-admin' ],
 
   inputs: {
     searchKeys:   { required: true },

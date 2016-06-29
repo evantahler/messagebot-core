@@ -32,17 +32,17 @@ module.exports = {
       "properties": {
         "guid":       { "type": "string" },
 
-        "personGuid":  { "type": "string"  },
-        "type":      { "type": "string"  },
-        "body":      { "type": "string"  },
+        "personGuid": { "type": "string" },
+        "transport":  { "type": "string" },
+        "body":       { "type": "string" },
 
-        "data":      { "type": "object"  },
+        "data":       { "type": "object" },
 
-        "createdAt": { "type":  "date" },
-        "updatedAt": { "type":  "date" },
-        "sentAt":    { "type":  "date" },
-        "readAt":    { "type":  "date" },
-        "actedAt":   { "type":  "date" }
+        "createdAt":  { "type":  "date" },
+        "updatedAt":  { "type":  "date" },
+        "sentAt":     { "type":  "date" },
+        "readAt":     { "type":  "date" },
+        "actedAt":    { "type":  "date" }
       }
     }
   },

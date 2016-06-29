@@ -5,6 +5,8 @@ app.controller('record:view', ['$scope', '$rootScope', '$location', 'ngNotify', 
   $scope.guid = $routeParams.guid;
   $scope.newAttribute = {};
 
+  $scope.renderableData = ['data', 'personGuid', 'location', 'body'];
+
   $scope.load = function(){
     $scope.formData = {};
     $rootScope.authenticatedActionHelper($scope, {
@@ -13,6 +15,15 @@ app.controller('record:view', ['$scope', '$rootScope', '$location', 'ngNotify', 
     }, '/api/' + $scope.recordType, 'GET', function(data){
       $scope.record = data[$scope.recordType];
       if(data.lists){ $scope.lists = data.lists; }
+
+      if($scope.record.body){
+        setTimeout(function(){
+          var iframe = $('#bodyIframe')[0];
+          iframe.contentWindow.document.open();
+          iframe.contentWindow.document.write($scope.record.body);
+          iframe.contentWindow.document.close();
+        }, 1000);
+      }
     });
   };
 

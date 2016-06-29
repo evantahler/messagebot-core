@@ -8,7 +8,7 @@ exports.peopleSearch = {
   name:                   'people:search',
   description:            'people:search',
   outputExample:          {},
-  middleware:             [],
+  middleware:             ['logged-in-session', 'status-required-admin' ],
 
   inputs: {
     searchKeys:   { required: true },
@@ -40,7 +40,7 @@ exports.peopleAggregation = {
   name:                   'people:aggregation',
   description:            'people:aggregation',
   outputExample:          {},
-  middleware:             [],
+  middleware:             ['logged-in-session', 'status-required-admin' ],
 
   inputs: {
     searchKeys:   { required: true },

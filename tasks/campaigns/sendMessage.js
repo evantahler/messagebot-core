@@ -20,6 +20,7 @@ exports.task = {
     var file;
     var body;
     var transport;
+    var message;
 
     jobs.push(function(done){
       api.models.campaign.findOne({where: {id: params.campaignId}}).then(function(c){
@@ -84,6 +85,18 @@ exports.task = {
         if(missingKey){ return done(new Error('person missing data.' + k)); }
         done();
       });
+    });
+
+    jobs.push(function(done){
+      message = new api.models.message();
+
+      message.data            = campaign.campaignVariables;
+      message.data.personGuid = person.data.guid;
+      message.data.transport  = transport.name;
+      message.data.body       = body;
+      message.data.sentAt     = new Date();
+
+      message.create(done);
     });
 
     jobs.push(function(done){

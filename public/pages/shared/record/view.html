@@ -5,8 +5,11 @@
     <p>Delete this {{ recordType }}: <span ng-click="deleteRecord()" class="glyphicon glyphicon-remove">&nbsp;</span></p>
 
     <ul>
+      <!-- special data we can render -->
       <li ng-repeat="(key, value) in record" ng-if="key == 'personGuid'"><a href="/#/person/{{ value }}"><strong>{{ key }}: </strong>{{ value }}</a></li>
-      <li ng-repeat="(key, value) in record" ng-if="key != 'data' && key != 'personGuid'"><strong>{{ key }}: </strong>{{ value }}</li>
+
+      <!-- normal data -->
+      <li ng-repeat="(key, value) in record" ng-if="renderableData.indexOf(key) < 0"><strong>{{ key }}: </strong>{{ value }}</li>
     </ul>
 
     <table class="table table-striped table-hover">
@@ -55,7 +58,20 @@
       </form>
     </div>
 
-    <div class="row" ng-if"lists">
+    <!-- special data we can render -->
+    <div class="row">
+      <div ng-if="record.body">
+        <hr />
+        <iframe id="bodyIframe" scrolling="no" frameborder="0" onLoad="app.utils.iframeResizeToFit('bodyIframe')"></iframe>
+      </div>
+
+      <div ng-if="record.location">
+        <hr />
+        <p>{{record.location}}</p>
+      </div>
+    </div>
+
+    <div class="row" ng-if="lists">
       <h2>Lists</h2>
 
       <table class="table table-striped table-hover">

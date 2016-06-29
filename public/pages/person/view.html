@@ -45,16 +45,16 @@
           <tr>
             <th>&nbsp;</th>
             <th>createdAt</th>
-            <th>type</th>
+            <th>transport</th>
             <th>data</th>
           </tr>
         </thead>
 
         <tbody ng-repeat="record in messages">
           <tr>
-            <td><a href="/#/event/{{ record.guid  }}"><span class="glyphicon glyphicon-pencil">&nbsp;</span></a></td>
+            <td><a href="/#/message/{{ record.guid  }}"><span class="glyphicon glyphicon-pencil">&nbsp;</span></a></td>
             <td>{{ record.createdAt }}</td>
-            <td>{{ record.type }}</td>
+            <td>{{ record.transport }}</td>
             <td>{{ record.data }}</td>
           </tr>
         </tbody>
