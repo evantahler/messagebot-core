@@ -30,6 +30,14 @@ module.exports = {
       });
 
       jobs.push(function(done){
+        campaign.updateAttributes({
+          sendingAt: new Date()
+        }).then(function(){
+          return done();
+        }).catch(done);
+      });
+
+      jobs.push(function(done){
         if(list.type === 'dynamic'){ api.lists.getPeople(list.id, done); };
       });
 
@@ -38,6 +46,14 @@ module.exports = {
         else if(campaign.type === 'recurring'){ api.campaigns.sendRecurring(campaign, list, LIMIT, OFFSET, done); }
         else if(campaign.type === 'trigger'){ api.campaigns.sendTrigger(campaign, list, LIMIT, OFFSET, done); }
         else{ return done(new Error('campaign type not understood')); }
+      });
+
+      jobs.push(function(done){
+        campaign.updateAttributes({
+          sentAt: new Date()
+        }).then(function(){
+          return done();
+        }).catch(done);
       });
 
       async.series(jobs, callback);
@@ -54,7 +70,7 @@ module.exports = {
       }, limit: limit, offset: offset}).then(function(listPeople){
         listPeople.forEach(function(listPerson){
           jobs.push(function(done){
-            api.tasks.enqueue('campaigns:send', {
+            api.tasks.enqueue('campaigns:sendMessage', {
               listId: list.id,
               campaignId: campaign.id,
               listPersonId: listPerson.id,
@@ -67,11 +83,7 @@ module.exports = {
           if(listPeople.length > 0){
             return api.campaigns.sendSimple(campaign, list, limit, (offset + listPeople.length), callback)
           }else{
-            campaign.updateAttributes({
-              sentAt: new Date()
-            }).then(function(){
-              return callback(null, (offset + listPeople.length));
-            }).catch(callback);
+            return callback(null, (offset + listPeople.length));
           }
         });
       }).catch(callback);

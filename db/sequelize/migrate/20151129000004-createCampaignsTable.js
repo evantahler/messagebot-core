@@ -53,6 +53,10 @@ module.exports = {
           type: Sequelize.DATE,
           allowNull: true,
         },
+        'sendingAt': {
+          type: Sequelize.DATE,
+          allowNull: true,
+        },
         'sentAt': {
           type: Sequelize.DATE,
           allowNull: true,

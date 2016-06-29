@@ -52,6 +52,10 @@ module.exports = function(sequelize, DataTypes){
       type: DataTypes.DATE,
       allowNull: true,
     },
+    'sendingAt': {
+      type: DataTypes.DATE,
+      allowNull: true,
+    },
     'sentAt': {
       type: DataTypes.DATE,
       allowNull: true,
@@ -85,6 +89,7 @@ module.exports = function(sequelize, DataTypes){
           campaignVariables: this.campaignVariables,
 
           sendAt:            this.sendAt,
+          sendingAt:         this.sendingAt,
           sentAt:            this.sentAt,
           sendOnce:          this.sendOnce,
           triggerDelay:      this.triggerDelay,

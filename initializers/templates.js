@@ -34,22 +34,58 @@ module.exports = {
       });
     };
 
+    api.template.buildView = function(person, events, template){
+      var view = {}
+
+      // person
+      view.person = person.data;
+
+      // events
+      view.events = events;
+
+      // template
+      view.template = template.apiData(api);
+      delete view.template.template;
+
+      // time
+      var now = new Date();
+      view.now = {
+        string: now.toString(),
+        date: now.getDate(),
+        day: now.getDay(),
+        fullYear: now.getFullYear(),
+        hours: now.getHours(),
+        milisseconds: now.getMilliseconds(),
+        minutes: now.getMinutes(),
+        mont: now.getMonth(),
+        seconds: now.getSeconds(),
+        time: now.getTime(),
+        timezoneOffset: now.getTimezoneOffset(),
+        UTCDate: now.getUTCDate(),
+        UTCDay: now.getUTCDay(),
+        UTCFullYear: now.getUTCFullYear(),
+        UTCHours: now.getUTCHours(),
+        UTCMilliseconds: now.getUTCMilliseconds(),
+        UTCMinutes: now.getUTCMinutes(),
+        UTCMonth: now.getUTCMonth(),
+        UTCSeconds: now.getUTCSeconds(),
+        year: now.getYear(),
+      }
+
+      return view;
+    };
+
     api.template.renderToDisk = function(templateId, personGuid, callback){
       api.models.template.findOne({where: {id: templateId}}).then(function(template){
         if(!template){ return callback(new Error('template not found')); }
         if(!template.template || template.template.length === 0 ){ return callback(new Error('template empty')); }
 
         var person = new api.models.person(personGuid);
+        var events = []; //TODO: Do we load in the events?  How many?
         person.hydrate(function(error){
           if(error){ return callback(error); }
 
-          //TODO: Do we load in the events?  How many?
-
-          var view = {};
-          view.person = person.data;
-          view.template = template.apiData(api);
-          delete view.template.template;
-          view.now = new Date;
+          var view = api.template.buildView(person, events, template);
 
           try{
             var fileBase = 'render/' + uuid.v4() + '.html';

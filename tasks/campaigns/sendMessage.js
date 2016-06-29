@@ -4,8 +4,8 @@ var fs = require('fs');
 var async = require('async');
 
 exports.task = {
-  name:          'campaigns:send',
-  description:   'campaigns:send',
+  name:          'campaigns:sendMessage',
+  description:   'campaigns:sendMessage',
   frequency:     0,
   queue:         'messagebot:campaigns',
   plugins:       [],
