@@ -2,7 +2,7 @@
 // APPLICATION //
 /////////////////
 
-var app = angular.module('app', ['ngRoute', 'ngNotify', 'angularFileUpload', 'ui.ace', 'ui.bootstrap.datetimepicker']);
+var app = angular.module('app', ['ngRoute', 'ngNotify', 'angularFileUpload', 'ui.ace', 'ui.bootstrap.datetimepicker', 'jsonFormatter']);
 
 app.config(function($routeProvider, $locationProvider){
 

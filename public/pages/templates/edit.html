@@ -32,7 +32,8 @@
       <hr />
 
       <h3>Variables</h3>
-      <pre>{{ view | json }}</pre>
+      <!-- <pre>{{ view | json }}</pre> -->
+      <json-formatter json="view" open="1"></json-formatter>
 
       <div id="fullScreenCode" class="modal modal-fullscreen fade" tabindex='-1'>
         <div ng-model="template.template" ui-ace="{
