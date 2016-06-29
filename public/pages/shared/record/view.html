@@ -65,9 +65,9 @@
         <iframe id="bodyIframe" scrolling="no" frameborder="0" onLoad="app.utils.iframeResizeToFit('bodyIframe')"></iframe>
       </div>
 
-      <div ng-if="record.location">
+      <div ng-if="map">
         <hr />
-        <p>{{record.location}}</p>
+        <leaflet id="locationMap" height="300px" width="100%" markers="map.markers" center="map.center"></leaflet>
       </div>
     </div>
 

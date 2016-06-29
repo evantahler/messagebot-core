@@ -24,6 +24,23 @@ app.controller('record:view', ['$scope', '$rootScope', '$location', 'ngNotify', 
           iframe.contentWindow.document.close();
         }, 1000);
       }
+
+      if($scope.record.location){
+        $scope.map ={
+          center: {
+            lat: $scope.record.location.lat,
+            lng: $scope.record.location.lon,
+            zoom: 8
+          },
+          markers: {
+            point: {
+              lat: $scope.record.location.lat,
+              lng: $scope.record.location.lon,
+              message: 'lat: ' + $scope.record.location.lat + '<br> lng: ' + $scope.record.location.lon,
+            }
+          }
+        };
+      }
     });
   };
 
