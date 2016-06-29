@@ -78,7 +78,7 @@ exports.task = {
         transport.requiredDataKeys.person.forEach(function(k){
           if(!person.data.data[k]){ missingKey = k; }
         })
-        
+
         // TODO: Event validation
 
         if(missingKey){ return done(new Error('person missing data.' + k)); }
@@ -87,9 +87,12 @@ exports.task = {
     });
 
     jobs.push(function(done){
-      transport.deliver({
-        body: body
-      }, person, done);
+      var sendParams = {body: body};
+      transport.campaignVariables.forEach(function(v){
+        sendParams[v] = campaign.campaignVariables[v];
+      });
+
+      transport.deliver(sendParams, person, done);
     });
 
     async.series(jobs, next);

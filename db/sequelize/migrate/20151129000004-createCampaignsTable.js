@@ -44,6 +44,10 @@ module.exports = {
           type: Sequelize.INTEGER,
           allowNull: false,
         },
+        'campaignVariables': {
+          type: Sequelize.TEXT,
+          allowNull: true,
+        }
 
         'sendAt': {
           type: Sequelize.DATE,

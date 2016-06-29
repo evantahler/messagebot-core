@@ -27,6 +27,28 @@
       <a ng-click="deleteCampaign();" class="btn btn-danger">Delete</a>
 
       <hr />
+      <h2>Campaign Variables:</h2>
+
+        <table class="table table-striped table-hover">
+
+          <thead>
+            <tr>
+              <th>key</th>
+              <th>value</th>
+            </tr>
+          </thead>
+
+          <tbody ng-repeat="campaignVariable in transport.campaignVariables">
+            <tr>
+              <td>{{ campaignVariable }}</td>
+              <td>
+                <span class="glyphicon glyphicon-edit">&nbsp;</span><input ng-model="campaign.campaignVariables[campaignVariable]" type="text" style="width:90%" >
+              </td>
+            </tr>
+          </tbody>
+
+        </table>
+      <hr />
 
       <div ng-if="campaign.type === 'simple'">
         <h2>Options for a Simple Campaign:</h2>

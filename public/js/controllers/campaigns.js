@@ -4,12 +4,18 @@ app.controller('campaign:edit', ['$scope', '$rootScope', '$location', 'ngNotify'
   $scope.lists = [];
   $scope.templates = [];
   $scope.transports = [];
+  $scope.transport = {};
   $scope.list = {};
   $scope.template = {};
 
   $scope.loadTransports = function(){
     $rootScope.authenticatedActionHelper($scope, {}, '/api/transports', 'GET', function(data){
       $scope.transports = data.transports;
+
+      Object.keys(data.transports).forEach(function(t){
+        var transport = data.transports[t];
+        if(transport.name === $scope.campaign.transport){ $scope.transport = transport; }
+      });
     });
   };
 
@@ -40,11 +46,14 @@ app.controller('campaign:edit', ['$scope', '$rootScope', '$location', 'ngNotify'
       $rootScope.authenticatedActionHelper($scope, {templateId: $scope.campaign.templateId}, '/api/template', 'GET', function(data){
         $scope.template = data.template;
       });
+
+      $scope.loadTransports();
     });
   };
 
   $scope.editCampaign = function(){
     if($scope.campaign.sendAt){ $scope.campaign.sendAt = $scope.campaign.sendAt.getTime(); }
+    if($scope.campaign.campaignVariables){ $scope.campaign.campaignVariables = JSON.stringify($scope.campaign.campaignVariables); }
 
     console.log($scope.campaign)
     $rootScope.authenticatedActionHelper($scope, $scope.campaign, '/api/campaign', 'PUT', function(data){
@@ -65,7 +74,6 @@ app.controller('campaign:edit', ['$scope', '$rootScope', '$location', 'ngNotify'
   $scope.loadCampaign();
   $scope.loadTemplates();
   $scope.loadLists();
-  $scope.loadTransports();
 }]);
 
 app.controller('campaigns:list', ['$scope', '$rootScope', '$location', 'ngNotify', '$routeParams', function($scope, $rootScope, $location, ngNotify, $routeParams){

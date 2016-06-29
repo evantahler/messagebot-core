@@ -50,6 +50,10 @@ exports.campaignCreate = {
       required: true,
       validator: transportValidator
     },
+    campaignVariables: {
+      required: false,
+      formatter: function(p){ return JSON.parse(p); }
+    },
     sendAt: {
       required: false,
       formatter: function(p){ return new Date(parseInt(p)); }
@@ -119,17 +123,18 @@ exports.campaignCopy = {
     api.models.campaign.findOne({where: {id: data.params.campaignId}}).then(function(campaign){
       if(!campaign){ return next(new Error('campaign not found')); }
       var newCampaign = api.models.campaign.build({
-        name:           data.params.name,
-        description:    campaign.description,
-        folder:         campaign.folder,
-        type:           campaign.type,
-        listId:         campaign.listId,
-        templateId:     campaign.templateId,
-        transport:      campaign.transport,
-        sendAt:         campaign.sendAt,
-        sendOnce:       campaign.sendOnce,
-        triggerDelay:   campaign.triggerDelay,
-        reTriggerDelay: campaign.reTriggerDelay,
+        name:              data.params.name,
+        description:       campaign.description,
+        folder:            campaign.folder,
+        type:              campaign.type,
+        listId:            campaign.listId,
+        templateId:        campaign.templateId,
+        transport:         campaign.transport,
+        campaignVariables: campaign.campaignVariables,
+        sendAt:            campaign.sendAt,
+        sendOnce:          campaign.sendOnce,
+        triggerDelay:      campaign.triggerDelay,
+        reTriggerDelay:    campaign.reTriggerDelay,
 
       });
       newCampaign.save().then(function(){
@@ -171,6 +176,10 @@ exports.campaignEdit = {
     transport: {
       required: false,
       validator: transportValidator
+    },
+    campaignVariables: {
+      required: false,
+      formatter: function(p){ return JSON.parse(p); }
     },
     sendAt: {
       required: false,
