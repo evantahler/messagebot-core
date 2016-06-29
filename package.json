@@ -45,6 +45,7 @@
     "start": "actionhero start",
     "actionhero": "actionhero",
     "startCluster": "actionhero startCluster",
+    "console": "actionhero console",
     "test": "NODE_ENV=test npm run migrate && NODE_ENV=test mocha",
     "kibana": "./kibana/kibana.sh",
     "migrate": "npm run migrate:bower && npm run migrate:maxmind && npm run migrate:sequelize && npm run migrate:elasticsearch",

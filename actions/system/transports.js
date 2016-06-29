@@ -11,9 +11,10 @@ exports.status = {
         name: transport.name,
         description: transport.description,
         requiredDataKeys: transport.requiredDataKeys,
+        campaignVariables: transport.campaignVariables,
       };
     });
-    
+
     next();
   }
 };

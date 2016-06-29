@@ -4,7 +4,15 @@ exports['default'] = {
       // Should this node run a scheduler to promote delayed tasks?
       scheduler: true,
       // what queues should the taskProcessors work?
-      queues: ['*'],
+      queues: [
+        'messagebot:lists',
+        'messagebot:campaigns',
+        'messagebot:events',
+        'messagebot:messages',
+        'messagebot:people',
+        'messagebot:system',
+        'messagebot:users',
+      ],
       // Logging levels of task workers
       workerLogging : {
         failure   : 'error', // task failure
@@ -36,7 +44,7 @@ exports['default'] = {
       // at maximum, how many parallel taskProcessors should this node spawn?
       maxTaskProcessors: 1,
       // how often should we check the event loop to spawn more taskProcessors?
-      checkTimeout: 5000,
+      checkTimeout: 1000,
       // how many ms would constitue an event loop delay to halt taskProcessors spawning?
       maxEventLoopDelay: 5,
       // When we kill off a taskProcessor, should we disconnect that local redis connection?

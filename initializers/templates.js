@@ -47,7 +47,8 @@ module.exports = {
 
           var view = {};
           view.person = person.data;
-          view.template = template;
+          view.template = template.apiData(api);
+          delete view.template.template;
           view.now = new Date;
 
           try{

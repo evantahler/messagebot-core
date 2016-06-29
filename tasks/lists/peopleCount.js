@@ -4,7 +4,7 @@ exports.task = {
   name:          'lists:peopleCount',
   description:   'lists:peopleCount',
   frequency:     0,
-  queue:         'default',
+  queue:         'messagebot:lists',
   plugins:       [],
   pluginOptions: {},
 

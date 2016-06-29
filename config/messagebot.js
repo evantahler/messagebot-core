@@ -29,7 +29,7 @@ exports.default = {
       // it will denote itself as busy and stop taking new requests until the
       // internal queue can drain
       tracking: {
-        maxPendingOperations: 10000,
+        maxPendingOperations: 100,
       }
     };
   }

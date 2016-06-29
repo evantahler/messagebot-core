@@ -71,7 +71,7 @@ exports.listCreate = {
       api.models.list.findOne({where: {name: data.params.name}})
     ).then(function(listObj){
       data.response.list = listObj.apiData(api);
-      api.tasks.enqueue('lists:peopleCount', {listId: listObj.id}, 'default', next);
+      api.tasks.enqueue('lists:peopleCount', {listId: listObj.id}, 'messagebot:lists', next);
     }).catch(function(errors){
        next(errors.errors[0].message);
     });
@@ -152,7 +152,7 @@ exports.listCopy = {
           });
 
           jobs.push(function(done){
-            api.tasks.enqueue('lists:peopleCount', {listId: newList.id}, 'default', done);
+            api.tasks.enqueue('lists:peopleCount', {listId: newList.id}, 'messagebot:lists', done);
           });
 
           async.series(jobs, next);
@@ -205,7 +205,7 @@ exports.listEdit = {
 
       list.updateAttributes(data.params).then(function(){
         data.response.list = list.apiData(api);
-        api.tasks.enqueue('lists:peopleCount', {listId: list.id}, 'default', next);
+        api.tasks.enqueue('lists:peopleCount', {listId: list.id}, 'messagebot:lists', next);
       }).catch(next);
     }).catch(next);
   }
