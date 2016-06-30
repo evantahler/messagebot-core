@@ -40,12 +40,12 @@ exports.default = {
         bootAttempts: 1,
         // Settings for determining the id of an http(s) request (browser-fingerprint)
         fingerprintOptions : {
-          cookieKey: 'sessionID',
+          cookieKey: 'messagebot-session',
           toSetCookie: true,
           onlyStaticElements: false,
           settings: {
             path: '/',
-            expires: 3600000,
+            expires: (1000 * 60 * 60 * 24 * 30),
           }
         },
         // Options to be applied to incoming file uploads.
