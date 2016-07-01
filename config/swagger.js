@@ -5,17 +5,19 @@ exports['default'] = {
       // internal values or from hostOverride and portOverride.
       baseUrl: '127.0.0.1:8080',
       // Specify routes that don't need to be displayed
-      ignoreRoutes: [ '/swagger' ],
+      ignoreRoutes: [ '/swagger', '/ah-resque-ui' ],
       // Specify how routes are grouped
       routeTags : {
-        'basics'  : [],
-        'system'  : [ 'documentation', 'status', 'transports' ],
-        'user'    : [ 'user' ],
-        'session' : [ 'session' ],
-        'person'  : [ 'person', 'people' ],
-        'message' : [ 'message', 'messages' ],
-        'event'   : [ 'event', 'events' ],
-        'list'    : [ 'list', 'lists' ],
+        'basics'   : [],
+        'system'   : [ 'documentation', 'status', 'transports' ],
+        'user'     : [ 'user' ],
+        'session'  : [ 'session' ],
+        'person'   : [ 'person', 'people' ],
+        'message'  : [ 'message', 'messages' ],
+        'event'    : [ 'event', 'events' ],
+        'list'     : [ 'list', 'lists' ],
+        'template' : [ 'template' ],
+        'campaign' : [ 'campaign' ],
       },
       // Generate documentation for simple actions specified by action-name
       documentSimpleRoutes: false,
