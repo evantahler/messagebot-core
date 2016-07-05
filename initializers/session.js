@@ -1,5 +1,3 @@
-var crypto = require('crypto');
-
 module.exports = {
   initialize: function (api, next) {
 
@@ -21,25 +19,20 @@ module.exports = {
       create: function(connection, user, callback){
         var key = api.session.prefix + connection.fingerprint;
 
-        crypto.randomBytes(64, function(ex, buf){
-          var csrfToken = buf.toString('hex');
+        var sessionData = {
+          userId:          user.id,
+          status:          user.status,
+          sesionCreatedAt: new Date().getTime()
+        };
 
-          var sessionData = {
-            userId:          user.id,
-            status:          user.status,
-            csrfToken:       csrfToken,
-            sesionCreatedAt: new Date().getTime()
-          };
-
-          user.updateAttributes({lastLoginAt: new Date()}).then(function(){
-            redis.set(key, JSON.stringify(sessionData), function(error, data){
-              if(error){ return callback(error); }
-              redis.expire(key, api.session.ttl, function(error){
-                callback(error, sessionData);
-              });
+        user.updateAttributes({lastLoginAt: new Date()}).then(function(){
+          redis.set(key, JSON.stringify(sessionData), function(error, data){
+            if(error){ return callback(error); }
+            redis.expire(key, api.session.ttl, function(error){
+              callback(error, sessionData);
             });
-          }).catch(callback);
-        });
+          });
+        }).catch(callback);
       },
 
       destroy: function(connection, callback){
@@ -48,7 +41,6 @@ module.exports = {
       },
 
       middleware: {
-        // These actions are restricted to the website (and you need a CSRF token)
         'logged-in-session': {
           name: 'logged-in-session',
           global: false,
@@ -58,8 +50,6 @@ module.exports = {
               if(error){ return callback(error); }
               else if(!sessionData){
                 return callback(new Error('Please log in to continue'));
-              }else if(!data.params.csrfToken || data.params.csrfToken != sessionData.csrfToken){
-                return callback(new Error('CSRF error'));
               }else{
                 data.session = sessionData;
                 var key = api.session.prefix + data.connection.fingerprint;
@@ -87,8 +77,6 @@ module.exports = {
 
     api.actions.addMiddleware(api.session.middleware['logged-in-session']);
     api.actions.addMiddleware(api.session.middleware['status-required-admin']);
-
-    api.params.globalSafeParams.push('csrfToken');
 
     next();
   }

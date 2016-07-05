@@ -13,7 +13,7 @@ app.controller('people:recentBehavior', ['$scope', '$rootScope', '$location', 'n
 
     var prepareData = function(){
       var sort = function(a,b){ return(a.createdAt > b.createdAt); };
-      
+
       $scope.messages.sort(sort);
       $scope.events.sort(sort);
 
@@ -65,7 +65,7 @@ app.controller('people:recentBehavior', ['$scope', '$rootScope', '$location', 'n
           layout: 'vertical',
           align: 'right',
           verticalAlign: 'top',
-          borderWidth: 1
+          floating: true,
         },
         series: [
           {name: 'Events',   data: eventSeries},
@@ -79,7 +79,7 @@ app.controller('people:recentBehavior', ['$scope', '$rootScope', '$location', 'n
       }, 10);
     };
 
-    $rootScope.authenticatedActionHelper($scope, {
+    $rootScope.action($scope, {
       userId: $rootScope.user.id,
       searchKeys: 'personGuid',
       searchValues: $scope.guid,
@@ -90,7 +90,7 @@ app.controller('people:recentBehavior', ['$scope', '$rootScope', '$location', 'n
       prepareData();
     });
 
-    $rootScope.authenticatedActionHelper($scope, {
+    $rootScope.action($scope, {
       userId: $rootScope.user.id,
       searchKeys: 'personGuid',
       searchValues: $scope.guid,

@@ -2,7 +2,7 @@ app.controller('settings', ['$scope', '$rootScope', '$location', function($scope
   $scope.transports = {};
 
   $scope.loadTransports = function(){
-    $rootScope.authenticatedActionHelper($scope, {}, '/api/transports', 'GET', function(data){
+    $rootScope.action($scope, {}, '/api/transports', 'GET', function(data){
       $scope.transports = data.transports;
     });
   };

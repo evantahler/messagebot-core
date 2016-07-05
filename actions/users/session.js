@@ -20,7 +20,6 @@ exports.sessionCreate = {
             if(error){ return next(error); }
             data.response.user      = user.apiData(api);
             data.response.success   = true;
-            data.response.csrfToken = sessionData.csrfToken;
             next();
           });
         }
@@ -59,7 +58,6 @@ exports.sessionCheck = {
         api.models.user.findOne({where: {id: sessionData.userId}}).then(function(user){
           if(!user){ return next(new Error('user not found')); }
           data.response.user      = user.apiData(api);
-          data.response.csrfToken = sessionData.csrfToken;
           data.response.success   = true;
           next();
         }).catch(next);

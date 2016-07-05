@@ -63,15 +63,13 @@ specHelper = {
       var body = JSON.parse(response.body);
       body.success.should.equal(true);
       body.user.email.should.equal(email);
-      callback(body.csrfToken);
     });
   },
 
   requestWithLogin: function(email, password, route, verb, params, callback){
     var self = this;
     var jar = request.jar();
-    self.login(jar, email, password, function(csrfToken){
-      params.csrfToken = csrfToken;
+    self.login(jar, email, password, function(){
       if(verb === 'get'){
         route += '?';
         for(var key in params){ route += key + '=' + params[key] + '&'; }

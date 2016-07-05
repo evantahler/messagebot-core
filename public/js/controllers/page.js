@@ -2,10 +2,9 @@ app.controller('pageController', ['$scope', '$rootScope', '$location', function(
 
   $scope.date = new Date();
 
-  $rootScope.actionHelper($scope, {}, '/api/session', 'PUT', function(data){
+  $rootScope.action($scope, {}, '/api/session', 'PUT', function(data){
     if(data.user){
       $rootScope.user      = data.user;
-      $rootScope.csrfToken = data.csrfToken;
 
       if($location.path() === '/'){      $location.path('/dashboard'); }
       if($location.path() === '/login'){ $location.path('/dashboard'); }

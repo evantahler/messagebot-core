@@ -36,24 +36,18 @@ app.run(['$rootScope', '$http', 'ngNotify', function($rootScope, $http, ngNotify
     html: false
   });
 
+  Highcharts.setOptions({
+    global: { useUTC: false },
+    credits: { enabled: false }
+  });
+
   $rootScope.clearModals = function(name){
     $(name).modal('hide');
     $('body').removeClass('modal-open');
     $('.modal-backdrop').remove();
   };
 
-  $rootScope.authenticatedActionHelper = function($scope, data, path, verb, successCallback, errorCallback){
-    if(!$rootScope.csrfToken){
-      setTimeout(function(){
-        console.log('await csrfToken for ' + path);
-        $rootScope.authenticatedActionHelper($scope, data, path, verb, successCallback, errorCallback);
-      }, 1000);
-    }else{
-      $rootScope.actionHelper($scope, data, path, verb, successCallback, errorCallback);
-    }
-  };
-
-  $rootScope.actionHelper = function($scope, data, path, verb, successCallback, errorCallback){
+  $rootScope.action = function($scope, data, path, verb, successCallback, errorCallback){
     var i;
 
     $('button').prop('disabled', true);
@@ -69,8 +63,6 @@ app.run(['$rootScope', '$http', 'ngNotify', function($rootScope, $http, ngNotify
     if(typeof errorCallback !== 'function'){
       errorCallback = function(errorMessage){ ngNotify.set(errorMessage, 'error'); };
     }
-
-    if(!data.csrfToken){ data.csrfToken = $rootScope.csrfToken; }
 
     for(i in data){
       if(data[i] === null || data[i] === undefined){ delete data[i]; }

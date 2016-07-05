@@ -16,7 +16,7 @@ app.controller('lists:list', ['$scope', '$rootScope', '$location', 'ngNotify', '
   };
 
   $scope.loadLists = function(){
-    $rootScope.authenticatedActionHelper($scope, {
+    $rootScope.action($scope, {
       from: (currentPage * perPage),
       size: perPage
     }, '/api/lists', 'GET', function(data){
@@ -32,7 +32,7 @@ app.controller('lists:list', ['$scope', '$rootScope', '$location', 'ngNotify', '
   };
 
   $scope.processCreateListForm = function(){
-    $rootScope.authenticatedActionHelper($scope, $scope.forms.createList, '/api/list', 'POST', function(data){
+    $rootScope.action($scope, $scope.forms.createList, '/api/list', 'POST', function(data){
       $rootScope.clearModals('#createListModal');
       ngNotify.set('List Created', 'success');
       $location.path('/list/' + data.list.id + '/people');
@@ -42,7 +42,7 @@ app.controller('lists:list', ['$scope', '$rootScope', '$location', 'ngNotify', '
   $scope.editList = function(listId){
     $scope.forms.editList = {};
     $('#editListModal').modal('show');
-    $rootScope.authenticatedActionHelper($scope, {listId: listId}, '/api/list', 'GET', function(data){
+    $rootScope.action($scope, {listId: listId}, '/api/list', 'GET', function(data){
       if(data.list.personQuery){  data.list.personQuery  = prettyPrintJSON(data.list.personQuery); }
       if(data.list.eventQuery){   data.list.eventQuery   = prettyPrintJSON(data.list.eventQuery); }
       if(data.list.messageQuery){ data.list.messageQuery = prettyPrintJSON(data.list.messageQuery); }
@@ -52,7 +52,7 @@ app.controller('lists:list', ['$scope', '$rootScope', '$location', 'ngNotify', '
 
   $scope.processEditListForm = function(){
     $scope.forms.editList.listId = $scope.forms.editList.id;
-    $rootScope.authenticatedActionHelper($scope, $scope.forms.editList, '/api/list', 'PUT', function(data){
+    $rootScope.action($scope, $scope.forms.editList, '/api/list', 'PUT', function(data){
       $rootScope.clearModals('#editListModal');
       $scope.loadLists();
       ngNotify.set('List Updated', 'success');
@@ -62,7 +62,7 @@ app.controller('lists:list', ['$scope', '$rootScope', '$location', 'ngNotify', '
   $scope.copyList = function(listId){
     var input = prompt("Please enter a name for the new list");
     if(input){
-      $rootScope.authenticatedActionHelper($scope, {
+      $rootScope.action($scope, {
         listId: listId,
         name: input
       }, '/api/list/copy', 'POST', function(data){
@@ -73,14 +73,14 @@ app.controller('lists:list', ['$scope', '$rootScope', '$location', 'ngNotify', '
   };
 
   $scope.peopleCount = function(listId){
-    $rootScope.authenticatedActionHelper($scope, {listId: listId}, '/api/list/people', 'POST', function(data){
+    $rootScope.action($scope, {listId: listId}, '/api/list/people', 'POST', function(data){
       ngNotify.set('recount enqueued...', 'success');
     });
   };
 
   $scope.deleteList = function(listId){
     if(confirm('Are you sure?')){
-      $rootScope.authenticatedActionHelper($scope, {listId: listId}, '/api/list', 'DELETE', function(data){
+      $rootScope.action($scope, {listId: listId}, '/api/list', 'DELETE', function(data){
         ngNotify.set('List Deleted', 'success');
         $scope.loadLists();
       });
@@ -110,7 +110,6 @@ app.controller('lists:people:view', ['$scope', '$rootScope', '$location', 'ngNot
     method: 'PUT',
     formData: [
       {listId: $routeParams.listId},
-      {csrfToken: $rootScope.csrfToken},
     ]
   });
 
@@ -121,12 +120,12 @@ app.controller('lists:people:view', ['$scope', '$rootScope', '$location', 'ngNot
     while($scope.uploader.queue.length > 1){ $scope.uploader.removeFromQueue(0); }
   };
 
-  $rootScope.authenticatedActionHelper($scope, {listId: $routeParams.listId}, '/api/list', 'GET', function(data){
+  $rootScope.action($scope, {listId: $routeParams.listId}, '/api/list', 'GET', function(data){
     $scope.list = data.list;
   });
 
   $scope.loadPeople = function(){
-    $rootScope.authenticatedActionHelper($scope, {
+    $rootScope.action($scope, {
       from: (currentPage * perPage),
       size: perPage,
       listId: $routeParams.listId,
@@ -147,7 +146,7 @@ app.controller('lists:people:view', ['$scope', '$rootScope', '$location', 'ngNot
 
   $scope.processAddListPeopleViapersonGuid = function(){
     $scope.forms.addListPeopleViapersonGuids.listId = $scope.list.id;
-    $rootScope.authenticatedActionHelper($scope, $scope.forms.addListPeopleViapersonGuids, '/api/list/people', 'PUT', function(data){
+    $rootScope.action($scope, $scope.forms.addListPeopleViapersonGuids, '/api/list/people', 'PUT', function(data){
       $rootScope.clearModals('#addListPeopleViapersonGuidModal');
       $scope.loadPeople();
       $scope.forms.addListPeopleViapersonGuids = {};
@@ -175,7 +174,7 @@ app.controller('lists:people:view', ['$scope', '$rootScope', '$location', 'ngNot
 
   $scope.removeListPerson = function(personGuid){
     if(confirm('Are you sure?')){
-      $rootScope.authenticatedActionHelper($scope, {
+      $rootScope.action($scope, {
         listId: $scope.list.id,
         personGuids: personGuid
       }, '/api/list/people', 'DELETE', function(data){

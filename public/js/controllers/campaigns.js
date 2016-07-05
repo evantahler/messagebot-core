@@ -9,7 +9,7 @@ app.controller('campaign:edit', ['$scope', '$rootScope', '$location', 'ngNotify'
   $scope.template = {};
 
   $scope.loadTransports = function(){
-    $rootScope.authenticatedActionHelper($scope, {}, '/api/transports', 'GET', function(data){
+    $rootScope.action($scope, {}, '/api/transports', 'GET', function(data){
       $scope.transports = data.transports;
 
       Object.keys(data.transports).forEach(function(t){
@@ -21,29 +21,29 @@ app.controller('campaign:edit', ['$scope', '$rootScope', '$location', 'ngNotify'
 
   $scope.loadLists = function(){
     //TODO: Pagination
-    $rootScope.authenticatedActionHelper($scope, {}, '/api/lists', 'GET', function(data){
+    $rootScope.action($scope, {}, '/api/lists', 'GET', function(data){
       $scope.lists = data.lists;
     });
   };
 
   $scope.loadTemplates = function(){
     //TODO: Pagination
-    $rootScope.authenticatedActionHelper($scope, {}, '/api/templates', 'GET', function(data){
+    $rootScope.action($scope, {}, '/api/templates', 'GET', function(data){
       $scope.templates = data.templates;
     });
   };
 
   $scope.loadCampaign = function(){
-    $rootScope.authenticatedActionHelper($scope, {campaignId: $routeParams.campaignId}, '/api/campaign', 'GET', function(data){
+    $rootScope.action($scope, {campaignId: $routeParams.campaignId}, '/api/campaign', 'GET', function(data){
       $scope.campaign = data.campaign;
       $scope.campaign.campaignId = data.campaign.id;
 
       if($scope.campaign.sendAt){ $scope.campaign.sendAt = new Date($scope.campaign.sendAt); }
 
-      $rootScope.authenticatedActionHelper($scope, {listId: $scope.campaign.listId}, '/api/list', 'GET', function(data){
+      $rootScope.action($scope, {listId: $scope.campaign.listId}, '/api/list', 'GET', function(data){
         $scope.list = data.list;
       });
-      $rootScope.authenticatedActionHelper($scope, {templateId: $scope.campaign.templateId}, '/api/template', 'GET', function(data){
+      $rootScope.action($scope, {templateId: $scope.campaign.templateId}, '/api/template', 'GET', function(data){
         $scope.template = data.template;
       });
 
@@ -56,7 +56,7 @@ app.controller('campaign:edit', ['$scope', '$rootScope', '$location', 'ngNotify'
     if($scope.campaign.campaignVariables){ $scope.campaign.campaignVariables = JSON.stringify($scope.campaign.campaignVariables); }
 
     console.log($scope.campaign)
-    $rootScope.authenticatedActionHelper($scope, $scope.campaign, '/api/campaign', 'PUT', function(data){
+    $rootScope.action($scope, $scope.campaign, '/api/campaign', 'PUT', function(data){
       $scope.loadCampaign();
       ngNotify.set('Template Updated', 'success');
     });
@@ -64,7 +64,7 @@ app.controller('campaign:edit', ['$scope', '$rootScope', '$location', 'ngNotify'
 
   $scope.deleteCampaign = function(){
     if(confirm('Are you sure?')){
-      $rootScope.authenticatedActionHelper($scope, $scope.campaign, '/api/campaign', 'DELETE', function(data){
+      $rootScope.action($scope, $scope.campaign, '/api/campaign', 'DELETE', function(data){
         ngNotify.set('Campaign Deleted', 'success');
         $location.path('/campaigns/list');
       });
@@ -91,7 +91,7 @@ app.controller('campaigns:list', ['$scope', '$rootScope', '$location', 'ngNotify
   var perPage = 50;
 
   $scope.loadCampaigns = function(){
-    $rootScope.authenticatedActionHelper($scope, {
+    $rootScope.action($scope, {
       from: (currentPage * perPage),
       size: perPage
     }, '/api/campaigns', 'GET', function(data){
@@ -103,21 +103,21 @@ app.controller('campaigns:list', ['$scope', '$rootScope', '$location', 'ngNotify
 
   $scope.loadTransports = function(){
     //TODO: Pagination
-    $rootScope.authenticatedActionHelper($scope, {}, '/api/transports', 'GET', function(data){
+    $rootScope.action($scope, {}, '/api/transports', 'GET', function(data){
       $scope.transports = data.transports;
     });
   };
 
   $scope.loadLists = function(){
     //TODO: Pagination
-    $rootScope.authenticatedActionHelper($scope, {}, '/api/lists', 'GET', function(data){
+    $rootScope.action($scope, {}, '/api/lists', 'GET', function(data){
       $scope.lists = data.lists;
     });
   };
 
   $scope.loadTemplates = function(){
     //TODO: Pagination
-    $rootScope.authenticatedActionHelper($scope, {}, '/api/templates', 'GET', function(data){
+    $rootScope.action($scope, {}, '/api/templates', 'GET', function(data){
       $scope.templates = data.templates;
     });
   };
@@ -127,7 +127,7 @@ app.controller('campaigns:list', ['$scope', '$rootScope', '$location', 'ngNotify
   };
 
   $scope.processCreateCampaignForm = function(){
-    $rootScope.authenticatedActionHelper($scope, $scope.forms.createCampaign, '/api/campaign', 'POST', function(data){
+    $rootScope.action($scope, $scope.forms.createCampaign, '/api/campaign', 'POST', function(data){
       $rootScope.clearModals('#createCampaignModal');
       ngNotify.set('Campaign Created', 'success');
       $location.path('/campaign/' + data.campaign.id);
@@ -137,14 +137,14 @@ app.controller('campaigns:list', ['$scope', '$rootScope', '$location', 'ngNotify
   $scope.editCampaign = function(campaignId){
     $scope.forms.editCampaign = {};
     $('#editCampaignModal').modal('show');
-    $rootScope.authenticatedActionHelper($scope, {campaignId: campaignId}, '/api/campaign', 'GET', function(data){
+    $rootScope.action($scope, {campaignId: campaignId}, '/api/campaign', 'GET', function(data){
       $scope.forms.editCampaign = data.campaign;
     });
   };
 
   $scope.processEditCampaignForm = function(){
     $scope.forms.editCampaign.campaignId = $scope.forms.editCampaign.id;
-    $rootScope.authenticatedActionHelper($scope, $scope.forms.editCampaign, '/api/campaign', 'PUT', function(data){
+    $rootScope.action($scope, $scope.forms.editCampaign, '/api/campaign', 'PUT', function(data){
       $rootScope.clearModals('#editCampaignModal');
       $scope.loadCampaigns();
       ngNotify.set('Campaign Updated', 'success');
@@ -154,7 +154,7 @@ app.controller('campaigns:list', ['$scope', '$rootScope', '$location', 'ngNotify
   $scope.copyCampaign = function(campaignId){
     var input = prompt("Please enter a name for the new campaign");
     if(input){
-      $rootScope.authenticatedActionHelper($scope, {
+      $rootScope.action($scope, {
         campaignId: campaignId,
         name: input
       }, '/api/campaign/copy', 'POST', function(data){
@@ -166,7 +166,7 @@ app.controller('campaigns:list', ['$scope', '$rootScope', '$location', 'ngNotify
 
   $scope.deleteCampaign = function(campaignId){
     if(confirm('Are you sure?')){
-      $rootScope.authenticatedActionHelper($scope, {campaignId: campaignId}, '/api/campaign', 'DELETE', function(data){
+      $rootScope.action($scope, {campaignId: campaignId}, '/api/campaign', 'DELETE', function(data){
         ngNotify.set('Campaign Deleted', 'success');
         $scope.loadCampaigns();
       });

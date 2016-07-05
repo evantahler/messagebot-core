@@ -1,7 +1,7 @@
 app.controller('user:create', ['$scope', '$rootScope', '$location', function($scope, $rootScope, $location){
   $scope.formData    = {};
   $scope.processForm = function(){
-    $rootScope.authenticatedActionHelper($scope, $scope.formData, '/api/user', 'POST', function(data){
+    $rootScope.action($scope, $scope.formData, '/api/user', 'POST', function(data){
       location.reload();
     });
   };
@@ -12,12 +12,12 @@ app.controller('users:list', ['$scope', '$rootScope', '$location', 'ngNotify', f
   $scope.forms.createUser = {};
   $scope.forms.editUser   = {};
 
-  $rootScope.authenticatedActionHelper($scope, {}, '/api/user/statuses', 'GET', function(data){
+  $rootScope.action($scope, {}, '/api/user/statuses', 'GET', function(data){
     $scope.validStatuses = data.validStatuses;
   });
 
   $scope.loadUsers = function(){
-    $rootScope.authenticatedActionHelper($scope, {}, '/api/users', 'GET', function(data){
+    $rootScope.action($scope, {}, '/api/users', 'GET', function(data){
       $scope.users = data.users;
     });
   };
@@ -28,7 +28,7 @@ app.controller('users:list', ['$scope', '$rootScope', '$location', 'ngNotify', f
   };
 
   $scope.processCreateUserForm = function(){
-    $rootScope.authenticatedActionHelper($scope, $scope.forms.createUser, '/api/user', 'POST', function(data){
+    $rootScope.action($scope, $scope.forms.createUser, '/api/user', 'POST', function(data){
       $rootScope.clearModals('#createUserModal');
       $scope.forms.createUser = {};
       $scope.loadUsers();
@@ -39,14 +39,14 @@ app.controller('users:list', ['$scope', '$rootScope', '$location', 'ngNotify', f
   $scope.editUser = function(userId){
     $scope.forms.editUser = {};
     $('#editUserModal').modal('show');
-    $rootScope.authenticatedActionHelper($scope, {userId: userId}, '/api/user', 'GET', function(data){
+    $rootScope.action($scope, {userId: userId}, '/api/user', 'GET', function(data){
       $scope.forms.editUser = data.user;
     });
   };
 
   $scope.processEditUserForm = function(){
     $scope.forms.editUser.userId = $scope.forms.editUser.id;
-    $rootScope.authenticatedActionHelper($scope, $scope.forms.editUser, '/api/user', 'PUT', function(data){
+    $rootScope.action($scope, $scope.forms.editUser, '/api/user', 'PUT', function(data){
       $rootScope.clearModals('#editUserModal');
       $scope.forms.editUser = {};
       $scope.loadUsers();
@@ -56,7 +56,7 @@ app.controller('users:list', ['$scope', '$rootScope', '$location', 'ngNotify', f
 
   $scope.deleteUser = function(userId){
     if(confirm('Are you sure?')){
-      $rootScope.authenticatedActionHelper($scope, {userId: userId}, '/api/user', 'DELETE', function(data){
+      $rootScope.action($scope, {userId: userId}, '/api/user', 'DELETE', function(data){
         ngNotify.set('User Deleted', 'success');
         $scope.loadUsers();
       });
@@ -68,17 +68,17 @@ app.controller('users:list', ['$scope', '$rootScope', '$location', 'ngNotify', f
 
 app.controller('user:edit', ['$scope', '$rootScope', '$location', 'ngNotify', function($scope, $rootScope, $location, ngNotify){
 
-  $rootScope.authenticatedActionHelper($scope, {}, '/api/user/statuses', 'GET', function(data){
+  $rootScope.action($scope, {}, '/api/user/statuses', 'GET', function(data){
     $scope.validStatuses = data.validStatuses;
   });
 
-  $rootScope.authenticatedActionHelper($scope, {userId: $rootScope.user.id}, '/api/user', 'GET', function(data){
+  $rootScope.action($scope, {userId: $rootScope.user.id}, '/api/user', 'GET', function(data){
     $scope.formData = data.user;
   });
 
   $scope.processForm = function(){
     $scope.formData.userId = $rootScope.user.id;
-    $rootScope.authenticatedActionHelper($scope, $scope.formData, '/api/user', 'PUT', function(data){
+    $rootScope.action($scope, $scope.formData, '/api/user', 'PUT', function(data){
       if(data.user){
         ngNotify.set('Account Updated', 'success');
         $rootScope.user = data.user;

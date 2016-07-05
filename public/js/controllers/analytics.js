@@ -45,7 +45,7 @@ app.controller('analytics:search', ['$scope', '$rootScope', '$location', 'ngNoti
   $scope.loadSearchResults = function(searchKeys, searchValues){
     $scope.searchResults = [];
 
-    $rootScope.authenticatedActionHelper($scope, {
+    $rootScope.action($scope, {
       userId: $rootScope.user.id,
       searchKeys: searchKeys,
       searchValues: searchValues,
@@ -83,7 +83,7 @@ app.controller('analytics:recent', ['$scope', '$rootScope', '$location', 'ngNoti
   var perPage = 50;
 
   $scope.loadRecent = function(){
-    $rootScope.authenticatedActionHelper($scope, {
+    $rootScope.action($scope, {
       userId: $rootScope.user.id,
       searchKeys: 'guid',
       searchValues: '*',
@@ -112,7 +112,7 @@ app.controller('analytics:histogram', ['$scope', '$rootScope', '$location', 'ngN
   $scope.possibleIntervals = [ 'year', 'month', 'week', 'day', 'hour', 'minute' ];
 
   $scope.loadHistogram = function(){
-    $rootScope.authenticatedActionHelper($scope, {
+    $rootScope.action($scope, {
       userId: $rootScope.user.id,
       searchKeys: 'guid',
       searchValues: '*',
@@ -152,7 +152,7 @@ app.controller('analytics:histogram', ['$scope', '$rootScope', '$location', 'ngN
           layout: 'vertical',
           align: 'right',
           verticalAlign: 'top',
-          borderWidth: 1
+          floating: true,
         },
         series: [
           {name: section, data: counts}

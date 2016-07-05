@@ -17,12 +17,11 @@ app.controller('template:edit', ['$scope', '$rootScope', '$location', 'ngNotify'
     $scope.template.url = '/api/template/render.html?' +
       'templateId=' + $scope.template.id +
       '&personGuid=' + $scope.options.personGuid +
-      '&csrfToken=' + $rootScope.csrfToken +
       '&r=' + Math.floor(new Date().getTime() / 1000);
   };
 
   $scope.loadTemplate = function(){
-    $rootScope.authenticatedActionHelper($scope, {templateId: $routeParams.templateId}, '/api/template', 'GET', function(data){
+    $rootScope.action($scope, {templateId: $routeParams.templateId}, '/api/template', 'GET', function(data){
       $scope.template = data.template;
       $scope.template.templateId = $scope.template.id;
       $scope.prepareRender();
@@ -30,7 +29,7 @@ app.controller('template:edit', ['$scope', '$rootScope', '$location', 'ngNotify'
   };
 
   $scope.loadView = function(){
-    $rootScope.authenticatedActionHelper($scope, {
+    $rootScope.action($scope, {
       templateId: $routeParams.templateId,
       personGuid: $scope.options.personGuid,
     }, '/api/template/render', 'GET', function(data){
@@ -39,7 +38,7 @@ app.controller('template:edit', ['$scope', '$rootScope', '$location', 'ngNotify'
   };
 
   $scope.editTemplate = function(){
-    $rootScope.authenticatedActionHelper($scope, $scope.template, '/api/template', 'PUT', function(data){
+    $rootScope.action($scope, $scope.template, '/api/template', 'PUT', function(data){
       $scope.template = data.template;
       $scope.template.templateId = $scope.template.id;
       $scope.prepareRender();
@@ -49,7 +48,7 @@ app.controller('template:edit', ['$scope', '$rootScope', '$location', 'ngNotify'
 
   $scope.deleteTemplate = function(){
     if(confirm('Are you sure?')){
-      $rootScope.authenticatedActionHelper($scope, $scope.template, '/api/template', 'DELETE', function(data){
+      $rootScope.action($scope, $scope.template, '/api/template', 'DELETE', function(data){
         ngNotify.set('Template Deleted', 'success');
         $location.path('/templates/list');
       });
@@ -95,7 +94,7 @@ app.controller('templates:list', ['$scope', '$rootScope', '$location', 'ngNotify
   };
 
   $scope.loadTemplates = function(){
-    $rootScope.authenticatedActionHelper($scope, {
+    $rootScope.action($scope, {
       from: (currentPage * perPage),
       size: perPage
     }, '/api/templates', 'GET', function(data){
@@ -106,7 +105,7 @@ app.controller('templates:list', ['$scope', '$rootScope', '$location', 'ngNotify
   };
 
   $scope.loadTransports = function(){
-    $rootScope.authenticatedActionHelper($scope, {}, '/api/transports', 'GET', function(data){
+    $rootScope.action($scope, {}, '/api/transports', 'GET', function(data){
       $scope.transports = data.transports;
     });
   };
@@ -116,7 +115,7 @@ app.controller('templates:list', ['$scope', '$rootScope', '$location', 'ngNotify
   };
 
   $scope.processCreateTemplateForm = function(){
-    $rootScope.authenticatedActionHelper($scope, $scope.forms.createTemplate, '/api/template', 'POST', function(data){
+    $rootScope.action($scope, $scope.forms.createTemplate, '/api/template', 'POST', function(data){
       $rootScope.clearModals('#createTemplateModal');
       ngNotify.set('Template Created', 'success');
       $location.path('/template/' + data.template.id);
@@ -126,14 +125,14 @@ app.controller('templates:list', ['$scope', '$rootScope', '$location', 'ngNotify
   $scope.editTemplate = function(templateId){
     $scope.forms.editTemplate = {};
     $('#editTemplateModal').modal('show');
-    $rootScope.authenticatedActionHelper($scope, {templateId: templateId}, '/api/template', 'GET', function(data){
+    $rootScope.action($scope, {templateId: templateId}, '/api/template', 'GET', function(data){
       $scope.forms.editTemplate = data.template;
     });
   };
 
   $scope.processEditTemplateForm = function(){
     $scope.forms.editTemplate.templateId = $scope.forms.editTemplate.id;
-    $rootScope.authenticatedActionHelper($scope, $scope.forms.editTemplate, '/api/template', 'PUT', function(data){
+    $rootScope.action($scope, $scope.forms.editTemplate, '/api/template', 'PUT', function(data){
       $rootScope.clearModals('#editTemplateModal');
       $scope.loadTemplates();
       ngNotify.set('Template Updated', 'success');
@@ -143,7 +142,7 @@ app.controller('templates:list', ['$scope', '$rootScope', '$location', 'ngNotify
   $scope.copyTemplate = function(templateId){
     var input = prompt("Please enter a name for the new template");
     if(input){
-      $rootScope.authenticatedActionHelper($scope, {
+      $rootScope.action($scope, {
         templateId: templateId,
         name: input
       }, '/api/template/copy', 'POST', function(data){
@@ -155,7 +154,7 @@ app.controller('templates:list', ['$scope', '$rootScope', '$location', 'ngNotify
 
   $scope.deleteTemplate = function(templateId){
     if(confirm('Are you sure?')){
-      $rootScope.authenticatedActionHelper($scope, {templateId: templateId}, '/api/template', 'DELETE', function(data){
+      $rootScope.action($scope, {templateId: templateId}, '/api/template', 'DELETE', function(data){
         ngNotify.set('Tepmplate Deleted', 'success');
         $scope.loadTemplates();
       });

@@ -9,7 +9,6 @@ module.exports = {
     api.transports = [];
 
     var middleware = {
-      // These actions are restricted to the website (and you need a CSRF token)
       'data-preperation': {
         name: 'data-preperation',
         global: true,

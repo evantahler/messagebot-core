@@ -9,7 +9,7 @@ app.controller('record:view', ['$scope', '$rootScope', '$location', 'ngNotify', 
 
   $scope.load = function(){
     $scope.formData = {};
-    $rootScope.authenticatedActionHelper($scope, {
+    $rootScope.action($scope, {
       userId: $rootScope.user.id,
       guid: $scope.guid
     }, '/api/' + $scope.recordType, 'GET', function(data){
@@ -49,7 +49,7 @@ app.controller('record:view', ['$scope', '$rootScope', '$location', 'ngNotify', 
 
     var data = {};
     data[key] = value;
-    $rootScope.authenticatedActionHelper($scope, {
+    $rootScope.action($scope, {
       userId: $rootScope.user.id,
       guid: $scope.guid,
       data: JSON.stringify(data),
@@ -62,7 +62,7 @@ app.controller('record:view', ['$scope', '$rootScope', '$location', 'ngNotify', 
   $scope.deleteAttribute = function(key){
     var data = {};
     data[key] = '_delete';
-    $rootScope.authenticatedActionHelper($scope, {
+    $rootScope.action($scope, {
       userId: $rootScope.user.id,
       guid: $scope.guid,
       data: JSON.stringify(data),
@@ -78,7 +78,7 @@ app.controller('record:view', ['$scope', '$rootScope', '$location', 'ngNotify', 
 
   $scope.deleteRecord = function(){
     if(confirm('are you sure?')){
-      $rootScope.authenticatedActionHelper($scope, {
+      $rootScope.action($scope, {
         userId: $rootScope.user.id,
         guid: $scope.guid,
       }, '/api/' + $scope.recordType, 'DELETE', function(data){
