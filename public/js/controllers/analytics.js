@@ -136,8 +136,13 @@ app.controller('analytics:histogram', ['$scope', '$rootScope', '$location', 'ngN
 
       var chartData = {
         chart: {
-          type: 'spline',
+          type: 'column',
           backgroundColor: 'rgba(255, 255, 255, 0.1)',
+        },
+        plotOptions: {
+          column: {
+            stacking: 'normal',
+          }
         },
         title: {
           text: section,
@@ -149,6 +154,13 @@ app.controller('analytics:histogram', ['$scope', '$rootScope', '$location', 'ngN
         },
         yAxis: {
           title: { text: (section + ' created') },
+          stackLabels: {
+            enabled: true,
+            style: {
+              fontWeight: 'bold',
+              color: (Highcharts.theme && Highcharts.theme.textColor) || 'gray'
+            }
+          }
         },
         legend: {
           layout: 'vertical',
