@@ -1,6 +1,6 @@
 <div ng-controller="analytics:recent">
 
-  <h2>recently created {{ $root.section }} ({{ total }} total):</h2>
+  <h2>All {{ $root.section }} ({{ total }} total):</h2>
 
   <table class="table table-striped table-hover">
 
@@ -10,6 +10,7 @@
         <th>createdAt</th>
         <th>updatedAt</th>
         <th ng-if="records[0].type !== undefined">type</th>
+        <th ng-if="records[0].transport !== undefined">transport</th>
         <th>data</th>
       </tr>
     </thead>
@@ -20,6 +21,7 @@
         <td>{{ record.createdAt }}</td>
         <td>{{ record.updatedAt }}</td>
         <td ng-if="record.type !== undefined">{{ record.type }}</td>
+        <td ng-if="record.transport !== undefined">{{ record.transport }}</td>
         <td>{{ record.data }}</td>
       </tr>
     </tbody>

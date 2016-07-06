@@ -43,8 +43,6 @@ exports.peopleAggregation = {
   middleware:             ['logged-in-session', 'status-required-admin' ],
 
   inputs: {
-    searchKeys:   { required: true },
-    searchValues: { required: true },
     start:        {
       required: false,
       formatter: function(p){ return new Date(parseInt(p)); },
@@ -55,26 +53,25 @@ exports.peopleAggregation = {
       formatter: function(p){ return new Date(parseInt(p)); },
       default:   function(p){ return new Date().getTime(); },
     },
-    dateField:    {
-      required: true,
-      default: function(){ return 'createdAt'; }
-    },
-    agg:          {
-      required: true,
-      default: function(){ return 'cardinality'; }
-    },
-    aggField: {
-      required: true,
-      default: function(){ return 'guid'; }
-    },
     interval: { required: false }
   },
 
   run: function(api, data, next){
-    api.elasticsearch.aggregation(alias(api), data.params.searchKeys, data.params.searchValues, data.params.start, data.params.end, data.params.dateField, data.params.agg, data.params.aggField, data.params.interval, function(error, value){
-      if(error){ return next(error); }
-      data.response.value = value;
-      next();
-    });
+    api.elasticsearch.aggregation(
+      alias(api),
+      ['guid'],
+      ['_exists'],
+      data.params.start,
+      data.params.end,
+      'createdAt',
+      'date_histogram',
+      'createdAt',
+      data.params.interval,
+      function(error, buckets){
+        if(error){ return next(error); }
+        data.response.aggregations = {created: buckets.buckets};
+        next();
+      }
+    );
   }
 };

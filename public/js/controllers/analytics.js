@@ -119,24 +119,25 @@ app.controller('analytics:histogram', ['$scope', '$rootScope', '$location', 'ngN
 
   $scope.loadHistogram = function(){
     $rootScope.action($scope, {
-      userId: $rootScope.user.id,
-      searchKeys: 'guid',
-      searchValues: '*',
-      agg: 'date_histogram',
-      aggField: 'createdAt',
       interval: $scope.histogramOptions.interval,
       start: $scope.histogramOptions.start.getTime(),
       end: $scope.histogramOptions.end.getTime(),
     }, '/api/' + section + '/aggregation', 'GET', function(data){
 
-      var seriesData = [];
-      data.value.buckets.forEach(function(e){
-        seriesData.push({x: new Date(e.key), y: e.doc_count});
+      var series = [];
+      Object.keys(data.aggregations).forEach(function(aggName){
+        var seriesData = {name: aggName, data: []};
+        data.aggregations[aggName].forEach(function(e){
+          seriesData.data.push({x: new Date(e.key), y: e.doc_count});
+        });
+
+        series.push(seriesData);
       });
 
       var chartData = {
         chart: {
-          type: 'spline'
+          type: 'spline',
+          backgroundColor: 'rgba(255, 255, 255, 0.1)',
         },
         title: {
           text: section,
@@ -155,9 +156,7 @@ app.controller('analytics:histogram', ['$scope', '$rootScope', '$location', 'ngN
           verticalAlign: 'top',
           floating: true,
         },
-        series: [
-          {name: section, data: seriesData}
-        ]
+        series: series
       };
 
       // hadck to defer loading to next cycle

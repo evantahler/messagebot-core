@@ -59,7 +59,8 @@ app.controller('campaign:stats', ['$scope', '$rootScope', '$location', 'ngNotify
 
       var chartData = {
         chart: {
-          type: 'spline'
+          type: 'spline',
+          backgroundColor: 'rgba(255, 255, 255, 0.1)',
         },
         title: {
           text: $scope.campaign.name,
