@@ -11,6 +11,9 @@ app.controller('analytics:search', ['$scope', '$rootScope', '$location', 'ngNoti
     'createdAt',
     'updatedAt',
     'campaignId',
+    'sentAt',
+    'openedAt',
+    'actedAt',
   ];
 
   $scope.searchResults = [];
@@ -120,37 +123,32 @@ app.controller('analytics:histogram', ['$scope', '$rootScope', '$location', 'ngN
       searchKeys: 'guid',
       searchValues: '*',
       agg: 'date_histogram',
-      interval: $scope.histogramOptions.interval,
       aggField: 'createdAt',
+      interval: $scope.histogramOptions.interval,
       start: $scope.histogramOptions.start.getTime(),
       end: $scope.histogramOptions.end.getTime(),
     }, '/api/' + section + '/aggregation', 'GET', function(data){
 
-      var times = [];
-      var counts = [];
-       data.value.buckets.forEach(function(bucket){
-        times.push(bucket.key_as_string);
-        counts.push(bucket.doc_count);
+      var seriesData = [];
+      data.value.buckets.forEach(function(e){
+        seriesData.push({x: new Date(e.key), y: e.doc_count});
       });
 
       var chartData = {
+        chart: {
+          type: 'spline'
+        },
         title: {
           text: section,
           align: 'left',
         },
         xAxis: {
-          categories: times
+          type: 'datetime',
+          tickPixelInterval: 150
         },
         yAxis: {
-          title: { text: (section + ' Created') },
+          title: { text: (section + ' created') },
         },
-        plotOptions: {
-          line: {
-            dataLabels: { enabled: true },
-            enableMouseTracking: true
-          }
-        },
-        // tooltip: { valueSuffix: (section + ' created') },
         legend: {
           layout: 'vertical',
           align: 'right',
@@ -158,7 +156,7 @@ app.controller('analytics:histogram', ['$scope', '$rootScope', '$location', 'ngN
           floating: true,
         },
         series: [
-          {name: section, data: counts}
+          {name: section, data: seriesData}
         ]
       };
 

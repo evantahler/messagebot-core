@@ -29,6 +29,7 @@ exports.default = {
         { path: '/template/render',      action: 'template:render' },
         { path: '/templates',            action: 'templates:list' },
         { path: '/campaign',             action: 'campaign:view' },
+        { path: '/campaign/stats',       action: 'campaign:stats' },
         { path: '/campaigns',            action: 'campaigns:list' },
         { path: '/transports',           action: 'transports:list' },
       ],

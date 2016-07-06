@@ -1,3 +1,101 @@
+app.controller('campaign:stats', ['$scope', '$rootScope', '$location', 'ngNotify', '$routeParams', function($scope, $rootScope, $location, ngNotify, $routeParams){
+  $scope.campaign = {};
+  $scope.list = {};
+  $scope.template = {};
+  $scope.funnel = {};
+
+  $scope.histogramOptions = {
+    interval: 'day',
+    start: new Date(new Date().setYear( new Date().getFullYear() - 1 )),
+    end: new Date(),
+  };
+
+  $scope.possibleIntervals = [ 'year', 'month', 'week', 'day', 'hour', 'minute' ];
+
+  $scope.loadCampaign = function(){
+    $rootScope.action($scope, {campaignId: $routeParams.campaignId}, '/api/campaign', 'GET', function(data){
+      $scope.campaign = data.campaign;
+      $scope.campaign.campaignId = data.campaign.id;
+
+      if($scope.campaign.sendAt){ $scope.campaign.sendAt = new Date($scope.campaign.sendAt); }
+      if($scope.campaign.sentAt){ $scope.campaign.sentAt = new Date($scope.campaign.sentAt); }
+
+      $rootScope.action($scope, {listId: $scope.campaign.listId}, '/api/list', 'GET', function(data){
+        $scope.list = data.list;
+      });
+      $rootScope.action($scope, {templateId: $scope.campaign.templateId}, '/api/template', 'GET', function(data){
+        $scope.template = data.template;
+      });
+    });
+  };
+
+  $scope.loadCampaignStats = function(){
+    $rootScope.action($scope, {
+      campaignId: $routeParams.campaignId,
+      interval: $scope.histogramOptions.interval,
+      start: $scope.histogramOptions.start.getTime(),
+      end: $scope.histogramOptions.end.getTime(),
+    }, '/api/campaign/stats', 'GET', function(data){
+      $scope.funnel = data;
+      $scope.funnel.rates = {
+        sentAt: Math.round($scope.funnel.totals.sentAt / $scope.funnel.totals.sentAt * 10000) / 100,
+        readAt: Math.round($scope.funnel.totals.readAt / $scope.funnel.totals.sentAt * 10000) / 100,
+        actedAt: Math.round($scope.funnel.totals.actedAt / $scope.funnel.totals.sentAt * 10000) / 100,
+      }
+
+      var sentAtSeries  = [];
+      var readAtSeries  = [];
+      var actedAtSeries = [];
+
+      $scope.funnel.sentAt.forEach(function(e){
+        sentAtSeries.push({x: new Date(e.key), y: e.doc_count});
+      });
+      $scope.funnel.readAt.forEach(function(e){
+        readAtSeries.push({x: new Date(e.key), y: e.doc_count});
+      });
+      $scope.funnel.actedAt.forEach(function(e){
+        actedAtSeries.push({x: new Date(e.key), y: e.doc_count});
+      });
+
+      var chartData = {
+        chart: {
+          type: 'spline'
+        },
+        title: {
+          text: $scope.campaign.name,
+          align: 'left',
+        },
+        xAxis: {
+          type: 'datetime',
+          tickPixelInterval: 150
+        },
+        yAxis: {
+          title: { text: 'count' },
+        },
+        legend: {
+          layout: 'vertical',
+          align: 'right',
+          verticalAlign: 'top',
+          floating: true,
+        },
+        series: [
+          {name: 'sent messages', data: sentAtSeries, color: 'orange'},
+          {name: 'read messages', data: readAtSeries, color: 'blue'},
+          {name: 'acted messages', data: actedAtSeries, color: 'green'},
+        ]
+      };
+
+      // hadck to defer loading to next cycle
+      setTimeout(function(){
+        $('#histogramChart').highcharts(chartData);
+      }, 10);
+    });
+  };
+
+  $scope.loadCampaign();
+  $scope.loadCampaignStats();
+}]);
+
 app.controller('campaign:edit', ['$scope', '$rootScope', '$location', 'ngNotify', '$routeParams', function($scope, $rootScope, $location, ngNotify, $routeParams){
   $scope.campaign = {};
   $scope.types = ['simple', 'recurring', 'trigger'];

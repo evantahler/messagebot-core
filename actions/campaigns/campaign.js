@@ -1,3 +1,5 @@
+var async = require('async');
+
 var campaignTypes = ['simple', 'recurring', 'trigger'];
 var campaignTypeValidator = function(p){
   if(campaignTypes.indexOf(p) < 0){
@@ -211,6 +213,81 @@ exports.campaignEdit = {
         next();
       }).catch(next);
     }).catch(next);
+  }
+};
+
+exports.campaignStats = {
+  name:                   'campaign:stats',
+  description:            'campaign:stats',
+  outputExample:          {},
+  middleware:             [ 'logged-in-session', 'status-required-admin' ],
+
+  inputs: {
+    campaignId: {
+      required: true,
+      formatter: function(p){ return parseInt(p); }
+    },
+    start:        {
+      required: false,
+      formatter: function(p){ return new Date(parseInt(p)); },
+      default:   function(p){ return 0; },
+    },
+    end:          {
+      required: false,
+      formatter: function(p){ return new Date(parseInt(p)); },
+      default:   function(p){ return new Date().getTime(); },
+    },
+    interval:          {
+      required: true,
+      default: 'hour',
+    },
+  },
+
+  run: function(api, data, next){
+    var jobs = [];
+    var campaign;
+    var alias = api.env + '-' + 'messages';
+
+    jobs.push(function(done){
+      api.models.campaign.findOne({where: {id: data.params.campaignId}}).then(function(_campaign){
+        campaign = _campaign;
+        if(!campaign){ return next(new Error('campaign not found')); }
+        done();
+      }).catch(done);
+    });
+
+    data.response.totals = {};
+
+    [
+      'sentAt',
+      'readAt',
+      'actedAt'
+    ].forEach(function(term){
+      jobs.push(function(done){
+        api.elasticsearch.aggregation(
+          alias,
+          ['campaignId', term],
+          [campaign.id, '_exists'],
+          data.params.start,
+          data.params.end,
+          'createdAt',
+          'date_histogram',
+          'createdAt',
+          data.params.interval,
+          function(error, buckets){
+            if(error){ return done(error); }
+
+            data.response[term] = buckets.buckets;
+            var total = 0;
+            buckets.buckets.forEach(function(bucket){ total += bucket.doc_count; });
+            data.response.totals[term] = total;
+            done();
+          }
+        );
+      });
+    });
+
+    async.series(jobs, next);
   }
 };
 

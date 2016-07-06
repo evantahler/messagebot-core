@@ -36,6 +36,7 @@ var routes = [
   [ '/templates/list/:page',         'pages/templates/list.html',   'MessageBot: Templates',   true ],
 
   [ '/campaign/:campaignId',         'pages/campaigns/edit.html',   'MessageBot: Campaign',    true ],
+  [ '/campaign/:campaignId/stats',   'pages/campaigns/stats.html',  'MessageBot: Campaign',    true ],
   [ '/campaigns/list',               'pages/campaigns/list.html',   'MessageBot: Campaigns',   true ],
   [ '/campaigns/list/:page',         'pages/campaigns/list.html',   'MessageBot: Campaigns',   true ],
 

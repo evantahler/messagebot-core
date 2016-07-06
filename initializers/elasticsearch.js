@@ -32,20 +32,45 @@ module.exports = {
         return guid;
       },
 
-      search: function(alias, searchKeys, searchValues, from, size, sort, callback){
+      prepareQuery: function(searchKeys, searchValues, start, end, dateField){
         var musts = [];
-        var results = [];
+        var q, key, val;
 
         for(var i in searchKeys){
-          var q = {};
-          var container = {};
-          var type = 'term';
-          if( searchValues[i].indexOf('*') >=0 ){ type = 'wildcard'; }
-          q[ searchKeys[i] ] = searchValues[i].toLowerCase();
-          // q['analyze_wildcard'] = true;
-          container[type] = q;
-          musts.push(container);
+          q = {};
+          key = searchKeys[i];
+          val = searchValues[i];
+
+          if(typeof(val) === 'string'){
+            val = val.toLowerCase();
+          }
+
+          if(val === '_exists'){
+            q['field'] = key;
+            musts.push({ exists: q });
+          }else if(val === '_missing'){
+            q['field'] = key;
+            musts.push({ missing: q });
+          }else if(typeof val === 'string' && val.indexOf('*') >=0){
+            q[key] = val;
+            musts.push({ wildcard: q });
+          }else{
+            q[key] = val;
+            musts.push({ term: q });
+          }
         }
+
+        if(start && end && dateField){
+          var range = {};
+          range[dateField] = {gte: start.getTime(), lte: end.getTime()};
+          musts.push({range: range});
+        }
+
+        return musts;
+      },
+
+      search: function(alias, searchKeys, searchValues, from, size, sort, callback){
+        var results = [];
 
         if(!sort){
           sort = [
@@ -62,7 +87,7 @@ module.exports = {
               sort: sort,
               query: {
                 bool: {
-                  must: musts
+                  must: this.prepareQuery(searchKeys, searchValues)
                 }
               }
             }
@@ -159,18 +184,6 @@ module.exports = {
       },
 
       aggregation: function(alias, searchKeys, searchValues, start, end, dateField, agg, aggField, interval, callback){
-        var musts = [];
-
-        for(var i in searchKeys){
-          var q = {};
-          q[searchKeys[i]] = searchValues[i];
-          musts.push({ wildcard: q });
-        }
-
-        var range = {};
-        range[dateField] = {gte: start.getTime(), lte: end.getTime()};
-        musts.push({range: range});
-
         var aggs = {agg_results: {}};
         if(interval){
           var format = 'yyyy-MM-dd';
@@ -198,7 +211,7 @@ module.exports = {
             size: 0,
             query: {
               bool: {
-                must: musts
+                must: this.prepareQuery(searchKeys, searchValues, start, end, dateField),
               }
             }
           }
