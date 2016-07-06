@@ -33,6 +33,7 @@ module.exports = {
         "guid":        { "type": "string"  },
 
         "lists":       { "type": "string"  },
+        "source":      { "type": "string"  },
 
         "data":        { "type": "object" },
         "permissions": { "type": "object" },

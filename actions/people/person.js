@@ -9,6 +9,7 @@ exports.personCreate = {
     guid:         { required: false },
     data:         { required: true  },
     permissions:  { required: false },
+    source:       { required: true },
     createdAt:    {
       required: false,
       formatter: function(p){
@@ -20,8 +21,9 @@ exports.personCreate = {
   run: function(api, data, next){
     var person = new api.models.person();
     if(data.params.guid){        person.data.guid = data.params.guid;               }
+    if(data.params.source){      person.data.source = data.params.source;           }
     if(data.params.permissions){ person.data.permissions = data.params.permissions; }
-    if(data.params.createdAt){ person.data.createdAt = data.params.createdAt; }
+    if(data.params.createdAt){   person.data.createdAt = data.params.createdAt;     }
 
     for(var i in data.params.data){
       if(person.data[i] === null || person.data[i] === undefined){
@@ -55,6 +57,7 @@ exports.personEdit = {
 
   inputs: {
     guid:         { required: true },
+    source:       { required: false },
     data:         { required: true  },
     permissions:  { required: false },
   },
@@ -62,6 +65,7 @@ exports.personEdit = {
   run: function(api, data, next){
     var person = new api.models.person(data.params.guid);
     if(data.params.permissions){ person.data.permissions = data.params.permissions; }
+    if(data.params.source){      person.data.source = data.params.source;           }
 
     for(var i in data.params.data){ person.data[i] = data.params.data[i]; }
 

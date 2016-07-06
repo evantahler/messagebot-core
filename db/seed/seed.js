@@ -30,6 +30,8 @@ var funnel = [
   { pages: ['thank-you.html'],                                            rate: 0.99 },
 ]
 
+var sources = ['web', 'iphone', 'android', 'referral'];
+
 var seed = function(api, callback){
 
   var routeBase = 'http://' + api.config.servers.web.bindIP + ':' + api.config.servers.web.port;
@@ -54,11 +56,11 @@ var seed = function(api, callback){
 
         var payload = {
           createdAt: time.getTime(),
+          source: sources[Math.floor(Math.random() * sources.length)],
           data: JSON.stringify({
             firstName: firstName,
             lastName: lastName,
             email: firstName + '.' + lastName + '@fake.com',
-            acquisitionSource: 'web'
           })
         };
 

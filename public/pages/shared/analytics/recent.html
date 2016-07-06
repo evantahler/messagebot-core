@@ -9,6 +9,7 @@
         <th>&nbsp;</th>
         <th>createdAt</th>
         <th>updatedAt</th>
+        <th ng-if="records[0].source !== undefined">source</th>
         <th ng-if="records[0].type !== undefined">type</th>
         <th ng-if="records[0].transport !== undefined">transport</th>
         <th>data</th>
@@ -20,6 +21,7 @@
         <td><a href="/#/{{ $root.singular($root.section) }}/{{ record.guid  }}"><span class="glyphicon glyphicon-pencil">&nbsp;</span></a></td>
         <td>{{ record.createdAt }}</td>
         <td>{{ record.updatedAt }}</td>
+        <td ng-if="record.source !== undefined">{{ record.source }}</td>
         <td ng-if="record.type !== undefined">{{ record.type }}</td>
         <td ng-if="record.transport !== undefined">{{ record.transport }}</td>
         <td>{{ record.data }}</td>

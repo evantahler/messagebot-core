@@ -41,6 +41,8 @@ exports.userCreate = {
         person.data[p] = user[p];
       });
 
+      person.data.source = 'admin';
+
       person.create(function(error){
         if(error){ api.log('person creation error: ' + error, 'error', data.params); }
 
