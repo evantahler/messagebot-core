@@ -79,7 +79,7 @@ exports.templateRender = {
   },
 
   run: function(api, data, next){
-    api.template.renderToDisk(data.params.templateId, data.params.personGuid, function(error, file, fileBase, view){
+    api.template.renderToDisk(data.params.templateId, data.params.personGuid, null, function(error, file, fileBase, view){
       if(data.connection.extension === 'html'){
         if(error){ return next(error); }
         data.toRender = false;

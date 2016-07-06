@@ -7,6 +7,9 @@
     <ul>
       <!-- special data we can render -->
       <li ng-repeat="(key, value) in record" ng-if="key == 'personGuid'"><a href="/#/person/{{ value }}"><strong>{{ key }}: </strong>{{ value }}</a></li>
+      <li ng-repeat="(key, value) in record" ng-if="key == 'eventGuid'"><a href="/#/event/{{ value }}"><strong>{{ key }}: </strong>{{ value }}</a></li>
+      <li ng-repeat="(key, value) in record" ng-if="key == 'messageGuid'"><a href="/#/message/{{ value }}"><strong>{{ key }}: </strong>{{ value }}</a></li>
+      <li ng-repeat="(key, value) in record" ng-if="key == 'campaignId'"><a href="/#/campaign/{{ value }}"><strong>{{ key }}: </strong>{{ value }}</a></li>
 
       <!-- normal data -->
       <li ng-repeat="(key, value) in record" ng-if="renderableData.indexOf(key) < 0"><strong>{{ key }}: </strong>{{ value }}</li>

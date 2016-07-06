@@ -39,6 +39,7 @@ app.controller('campaign:edit', ['$scope', '$rootScope', '$location', 'ngNotify'
       $scope.campaign.campaignId = data.campaign.id;
 
       if($scope.campaign.sendAt){ $scope.campaign.sendAt = new Date($scope.campaign.sendAt); }
+      if($scope.campaign.sentAt){ $scope.campaign.sentAt = new Date($scope.campaign.sentAt); }
 
       $rootScope.action($scope, {listId: $scope.campaign.listId}, '/api/list', 'GET', function(data){
         $scope.list = data.list;
@@ -55,7 +56,6 @@ app.controller('campaign:edit', ['$scope', '$rootScope', '$location', 'ngNotify'
     if($scope.campaign.sendAt){ $scope.campaign.sendAt = $scope.campaign.sendAt.getTime(); }
     if($scope.campaign.campaignVariables){ $scope.campaign.campaignVariables = JSON.stringify($scope.campaign.campaignVariables); }
 
-    console.log($scope.campaign)
     $rootScope.action($scope, $scope.campaign, '/api/campaign', 'PUT', function(data){
       $scope.loadCampaign();
       ngNotify.set('Template Updated', 'success');
@@ -64,10 +64,10 @@ app.controller('campaign:edit', ['$scope', '$rootScope', '$location', 'ngNotify'
 
   $scope.deleteCampaign = function(){
     if(confirm('Are you sure?')){
-      $rootScope.action($scope, $scope.campaign, '/api/campaign', 'DELETE', function(data){
-        ngNotify.set('Campaign Deleted', 'success');
-        $location.path('/campaigns/list');
-      });
+      // $rootScope.action($scope, $scope.campaign, '/api/campaign', 'DELETE', function(data){
+      //   ngNotify.set('Campaign Deleted', 'success');
+      //   $location.path('/campaigns/list');
+      // });
     }
   };
 

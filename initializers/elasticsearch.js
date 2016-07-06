@@ -246,12 +246,20 @@ module.exports = {
       return payload;
     };
 
+    elasticsearchModel.prototype.ensureGuid = function(){
+      var self = this;
+      if(!self.data.guid){
+        self.data.guid = api.elasticsearch.cleanGuid( uuid.v4() );
+      }
+      return self.data.guid;
+    };
+
     elasticsearchModel.prototype.create = function(callback){
       var self = this;
       var searchKey;
       var searchValue;
 
-      if(!self.data.guid){ self.data.guid = api.elasticsearch.cleanGuid( uuid.v4() ); }
+      self.ensureGuid();
       if(!self.index){ return callback(new Error('index is required')); }
 
       var payload;

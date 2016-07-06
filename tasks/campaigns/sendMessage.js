@@ -20,7 +20,9 @@ exports.task = {
     var file;
     var body;
     var transport;
-    var message;
+
+    var message = new api.models.message();
+    message.ensureGuid();
 
     jobs.push(function(done){
       api.models.campaign.findOne({where: {id: params.campaignId}}).then(function(c){
@@ -55,7 +57,7 @@ exports.task = {
     });
 
     jobs.push(function(done){
-      api.template.renderToDisk(campaign.templateId, person.data.guid, function(error, f){
+      api.template.renderToDisk(campaign.templateId, person.data.guid, message, function(error, f){
         if(error){ return done(error); }
         file = f;
         done();
@@ -88,11 +90,13 @@ exports.task = {
     });
 
     jobs.push(function(done){
-      message = new api.models.message();
+      Object.keys(campaign.campaignVariables).forEach(function(k){
+        message.data[k] = campaign.campaignVariables[k];
+      })
 
-      message.data            = campaign.campaignVariables;
       message.data.personGuid = person.data.guid;
       message.data.transport  = transport.name;
+      message.data.campaignId = campaign.id;
       message.data.body       = body;
       message.data.sentAt     = new Date();
 

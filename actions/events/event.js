@@ -1,6 +1,7 @@
 exports.eventCreate = {
   name:                   'event:create',
   description:            'event:create',
+  matchExtensionMimeType: true,
   outputExample:          {},
   middleware:             [],
 
@@ -9,7 +10,8 @@ exports.eventCreate = {
     ip:           { required: false },
     device:       { required: false },
     guid:         { required: false },
-    personGuid:     { required: true  },
+    personGuid:   { required: true  },
+    messageGuid:  { required: false },
     type:         { required: true  },
     data:         { required: true  },
     lat: {
@@ -31,13 +33,13 @@ exports.eventCreate = {
   run: function(api, data, next){
     var event = new api.models.event();
 
-    if(data.params.ip){        event.data.ip = data.params.ip;               }
-    if(data.params.device){    event.data.device = data.params.device;       }
-    if(data.params.device){    event.data.device = data.params.device;       }
-    if(data.params.guid){      event.data.guid = data.params.guid;           }
+    if(data.params.ip){          event.data.ip = data.params.ip;                   }
+    if(data.params.device){      event.data.device = data.params.device;           }
+    if(data.params.guid){        event.data.guid = data.params.guid;               }
     if(data.params.personGuid){  event.data.personGuid = data.params.personGuid;   }
-    if(data.params.type){      event.data.type = data.params.type;           }
-    if(data.params.createdAt){ event.data.createdAt = data.params.createdAt; }
+    if(data.params.messageGuid){ event.data.messageGuid = data.params.messageGuid; }
+    if(data.params.type){        event.data.type = data.params.type;               }
+    if(data.params.createdAt){   event.data.createdAt = data.params.createdAt;     }
 
     if(data.params.lat && data.params.lon){
       event.data.location = {
@@ -75,7 +77,14 @@ exports.eventCreate = {
       next();
     }else{
       event.create(function(error){
-        if(!error){ data.response.guid = event.data.guid; }
+        if(!error){
+          data.response.guid = event.data.guid;
+          if(data.connection.extension === 'gif'){
+            data.toRender = false;
+            data.connection.rawConnection.responseHttpCode = 200;
+            data.connection.sendFile('tracking.gif');
+          }
+        }
         next(error);
       });
     }
@@ -92,7 +101,8 @@ exports.eventEdit = {
     ip:           { required: false  },
     device:       { required: false  },
     guid:         { required: true   },
-    personGuid:     { required: false  },
+    personGuid:   { required: false  },
+    messageGuid:  { required: false  },
     type:         { required: false  },
     data:         { required: false  },
   },
@@ -100,12 +110,12 @@ exports.eventEdit = {
   run: function(api, data, next){
     var event = new api.models.event(data.params.guid);
 
-    if(data.params.ip){       event.data.ip = data.params.ip;             }
-    if(data.params.device){   event.data.device = data.params.device;     }
-    if(data.params.device){   event.data.device = data.params.device;     }
-    if(data.params.guid){     event.data.guid = data.params.guid;         }
-    if(data.params.personGuid){ event.data.personGuid = data.params.personGuid; }
-    if(data.params.type){     event.data.type = data.params.type;         }
+    if(data.params.ip){          event.data.ip = data.params.ip;                   }
+    if(data.params.device){      event.data.device = data.params.device;           }
+    if(data.params.guid){        event.data.guid = data.params.guid;               }
+    if(data.params.personGuid){  event.data.personGuid = data.params.personGuid;   }
+    if(data.params.messageGuid){ event.data.messageGuid = data.params.messageGuid; }
+    if(data.params.type){        event.data.type = data.params.type;               }
 
     for(var i in data.params.data){ event.data[i] = data.params.data[i]; }
 

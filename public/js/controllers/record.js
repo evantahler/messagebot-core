@@ -5,7 +5,15 @@ app.controller('record:view', ['$scope', '$rootScope', '$location', 'ngNotify', 
   $scope.guid = $routeParams.guid;
   $scope.newAttribute = {};
 
-  $scope.renderableData = ['data', 'personGuid', 'location', 'body'];
+  $scope.renderableData = [
+    'data',
+    'personGuid',
+    'eventGuid',
+    'messageGuid', 
+    'location',
+    'body',
+    'campaignId'
+  ];
 
   $scope.load = function(){
     $scope.formData = {};

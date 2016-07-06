@@ -1,4 +1,3 @@
-
 <html lang="en">
   <body style="
     font-family: 'Roboto','Helvetica Neue',Helvetica,Arial,sans-serif;
@@ -7,10 +6,13 @@
     color: #bbbbbb
     background-color: #ffffff;
   ">
-    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+
+    {{{ beacon }}}
+
+    <table border="0" cellpadding="0" cellspacing="0" width="800">
       <tr>
         <td></td>
-        <td align="left" valign="top" width="600">
+        <td align="left" valign="top" width="100%">
           <table border="0" cellpadding="0" cellspacing="0" width="100%">
 
             <tr><td></td></tr>
@@ -46,7 +48,7 @@
 
                 <p>I last saw you in {{person.updatedAt.monthName}}, {{person.updatedAt.fullYear}}</p>
 
-                <a href="http://messagebot.io" style="text-decoration: none;">
+                <a href="{{#track}}http://messagebot.io{{/track}}" style="text-decoration: none;">
                 <table align="center" width="100%">
                   <tr>
                     <td></td>
@@ -84,7 +86,6 @@
 
               </td>
             </tr>
-
 
             <tr><td></td></tr>
 

@@ -33,6 +33,7 @@ module.exports = {
         "guid":       { "type": "string" },
 
         "personGuid": { "type": "string" },
+        "campaignId": { "type": "integer" },
         "transport":  { "type": "string" },
         "body":       { "type": "string" },
 

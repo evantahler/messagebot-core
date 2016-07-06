@@ -4,10 +4,13 @@ app.controller('analytics:search', ['$scope', '$rootScope', '$location', 'ngNoti
   var topLevelSearchTerms = [
     'type',
     'personGuid',
+    'messageGuid',
+    'eventGuid',
     'guid',
     'type',
     'createdAt',
     'updatedAt',
+    'campaignId',
   ];
 
   $scope.searchResults = [];
