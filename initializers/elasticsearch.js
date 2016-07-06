@@ -421,7 +421,7 @@ module.exports = {
       }, function(error, data){
         api.elasticsearch.pendingOperations--;
         if(error){ return callback(error); }
-        if(data.hits.hits.length === 0){ return callback(new Error('not found')); }
+        if(data.hits.hits.length === 0){ return callback(new Error(self.type + ' (' + self.data.guid + ') not found')); }
         self.data = data.hits.hits[0]._source;
 
         if(self.data.createdAt){ self.data.createdAt = new Date(self.data.createdAt); }

@@ -133,10 +133,10 @@ exports.campaignCopy = {
         templateId:        campaign.templateId,
         transport:         campaign.transport,
         campaignVariables: campaign.campaignVariables,
-        sendAt:            campaign.sendAt,
-        sendOnce:          campaign.sendOnce,
-        triggerDelay:      campaign.triggerDelay,
-        reTriggerDelay:    campaign.reTriggerDelay,
+        // sendAt:            campaign.sendAt,
+        // sendOnce:          campaign.sendOnce,
+        // triggerDelay:      campaign.triggerDelay,
+        // reTriggerDelay:    campaign.reTriggerDelay,
 
       });
       newCampaign.save().then(function(){

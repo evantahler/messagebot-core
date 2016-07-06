@@ -71,21 +71,25 @@ exports.eventCreate = {
     // guid will be hydrated syncrhonusly before the save operation
     if(data.params.sync === false){
       event.create(function(error){
-        if(error){ api.log('event creation error: ' + error, 'error', data.params); }
+        if(error){
+          api.log('event creation error: ' + error, 'error', data.params);
+        }else{
+          api.tasks.enqueue('events:process', {events: [event.data.guid]}, 'messagebot:events');
+        }
       });
       data.response.guid = event.data.guid;
       next();
     }else{
       event.create(function(error){
-        if(!error){
-          data.response.guid = event.data.guid;
-          if(data.connection.extension === 'gif'){
-            data.toRender = false;
-            data.connection.rawConnection.responseHttpCode = 200;
-            data.connection.sendFile('tracking.gif');
-          }
+        if(error){ return next(error); }
+        data.response.guid = event.data.guid;
+        if(data.connection.extension === 'gif'){
+          data.toRender = false;
+          data.connection.rawConnection.responseHttpCode = 200;
+          data.connection.sendFile('tracking.gif');
         }
-        next(error);
+
+        api.tasks.enqueue('events:process', {events: [event.data.guid]}, 'messagebot:events', next);
       });
     }
   }
@@ -122,7 +126,7 @@ exports.eventEdit = {
     event.edit(function(error){
       if(error){ return next(error); }
       data.response.event = event.data;
-      next();
+      api.tasks.enqueue('events:process', {events: [event.data.guid]}, 'messagebot:events', next);
     });
   }
 };
