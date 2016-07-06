@@ -183,6 +183,33 @@ module.exports = {
         });
       },
 
+      distinct: function(alias, searchKeys, searchValues, start, end, dateField, field, callback){
+        var aggs = {
+          agg_results: {terms: {field: field}}
+        };
+
+        var query = {
+          size: 0,
+          index: alias,
+          body: {
+            aggs: aggs,
+            size: 0,
+            query: {
+              bool: {
+                must: this.prepareQuery(searchKeys, searchValues, start, end, dateField),
+              }
+            }
+          }
+        };
+
+        api.elasticsearch.pendingOperations++;
+        api.elasticsearch.client.search(query, function(error, data){
+          api.elasticsearch.pendingOperations--;
+          if(error){ return callback(error); }
+          callback(null, data.aggregations.agg_results);
+        });
+      },
+
       aggregation: function(alias, searchKeys, searchValues, start, end, dateField, agg, aggField, interval, callback){
         var aggs = {agg_results: {}};
         if(interval){

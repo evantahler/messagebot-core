@@ -1,4 +1,5 @@
 var dateformat = require('dateformat');
+var async      = require('async');
 
 var alias = function(api){
   return api.env + '-' + 'people';
@@ -57,21 +58,59 @@ exports.peopleAggregation = {
   },
 
   run: function(api, data, next){
-    api.elasticsearch.aggregation(
-      alias(api),
-      ['guid'],
-      ['_exists'],
-      data.params.start,
-      data.params.end,
-      'createdAt',
-      'date_histogram',
-      'createdAt',
-      data.params.interval,
-      function(error, buckets){
-        if(error){ return next(error); }
-        data.response.aggregations = {created: buckets.buckets};
-        next();
-      }
-    );
+    var jobs = [];
+    var aggJobs = [];
+    var sources = [];
+    data.response.aggregations = {};
+
+    jobs.push(function(done){
+      api.elasticsearch.distinct(
+        alias(api),
+        ['guid'],
+        ['_exists'],
+        data.params.start,
+        data.params.end,
+        'createdAt',
+        'source',
+        function(error, buckets){
+          if(error){ return done(error); }
+          buckets.buckets.forEach(function(b){
+            sources.push(b.key);
+          });
+          done();
+        }
+      );
+    });
+
+    jobs.push(function(done){
+      sources.forEach(function(source){
+        aggJobs.push(function(aggDone){
+          api.elasticsearch.aggregation(
+            alias(api),
+            ['guid', 'source'],
+            ['_exists', source],
+            data.params.start,
+            data.params.end,
+            'createdAt',
+            'date_histogram',
+            'createdAt',
+            data.params.interval,
+            function(error, buckets){
+              if(error){ return aggDone(error); }
+              data.response.aggregations[source] = buckets.buckets;
+              aggDone();
+            }
+          );
+        });
+      });
+
+      done();
+    });
+
+    jobs.push(function(done){
+      async.series(aggJobs, done);
+    });
+
+    async.series(jobs, next);
   }
 };
