@@ -52,7 +52,6 @@ app.controller('analytics:search', ['$scope', '$rootScope', '$location', 'ngNoti
     $scope.searchResults = [];
 
     $rootScope.action($scope, {
-      userId: $rootScope.user.id,
       searchKeys: searchKeys,
       searchValues: searchValues,
       from: (currentPage * perPage),
@@ -90,9 +89,8 @@ app.controller('analytics:recent', ['$scope', '$rootScope', '$location', 'ngNoti
 
   $scope.loadRecent = function(){
     $rootScope.action($scope, {
-      userId: $rootScope.user.id,
       searchKeys: 'guid',
-      searchValues: '*',
+      searchValues: '_exists',
       from: (currentPage * perPage),
       size: perPage,
     }, '/api/' + section + '/search', 'GET', function(data){
@@ -103,6 +101,59 @@ app.controller('analytics:recent', ['$scope', '$rootScope', '$location', 'ngNoti
   };
 
   $scope.loadRecent();
+}]);
+
+app.controller('analytics:heatmap', ['$scope', '$rootScope', '$location', 'ngNotify', '$routeParams', function($scope, $rootScope, $location, ngNotify, $routeParams){
+  var section = $rootScope.section;
+  $scope.heatmapOptions = {size: 1000};
+  $scope.map = {
+    center: {
+      lat: 39.691949,
+      lng: -96.577517,
+      zoom: 4
+    },
+    layers: {
+      baselayers: {
+        osm: {
+          name: 'OpenStreetMap',
+          type: 'xyz',
+          url: 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+          layerOptions: {
+            subdomains: ['a', 'b', 'c'],
+            attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+            continuousWorld: true
+          }
+        }
+      }
+    }
+  };
+
+  $scope.loadHeatmap = function(){
+    $scope.map.layers.overlays = {};
+    $rootScope.action($scope, {
+      searchKeys: 'location',
+      searchValues: '_exists',
+      from: 0,
+      size: $scope.heatmapOptions.size,
+    }, '/api/' + section + '/search', 'GET', function(data){
+      var points = [];
+      data[section].forEach(function(e){
+        points.push([e.location.lat, e.location.lon])
+      });
+
+      $scope.map.layers.overlays = {
+        heat: {
+          name: 'Heat Map',
+          type: 'heat',
+          data: points,
+          layerOptions: { radius: 20, blur: 10 },
+          visible: true
+        }
+      };
+    });
+  }
+
+  $scope.loadHeatmap();
 }]);
 
 app.controller('analytics:histogram', ['$scope', '$rootScope', '$location', 'ngNotify', function($scope, $rootScope, $location, ngNotify){
