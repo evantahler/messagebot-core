@@ -47,6 +47,41 @@ app.run(['$rootScope', '$http', 'ngNotify', function($rootScope, $http, ngNotify
     $('.modal-backdrop').remove();
   };
 
+  $rootScope.routeQueryToParams = function(query){
+    var topLevelSearchTerms = [
+      'type',
+      'personGuid',
+      'messageGuid',
+      'eventGuid',
+      'guid',
+      'type',
+      'createdAt',
+      'updatedAt',
+      'campaignId',
+      'sentAt',
+      'openedAt',
+      'actedAt',
+      'transport',
+    ];
+
+    var searchKeys = [];
+    var searchValues = [];
+    var parts = query.split(' ');
+    parts.forEach(function(part){
+      if(part !== ''){
+        var words = part.split(':');
+        if(topLevelSearchTerms.indexOf(words[0]) >= 0){
+          searchKeys.push(words[0]);
+        }else{
+          searchKeys.push('data.' + words[0]);
+        }
+        searchValues.push(words[1]);
+      }
+    });
+
+    return [searchKeys, searchValues];
+  };
+
   $rootScope.action = function($scope, data, path, verb, successCallback, errorCallback){
     var i;
 

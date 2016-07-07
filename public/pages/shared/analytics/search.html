@@ -16,6 +16,9 @@
     </form>
   </div>
 
+  <div ng-if="searchResults.length > 0" class="col-md-12" ng-include="'pages/shared/analytics/histogram.html'"></div>
+  <div ng-if="searchResults.length > 0" class="col-md-12" ng-include="'pages/shared/analytics/heatmap.html'"></div>
+
   <div class="row" ng-if="searchResults.length > 0">
     <div class="col-md-12">
       <h2>Search Results ({{ total }} total):</h2>
@@ -28,7 +31,9 @@
             <th>guid</th>
             <th>createdAt</th>
             <th>updatedAt</th>
-            <th ng-if="records[0].type !== undefined">type</th>
+            <th ng-if="searchResults[0].source !== undefined">source</th>
+            <th ng-if="searchResults[0].type !== undefined">type</th>
+            <th ng-if="searchResults[0].transport !== undefined">transport</th>
             <th>data</th>
           </tr>
         </thead>
@@ -39,7 +44,9 @@
             <td>{{ record.guid }}</td>
             <td>{{ record.createdAt }}</td>
             <td>{{ record.updatedAt }}</td>
+            <td ng-if="record.source !== undefined">{{ record.source }}</td>
             <td ng-if="record.type !== undefined">{{ record.type }}</td>
+            <td ng-if="record.transport !== undefined">{{ record.transport }}</td>
             <td>{{ record.data }}</td>
           </tr>
         </tbody>

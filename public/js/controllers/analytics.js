@@ -1,21 +1,6 @@
 app.controller('analytics:search', ['$scope', '$rootScope', '$location', 'ngNotify', '$routeParams', function($scope, $rootScope, $location, ngNotify, $routeParams){
   var section = $rootScope.section;
 
-  var topLevelSearchTerms = [
-    'type',
-    'personGuid',
-    'messageGuid',
-    'eventGuid',
-    'guid',
-    'type',
-    'createdAt',
-    'updatedAt',
-    'campaignId',
-    'sentAt',
-    'openedAt',
-    'actedAt',
-  ];
-
   $scope.searchResults = [];
   $scope.query = $routeParams.query || '';
   $scope.pagination = {};
@@ -26,24 +11,13 @@ app.controller('analytics:search', ['$scope', '$rootScope', '$location', 'ngNoti
   $scope.doSearch = function(){
     $location.path( '/' + section + '/search/' + $scope.query + '/' + currentPage );
 
-    var searchKeys = [];
-    var searchValues = [];
-    var parts = $scope.query.split(' ');
-    parts.forEach(function(part){
-      if(part !== ''){
-        var words = part.split(':');
-        if(topLevelSearchTerms.indexOf(words[0]) >= 0){
-          searchKeys.push(words[0]);
-        }else{
-          searchKeys.push('data.' + words[0]);
-        }
-        searchValues.push(words[1]);
-      }
-    });
+    var r = $rootScope.routeQueryToParams($scope.query);
+    var searchKeys = r[0]; var searchValues = r[1];
 
     if(searchKeys.length === searchValues.length && searchValues.length > 0){
       $scope.loadSearchResults(searchKeys, searchValues);
     }else{
+      $location.path( '/' + section + '/search/' );
       ngNotify.set('search query error, try again', 'error');
     }
   };
@@ -128,11 +102,19 @@ app.controller('analytics:heatmap', ['$scope', '$rootScope', '$location', 'ngNot
     }
   };
 
+  var searchKeys = ['location'];
+  var searchValues = ['_exists'];
+  if($scope.query){
+    var r = $rootScope.routeQueryToParams($scope.query);
+    searchKeys = searchKeys.concat(r[0]);
+    searchValues = searchValues.concat(r[1]);
+  }
+
   $scope.loadHeatmap = function(){
     $scope.map.layers.overlays = {};
     $rootScope.action($scope, {
-      searchKeys: 'location',
-      searchValues: '_exists',
+      searchKeys: searchKeys,
+      searchValues: searchValues,
       from: 0,
       size: $scope.heatmapOptions.size,
     }, '/api/' + section + '/search', 'GET', function(data){
@@ -168,8 +150,18 @@ app.controller('analytics:histogram', ['$scope', '$rootScope', '$location', 'ngN
 
   $scope.possibleIntervals = [ 'year', 'month', 'week', 'day', 'hour', 'minute' ];
 
+  var searchKeys = ['guid'];
+  var searchValues = ['_exists'];
+  if($scope.query){
+    var r = $rootScope.routeQueryToParams($scope.query);
+    searchKeys = searchKeys.concat(r[0]);
+    searchValues = searchValues.concat(r[1]);
+  }
+
   $scope.loadHistogram = function(){
     $rootScope.action($scope, {
+      searchKeys: searchKeys,
+      searchValues: searchValues,
       interval: $scope.histogramOptions.interval,
       start: $scope.histogramOptions.start.getTime(),
       end: $scope.histogramOptions.end.getTime(),

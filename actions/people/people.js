@@ -44,6 +44,8 @@ exports.peopleAggregation = {
   middleware:             ['logged-in-session', 'status-required-admin' ],
 
   inputs: {
+    searchKeys:   { required: true },
+    searchValues: { required: true },
     start:        {
       required: false,
       formatter: function(p){ return new Date(parseInt(p)); },
@@ -66,8 +68,8 @@ exports.peopleAggregation = {
     jobs.push(function(done){
       api.elasticsearch.distinct(
         alias(api),
-        ['guid'],
-        ['_exists'],
+        data.params.searchKeys,
+        data.params.searchValues,
         data.params.start,
         data.params.end,
         'createdAt',
@@ -87,8 +89,8 @@ exports.peopleAggregation = {
         aggJobs.push(function(aggDone){
           api.elasticsearch.aggregation(
             alias(api),
-            ['guid', 'source'],
-            ['_exists', source],
+            ['source'].concat(data.params.searchKeys),
+            [source].concat(data.params.searchValues),
             data.params.start,
             data.params.end,
             'createdAt',

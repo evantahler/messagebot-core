@@ -44,6 +44,8 @@ exports.messagesAggregation = {
   middleware:             ['logged-in-session', 'status-required-admin' ],
 
   inputs: {
+    searchKeys:   { required: true },
+    searchValues: { required: true },
     start:        {
       required: false,
       formatter: function(p){ return new Date(parseInt(p)); },
@@ -66,8 +68,8 @@ exports.messagesAggregation = {
     jobs.push(function(done){
       api.elasticsearch.distinct(
         alias(api),
-        ['guid'],
-        ['_exists'],
+        data.params.searchKeys,
+        data.params.searchValues,
         data.params.start,
         data.params.end,
         'createdAt',
@@ -87,8 +89,8 @@ exports.messagesAggregation = {
         aggJobs.push(function(aggDone){
           api.elasticsearch.aggregation(
             alias(api),
-            ['guid', 'transport'],
-            ['_exists', transport],
+            ['transport'].concat(data.params.searchKeys),
+            [transport].concat(data.params.searchValues),
             data.params.start,
             data.params.end,
             'createdAt',
