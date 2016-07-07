@@ -79,12 +79,12 @@ app.controller('analytics:recent', ['$scope', '$rootScope', '$location', 'ngNoti
 
 app.controller('analytics:heatmap', ['$scope', '$rootScope', '$location', 'ngNotify', '$routeParams', function($scope, $rootScope, $location, ngNotify, $routeParams){
   var section = $rootScope.section;
-  $scope.heatmapOptions = {size: 1000};
+  $scope.heatmapOptions = {size: 10000};
   $scope.map = {
     center: {
-      lat: 39.691949,
-      lng: -96.577517,
-      zoom: 4
+      lat: 0,
+      lng: 0,
+      zoom: 3
     },
     layers: {
       baselayers: {
@@ -119,10 +119,19 @@ app.controller('analytics:heatmap', ['$scope', '$rootScope', '$location', 'ngNot
       size: $scope.heatmapOptions.size,
     }, '/api/' + section + '/search', 'GET', function(data){
       var points = [];
+      var avgLat = 0;
+      var avgLon = 0;
       data[section].forEach(function(e){
+        avgLat += e.location.lat;
+        avgLon += e.location.lon;
         points.push([e.location.lat, e.location.lon])
       });
 
+      avgLat = avgLat / data[section].length;
+      avgLon = avgLon / data[section].length;
+
+      $scope.map.center.lat = avgLat;
+      $scope.map.center.lon = avgLon;
       $scope.map.layers.overlays = {
         heat: {
           name: 'Heat Map',
