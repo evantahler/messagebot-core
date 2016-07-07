@@ -46,6 +46,19 @@ exports.eventsAggregation = {
   inputs: {
     searchKeys:   { required: true },
     searchValues: { required: true },
+    maximumSelections: {
+      required: true,
+      formatter: function(p){ return parseInt(p); },
+      default:   function(p){ return 5; },
+    },
+    selections: {
+      required: false,
+      formatter: function(p){
+        if(p.length === 0){ return []; }
+        return p.split(',');
+      },
+      default:   function(p){ return []; },
+    },
     start:        {
       required: false,
       formatter: function(p){ return new Date(parseInt(p)); },
@@ -79,31 +92,58 @@ exports.eventsAggregation = {
           buckets.buckets.forEach(function(b){
             types.push(b.key);
           });
+          data.response.selections = types;
+          data.response.selectionsName = 'types';
           done();
         }
       );
     });
 
     jobs.push(function(done){
+      aggJobs.push(function(aggDone){
+        api.elasticsearch.aggregation(
+          alias(api),
+          ['guid'],
+          ['_exists'],
+          data.params.start,
+          data.params.end,
+          'createdAt',
+          'date_histogram',
+          'createdAt',
+          data.params.interval,
+          function(error, buckets){
+            if(error){ return aggDone(error); }
+            data.response.aggregations['_all'] = buckets.buckets;
+            aggDone();
+          }
+        );
+      });
+
+      done();
+    });
+
+    jobs.push(function(done){
       types.forEach(function(type){
-        aggJobs.push(function(aggDone){
-          api.elasticsearch.aggregation(
-            alias(api),
-            ['type'].concat(data.params.searchKeys),
-            [type].concat(data.params.searchValues),
-            data.params.start,
-            data.params.end,
-            'createdAt',
-            'date_histogram',
-            'createdAt',
-            data.params.interval,
-            function(error, buckets){
-              if(error){ return aggDone(error); }
-              data.response.aggregations[type] = buckets.buckets;
-              aggDone();
-            }
-          );
-        });
+        if(aggJobs.length <= data.params.maximumSelections && (data.params.selections.length === 0 || data.params.selections.indexOf(type) >= 0)){
+          aggJobs.push(function(aggDone){
+            api.elasticsearch.aggregation(
+              alias(api),
+              ['type'].concat(data.params.searchKeys),
+              [type].concat(data.params.searchValues),
+              data.params.start,
+              data.params.end,
+              'createdAt',
+              'date_histogram',
+              'createdAt',
+              data.params.interval,
+              function(error, buckets){
+                if(error){ return aggDone(error); }
+                data.response.aggregations[type] = buckets.buckets;
+                aggDone();
+              }
+            );
+          });
+        }
       });
 
       done();

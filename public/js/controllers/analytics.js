@@ -148,13 +148,13 @@ app.controller('analytics:heatmap', ['$scope', '$rootScope', '$location', 'ngNot
 }]);
 
 app.controller('analytics:histogram', ['$scope', '$rootScope', '$location', 'ngNotify', function($scope, $rootScope, $location, ngNotify){
-
   var section = $rootScope.section;
 
   $scope.histogramOptions = {
     interval: 'day',
     start: new Date(new Date().setMonth( new Date().getMonth() - 1 )),
     end: new Date(),
+    selections: {},
   };
 
   $scope.possibleIntervals = [ 'year', 'month', 'week', 'day', 'hour', 'minute' ];
@@ -168,27 +168,57 @@ app.controller('analytics:histogram', ['$scope', '$rootScope', '$location', 'ngN
   }
 
   $scope.loadHistogram = function(){
+    var selections = [];
+    Object.keys($scope.histogramOptions.selections).forEach(function(k){
+      if($scope.histogramOptions.selections[k] === true){ selections.push(k); }
+    });
+
     $rootScope.action($scope, {
+      maximumSelections: 10,
+      selections: selections,
       searchKeys: searchKeys,
       searchValues: searchValues,
       interval: $scope.histogramOptions.interval,
       start: $scope.histogramOptions.start.getTime(),
       end: $scope.histogramOptions.end.getTime(),
     }, '/api/' + section + '/aggregation', 'GET', function(data){
+      $scope.histogramOptions.selectionsName = data.selectionsName;
+      data.selections.forEach(function(aggName){
+        $scope.histogramOptions.selections[aggName] = false;
+      });
 
       var series = [];
       Object.keys(data.aggregations).forEach(function(aggName){
-        var seriesData = {name: aggName, data: []};
+        var seriesData;
+        if(aggName !== '_all'){
+          seriesData = {
+            name: aggName,
+            type: 'column',
+            data: []
+          };
+
+          $scope.histogramOptions.selections[aggName] = true;
+        }else{
+          seriesData = {
+            name: '*Total',
+            type: 'spline',
+            dashStyle: 'LongDash',
+            lineWidth: 4,
+            color: '#CCCCCC',
+            data: []
+          };
+        }
+
         data.aggregations[aggName].forEach(function(e){
           seriesData.data.push({x: new Date(e.key), y: e.doc_count});
         });
-
         series.push(seriesData);
       });
 
+      console.log($scope.histogramOptions);
+
       var chartData = {
         chart: {
-          type: 'column',
           backgroundColor: 'rgba(255, 255, 255, 0.1)',
         },
         plotOptions: {
