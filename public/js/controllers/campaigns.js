@@ -3,6 +3,7 @@ app.controller('campaign:stats', ['$scope', '$rootScope', '$location', 'ngNotify
   $scope.list = {};
   $scope.template = {};
   $scope.funnel = {};
+  $scope.renderOptions = { personGuid: $rootScope.user.personGuid };
 
   $scope.histogramOptions = {
     interval: 'day',
@@ -11,6 +12,13 @@ app.controller('campaign:stats', ['$scope', '$rootScope', '$location', 'ngNotify
   };
 
   $scope.possibleIntervals = [ 'year', 'month', 'week', 'day', 'hour', 'minute' ];
+
+  $scope.prepareRender = function(){
+    $scope.template.url = '/api/template/render.html?' +
+      'templateId=' + $scope.template.id +
+      '&personGuid=' + $scope.renderOptions.personGuid +
+      '&r=' + Math.floor(new Date().getTime() / 1000);
+  };
 
   $scope.loadCampaign = function(){
     $rootScope.action($scope, {campaignId: $routeParams.campaignId}, '/api/campaign', 'GET', function(data){
@@ -25,6 +33,7 @@ app.controller('campaign:stats', ['$scope', '$rootScope', '$location', 'ngNotify
       });
       $rootScope.action($scope, {templateId: $scope.campaign.templateId}, '/api/template', 'GET', function(data){
         $scope.template = data.template;
+        $scope.prepareRender();
       });
     });
   };
@@ -93,6 +102,10 @@ app.controller('campaign:stats', ['$scope', '$rootScope', '$location', 'ngNotify
     });
   };
 
+  $scope.$watch('renderOptions.personGuid', function(){
+    $scope.prepareRender();
+  });
+
   $scope.loadCampaign();
   $scope.loadCampaignStats();
 }]);
@@ -106,6 +119,14 @@ app.controller('campaign:edit', ['$scope', '$rootScope', '$location', 'ngNotify'
   $scope.transport = {};
   $scope.list = {};
   $scope.template = {};
+  $scope.renderOptions = { personGuid: $rootScope.user.personGuid };
+
+  $scope.prepareRender = function(){
+    $scope.template.url = '/api/template/render.html?' +
+      'templateId=' + $scope.template.id +
+      '&personGuid=' + $scope.renderOptions.personGuid +
+      '&r=' + Math.floor(new Date().getTime() / 1000);
+  };
 
   $scope.loadTransports = function(){
     $rootScope.action($scope, {}, '/api/transports', 'GET', function(data){
@@ -145,6 +166,7 @@ app.controller('campaign:edit', ['$scope', '$rootScope', '$location', 'ngNotify'
       });
       $rootScope.action($scope, {templateId: $scope.campaign.templateId}, '/api/template', 'GET', function(data){
         $scope.template = data.template;
+        $scope.prepareRender();
       });
 
       $scope.loadTransports();
@@ -169,6 +191,10 @@ app.controller('campaign:edit', ['$scope', '$rootScope', '$location', 'ngNotify'
       // });
     }
   };
+
+  $scope.$watch('renderOptions.personGuid', function(){
+    $scope.prepareRender();
+  });
 
   $scope.loadCampaign();
   $scope.loadTemplates();

@@ -1,6 +1,6 @@
 app.controller('template:edit', ['$scope', '$rootScope', '$location', 'ngNotify', '$routeParams', function($scope, $rootScope, $location, ngNotify, $routeParams){
   $scope.template = {};
-  $scope.options = {
+  $scope.renderOptions = {
     personGuid: $rootScope.user.personGuid,
   };
 
@@ -16,7 +16,7 @@ app.controller('template:edit', ['$scope', '$rootScope', '$location', 'ngNotify'
   $scope.prepareRender = function(){
     $scope.template.url = '/api/template/render.html?' +
       'templateId=' + $scope.template.id +
-      '&personGuid=' + $scope.options.personGuid +
+      '&personGuid=' + $scope.renderOptions.personGuid +
       '&r=' + Math.floor(new Date().getTime() / 1000);
   };
 
@@ -31,7 +31,7 @@ app.controller('template:edit', ['$scope', '$rootScope', '$location', 'ngNotify'
   $scope.loadView = function(){
     $rootScope.action($scope, {
       templateId: $routeParams.templateId,
-      personGuid: $scope.options.personGuid,
+      personGuid: $scope.renderOptions.personGuid,
     }, '/api/template/render', 'GET', function(data){
       $scope.view = data.view;
     });
@@ -58,7 +58,7 @@ app.controller('template:edit', ['$scope', '$rootScope', '$location', 'ngNotify'
   $scope.loadTemplate();
   $scope.loadView();
 
-  $scope.$watch('options.personGuid', function(){
+  $scope.$watch('renderOptions.personGuid', function(){
     $scope.prepareRender();
     $scope.loadView();
   });
