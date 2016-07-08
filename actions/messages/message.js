@@ -184,10 +184,10 @@ exports.messageTrack = {
     jobs.push(function(done){
       if(data.params.verb === 'read'){
         message.data.readAt = new Date();
-        eventType = 'messageRead';
+        eventType = 'message_read';
       }
       if(data.params.verb === 'act'){
-        eventType = 'messageActedOn';
+        eventType = 'message_acted_on';
         message.data.actedAt = new Date();
       }
       done();
@@ -241,7 +241,7 @@ exports.messageTrack = {
 
     async.series(jobs, function(error){
       if(error){ return next(error); }
-      
+
       data.response.eventGuid = event.data.guid;
 
       if(data.params.link){
