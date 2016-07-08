@@ -57,6 +57,7 @@
     "prepare:bower": "bower install",
     "prepare:kibana": "./kibana/kibana.sh",
     "kibana": "./kibana/kibana.sh -run",
-    "faker:seed": "node db/seed/seed.js"
+    "faker:run": "node db/faker/run.js",
+    "faker:seed": "node db/faker/seed.js"
   }
 }
