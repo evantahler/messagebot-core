@@ -218,7 +218,7 @@ app.controller('campaigns:list', ['$scope', '$rootScope', '$location', 'ngNotify
   $scope.loadCampaigns = function(){
     $rootScope.action($scope, {
       from: (currentPage * perPage),
-      size: perPage
+      size: perPage,
     }, '/api/campaigns', 'GET', function(data){
       $scope.campaigns = data.campaigns;
       $scope.total = data.total;

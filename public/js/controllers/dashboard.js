@@ -9,6 +9,8 @@ app.controller('dashboard', ['$scope', '$rootScope', '$location', 'ngNotify', fu
   $scope.stats = {};
   $scope.sleep = 5000;
   $scope.timer;
+  $scope.campaigns = {};
+  $scope.campaignFunnels = {};
 
   $scope.loadStats = function(){
 
@@ -115,6 +117,37 @@ app.controller('dashboard', ['$scope', '$rootScope', '$location', 'ngNotify', fu
     series: series
   };
 
+  $scope.loadCampaigns = function(){
+    $rootScope.action($scope, {
+      from: 0,
+      size: 20,
+      sent: true,
+    }, '/api/campaigns', 'GET', function(data){
+      $scope.campaigns = data.campaigns;
+      $scope.campaigns.forEach(function(campaign){
+        $scope.loadCampaignStats(campaign);
+      });
+    });
+  };
+
+  $scope.loadCampaignStats = function(campaign){
+    $rootScope.action($scope, {
+      campaignId: campaign.id,
+      interval: 'year',
+      start: new Date(0).getTime(),
+      end: new Date().getTime(),
+    }, '/api/campaign/stats', 'GET', function(data){
+      $scope.campaignFunnels[campaign.id] = data;
+      $scope.campaignFunnels[campaign.id].rates = {
+        sentAt: Math.round(data.totals.sentAt / data.totals.sentAt * 10000) / 100,
+        readAt: Math.round(data.totals.readAt / data.totals.sentAt * 10000) / 100,
+        actedAt: Math.round(data.totals.actedAt / data.totals.sentAt * 10000) / 100,
+      }
+    });
+  };
+
+  /*---- loader ----*/
+
   var loader = function(){
     clearTimeout($scope.timer);
 
@@ -133,4 +166,6 @@ app.controller('dashboard', ['$scope', '$rootScope', '$location', 'ngNotify', fu
   $scope.$on('$locationChangeStart', function(){
     clearTimeout($scope.timer);
   });
+
+  $scope.loadCampaigns();
 }]);

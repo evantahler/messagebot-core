@@ -55,27 +55,29 @@
           <th>&nbsp;</th>
           <th>Name</th>
           <th>Sent At</th>
-          <th>Total Audience</th>
+          <th>Total Messages</th>
+          <th>Type</th>
           <th>Transport</th>
           <th>Stats</th>
         </tr>
       </thead>
 
       <tbody>
-        <tr ng-repeat="campaign in ['Welcome Email Drip', 'Other Campaign', 'July 4th Sale']">
-          <td><a href="/#/campaign/3/stats"><span class="glyphicon glyphicon-signal">&nbsp;</span></a></td>
-          <td><strong>{{ campaign }}</strong></td>
-          <td>2016-07-06T23:23:38.284Z</td>
-          <td>1234</td>
-          <td>SMTP</td>
+        <tr ng-repeat="campaign in campaigns">
+          <td><a href="/#/campaign/{{ campaign.id }}/stats"><span class="glyphicon glyphicon-signal">&nbsp;</span></a></td>
+          <td><strong>{{ campaign.name }}</strong></td>
+          <td>{{ campaign.sentAt }}</td>
+          <td>{{ campaignFunnels[campaign.id].totals.sentAt }}</td>
+          <td>{{ campaign.type }}</td>
+          <td>{{ campaign.transport }}</td>
           <td>
             <p>
-              <strong><span>Conversion Rate <span class="badge">3.43%</span></span></strong>
+              <strong><span>Conversion Rate: <span class="badge">{{ campaignFunnels[campaign.id].rates.actedAt }}%</span></span></strong>
             </p>
             <p>
-              <span class="label label-danger">1000 Sent</span>
-              <span class="label label-info">500 Read</span>
-              <span class="label label-success">200 Acted</span>
+              <span class="label label-danger">{{ campaignFunnels[campaign.id].totals.sentAt }} Sent</span>
+              <span class="label label-info">{{ campaignFunnels[campaign.id].totals.readAt }} Read</span>
+              <span class="label label-success">{{ campaignFunnels[campaign.id].totals.actedAt }} Acted</span>
             </p>
           </td>
         </tr>

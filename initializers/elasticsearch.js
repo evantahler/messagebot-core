@@ -1,3 +1,5 @@
+//TODO: cache aggregations and search results (not instance methods)
+
 var path              = require('path');
 var fs                = require('fs');
 var util              = require('util');
