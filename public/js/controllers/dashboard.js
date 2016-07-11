@@ -21,19 +21,14 @@ app.controller('dashboard:realtime', ['$scope', '$rootScope', '$location', 'ngNo
     }, '/api/' + section + '/aggregation', 'GET', function(data){
       $scope.chart.series.forEach(function(series){
         if(series.name === section){
+          var seriesData = [];
           data.aggregations._all.forEach(function(e){
-            var t = new Date(e.key)
-            var lastPoint = series.data[(series.data.length - 1)];
-            if(lastPoint && lastPoint.x=== t.getTime()){
-              lastPoint.update({x: t.getTime(), y: e.doc_count}, true);
-            }else if(series.data.length > maxPoints){
-              series.addPoint([t.getTime(), e.doc_count], true, true);
-            }else{
-              series.addPoint([t.getTime(), e.doc_count], true, false);
-            }
+            seriesData.push([e.key, e.doc_count]);
           });
+
+          series.update({data: seriesData});
         }
-      })
+      });
     });
   };
 
