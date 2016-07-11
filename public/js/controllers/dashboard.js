@@ -1,9 +1,47 @@
-app.controller('dashboard:realtime', ['$scope', '$rootScope', '$location', 'ngNotify', function($scope, $rootScope, $location, ngNotify){
-  $scope.sections  = ['people', 'events', 'messages']
-  $scope.sleep     = 5000;
+app.controller('dashboard', ['$scope', '$rootScope', '$location', 'ngNotify', function($scope, $rootScope, $location, ngNotify){
+  $scope.sections  = [
+    'people',
+    'events',
+    'messages'
+  ];
+
+  $scope.ranges = {};
+  $scope.stats = {};
+  $scope.sleep = 5000;
   $scope.timer;
-  var searchKeys   = ['guid'];
-  var searchValues = ['_exists'];
+
+  $scope.loadStats = function(){
+
+    $scope.ranges = {
+      'Today':      {start: (moment().startOf('day')),   end: moment()},
+      'This Week':  {start: (moment().startOf('week')),  end: moment()},
+      'This Month': {start: (moment().startOf('month')), end: moment()},
+      'This Year':  {start: (moment().startOf('year')),  end: moment()},
+    };
+
+    $scope.sections.forEach(function(section){
+      Object.keys($scope.ranges).forEach(function(range){
+        $rootScope.action($scope, {
+          maximumSelections: 0,
+          selections: [],
+          searchKeys: ['guid'],
+          searchValues: ['_exists'],
+          interval: 'year',
+          start: $scope.ranges[range].start.valueOf(),
+          end: $scope.ranges[range].end.valueOf(),
+        }, '/api/' + section + '/aggregation', 'GET', function(data){
+          var value = 0;
+          if(data.aggregations._all.length > 0){
+            value = data.aggregations._all[0].doc_count;
+          }
+
+          if(!$scope.stats[range]){ $scope.stats[range] = {}; }
+          $scope.stats[range][section] = value;
+        });
+
+      });
+    });
+  };
 
   $scope.loadHistorgramSection = function(section){
     var start = ( new Date(new Date().getTime() - (1000 * 60 * 60)).getTime() );
@@ -33,11 +71,9 @@ app.controller('dashboard:realtime', ['$scope', '$rootScope', '$location', 'ngNo
   };
 
   $scope.loadHistogram = function(){
-    clearTimeout($scope.timer);
-    $scope.loadHistorgramSection('people');
-    $scope.loadHistorgramSection('events');
-    $scope.loadHistorgramSection('messages');
-    $scope.timer = setTimeout($scope.loadHistogram, $scope.sleep);
+    $scope.sections.forEach(function(section){
+      $scope.loadHistorgramSection(section);
+    });
   };
 
   var series = [];
@@ -79,14 +115,22 @@ app.controller('dashboard:realtime', ['$scope', '$rootScope', '$location', 'ngNo
     series: series
   };
 
+  var loader = function(){
+    clearTimeout($scope.timer);
+
+    $scope.loadHistogram();
+    $scope.loadStats();
+
+    $scope.timer = setTimeout(loader, $scope.sleep);
+  };
+
   // hadck to defer loading to next cycle
   setTimeout(function(){
     $('#realtimeChart').highcharts(chartData);
-    $scope.loadHistogram();
+    loader();
   }, 10);
 
   $scope.$on('$locationChangeStart', function(){
     clearTimeout($scope.timer);
   });
-
 }]);

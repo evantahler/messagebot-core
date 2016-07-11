@@ -4,7 +4,7 @@
 
 var app = angular.module('app', ['ngRoute', 'ngNotify', 'angularFileUpload', 'ui.ace', 'ui.bootstrap.datetimepicker', 'jsonFormatter', 'leaflet-directive']);
 
-app.config(function($routeProvider, $locationProvider){
+app.config(function($routeProvider, $locationProvider, $logProvider){
 
   routes.forEach(function(collection){
     var route = collection[0];
@@ -15,6 +15,8 @@ app.config(function($routeProvider, $locationProvider){
       'pageTitle': title
     });
   });
+
+  $logProvider.debugEnabled(false);
 
   // $locationProvider.html5Mode(true);
 });

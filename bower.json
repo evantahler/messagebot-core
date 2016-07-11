@@ -27,7 +27,7 @@
     "bootswatch-dist": "simplex",
     "angular-ui-ace": "bower",
     "angular-bootstrap-datetimepicker": "^1.0.1",
-    "moment": "^2.13.0",
+    "moment": "^2.14.1",
     "json-formatter": "^0.6.0",
     "angular-leaflet-directive": "^0.10.0",
     "leaflet.heat": "Leaflet.heat#*"

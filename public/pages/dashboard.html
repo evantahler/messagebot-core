@@ -1,11 +1,11 @@
-<div class="row">
+<div class="row" ng-controller="dashboard">
 
   <div class="col-md-12">
     <h1>MessageBot @ <strong>tracking.mysite.com</strong></h1>
     <p><span class="text-info">MessageBot Version 1.3.3</span></p>
   </div>
 
-  <div class="col-md-12" ng-controller="dashboard:realtime">
+  <div class="col-md-12">
     <hr />
     <h2>Realtime</h2>
     <div id="realtimeChart" style="min-width: 310px; height: 300px; margin: 0 auto"></div>
@@ -16,39 +16,22 @@
     <h2>Tracking</h2>
   </div>
 
-  <div class="col-md-12">
-    <div class="panel panel-info">
+  <div ng-repeat="(range, setter) in ranges">
+  <div ng-class="$index === 0 ? 'col-md-12':'col-md-4'">
+    <div ng-class="$index === 0 ? 'panel-info':'panel-default'" class="panel">
       <div class="panel-heading">
-        <h3 class="panel-title">Today</h3>
+        <h3 class="panel-title">{{ range }}</h3>
       </div>
       <div class="panel-body">
 
         <div class="row">
 
-          <div class="col-md-4">
+          <div ng-repeat="section in sections" class="col-md-4">
             <div class="panel panel-default">
               <div class="panel-body text-center">
-                <h1>100</h1>
+                <h5>{{ stats[range][section] }}</h5>
               </div>
-              <div class="panel-footer text-center">People</div>
-            </div>
-          </div>
-
-          <div class="col-md-4">
-            <div class="panel panel-default">
-              <div class="panel-body text-center">
-                <h1>100</h1>
-              </div>
-              <div class="panel-footer text-center">Events</div>
-            </div>
-          </div>
-
-          <div class="col-md-4">
-            <div class="panel panel-default">
-              <div class="panel-body text-center">
-                <h1>100</h1>
-              </div>
-              <div class="panel-footer text-center">Messages</div>
+              <div class="panel-footer text-center">{{ section }}</div>
             </div>
           </div>
 
@@ -57,47 +40,6 @@
       </div>
     </div>
   </div>
-
-  <div class="col-md-4" ng-repeat="timeWindow in ['This Week', 'This Month', 'All Time']">
-    <div class="panel panel-default">
-      <div class="panel-heading">
-        <h3 class="panel-title">{{ timeWindow }}</h3>
-      </div>
-      <div class="panel-body">
-
-        <div class="row">
-
-          <div class="col-md-4">
-            <div class="panel panel-default">
-              <div class="panel-body text-center">
-                <h3>1234</h3>
-              </div>
-              <div class="panel-footer text-center">People</div>
-            </div>
-          </div>
-
-          <div class="col-md-4">
-            <div class="panel panel-default">
-              <div class="panel-body text-center">
-                <h3>1234</h3>
-              </div>
-              <div class="panel-footer text-center">Events</div>
-            </div>
-          </div>
-
-          <div class="col-md-4">
-            <div class="panel panel-default">
-              <div class="panel-body text-center">
-                <h3>1234</h3>
-              </div>
-              <div class="panel-footer text-center">Messages</div>
-            </div>
-          </div>
-
-        </div>
-
-      </div>
-    </div>
   </div>
 
   <div class="col-md-12">
