@@ -154,7 +154,7 @@ app.controller('analytics:histogram', ['$scope', '$rootScope', '$location', 'ngN
     interval: 'day',
     start: new Date(new Date().setMonth( new Date().getMonth() - 1 )),
     end: new Date(),
-    selections: {},
+    selections: [],
   };
 
   $scope.possibleIntervals = [ 'year', 'month', 'week', 'day', 'hour', 'minute' ];
@@ -214,8 +214,6 @@ app.controller('analytics:histogram', ['$scope', '$rootScope', '$location', 'ngN
         });
         series.push(seriesData);
       });
-
-      console.log($scope.histogramOptions);
 
       var chartData = {
         chart: {

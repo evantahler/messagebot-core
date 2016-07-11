@@ -53,7 +53,7 @@ exports.peopleAggregation = {
     },
     selections: {
       required: false,
-      formatter: function(p){ 
+      formatter: function(p){
         if(p.length === 0){ return []; }
         return p.split(',');
       },

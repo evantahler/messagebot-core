@@ -220,6 +220,7 @@ module.exports = {
           if(interval === 'day'){ format = 'yyyy-MM-dd'; }
           if(interval === 'hour'){ format = 'yyyy-MM-dd HH:00'; }
           if(interval === 'minute'){ format = 'yyyy-MM-dd HH:mm'; }
+          if(interval === 'second'){ format = 'yyyy-MM-dd HH:mm:ss'; }
 
           aggs.agg_results[agg] = {
             field: aggField,

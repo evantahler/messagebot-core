@@ -74,7 +74,7 @@ exports.eventCreate = {
         if(error){
           api.log('event creation error: ' + error, 'error', data.params);
         }else{
-          api.tasks.enqueue('events:process', {events: [event.data.guid]}, 'messagebot:events');
+          api.tasks.enqueueIn((5 * 1000), 'events:process', {events: [event.data.guid]}, 'messagebot:events');
         }
       });
       data.response.guid = event.data.guid;
@@ -89,7 +89,7 @@ exports.eventCreate = {
           data.connection.sendFile('tracking.gif');
         }
 
-        api.tasks.enqueue('events:process', {events: [event.data.guid]}, 'messagebot:events', next);
+        api.tasks.enqueueIn((5 * 1000), 'events:process', {events: [event.data.guid]}, 'messagebot:events', next);
       });
     }
   }
@@ -126,7 +126,7 @@ exports.eventEdit = {
     event.edit(function(error){
       if(error){ return next(error); }
       data.response.event = event.data;
-      api.tasks.enqueue('events:process', {events: [event.data.guid]}, 'messagebot:events', next);
+      api.tasks.enqueueIn((5 * 1000), 'events:process', {events: [event.data.guid]}, 'messagebot:events', next);
     });
   }
 };
