@@ -52,7 +52,7 @@
     "migrate": "npm run migrate:sequelize && npm run migrate:elasticsearch",
     "prepare": "npm run prepare:bower && npm run prepare:maxmind && npm run prepare:kibana",
     "bower": "bower",
-    "migrate:elasticsearch": "ah-elasticsaerch migrate",
+    "migrate:elasticsearch": "ah-elasticsearch-orm migrate",
     "migrate:sequelize": "sequelize db:migrate",
     "prepare:maxmind": "./db/maxmind/download.sh",
     "prepare:bower": "bower install",
