@@ -121,7 +121,7 @@ exports.messageDelete = {
     var message = new api.models.message(data.params.guid);
     message.hydrate(function(error){
       if(error){ return next(error); }
-      message.delete(function(error){
+      message.del(function(error){
         if(error){ return next(error); }
         next();
       });

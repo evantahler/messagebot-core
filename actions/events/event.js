@@ -165,7 +165,7 @@ exports.eventDelete = {
     var event = new api.models.event(data.params.guid);
     event.hydrate(function(error){
       if(error){ return next(error); }
-      event.delete(function(error){
+      event.del(function(error){
         if(error){ return next(error); }
         next();
       });

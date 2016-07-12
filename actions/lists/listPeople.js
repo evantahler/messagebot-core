@@ -217,7 +217,7 @@ exports.listPeopleView = {
           personGuids.push( listPerson.personGuid );
         });
 
-        api.elasticsearch.mget((api.env + '-people'), personGuids, function(error, results){
+        api.elasticsearch.mget(api, (api.env + '-people'), personGuids, function(error, results){
           if(error){ return next(error); }
           data.response.people = results;
           next();

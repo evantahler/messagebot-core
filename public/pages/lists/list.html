@@ -113,7 +113,6 @@
   <a ng-click="createList('dynamic');" class="btn btn-primary">Create Dynamic List</a>
   <a ng-click="createList('static');"  class="btn btn-primary">Create Static List</a>
 
-
   <table class="table table-striped table-hover">
 
     <thead>
@@ -161,5 +160,34 @@
 
     <li ng-class="pagination.showForward ? '' : 'disabled'"><a href="/#/lists/list/{{ pagination.lastPage }}">&raquo;</a></li>
   </ul>
+
+  <p>
+    <strong>Query Notes:</strong>
+    <ul>
+      <li>Do not include "query" as the top level of your query hash.</li>
+      <li>We will validate and format your JSON for you.</li>
+      <li>Remember to "quote" JSON keys and values</li>
+      <li>Alawys use lower-case when matching strings: <pre>
+{
+    "bool": {
+        "must": [
+            {
+                "wildcard": {
+                    "data.firstName": "E*"
+                }
+            }
+        ]
+    }
+}
+      </pre></li>
+      <li>You can short-hand queries with a single match:<pre>
+{
+    "wildcard": {
+        "data.firstName": "E*"
+    }
+}
+      </pre></li>
+    </ul>
+  </p>
 
 </div>

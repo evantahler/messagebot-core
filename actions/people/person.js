@@ -125,7 +125,7 @@ exports.personDelete = {
       api.models.listPerson.destroy({
         where: {personGuid: person.data.guid}
       }).then(function(){
-        person.delete(function(error){
+        person.del(function(error){
           if(error){ return next(error); }
           next();
         });
