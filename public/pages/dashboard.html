@@ -1,8 +1,8 @@
-<div class="row" ng-controller="dashboard">
+<div class="row" ng-controller="dashboard:view">
 
   <div class="col-md-12">
-    <h1>MessageBot @ <strong>tracking.mysite.com</strong></h1>
-    <p><span class="text-info">MessageBot Version 1.3.3</span></p>
+    <h1>MessageBot @ <strong>{{ status.urlHuman }}</strong></h1>
+    <p><span class="text-info">MessageBot Version {{ status.version }}</span></p>
   </div>
 
   <div class="col-md-12">

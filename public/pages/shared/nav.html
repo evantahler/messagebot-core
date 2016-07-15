@@ -18,7 +18,7 @@
         <li ng-class="getNavigationHighlight('dashboard')"><a href="/#/dashboard"><strong>{{ $root.user.firstName }}'s Dashboard</strong></a></li>
 
         <li class="dropdown" ng-class="getNavigationHighlight('people')">
-          <a id="navDropdown-people" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><span class="glyphicon glyphicon-user">&nbsp;</span>People</a>
+          <a id="navDropdown-people" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><span class="glyphicon glyphicon-user">&nbsp;</span>People<span class="caret"></span></a>
           <ul class="dropdown-menu" role="menu">
             <li ng-class="getNavigationHighlight('people/recent')"><a href="/#/people/recent">Recent</a></li>
             <li ng-class="getNavigationHighlight('people/search')"><a href="/#/people/search">Search</a></li>
@@ -26,7 +26,7 @@
         </li>
 
         <li class="dropdown" ng-class="getNavigationHighlight('events')">
-          <a id="navDropdown-events" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><span class="glyphicon glyphicon-equalizer">&nbsp;</span>Events</a>
+          <a id="navDropdown-events" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><span class="glyphicon glyphicon-equalizer">&nbsp;</span>Events<span class="caret"></span></a>
           <ul class="dropdown-menu" role="menu">
             <li ng-class="getNavigationHighlight('events/recent')"><a href="/#/events/recent">Recent</a></li>
             <li ng-class="getNavigationHighlight('events/search')"><a href="/#/events/search">Search</a></li>
@@ -40,7 +40,7 @@
         <li ng-class="getNavigationHighlight('campaigns')"><a href="/#/campaigns/list"><span class="glyphicon glyphicon-send">&nbsp;</span>Campaigns</a></li>
 
         <li class="dropdown" ng-class="getNavigationHighlight('messages')">
-          <a id="navDropdown-messages" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><span class="glyphicon glyphicon-envelope">&nbsp;</span>Messages</a>
+          <a id="navDropdown-messages" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><span class="glyphicon glyphicon-envelope">&nbsp;</span>Messages<span class="caret"></span></a>
           <ul class="dropdown-menu" role="menu">
             <li ng-class="getNavigationHighlight('messages/recent')"><a href="/#/messages/recent">Recent</a></li>
             <li ng-class="getNavigationHighlight('messages/search')"><a href="/#/messages/search">Search</a></li>
@@ -54,11 +54,14 @@
         <li class="dropdown">
           <a id="navDropdown" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">More Options<span class="caret"></span></a>
           <ul class="dropdown-menu" role="menu">
+            <li ng-class="getNavigationHighlight('status')"><a href="/#/status"><span class="glyphicon glyphicon-flash">&nbsp;</span>Status</a></li>
+            <li><hr /></li>
+            <li ng-class="getNavigationHighlight('settings')"><a href="/#/settings"><span class="glyphicon glyphicon glyphicon-cog">&nbsp;</span>Settings</a></li>
             <li ng-class="getNavigationHighlight('api')"><a target="_blank" href="/swagger/"><span class="glyphicon glyphicon-cloud">&nbsp;</span>API</a></li>
             <li ng-class="getNavigationHighlight('resque')"><a target="_blank" href="/resque/"><span class="glyphicon glyphicon-road">&nbsp;</span>Resque</a></li>
+            <li><hr /></li>
             <li ng-class="getNavigationHighlight('account')"><a href="/#/account"><span class="glyphicon glyphicon-user">&nbsp;</span>Account</a></li>
             <li ng-class="getNavigationHighlight('users')"><a href="/#/users"><span class="glyphicon glyphicon-th">&nbsp;</span>Users</a></li>
-            <li ng-class="getNavigationHighlight('settings')"><a href="/#/settings"><span class="glyphicon glyphicon glyphicon-cog">&nbsp;</span>Settings</a></li>
             <li ng-class="getNavigationHighlight('logout')"><a href="/#/logout"><span class="glyphicon glyphicon-off">&nbsp;</span>Log Out</a></li>
           </ul>
         </li>

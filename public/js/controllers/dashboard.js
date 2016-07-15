@@ -1,4 +1,4 @@
-app.controller('dashboard', ['$scope', '$rootScope', '$location', 'ngNotify', function($scope, $rootScope, $location, ngNotify){
+app.controller('dashboard:view', ['$scope', '$rootScope', '$location', 'ngNotify', function($scope, $rootScope, $location, ngNotify){
   $scope.sections  = [
     'people',
     'events',
@@ -11,6 +11,12 @@ app.controller('dashboard', ['$scope', '$rootScope', '$location', 'ngNotify', fu
   $scope.timer;
   $scope.campaigns = {};
   $scope.campaignFunnels = {};
+
+  $scope.loadStatus = function(){
+    $rootScope.action($scope, {}, '/api/system/status', 'GET', function(data){
+      $scope.status = data;
+    });
+  };
 
   $scope.loadStats = function(){
 
@@ -168,4 +174,5 @@ app.controller('dashboard', ['$scope', '$rootScope', '$location', 'ngNotify', fu
   });
 
   $scope.loadCampaigns();
+  $scope.loadStatus();
 }]);

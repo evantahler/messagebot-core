@@ -40,6 +40,7 @@ var routes = [
   [ '/campaigns/list',               'pages/campaigns/list.html',   'MessageBot: Campaigns',   true ],
   [ '/campaigns/list/:page',         'pages/campaigns/list.html',   'MessageBot: Campaigns',   true ],
 
+  [ '/status',                       'pages/status.html',           'MessageBot: Status',      true ],
   [ '/account',                      'pages/account.html',          'MessageBot: Account',     true ],
   [ '/users',                        'pages/users.html',            'MessageBot: Users',       true ],
   [ '/settings',                     'pages/settings.html',         'MessageBot: Settings',    true ],

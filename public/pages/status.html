@@ -1,0 +1,80 @@
+<div ng-controller="status:view">
+
+  <div class="row">
+    <div class="col-md-12">
+      <h1>MessageBot @ <strong>{{ status.node.urlHuman }}</strong></h1>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-6">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title">Node Status
+            <span ng-if="status.node.healthy" class="label label-success">Healthy</span>
+            <span ng-if="!status.node.healthy" class="label label-danger">Unhealthy</span>
+          </h3>
+        </div>
+        <div class="panel-body">
+          <h4>Node ID: {{ status.node.id }}</h4>
+          <ul>
+            <li><strong>Local MessageBot Version</strong>: {{ status.node.version }}</li>
+            <li><strong>Booted</strong>: {{ status.node.bootedAgo }}</li>
+            <li><strong>Local Event Loop Delay</strong>: {{ status.node.avgEventLoopDelay }}ms</li>
+            <li><strong>Memory Used</strong>: {{ status.node.memoryUsedMB }}MB</li>
+            <li><strong>Local Pending Elasticsaerch Opeartions</strong>: {{ status.node.elasticsaerchPendingOperations }} ({{ status.node.elasticsaerchPendingOperationsPercent }}%)</li>
+            <li><strong>ActionHero Version</strong>: {{ status.node.actionheroVersion }}</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title">ElasticSearch Status
+            <span ng-if="status.elasticsearch.health.status === 'green' " class="label label-success">{{ status.elasticsearch.health.status }}</span>
+            <span ng-if="!status.elasticsearch.health.status === 'green'" class="label label-danger">{{ status.elasticsearch.health.status }}</span>
+          </h3>
+        </div>
+        <div class="panel-body">
+          <ul>
+            <li><strong>Cluster Name</strong>: {{ status.elasticsearch.info.cluster_name }}</li>
+            <li><strong>Version</strong>: {{ status.elasticsearch.info.version.number }}</li>
+            <li><strong>Number of Nodes</strong>: {{ status.elasticsearch.health.number_of_nodes }}</li>
+            <li><strong>Active Shards</strong>: {{ status.elasticsearch.health.active_shards }}</li>
+            <li><strong>Relocating Shards</strong>: {{ status.elasticsearch.health.relocating_shards }}</li>
+            <li><strong>Initializing Shards</strong>: {{ status.elasticsearch.health.initializing_shards }}</li>
+            <li><strong>Unassigned Shards</strong>: {{ status.elasticsearch.health.unassigned_shards }}</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-6" ng-repeat="redisName in ['tasks', 'client']">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title">Redis [{{ redisName }}] Status
+            <span ng-if="status.redis[redisName].healthy" class="label label-success">Healthy</span>
+            <span ng-if="!status.redis[redisName].healthy" class="label label-danger">Unhealthy</span>
+          </h3>
+        </div>
+        <div class="panel-body">
+          <ul>
+            <li><strong>Version</strong>: {{ status.redis[redisName].redis_version }}</li>
+            <li><strong>Uptime</strong>: {{ status.redis[redisName].uptime_in_seconds }}</li>
+            <li><strong>Connected Clients</strong>: {{ status.redis[redisName].connected_clients }}</li>
+            <li><strong>Memory</strong>: {{ status.redis[redisName].used_memoryMB }}MB / {{ status.redis[redisName].total_system_memoryMB }}MB ({{ status.redis[redisName].memoryPercent }}%)</li>
+            <li><strong>Operations / Second</strong>: {{ status.redis[redisName].instantaneous_ops_per_sec }}</li>
+            <li><strong>Instantaneous Network In</strong>: {{ status.redis[redisName].instantaneous_input_kbps }}Kb</li>
+            <li><strong>Instantaneous Network Out</strong>: {{ status.redis[redisName].instantaneous_output_kbps }}Kb</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  </div>
+</div>
