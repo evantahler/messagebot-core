@@ -38,9 +38,10 @@
   },
   "devDependencies": {
     "bower": "^1.7.9",
+    "eslint": "^3.1.0",
+    "faker": "^3.1.0",
     "mocha": "latest",
-    "should": "latest",
-    "faker": "^3.1.0"
+    "should": "latest"
   },
   "scripts": {
     "help": "actionhero help",

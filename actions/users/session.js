@@ -24,8 +24,7 @@ exports.sessionCreate = {
           });
         }
       });
-    })
-    .catch(next)
+    }).catch(next)
     ;
   }
 };

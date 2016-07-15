@@ -9,7 +9,7 @@ exports.messagesSearch = {
   name:                   'messages:search',
   description:            'messages:search',
   outputExample:          {},
-  middleware:             ['logged-in-session', 'status-required-admin' ],
+  middleware:             ['logged-in-session', 'status-required-admin'],
 
   inputs: {
     searchKeys:   { required: true },
@@ -41,7 +41,7 @@ exports.messagesAggregation = {
   name:                   'messages:aggregation',
   description:            'messages:aggregation',
   outputExample:          {},
-  middleware:             ['logged-in-session', 'status-required-admin' ],
+  middleware:             ['logged-in-session', 'status-required-admin'],
 
   inputs: {
     searchKeys:   { required: true },

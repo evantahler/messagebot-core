@@ -6,17 +6,7 @@ exports.status = {
   name: 'system:status',
   description: 'I will return some basic information about the API',
 
-  outputExample:{
-    "id":"192.168.2.11",
-    "actionheroVersion":"9.4.1",
-    "uptime":10469,
-    "serverInformation":{
-      "serverName":"actionhero API",
-      "apiVersion":"0.0.1",
-      "requestDuration":12,
-      "currentTime":1420953679624
-    }
-  },
+  outputExample:{},
 
   run: function(api, data, next){
     var jobs = [];
@@ -34,7 +24,7 @@ exports.status = {
       data.response.node.actionheroVersion = api.actionheroVersion;
       data.response.node.uptime            = new Date().getTime() - api.bootTime;
       data.response.node.version           = packageJSON.version,
-      data.response.node.url               = api.config.messagebot.url
+      data.response.node.url               = api.config.messagebot.url;
 
       data.response.node.urlHuman = data.response.node.url;
       data.response.node.urlHuman = data.response.node.urlHuman.replace('https://', '');
@@ -63,7 +53,7 @@ exports.status = {
 
       async.series(intervalJobs, function(){
         var sum = 0;
-        intervalTimes.forEach(function(t){ sum += t; })
+        intervalTimes.forEach(function(t){ sum += t; });
         data.response.node.avgEventLoopDelay = Math.round(sum / intervalTimes.length * 10000) / 1000;
         if(data.response.node.avgEventLoopDelay > 2){ data.response.node.healthy = false; }
         done();
@@ -72,7 +62,7 @@ exports.status = {
 
     jobs.push(function(done){
       data.response.node.memoryUsedMB = Math.round(process.memoryUsage().heapUsed / 1024 / 1024 * 100) / 100;
-      done()
+      done();
     });
 
     jobs.push(function(done){
@@ -154,6 +144,14 @@ exports.status = {
         }else{
           done();
         }
+      });
+    });
+
+    jobs.push(function(done){
+      api.tasks.details(function(error, resque){
+        if(error){ return done(error); }
+        data.response.resque = resque;
+        done();
       });
     });
 

@@ -9,7 +9,7 @@ exports.peopleSearch = {
   name:                   'people:search',
   description:            'people:search',
   outputExample:          {},
-  middleware:             ['logged-in-session', 'status-required-admin' ],
+  middleware:             ['logged-in-session', 'status-required-admin'],
 
   inputs: {
     searchKeys:   { required: true },
@@ -41,7 +41,7 @@ exports.peopleAggregation = {
   name:                   'people:aggregation',
   description:            'people:aggregation',
   outputExample:          {},
-  middleware:             ['logged-in-session', 'status-required-admin' ],
+  middleware:             ['logged-in-session', 'status-required-admin'],
 
   inputs: {
     searchKeys:   { required: true },
@@ -115,7 +115,7 @@ exports.peopleAggregation = {
           data.params.interval,
           function(error, buckets){
             if(error){ return aggDone(error); }
-            data.response.aggregations['_all'] = buckets.buckets;
+            data.response.aggregations._all = buckets.buckets;
             aggDone();
           }
         );
