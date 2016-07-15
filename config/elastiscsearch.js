@@ -27,10 +27,10 @@ exports.default = {
       // If an object is found, we transform the `create` call into an `edit` call
       uniqueFields: {
         person: [
-          'email',
-          'phoneNumber',
-          'token',
-          'pushToken',
+          'data.email',
+          'data.phoneNumber',
+          'data.token',
+          'data.pushToken',
           'guid',
         ],
         event: [

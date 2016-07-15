@@ -28,6 +28,7 @@ exports.buildPerson = function(start, end, routeBase, callback){
   var time      = faker.date.between(start, end);
   var firstName = faker.name.firstName();
   var lastName  = faker.name.lastName();
+  var source    = this.sources[Math.floor(Math.random() * this.sources.length)];
   var person    = {};
 
   var payloadData = {
@@ -37,8 +38,8 @@ exports.buildPerson = function(start, end, routeBase, callback){
   };
 
   var payload = {
+    source: source,
     createdAt: time.getTime(),
-    source: this.sources[Math.floor(Math.random() * this.sources.length)],
     data: JSON.stringify(payloadData),
   };
 
@@ -52,7 +53,7 @@ exports.buildPerson = function(start, end, routeBase, callback){
   });
 };
 
-exports.buildFunnel= function(person, routeBase, callback){
+exports.buildFunnel = function(person, routeBase, callback){
   var counter = 0;
   var ip = faker.internet.ip();
   var progress = true;
@@ -76,6 +77,7 @@ exports.buildFunnel= function(person, routeBase, callback){
         createdAt: (new Date(person.createdAt + (1000 * 30 * counter))).getTime(),
         personGuid: person.guid,
         type: 'pageview',
+        device: person.source,
         ip: ip,
         data: JSON.stringify({
           page: event,
@@ -90,6 +92,7 @@ exports.buildFunnel= function(person, routeBase, callback){
           personGuid: person.guid,
           type: 'purchase',
           ip: ip,
+          device: person.source,
           data: JSON.stringify({
             value: Math.round(Math.random() * 1000)
           })

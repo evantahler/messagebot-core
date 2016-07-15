@@ -8,7 +8,6 @@ exports.personCreate = {
     sync:         { required: true, default: false },
     guid:         { required: false },
     data:         { required: true  },
-    permissions:  { required: false },
     source:       { required: true },
     createdAt:    {
       required: false,
@@ -22,7 +21,6 @@ exports.personCreate = {
     var person = new api.models.person();
     if(data.params.guid){        person.data.guid = data.params.guid;               }
     if(data.params.source){      person.data.source = data.params.source;           }
-    if(data.params.permissions){ person.data.permissions = data.params.permissions; }
     if(data.params.createdAt){   person.data.createdAt = data.params.createdAt;     }
 
     for(var i in data.params.data){
@@ -30,6 +28,10 @@ exports.personCreate = {
         person.data[i] = data.params.data[i];
       }
     }
+
+    // location and device will be updated by events as they come in
+    person.data.location = {lat: 0, lon: 0}
+    person.data.device = 'unknown';
 
     // return without waiting for the crete callback; log errors
     // this effectivley allows the tracking request to 'buffer' in RAM & returning to the client quickly
@@ -59,12 +61,10 @@ exports.personEdit = {
     guid:         { required: true },
     source:       { required: false },
     data:         { required: true  },
-    permissions:  { required: false },
   },
 
   run: function(api, data, next){
     var person = new api.models.person(data.params.guid);
-    if(data.params.permissions){ person.data.permissions = data.params.permissions; }
     if(data.params.source){      person.data.source = data.params.source;           }
 
     for(var i in data.params.data){ person.data[i] = data.params.data[i]; }

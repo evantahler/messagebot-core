@@ -30,21 +30,17 @@ module.exports = {
       ],
 
       "properties": {
-        "guid":        { "type": "string"  },
+        "guid":       { "type": "string" },
+        "createdAt":  { "type":  "date"  },
+        "updatedAt":  { "type":  "date"  },
+        "data":       { "type": "object" },
 
-        "lists":       { "type": "string"  },
-        "source":      { "type": "string"  },
-
-        "data":        { "type": "object" },
-        "permissions": { "type": "object" },
-
-        "location":    {
+        "source":       { "type": "string" },
+        "device": { "type": "string" },
+        "location": {
           "type": "geo_point",
           "geohash_precision": (process.env.GEOHASH_PRECISION || "1km")
-        },
-
-        "createdAt":   { "type":  "date" },
-        "updatedAt":   { "type":  "date" }
+        }
       }
     }
   },

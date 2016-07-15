@@ -41,6 +41,7 @@ exports.eventCreate = {
     if(data.params.type){        event.data.type = data.params.type;               }
     if(data.params.createdAt){   event.data.createdAt = data.params.createdAt;     }
 
+    event.data.location = { lat: 0, lon: 0 };
     if(data.params.lat && data.params.lon){
       event.data.location = {
         lat: data.params.lat,
@@ -59,6 +60,8 @@ exports.eventCreate = {
         api.log('Geocoding Error: ' +  String(e), 'error');
       }
     }
+
+    if(!event.data.messageGuid){ event.data.messageGuid = 'unknown'; }
 
     for(var i in data.params.data){
       if(event.data[i] === null || event.data[i] === undefined){

@@ -27,12 +27,6 @@ module.exports = {
             }
           }
 
-          if(data.params.permissions){
-            if(typeof data.params.permissions === 'string'){
-              data.params.permissions = data.params.permissions.split(',');
-            }
-          }
-
           if(data.params.data && typeof data.params.data === 'string'){
             try{
               data.params.data = JSON.parse(data.params.data);
