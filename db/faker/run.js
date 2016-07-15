@@ -1,6 +1,6 @@
 var async   = require('async');
 var common  = require(__dirname + '/common.js');
-var sleep   = parseInt(process.env.SLEEP) || (1000 * 2.7);
+var sleep   = parseInt(process.env.SLEEP) || (1000 * 2.2);
 
 var run = function(api){
 

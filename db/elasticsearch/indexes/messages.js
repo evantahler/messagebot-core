@@ -31,19 +31,17 @@ module.exports = {
 
       "properties": {
         "guid":       { "type": "string" },
-
-        "personGuid": { "type": "string" },
-        "campaignId": { "type": "integer" },
-        "transport":  { "type": "string" },
-        "body":       { "type": "string" },
-
+        "createdAt":  { "type":  "date"  },
+        "updatedAt":  { "type":  "date"  },
         "data":       { "type": "object" },
 
-        "createdAt":  { "type":  "date" },
-        "updatedAt":  { "type":  "date" },
-        "sentAt":     { "type":  "date" },
-        "readAt":     { "type":  "date" },
-        "actedAt":    { "type":  "date" }
+        "personGuid": { "type": "string"  },
+        "campaignId": { "type": "integer" },
+        "transport":  { "type": "string"  },
+        "body":       { "type": "string"  },
+        "sentAt":     { "type":  "date"   },
+        "readAt":     { "type":  "date"   },
+        "actedAt":    { "type":  "date"   }
       }
     }
   },

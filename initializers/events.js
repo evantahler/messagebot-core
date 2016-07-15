@@ -16,6 +16,8 @@ module.exports = {
         person.hydrate(function(error){
           if(error){ return callback(error); }
 
+          person.data.device = event.data.device;
+
           person.data.location = {
             lat: event.data.location.lat,
             lon: event.data.location.lon

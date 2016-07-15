@@ -265,6 +265,7 @@ exports.campaignStats = {
     ].forEach(function(term){
       jobs.push(function(done){
         api.elasticsearch.aggregation(
+          api,
           alias,
           ['campaignId', term],
           [campaign.id, '_exists'],

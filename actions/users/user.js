@@ -42,6 +42,8 @@ exports.userCreate = {
       });
 
       person.data.source = 'admin';
+      person.data.location = {lat: 0, lon: 0}
+      person.data.device = 'unknown';
 
       person.create(function(error){
         if(error){ api.log('person creation error: ' + error, 'error', data.params); }
