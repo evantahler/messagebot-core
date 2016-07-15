@@ -6,8 +6,13 @@
     </div>
   </div>
 
-  <div class="row">
-    <div class="col-md-6">
+  <div class="row well">
+    <div class="col-md-2">
+      <img width="100%" src="/images/logo/logo.png" />
+      <img width="100%" src="/images/vendors/nodejs.png" />
+    </div>
+
+    <div class="col-md-10">
       <div class="panel panel-default">
         <div class="panel-heading">
           <h3 class="panel-title">Node Status
@@ -28,8 +33,40 @@
         </div>
       </div>
     </div>
+  </div>
 
-    <div class="col-md-6">
+  <div class="row well">
+    <div class="col-md-2">
+      <img width="100%" src="/images/vendors/database.png" />
+    </div>
+
+    <div class="col-md-10">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title">Database Status
+            <span ng-if="status.database.healthy" class="label label-success">Healthy</span>
+            <span ng-if="!status.database.healthy" class="label label-danger">Unhealthy</span>
+          </h3>
+        </div>
+        <div class="panel-body">
+          <ul>
+            <li><strong>Campaigns</strong>: {{ status.database.campaign }}</li>
+            <li><strong>Lists</strong>: {{ status.database.list }}</li>
+            <li><strong>ListPeople</strong>: {{ status.database.listPerson }}</li>
+            <li><strong>Templates</strong>: {{ status.database.template }}</li>
+            <li><strong>Users</strong>: {{ status.database.user }}</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row well">
+    <div class="col-md-2">
+      <img width="100%" src="/images/vendors/elasticsearch.png" />
+    </div>
+
+    <div class="col-md-10">
       <div class="panel panel-default">
         <div class="panel-heading">
           <h3 class="panel-title">ElasticSearch Status
@@ -52,25 +89,31 @@
     </div>
   </div>
 
-  <div class="row">
-    <div class="col-md-6" ng-repeat="redisName in ['tasks', 'client']">
-      <div class="panel panel-default">
-        <div class="panel-heading">
-          <h3 class="panel-title">Redis [{{ redisName }}] Status
-            <span ng-if="status.redis[redisName].healthy" class="label label-success">Healthy</span>
-            <span ng-if="!status.redis[redisName].healthy" class="label label-danger">Unhealthy</span>
-          </h3>
-        </div>
-        <div class="panel-body">
-          <ul>
-            <li><strong>Version</strong>: {{ status.redis[redisName].redis_version }}</li>
-            <li><strong>Uptime</strong>: {{ status.redis[redisName].uptime_in_seconds }}</li>
-            <li><strong>Connected Clients</strong>: {{ status.redis[redisName].connected_clients }}</li>
-            <li><strong>Memory</strong>: {{ status.redis[redisName].used_memoryMB }}MB / {{ status.redis[redisName].total_system_memoryMB }}MB ({{ status.redis[redisName].memoryPercent }}%)</li>
-            <li><strong>Operations / Second</strong>: {{ status.redis[redisName].instantaneous_ops_per_sec }}</li>
-            <li><strong>Instantaneous Network In</strong>: {{ status.redis[redisName].instantaneous_input_kbps }}Kb</li>
-            <li><strong>Instantaneous Network Out</strong>: {{ status.redis[redisName].instantaneous_output_kbps }}Kb</li>
-          </ul>
+  <div class="row well">
+    <div ng-repeat="redisName in ['tasks', 'client']">
+      <div class="col-md-2">
+        <img ng-if="$index === 0" width="100%" src="/images/vendors/redis.png" />
+      </div>
+
+      <div class="col-md-10">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h3 class="panel-title">Redis [{{ redisName }}] Status
+              <span ng-if="status.redis[redisName].healthy" class="label label-success">Healthy</span>
+              <span ng-if="!status.redis[redisName].healthy" class="label label-danger">Unhealthy</span>
+            </h3>
+          </div>
+          <div class="panel-body">
+            <ul>
+              <li><strong>Version</strong>: {{ status.redis[redisName].redis_version }}</li>
+              <li><strong>Uptime</strong>: {{ status.redis[redisName].uptime_in_seconds }}</li>
+              <li><strong>Connected Clients</strong>: {{ status.redis[redisName].connected_clients }}</li>
+              <li><strong>Memory</strong>: {{ status.redis[redisName].used_memoryMB }}MB / {{ status.redis[redisName].total_system_memoryMB }}MB ({{ status.redis[redisName].memoryPercent }}%)</li>
+              <li><strong>Operations / Second</strong>: {{ status.redis[redisName].instantaneous_ops_per_sec }}</li>
+              <li><strong>Instantaneous Network In</strong>: {{ status.redis[redisName].instantaneous_input_kbps }}Kb</li>
+              <li><strong>Instantaneous Network Out</strong>: {{ status.redis[redisName].instantaneous_output_kbps }}Kb</li>
+            </ul>
+          </div>
         </div>
       </div>
     </div>

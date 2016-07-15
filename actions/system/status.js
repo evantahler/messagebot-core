@@ -21,6 +21,7 @@ exports.status = {
   run: function(api, data, next){
     var jobs = [];
 
+    data.response.database = {};
     data.response.elasticsearch = {};
     data.response.redis = {};
     data.response.node = {};
@@ -82,6 +83,21 @@ exports.status = {
       }
 
       done();
+    });
+
+    /* ------ Database ------ */
+
+    data.response.database.healthy = true;
+    ['campaign', 'list', 'listPerson', 'template', 'user'].forEach(function(model){
+      jobs.push(function(done){
+        api.models[model].count().then(function(count){
+          data.response.database[model] = count;
+          done();
+        }).catch(function(error){
+          data.response.database.health = false;
+          done(error);
+        });
+      });
     });
 
     /* ------ ElasticSearch ------ */
