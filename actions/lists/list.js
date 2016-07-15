@@ -2,10 +2,9 @@ var async = require('async');
 
 var JSONValidator = function(p){
   if(p === null){ return true; }
-  if(p.indexOf())
   try{
-    var o =JSON.parse(p);
-    if (o && typeof o === "object" && o !== null){
+    var o = JSON.parse(p);
+    if(o && typeof o === 'object' && o !== null){
       return true;
     }else{
       return new Error('not valid JSON');
@@ -13,12 +12,12 @@ var JSONValidator = function(p){
   }catch(e){
     return new Error('not valid JSON');
   }
-}
+};
 
 var JSONFormatter = function(p){
   if(p === '' || p === null){ return null; }
   else{ return p; }
-}
+};
 
 var listTypes = ['dynamic', 'static'];
 var listTypeValidator = function(p){
@@ -27,13 +26,13 @@ var listTypeValidator = function(p){
   }else{
     return true;
   }
-}
+};
 
 exports.listCreate = {
   name:                   'list:create',
   description:            'list:create',
   outputExample:          {},
-  middleware:             [ 'logged-in-session', 'status-required-admin' ],
+  middleware:             ['logged-in-session', 'status-required-admin'],
 
   inputs: {
     name:   { required: true },
@@ -73,7 +72,7 @@ exports.listCreate = {
       data.response.list = listObj.apiData(api);
       api.tasks.enqueue('lists:peopleCount', {listId: listObj.id}, 'messagebot:lists', next);
     }).catch(function(errors){
-       next(errors.errors[0].message);
+      next(errors.errors[0].message);
     });
   }
 };
@@ -82,7 +81,7 @@ exports.listView = {
   name:                   'list:view',
   description:            'list:view',
   outputExample:          {},
-  middleware:             [ 'logged-in-session' ],
+  middleware:             ['logged-in-session'],
 
   inputs: {
     listId: {
@@ -108,7 +107,7 @@ exports.listCopy = {
   name:                   'list:copy',
   description:            'list:copy',
   outputExample:          {},
-  middleware:             [ 'logged-in-session', 'status-required-admin' ],
+  middleware:             ['logged-in-session', 'status-required-admin'],
 
   inputs: {
     name: { required: true },
@@ -168,7 +167,7 @@ exports.listEdit = {
   name:                   'list:edit',
   description:            'list:edit',
   outputExample:          {},
-  middleware:             [ 'logged-in-session', 'status-required-admin' ],
+  middleware:             ['logged-in-session', 'status-required-admin'],
 
   inputs: {
     name:   { required: false },
@@ -215,7 +214,7 @@ exports.listDelete = {
   name:                   'list:delete',
   description:            'list:delete',
   outputExample:          {},
-  middleware:             [ 'logged-in-session', 'status-required-admin' ],
+  middleware:             ['logged-in-session', 'status-required-admin'],
 
   inputs: {
     listId: {
@@ -228,7 +227,7 @@ exports.listDelete = {
     api.models.list.findOne({where: {id: data.params.listId}}).then(function(list){
       if(!list){ return next(new Error('list not found')); }
       api.models.listPerson.destroy({where: {listId: list.id}}).then(function(){
-          list.destroy().then(function(){
+        list.destroy().then(function(){
           next();
         }).catch(next);
       }).catch(next);

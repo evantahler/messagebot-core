@@ -17,7 +17,7 @@ exports.userCreate = {
   name:                   'user:create',
   description:            'user:create',
   outputExample:          {},
-  middleware:             [ 'logged-in-session', 'status-required-admin' ],
+  middleware:             ['logged-in-session', 'status-required-admin'],
 
   inputs: {
     email:       { required: true },
@@ -42,7 +42,7 @@ exports.userCreate = {
       });
 
       person.data.source = 'admin';
-      person.data.location = {lat: 0, lon: 0}
+      person.data.location = {lat: 0, lon: 0};
       person.data.device = 'unknown';
 
       person.create(function(error){
@@ -51,7 +51,7 @@ exports.userCreate = {
         user.personGuid = person.data.guid;
         user.save().then(function(){
           data.response.user = user.apiData(api);
-            next(error);
+          next(error);
         }).catch(function(errors){
           next(errors.errors[0].message);
         });
@@ -64,7 +64,7 @@ exports.userStatuses = {
   name:                   'user:statusesList',
   description:            'user:statusesList',
   outputExample:          {},
-  middleware:             [ 'logged-in-session' ],
+  middleware:             ['logged-in-session'],
   inputs:                 {},
   run: function(api, data, next){
     data.response.validStatuses = validStatuses;
@@ -76,7 +76,7 @@ exports.userView = {
   name:                   'user:view',
   description:            'user:view',
   outputExample:          {},
-  middleware:             [ 'logged-in-session' ],
+  middleware:             ['logged-in-session'],
 
   inputs: {
     userId: {
@@ -104,7 +104,7 @@ exports.userEdit = {
   name:                   'user:edit',
   description:            'user:edit',
   outputExample:          {},
-  middleware:             [ 'logged-in-session' ],
+  middleware:             ['logged-in-session'],
 
   inputs: {
     email:       { required: false },
@@ -130,7 +130,7 @@ exports.userEdit = {
     api.models.user.findOne({where: {id: userId}}).then(function(user){
       if(!user){ return next(new Error('user not found')); }
 
-      if(data.params.status && user.status != data.params.status && data.session.status !== 'admin'){
+      if(data.params.status && user.status !== data.params.status && data.session.status !== 'admin'){
         return next(new Error('only admin role can modify status'));
       }
 
@@ -152,7 +152,7 @@ exports.userEdit = {
 
           if(data.params.password){
             user.updatePassword(data.params.password, function(error){
-              if(error){ return callback(error); }
+              if(error){ return next(error); }
               user.save().then(function(){
                 next();
               }).catch(next);
@@ -170,7 +170,7 @@ exports.userDelete = {
   name:                   'user:delete',
   description:            'user:delete',
   outputExample:          {},
-  middleware:             [ 'logged-in-session', 'status-required-admin' ],
+  middleware:             ['logged-in-session', 'status-required-admin'],
 
   inputs: {
     userId: {

@@ -3,7 +3,7 @@ var port     = process.env.REDIS_PORT || 6379;
 var db       = process.env.REDIS_DB   || 0;
 var password = process.env.REDIS_PASS || null;
 
-exports['default'] = {
+exports.default = {
   redis: function(api){
 
     // konstructor: The redis client constructor method

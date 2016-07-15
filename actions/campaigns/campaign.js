@@ -7,26 +7,26 @@ var campaignTypeValidator = function(p){
   }else{
     return true;
   }
-}
+};
 
 var transportValidator = function(p){
   var api = this;
   var transportNames = [];
 
   api.transports.forEach(function(t){ transportNames.push(t.name); });
-  if( transportNames.indexOf(p) < 0 ){
+  if(transportNames.indexOf(p) < 0){
     return new Error(p + ' is not a valid transport');
   }else{
     return true;
   }
-}
+};
 
 
 exports.campaignCreate = {
   name:                   'campaign:create',
   description:            'campaign:create',
   outputExample:          {},
-  middleware:             [ 'logged-in-session', 'status-required-admin' ],
+  middleware:             ['logged-in-session', 'status-required-admin'],
 
   inputs: {
     name:        { required: true },
@@ -80,7 +80,7 @@ exports.campaignCreate = {
       data.response.campaign = campaign.apiData(api);
       next();
     }).catch(function(errors){
-       next(errors.errors[0].message);
+      next(errors.errors[0].message);
     });
   }
 };
@@ -89,7 +89,7 @@ exports.campaignView = {
   name:                   'campaign:view',
   description:            'campaign:view',
   outputExample:          {},
-  middleware:             [ 'logged-in-session' ],
+  middleware:             ['logged-in-session'],
 
   inputs: {
     campaignId: {
@@ -111,7 +111,7 @@ exports.campaignCopy = {
   name:                   'campaign:copy',
   description:            'campaign:copy',
   outputExample:          {},
-  middleware:             [ 'logged-in-session', 'status-required-admin' ],
+  middleware:             ['logged-in-session', 'status-required-admin'],
 
   inputs: {
     name: { required: true },
@@ -153,7 +153,7 @@ exports.campaignEdit = {
   name:                   'campaign:edit',
   description:            'campaign:edit',
   outputExample:          {},
-  middleware:             [ 'logged-in-session', 'status-required-admin' ],
+  middleware:             ['logged-in-session', 'status-required-admin'],
 
   inputs: {
     name:        { required: false },
@@ -220,7 +220,7 @@ exports.campaignStats = {
   name:                   'campaign:stats',
   description:            'campaign:stats',
   outputExample:          {},
-  middleware:             [ 'logged-in-session', 'status-required-admin' ],
+  middleware:             ['logged-in-session', 'status-required-admin'],
 
   inputs: {
     campaignId: {
@@ -296,7 +296,7 @@ exports.campaignDelete = {
   name:                   'campaign:delete',
   description:            'campaign:delete',
   outputExample:          {},
-  middleware:             [ 'logged-in-session', 'status-required-admin' ],
+  middleware:             ['logged-in-session', 'status-required-admin'],
 
   inputs: {
     campaignId: {

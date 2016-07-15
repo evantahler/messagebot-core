@@ -36,7 +36,7 @@ var allowedTags = [
 ];
 
 module.exports = function(sequelize, DataTypes){
-  return sequelize.define("template", {
+  return sequelize.define('template', {
     'name': {
       type: DataTypes.STRING,
       allowNull: false,

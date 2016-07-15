@@ -8,9 +8,9 @@ var seed = function(api, callback){
   var jobs = [];
 
   // only create entries within a 1-month window
-  var start = new Date()
+  var start = new Date();
   start.setMonth(start.getMonth() - 1);
-  var end = new Date()
+  var end = new Date();
 
   var i = 0;
   while(i < usersCount){
@@ -24,7 +24,7 @@ var seed = function(api, callback){
         common.buildPerson(start, end, routeBase, function(error, _person){
           if(error){ throw error; }
           person = _person;
-          message += 'Created `' + person.data.firstName + ' ' + person.data.lastName + '` + ['
+          message += 'Created `' + person.data.firstName + ' ' + person.data.lastName + '` + [';
           return next();
         });
       });
@@ -47,11 +47,11 @@ var seed = function(api, callback){
   }
 
   async.series(jobs, callback);
-}
+};
 
 if(require.main === module){
   common.connect(function(error, api){
-    if(error){ return end(error); }
+    if(error){ throw(error); }
     console.log('seeding env with fake data: ' + api.env);
     seed(api, function(error){
       if(error){ throw error; }

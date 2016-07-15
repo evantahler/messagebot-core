@@ -54,42 +54,42 @@ module.exports = {
       }
     };
 
-    api.actions.addMiddleware( middleware['data-preperation'] );
+    api.actions.addMiddleware(middleware['data-preperation']);
 
     next();
   },
 
   start: function(api, next){
-   var jobs = [];
+    var jobs = [];
 
-   // ensure that the first admin user exists
-   jobs.push(function(done){
-    api.models.user.count({where: {status: 'admin'}}).then(function(count){
-      if(count > 0){
-        done();
-      }else{
-        var user = api.models.user.build({
-          email:     'admin@localhost.com',
-          status:    'admin',
-          firstName: 'admin',
-          lastName:  'admin',
-          personGuid:  '0',
-        });
-
-        user.updatePassword('password', function(error){
-          if(error){ return done(error); }
-          user.save().then(function(){
-            api.log('*** created first admin user `admin@localhost.com` with password `password` ***', 'alert');
-            done();
-          }).catch(function(error){
-            api.log(error, 'error');
-            done(error);
+    // ensure that the first admin user exists
+    jobs.push(function(done){
+      api.models.user.count({where: {status: 'admin'}}).then(function(count){
+        if(count > 0){
+          done();
+        }else{
+          var user = api.models.user.build({
+            email:     'admin@localhost.com',
+            status:    'admin',
+            firstName: 'admin',
+            lastName:  'admin',
+            personGuid:  '0',
           });
-        });
-      }
-    }).catch(done);
-   });
 
-   async.series(jobs, next);
+          user.updatePassword('password', function(error){
+            if(error){ return done(error); }
+            user.save().then(function(){
+              api.log('*** created first admin user `admin@localhost.com` with password `password` ***', 'alert');
+              done();
+            }).catch(function(error){
+              api.log(error, 'error');
+              done(error);
+            });
+          });
+        }
+      }).catch(done);
+    });
+
+    async.series(jobs, next);
   }
 };

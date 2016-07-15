@@ -1,4 +1,4 @@
-var urls = process.env.ELASTICSEARCH_URLS ? process.env.ELASTICSEARCH_URLS.split(',') : ['http://localhost:9200']
+var urls = process.env.ELASTICSEARCH_URLS ? process.env.ELASTICSEARCH_URLS.split(',') : ['http://localhost:9200'];
 
 exports.default = {
   elasticsearch: function(api){

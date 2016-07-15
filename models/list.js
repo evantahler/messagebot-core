@@ -1,5 +1,5 @@
 module.exports = function(sequelize, DataTypes){
-  return sequelize.define("list", {
+  return sequelize.define('list', {
     'name': {
       type: DataTypes.STRING,
       allowNull: false,

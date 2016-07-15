@@ -2,7 +2,7 @@ exports.campaignsList = {
   name:                   'campaigns:list',
   description:            'campaigns:list',
   outputExample:          {},
-  middleware:             [ 'logged-in-session' ],
+  middleware:             ['logged-in-session'],
 
   inputs: {
     from: {
@@ -33,7 +33,7 @@ exports.campaignsList = {
       offset: data.params.from,
       limit: data.params.size,
       order: data.params.order,
-    }
+    };
 
     query.where = {};
 
@@ -50,7 +50,7 @@ exports.campaignsList = {
       data.response.campaigns = [];
 
       response.rows.forEach(function(campaign){
-        data.response.campaigns.push( campaign.apiData(api) );
+        data.response.campaigns.push(campaign.apiData(api));
       });
 
       next();

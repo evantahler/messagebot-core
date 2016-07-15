@@ -59,7 +59,8 @@ exports.buildFunnel = function(person, routeBase, callback){
   var progress = true;
   var jobs = [];
 
-  var payload, event;
+  var payload;
+  var event;
 
   var pushEvent = function(event, payload){
     jobs.push(function(next){
@@ -67,7 +68,7 @@ exports.buildFunnel = function(person, routeBase, callback){
         next(error, event);
       });
     });
-  }
+  };
 
   while(counter < this.funnel.length && progress === true){
     if(Math.random() <= this.funnel[counter].rate){
@@ -112,4 +113,4 @@ exports.buildFunnel = function(person, routeBase, callback){
     if(!Array.isArray(events)){ events = [events]; }
     return callback(error, events);
   });
-}
+};

@@ -35,7 +35,7 @@ module.exports = {
     };
 
     api.template.expandDate = function(d){
-      var monthNames = ["January", "February", "March", "April", "May", "June","July", "August", "September", "October", "November", "December"];
+      var monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
       return {
         string: d.toString(),
@@ -59,11 +59,11 @@ module.exports = {
         // UTCMonth: d.getUTCMonth(),
         // UTCSeconds: d.getUTCSeconds(),
         // year: d.getYear(),
-      }
+      };
     };
 
     api.template.buildView = function(person, events, template){
-      var view = {}
+      var view = {};
 
       // beacon
       view.beacon = '<img src="';
@@ -73,15 +73,15 @@ module.exports = {
       view.beacon += '" >';
 
       view.track = function(){
-        return function(val, render) {
-          var trackingURL = ''
+        return function(val, render){
+          var trackingURL = '';
           trackingURL += api.config.messagebot.url + '/api/message/track.gif?';
           trackingURL += 'verb=act&';
           trackingURL += 'guid=%%MESSAGEGUID%%&';
           trackingURL += 'link=' + render(val);
           return trackingURL;
-        }
-      }
+        };
+      };
 
       // person
       view.person = person.data;
@@ -110,7 +110,7 @@ module.exports = {
     api.template.renderToDisk = function(templateId, personGuid, message, callback){
       api.models.template.findOne({where: {id: templateId}}).then(function(template){
         if(!template){ return callback(new Error('template not found')); }
-        if(!template.template || template.template.length === 0 ){ return callback(new Error('template empty')); }
+        if(!template.template || template.template.length === 0){ return callback(new Error('template empty')); }
 
         var person = new api.models.person(personGuid);
         var events = []; //TODO: Do we load in the events?  How many?
@@ -130,20 +130,20 @@ module.exports = {
 
           fs.writeFile(file, html, function(error){
             if(error){ return callback(error); }
-            var logData = {}
-            if(message){ logData = {messageGuid: message.data.guid} }
+            var logData = {};
+            if(message){ logData = {messageGuid: message.data.guid}; }
             api.log('rendered template #' + template.id + ' for person #' + person.data.guid + ' to ' + file, 'info', logData);
             callback(null, file, fileBase, view);
           });
         });
       }).catch(callback);
-    }
+    };
 
     next();
   },
 
   start: function(api, next){
-    api.template.cleanupTimer = setInterval(api.template.cleanup, Math.floor(parseInt(api.config.messagebot.tmpFileLifespan) / 2))
+    api.template.cleanupTimer = setInterval(api.template.cleanup, Math.floor(parseInt(api.config.messagebot.tmpFileLifespan) / 2));
     next();
   },
 

@@ -1,7 +1,7 @@
 var async = require('async');
 
 var LIMIT = 1000;
-var OFFSET = 0
+var OFFSET = 0;
 
 module.exports = {
   initialize: function(api, next){
@@ -81,7 +81,7 @@ module.exports = {
         async.parallel(jobs, function(error){
           if(error){ return callback(error); }
           if(listPeople.length > 0){
-            return api.campaigns.sendSimple(campaign, list, limit, (offset + listPeople.length), callback)
+            return api.campaigns.sendSimple(campaign, list, limit, (offset + listPeople.length), callback);
           }else{
             return callback(null, (offset + listPeople.length));
           }
@@ -99,4 +99,4 @@ module.exports = {
 
     next();
   }
-}
+};

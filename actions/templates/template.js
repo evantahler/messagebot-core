@@ -3,18 +3,18 @@ var transportValidator = function(p){
   var transportNames = [];
 
   api.transports.forEach(function(t){ transportNames.push(t.name); });
-  if( transportNames.indexOf(p) < 0 ){
+  if(transportNames.indexOf(p) < 0){
     return new Error(p + ' is not a valid transport');
   }else{
     return true;
   }
-}
+};
 
 exports.templateCreate = {
   name:                   'template:create',
   description:            'template:create',
   outputExample:          {},
-  middleware:             [ 'logged-in-session', 'status-required-admin' ],
+  middleware:             ['logged-in-session', 'status-required-admin'],
 
   inputs: {
     name:         { required: true },
@@ -45,7 +45,7 @@ exports.templateView = {
   name:                   'template:view',
   description:            'template:view',
   outputExample:          {},
-  middleware:             [ 'logged-in-session' ],
+  middleware:             ['logged-in-session'],
 
   inputs: {
     templateId: {
@@ -68,7 +68,7 @@ exports.templateRender = {
   description:            'template:render',
   matchExtensionMimeType: true,
   outputExample:          {},
-  middleware:             [ 'logged-in-session' ],
+  middleware:             ['logged-in-session'],
 
   inputs: {
     personGuid: { required: true },
@@ -99,7 +99,7 @@ exports.templateCopy = {
   name:                   'template:copy',
   description:            'template:copy',
   outputExample:          {},
-  middleware:             [ 'logged-in-session', 'status-required-admin' ],
+  middleware:             ['logged-in-session', 'status-required-admin'],
 
   inputs: {
     name: { required: true },
@@ -133,7 +133,7 @@ exports.templateEdit = {
   name:                   'template:edit',
   description:            'template:edit',
   outputExample:          {},
-  middleware:             [ 'logged-in-session', 'status-required-admin' ],
+  middleware:             ['logged-in-session', 'status-required-admin'],
 
   inputs: {
     templateId: {
@@ -165,7 +165,7 @@ exports.templateDelete = {
   name:                   'template:delete',
   description:            'template:delete',
   outputExample:          {},
-  middleware:             [ 'logged-in-session', 'status-required-admin' ],
+  middleware:             ['logged-in-session', 'status-required-admin'],
 
   inputs: {
     templateId: {

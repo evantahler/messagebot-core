@@ -41,11 +41,11 @@ var log = function(msg){
 var migrate = function(api, callback){
   var dir = path.normalize(api.projectRoot + '/db/elasticsearch/indexes');
   fs.readdirSync(dir).forEach(function(file){
-    var nameParts = file.split("/");
-    var name = nameParts[(nameParts.length - 1)].split(".")[0];
+    var nameParts = file.split('/');
+    var name = nameParts[(nameParts.length - 1)].split('.')[0];
     var now = new Date();
     var thisMonth = dateformat(now, 'yyyy-mm');
-    var nextMonth = dateformat(new Date( now.getTime() + (1000 * 60 * 60 * 24 * 30) ), 'yyyy-mm');
+    var nextMonth = dateformat(new Date(now.getTime() + (1000 * 60 * 60 * 24 * 30)), 'yyyy-mm');
 
     delete require.cache[require.resolve(dir + '/' + file)];
     var payload = require(dir + '/' + file);

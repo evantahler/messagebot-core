@@ -179,7 +179,7 @@ exports.messageTrack = {
 
     jobs.push(function(done){
       message.hydrate(done);
-    })
+    });
 
     jobs.push(function(done){
       if(data.params.verb === 'read'){
@@ -256,4 +256,4 @@ exports.messageTrack = {
       next();
     });
   }
-}
+};

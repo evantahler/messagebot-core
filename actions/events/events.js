@@ -115,7 +115,7 @@ exports.eventsAggregation = {
           data.params.interval,
           function(error, buckets){
             if(error){ return aggDone(error); }
-            data.response.aggregations['_all'] = buckets.buckets;
+            data.response.aggregations._all = buckets.buckets;
             aggDone();
           }
         );

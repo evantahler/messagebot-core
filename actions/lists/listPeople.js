@@ -12,7 +12,7 @@ exports.listPeopleAdd = {
   name:                   'list:people:add',
   description:            'list:people:add',
   outputExample:          {},
-  middleware:             [ 'logged-in-session', 'status-required-admin' ],
+  middleware:             ['logged-in-session', 'status-required-admin'],
 
   inputs: {
     listId: {
@@ -63,7 +63,7 @@ exports.listPeopleAdd = {
 
       else if(data.params.file){
         var file = data.params.file.path;
-        var fileStream = fs.createReadStream(file).on('error', next);;
+        var fileStream = fs.createReadStream(file).on('error', next);
         var csvStream = csv({
           headers: true,
           ignoreEmpty: true,
@@ -104,7 +104,7 @@ exports.listPeopleDelete = {
   name:                   'list:people:delete',
   description:            'list:people:delete',
   outputExample:          {},
-  middleware:             [ 'logged-in-session', 'status-required-admin' ],
+  middleware:             ['logged-in-session', 'status-required-admin'],
 
   inputs: {
     listId: {
@@ -158,7 +158,7 @@ exports.listPeopleCount = {
   name:                   'list:people:count',
   description:            'list:people:count',
   outputExample:          {},
-  middleware:             [ 'logged-in-session', 'status-required-admin' ],
+  middleware:             ['logged-in-session', 'status-required-admin'],
 
   inputs: {
     listId: {
@@ -181,7 +181,7 @@ exports.listPeopleView = {
   name:                   'list:people:view',
   description:            'list:people:view',
   outputExample:          {},
-  middleware:             [ 'logged-in-session', 'status-required-admin' ],
+  middleware:             ['logged-in-session', 'status-required-admin'],
 
   inputs: {
     listId: {
@@ -214,7 +214,7 @@ exports.listPeopleView = {
         var personGuids = [];
 
         response.rows.forEach(function(listPerson){
-          personGuids.push( listPerson.personGuid );
+          personGuids.push(listPerson.personGuid);
         });
 
         api.elasticsearch.mget(api, (api.env + '-people'), personGuids, function(error, results){

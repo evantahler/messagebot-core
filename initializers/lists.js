@@ -24,7 +24,7 @@ module.exports = {
         });
 
         return guids;
-      }
+      };
 
       // load the collection of people which would match the `peopleQuery`, `eventQuery`, and `messageQuery`
       // and then take the goup of folks who match all sections
@@ -81,7 +81,7 @@ module.exports = {
             if(queryResults[type] !== false){
               uniqueGuids.forEach(function(guid){
                 if(queryResults[type].indexOf(guid) < -1){
-                  uniqueGuids.splice( uniqueGuids.indexOf(guid), 1 );
+                  uniqueGuids.splice(uniqueGuids.indexOf(guid), 1);
                 }
               });
             }
@@ -126,4 +126,4 @@ module.exports = {
 
     next();
   }
-}
+};

@@ -30,7 +30,7 @@ exports.personCreate = {
     }
 
     // location and device will be updated by events as they come in
-    person.data.location = {lat: 0, lon: 0}
+    person.data.location = {lat: 0, lon: 0};
     person.data.device = 'unknown';
 
     // return without waiting for the crete callback; log errors
@@ -65,7 +65,7 @@ exports.personEdit = {
 
   run: function(api, data, next){
     var person = new api.models.person(data.params.guid);
-    if(data.params.source){      person.data.source = data.params.source;           }
+    if(data.params.source){ person.data.source = data.params.source; }
 
     for(var i in data.params.data){ person.data[i] = data.params.data[i]; }
 
@@ -101,7 +101,8 @@ exports.personView = {
           var d = listPerson.list.apiData(api);
           d.joinedAt = listPerson.createdAt;
           data.response.lists.push(d);
-        })
+        });
+
         next();
       }).catch(next);
     });

@@ -2,7 +2,7 @@ exports.usersList = {
   name:                   'users:list',
   description:            'users:list',
   outputExample:          {},
-  middleware:             [ 'logged-in-session' ],
+  middleware:             ['logged-in-session'],
 
   inputs: {},
 
@@ -11,7 +11,7 @@ exports.usersList = {
     api.models.user.findAll().then(function(users){
       data.response.users = [];
       users.forEach(function(user){
-        data.response.users.push( user.apiData(api) );
+        data.response.users.push(user.apiData(api));
       });
 
       next();

@@ -1,5 +1,5 @@
 module.exports = {
-  initialize: function (api, next) {
+  initialize: function(api, next){
 
     var redis = api.redis.clients.client;
 

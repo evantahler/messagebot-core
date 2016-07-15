@@ -1,5 +1,5 @@
 module.exports = function(sequelize, DataTypes){
-  return sequelize.define("listPerson", {
+  return sequelize.define('listPerson', {
     'listId': {
       type: DataTypes.INTEGER,
       allowNull: false,

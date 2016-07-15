@@ -8,7 +8,7 @@ var run = function(api){
   var jobs = [];
   var person;
   var message = '';
-  var end = new Date()
+  var end = new Date();
   var start = new Date(end.getTime() + 1);
 
   message += '[' + end.toString() + '] ';
@@ -18,7 +18,7 @@ var run = function(api){
     common.buildPerson(start, end, routeBase, function(error, _person){
       if(error){ throw error; }
       person = _person;
-      message += 'Created `' + person.data.firstName + ' ' + person.data.lastName + '` + ['
+      message += 'Created `' + person.data.firstName + ' ' + person.data.lastName + '` + [';
       return next();
     });
   });
@@ -37,11 +37,11 @@ var run = function(api){
     console.log(message);
     setTimeout(run, sleep, api);
   });
-}
+};
 
 if(require.main === module){
   common.connect(function(error, api){
-    if(error){ return end(error); }
+    if(error){ throw(error); }
     console.log('Running Faker: ' + api.env);
     run(api);
   });

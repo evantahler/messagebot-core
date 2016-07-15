@@ -2,7 +2,7 @@ var bcrypt = require('bcrypt');
 var bcryptComplexity = 10;
 
 module.exports = function(sequelize, DataTypes){
-  return sequelize.define("user", {
+  return sequelize.define('user', {
     'email': {
       type: DataTypes.STRING,
       allowNull: false,

@@ -23,8 +23,8 @@ module.exports = {
       connect: function(callback){
         var dir = path.normalize(api.projectRoot + '/models');
         fs.readdirSync(dir).forEach(function(file){
-          var nameParts = file.split("/");
-          var name = nameParts[(nameParts.length - 1)].split(".")[0];
+          var nameParts = file.split('/');
+          var name = nameParts[(nameParts.length - 1)].split('.')[0];
           api.models[name] = api.sequelize.sequelize.import(dir + '/' + file);
         });
 
