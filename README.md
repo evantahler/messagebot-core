@@ -6,24 +6,20 @@
 ## Requirements
 
 - Node.js
-- mySQL
+- MySQL/Postgres
 - Redis
 - ElasticSearch
 
 ## Install
 
-- `npm install`
+- `npm run prepare`
 
 ## Configuration and Running
-
-`source .env && npm run migrate && npm start`
 
 - start `redis`
 - start `mySQL`
 - start `elasticsearch`
 - Configure `.env` with the secrets you need, or ensure that they are already present within the environment
   - ensure that the databases you listed exist and that the user(s) you have configured can reach & access them
-- npm install && npm update
-- prepare `this` host (bower, maxmind, etc) via `npm run prepare`
-- run migrations (elasticsearch + mysql) via `npm run migrate`
-- (source .env && ) `npm start`
+
+`source .env && npm run migrate && npm start`
