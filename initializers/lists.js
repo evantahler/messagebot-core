@@ -67,6 +67,7 @@ module.exports = {
 
         jobs.push(function(done){
           var uniqueGuids = [];
+          var guidsToRemove = [];
 
           ['people', 'events', 'messages'].forEach(function(type){
             if(queryResults[type] !== false){
@@ -80,11 +81,16 @@ module.exports = {
           ['people', 'events', 'messages'].forEach(function(type){
             if(queryResults[type] !== false){
               uniqueGuids.forEach(function(guid){
-                if(queryResults[type].indexOf(guid) < -1){
-                  uniqueGuids.splice(uniqueGuids.indexOf(guid), 1);
+                if(queryResults[type].indexOf(guid) < 0){
+                  guidsToRemove.push(guid);
                 }
               });
             }
+          });
+
+          guidsToRemove = api.utils.arrayUniqueify(guidsToRemove);
+          guidsToRemove.forEach(function(guid){
+            uniqueGuids.splice(uniqueGuids.indexOf(guid), 1);
           });
 
           queryResults.final = uniqueGuids;

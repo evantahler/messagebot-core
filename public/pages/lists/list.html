@@ -187,6 +187,32 @@
     }
 }
       </pre></li>
+      <li>And finally, you can make compound queries which will be joined with *AND*.  Here is how you would send an email to all users who signed up this month who have bought a product.<pre>
+// USERS
+{
+  "range" : {
+    "createdAt" : {
+      "gte" : "now-1M",
+      "lte" : "now"
+    }
+  }
+}
+
+// EVENTS
+{
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "term": {
+            "type": "purchase"
+          }
+        }
+      ]
+    }
+  }
+}
+      </pre></li>
     </ul>
   </p>
 

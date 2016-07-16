@@ -87,12 +87,7 @@ app.controller('lists:list', ['$scope', '$rootScope', '$location', 'ngNotify', '
     }
   };
 
-  $scope.$on("$destroy", function(event){
-    clearTimeout(refreshTimer);
-  });
-
   $scope.loadLists();
-  refreshTimer = setInterval($scope.loadLists, (1000 * 10));
 }]);
 
 app.controller('lists:people:view', ['$scope', '$rootScope', '$location', 'ngNotify', '$routeParams', 'FileUploader', function($scope, $rootScope, $location, ngNotify, $routeParams, FileUploader){
