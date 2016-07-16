@@ -1,3 +1,67 @@
+app.controller('record:new', ['$scope', '$rootScope', '$location', 'ngNotify', '$routeParams', function($scope, $rootScope, $location, ngNotify, $routeParams){
+  $scope.section = $rootScope.section;                     // people
+  $scope.recordType = $rootScope.singular($scope.section); // person
+  $scope.formData = {
+    createdAt: new Date(),
+    sync: true,
+    data: {},
+  };
+
+  $scope.newDataKey;
+  $scope.newDataValue;
+
+  $('#newDataKey').keydown(function(e){
+    if(e.keyCode === 13){
+      e.preventDefault();
+      return $scope.loadDataProperty();
+    }
+  });
+
+  $('#newDataValue').keydown(function(e){
+    if(e.keyCode === 13){
+      e.preventDefault();
+      return $scope.loadDataProperty();
+    }
+  });
+
+  $scope.loadDocumenation = function(){
+    $rootScope.action($scope, {
+      userId: $rootScope.user.id,
+      guid: $scope.guid
+    }, '/api/system/documentation', 'GET', function(data){
+      $scope.action = data.documentation[$scope.recordType + ':create'][1];
+    });
+  };
+
+  $scope.loadDataProperty = function(){
+    if(!$scope.newDataKey || !$scope.newDataValue){ return false; }
+    $scope.formData.data[$scope.newDataKey] = $scope.newDataValue;
+    $scope.newDataKey = null;
+    $scope.newDataValue = null;
+
+    return false; // to prevent forms from submitting
+  };
+
+  $scope.deleteDataAttribute = function(k){
+    delete $scope.formData.data[k];
+  };
+
+  $scope.processForm = function(event){
+    var payload = {};
+    for(var i in $scope.formData){
+      payload[i] = $scope.formData[i];
+    };
+
+    payload.createdAt = payload.createdAt.getTime();
+
+    $rootScope.action($scope, payload, '/api/' + $scope.recordType, 'POST', function(data){
+      $location.path('/' + $scope.recordType + '/' + data.guid);
+    });
+  };
+
+  $scope.loadDocumenation();
+}]);
+
 app.controller('record:view', ['$scope', '$rootScope', '$location', 'ngNotify', '$routeParams', function($scope, $rootScope, $location, ngNotify, $routeParams){
   $scope.section = $rootScope.section;                     // people
   $scope.recordType = $rootScope.singular($scope.section); // person
@@ -9,7 +73,7 @@ app.controller('record:view', ['$scope', '$rootScope', '$location', 'ngNotify', 
     'data',
     'personGuid',
     'eventGuid',
-    'messageGuid', 
+    'messageGuid',
     'location',
     'body',
     'campaignId'

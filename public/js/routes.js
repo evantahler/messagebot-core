@@ -10,6 +10,7 @@ var routes = [
   [ '/people/search',                'pages/people/search.html',     'MessageBot: People',     true ],
   [ '/people/search/:query',         'pages/people/search.html',     'MessageBot: People',     true ],
   [ '/people/search/:query/:page',   'pages/people/search.html',     'MessageBot: People',     true ],
+  [ '/person/new',                   'pages/person/new.html',        'MessageBot: Person',     true ],
   [ '/person/:guid',                 'pages/person/view.html',       'MessageBot: Person',     true ],
 
   [ '/events/recent',                'pages/events/recent.html',    'MessageBot: Events',      true ],
@@ -17,6 +18,7 @@ var routes = [
   [ '/events/search',                'pages/events/search.html',    'MessageBot: Events',      true ],
   [ '/events/search/:query',         'pages/events/search.html',    'MessageBot: Events',      true ],
   [ '/events/search/:query/:page',   'pages/events/search.html',    'MessageBot: Events',      true ],
+  [ '/event/new',                    'pages/event/new.html',        'MessageBot: Event',       true ],
   [ '/event/:guid',                  'pages/event/view.html',       'MessageBot: Event',       true ],
 
   [ '/messages/recent',              'pages/messages/recent.html',  'MessageBot: Messages',    true ],
@@ -24,6 +26,7 @@ var routes = [
   [ '/messages/search',              'pages/messages/search.html',  'MessageBot: Messages',    true ],
   [ '/messages/search/:query',       'pages/messages/search.html',  'MessageBot: Messages',    true ],
   [ '/messages/search/:query/:page', 'pages/messages/search.html',  'MessageBot: Messages',    true ],
+  [ '/message/new',                  'pages/message/new.html',      'MessageBot: Message',     true ],
   [ '/message/:guid',                'pages/message/view.html',     'MessageBot: Message',     true ],
 
   [ '/lists/list',                   'pages/lists/list.html',       'MessageBot: Lists',       true ],
