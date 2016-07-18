@@ -98,28 +98,26 @@ module.exports = {
         });
 
         jobs.push(function(done){
-          api.models.listPerson.destroy({where: {listId: list.id}}).then(function(){
+          api.models.listPerson.destroy({
+            where: {listId: list.id}
+          }).then(function(){
             done();
-          });
+          }).catch(next);
         });
 
         jobs.push(function(done){
-          var listPersonJobs = [];
+          var bulk = [];
 
           queryResults.final.forEach(function(personGuid){
-            listPersonJobs.push(function(cb){
-              var listPerson = api.models.listPerson.build({
-                personGuid: personGuid,
-                listId: list.id,
-              });
-
-              listPerson.save().then(function(){
-                cb();
-              }).catch(done);
+            bulk.push({
+              personGuid: personGuid,
+              listId: list.id,
             });
           });
 
-          async.series(listPersonJobs, done);
+          api.models.listPerson.bulkCreate(bulk, {validate: true}).then(function(){
+            done();
+          }).catch(done);
         });
 
 
