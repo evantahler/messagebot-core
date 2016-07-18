@@ -131,30 +131,18 @@ exports.listCopy = {
       newList.save().then(function(){
         data.response.list = newList.apiData(api);
 
-        // TODO: Paginate this or do in batches.
-        // https://github.com/sequelize/sequelize/issues/2454
-        api.models.listPerson.findAll({where: {listId: list.id}}).then(function(listPeople){
-          var jobs = [];
-
-          listPeople.forEach(function(listPerson){
-            jobs.push(function(done){
-              var newListPerson = api.models.listPerson.build({
-                personGuid: listPerson.personGuid,
-                listId: newList.id
-              });
-              newListPerson.save().then(function(){
-                done();
-              }).catch(function(errors){
-                done(errors.errors[0].message);
-              });
-            });
+        api.utils.findInBatches(api.models.listPerson, {where: {listId: list.id}}, function(listPerson, done){
+          var newListPerson = api.models.listPerson.build({
+            personGuid: listPerson.personGuid,
+            listId: newList.id
           });
-
-          jobs.push(function(done){
-            api.tasks.enqueue('lists:peopleCount', {listId: newList.id}, 'messagebot:lists', done);
+          newListPerson.save().then(function(){
+            done();
+          }).catch(function(errors){
+            done(errors.errors[0].message);
           });
-
-          async.series(jobs, next);
+        }, function(){
+          api.tasks.enqueue('lists:peopleCount', {listId: newList.id}, 'messagebot:lists', next);
         });
       }).catch(function(errors){
         next(errors.errors[0].message);

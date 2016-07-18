@@ -6,8 +6,10 @@ module.exports = {
 
   initialize: function(api, next){
 
+    /* --- Transports --- */
     api.transports = [];
 
+    /* --- Params Middleware --- */
     var middleware = {
       'data-preperation': {
         name: 'data-preperation',
@@ -55,6 +57,27 @@ module.exports = {
     };
 
     api.actions.addMiddleware(middleware['data-preperation']);
+
+    /* --- Utils --- */
+    api.utils.findInBatches = function(model, query, recordResponder, callback, limit, offset){
+      if(!limit){ limit = 1000; }
+      if(!offset){ offset = 0; }
+
+      query.limit = limit;
+      query.offset = offset;
+      model.findAll(query).then(function(records){
+        var jobs = [];
+        if(!records || records.length === 0){ return callback(); }
+        records.forEach(function(r){
+          jobs.push(function(done){ recordResponder(r, done); });
+        });
+
+        async.series(jobs, function(error){
+          if(error){ return error(error); }
+          api.utils.findInBatches(model, query, recordResponder, callback, limit, (offset + limit));
+        });
+      }).catch(callback);
+    };
 
     next();
   },
