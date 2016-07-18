@@ -32,6 +32,8 @@ exports.templateCreate = {
 
   run: function(api, data, next){
     var template = api.models.template.build(data.params);
+    template.teamId = data.session.teamId;
+
     template.save().then(function(){
       data.response.template = template.apiData(api);
       next();
@@ -55,7 +57,10 @@ exports.templateView = {
   },
 
   run: function(api, data, next){
-    api.models.template.findOne({where: {id: data.params.templateId}}).then(function(template){
+    api.models.template.findOne({where: {
+      id: data.params.templateId,
+      teamId: data.session.teamId,
+    }}).then(function(template){
       if(!template){ return next(new Error('template not found')); }
       data.response.template = template.apiData(api);
       next();
@@ -79,19 +84,24 @@ exports.templateRender = {
   },
 
   run: function(api, data, next){
-    api.template.renderToDisk(data.params.templateId, data.params.personGuid, null, function(error, file, fileBase, view){
-      if(data.connection.extension === 'html'){
-        if(error){ return next(error); }
-        data.toRender = false;
-        data.connection.rawConnection.responseHttpCode = 200;
-        data.connection.sendFile(fileBase);
-        next();
-      }else{
-        if(error && !view){ return next(error); }
-        data.response.view = view;
-        next();
-      }
-    });
+    api.models.template.findOne({where: {
+      id: data.params.templateId,
+      teamId: data.session.teamId,
+    }}).then(function(template){
+      api.template.renderToDisk(data.params.templateId, data.params.personGuid, null, function(error, file, fileBase, view){
+        if(data.connection.extension === 'html'){
+          if(error){ return next(error); }
+          data.toRender = false;
+          data.connection.rawConnection.responseHttpCode = 200;
+          data.connection.sendFile(fileBase);
+          next();
+        }else{
+          if(error && !view){ return next(error); }
+          data.response.view = view;
+          next();
+        }
+      });
+    }).catch(next);
   }
 };
 
@@ -110,10 +120,14 @@ exports.templateCopy = {
   },
 
   run: function(api, data, next){
-    api.models.template.findOne({where: {id: data.params.templateId}}).then(function(template){
+    api.models.template.findOne({where: {
+      id: data.params.templateId,
+      teamId: data.session.teamId,
+    }}).then(function(template){
       if(!template){ return next(new Error('template not found')); }
       var newTemplate = api.models.template.build({
         name:        data.params.name,
+        teamId:      template.teamId,
         description: template.description,
         folder:      template.folder,
         transport:   template.transport,
@@ -151,7 +165,10 @@ exports.templateEdit = {
   },
 
   run: function(api, data, next){
-    api.models.template.findOne({where: {id: data.params.templateId}}).then(function(template){
+    api.models.template.findOne({where: {
+      id: data.params.templateId,
+      teamId: data.session.teamId,
+    }}).then(function(template){
       if(!template){ return next(new Error('template not found')); }
       template.updateAttributes(data.params).then(function(){
         data.response.template = template.apiData(api);
@@ -175,7 +192,10 @@ exports.templateDelete = {
   },
 
   run: function(api, data, next){
-    api.models.template.findOne({where: {id: data.params.templateId}}).then(function(template){
+    api.models.template.findOne({where: {
+      id: data.params.templateId,
+      teamId: data.session.teamId,
+    }}).then(function(template){
       if(!template){ return next(new Error('template not found')); }
       template.destroy().then(function(){ next(); }).catch(next);
     }).catch(next);

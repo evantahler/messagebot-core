@@ -32,6 +32,8 @@ exports.userCreate = {
 
   run: function(api, data, next){
     var user = api.models.user.build(data.params);
+    user.teamId = data.session.teamId;
+
     user.updatePassword(data.params.password, function(error){
       if(error){ return next(error); }
 
@@ -44,6 +46,7 @@ exports.userCreate = {
       person.data.source = 'admin';
       person.data.location = {lat: 0, lon: 0};
       person.data.device = 'unknown';
+      person.data.teamId = user.teamId;
 
       person.create(function(error){
         if(error){ api.log('person creation error: ' + error, 'error', data.params); }
@@ -91,7 +94,10 @@ exports.userView = {
       userId = data.params.userId;
     }
 
-    api.models.user.findOne({where: {id: userId}}).then(function(user){
+    api.models.user.findOne({where: {
+      id: userId,
+      teamId: data.session.teamId,
+    }}).then(function(user){
       if(!user){ return next(new Error('user not found')); }
       data.response.user = user.apiData(api);
       next();
@@ -127,7 +133,10 @@ exports.userEdit = {
       userId = data.params.userId;
     }
 
-    api.models.user.findOne({where: {id: userId}}).then(function(user){
+    api.models.user.findOne({where: {
+      id: userId,
+      teamId: data.session.teamId,
+    }}).then(function(user){
       if(!user){ return next(new Error('user not found')); }
 
       if(data.params.status && user.status !== data.params.status && data.session.status !== 'admin'){
@@ -180,7 +189,10 @@ exports.userDelete = {
   },
 
   run: function(api, data, next){
-    api.models.user.findOne({where: {id: data.params.userId}}).then(function(user){
+    api.models.user.findOne({where: {
+      id: data.params.userId,
+      teamId: data.session.teamId,
+    }}).then(function(user){
       if(!user){ return next(new Error('user not found')); }
       if(data.session.userId === user.id){ return next(new Error('you cannot delete yourself')); }
       user.destroy().then(function(){ next(); }).catch(next);

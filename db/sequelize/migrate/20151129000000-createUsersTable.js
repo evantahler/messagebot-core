@@ -57,6 +57,7 @@ module.exports = {
     );
 
     queryInterface.addIndex(
+      'users', ['teamId'],
       'users', ['email'], {
         indexName: 'emailUniqueIndex',
         indicesType: 'UNIQUE'

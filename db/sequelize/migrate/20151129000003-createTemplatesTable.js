@@ -45,6 +45,7 @@ module.exports = {
     );
 
     queryInterface.addIndex(
+      'templates', ['teamId'],
       'templates', ['name'], {
         indicesType: 'UNIQUE'
       }

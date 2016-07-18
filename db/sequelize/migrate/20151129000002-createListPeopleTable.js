@@ -32,6 +32,10 @@ module.exports = {
     );
 
     queryInterface.addIndex(
+      'listPeople', ['teamId']
+    );
+
+    queryInterface.addIndex(
       'listPeople', ['personGuid'], {
         indexName: 'personGuidIndex'
       }

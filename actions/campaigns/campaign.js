@@ -75,6 +75,7 @@ exports.campaignCreate = {
 
   run: function(api, data, next){
     var campaign = api.models.campaign.build(data.params);
+    campaign.teamId = data.session.teamId;
 
     campaign.save().then(function(){
       data.response.campaign = campaign.apiData(api);
@@ -99,7 +100,10 @@ exports.campaignView = {
   },
 
   run: function(api, data, next){
-    api.models.campaign.findOne({where: {id: data.params.campaignId}}).then(function(campaign){
+    api.models.campaign.findOne({where: {
+      id: data.params.campaignId,
+      teamId: data.session.teamId,
+    }}).then(function(campaign){
       if(!campaign){ return next(new Error('campaign not found')); }
       data.response.campaign = campaign.apiData(api);
       next();
@@ -122,7 +126,10 @@ exports.campaignCopy = {
   },
 
   run: function(api, data, next){
-    api.models.campaign.findOne({where: {id: data.params.campaignId}}).then(function(campaign){
+    api.models.campaign.findOne({where: {
+      id: data.params.campaignId,
+      teamId: data.session.teamId,
+    }}).then(function(campaign){
       if(!campaign){ return next(new Error('campaign not found')); }
       var newCampaign = api.models.campaign.build({
         name:              data.params.name,
@@ -130,6 +137,7 @@ exports.campaignCopy = {
         folder:            campaign.folder,
         type:              campaign.type,
         listId:            campaign.listId,
+        teamId:            campaign.teamId,
         templateId:        campaign.templateId,
         transport:         campaign.transport,
         campaignVariables: campaign.campaignVariables,
@@ -205,7 +213,10 @@ exports.campaignEdit = {
   },
 
   run: function(api, data, next){
-    api.models.campaign.findOne({where: {id: data.params.campaignId}}).then(function(campaign){
+    api.models.campaign.findOne({where: {
+      id: data.params.campaignId,
+      teamId: data.session.teamId,
+    }}).then(function(campaign){
       if(!campaign){ return next(new Error('campaign not found')); }
 
       campaign.updateAttributes(data.params).then(function(){
@@ -249,7 +260,10 @@ exports.campaignStats = {
     var alias = api.env + '-' + 'messages';
 
     jobs.push(function(done){
-      api.models.campaign.findOne({where: {id: data.params.campaignId}}).then(function(_campaign){
+      api.models.campaign.findOne({where: {
+        id: data.params.campaignId,
+        teamId: data.session.teamId,
+      }}).then(function(_campaign){
         campaign = _campaign;
         if(!campaign){ return next(new Error('campaign not found')); }
         done();
@@ -306,7 +320,10 @@ exports.campaignDelete = {
   },
 
   run: function(api, data, next){
-    api.models.campaign.findOne({where: {id: data.params.campaignId}}).then(function(campaign){
+    api.models.campaign.findOne({where: {
+      id: data.params.campaignId,
+      teamId: data.session.teamId,
+    }}).then(function(campaign){
       if(!campaign){ return next(new Error('campaign not found')); }
       campaign.destroy().then(function(){
         next();

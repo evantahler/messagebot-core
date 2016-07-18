@@ -35,7 +35,9 @@ exports.campaignsList = {
       order: data.params.order,
     };
 
-    query.where = {};
+    query.where = {
+      teamId: data.session.teamId
+    };
 
     if(data.params.folder){
       query.where.folder = data.params.folder;
@@ -67,7 +69,7 @@ exports.campaignsFolders = {
   inputs: {},
 
   run: function(api, data, next){
-    api.models.campaign.aggregate('folder', 'DISTINCT', {plain: false}).then(function(response){
+    api.models.campaign.aggregate('folder', 'DISTINCT', {plain: false, where: {teamId: data.session.teamId}}).then(function(response){
       data.response.folders = [];
       response.forEach(function(r){ data.response.folders.push(r.DISTINCT); });
       data.response.folders.sort();

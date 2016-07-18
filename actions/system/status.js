@@ -5,11 +5,13 @@ var packageJSON = require(path.normalize(__dirname + path.sep + '..' + path.sep 
 exports.status = {
   name: 'system:status',
   description: 'I will return some basic information about the API',
+  middleware:  ['logged-in-session'],
 
   outputExample:{},
 
   run: function(api, data, next){
     var jobs = [];
+    var team;
 
     data.response.database = {};
     data.response.elasticsearch = {};
@@ -19,16 +21,19 @@ exports.status = {
     /* ------ Node ------ */
 
     jobs.push(function(done){
+      api.models.team.findOne({where: {id: data.session.teamId}}).then(function(_team){
+        team = _team;
+        done();
+      }).catch(done);
+    });
+
+    jobs.push(function(done){
       data.response.node.id                = api.id;
       data.response.node.healthy           = true;
       data.response.node.actionheroVersion = api.actionheroVersion;
       data.response.node.uptime            = new Date().getTime() - api.bootTime;
       data.response.node.version           = packageJSON.version,
-      data.response.node.url               = api.config.messagebot.url;
-
-      data.response.node.urlHuman = data.response.node.url;
-      data.response.node.urlHuman = data.response.node.urlHuman.replace('https://', '');
-      data.response.node.urlHuman = data.response.node.urlHuman.replace('http://', '');
+      data.response.node.team              = team.apiData(api);
 
       done();
     });

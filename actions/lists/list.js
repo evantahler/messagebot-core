@@ -65,6 +65,7 @@ exports.listCreate = {
 
   run: function(api, data, next){
     var list = api.models.list.build(data.params);
+    list.teamId = data.session.teamId;
 
     list.save().then(
       api.models.list.findOne({where: {name: data.params.name}})
@@ -95,7 +96,10 @@ exports.listView = {
   },
 
   run: function(api, data, next){
-    api.models.list.findOne({where: {id: data.params.listId}}).then(function(list){
+    api.models.list.findOne({where: {
+      id: data.params.listId,
+      teamId: data.session.teamId,
+    }}).then(function(list){
       if(!list){ return next(new Error('list not found')); }
       data.response.list = list.apiData(api);
       next();
@@ -118,10 +122,14 @@ exports.listCopy = {
   },
 
   run: function(api, data, next){
-    api.models.list.findOne({where: {id: data.params.listId}}).then(function(list){
+    api.models.list.findOne({where: {
+      id: data.params.listId,
+      teamId: data.session.teamId,
+    }}).then(function(list){
       if(!list){ return next(new Error('list not found')); }
       var newList = api.models.list.build({
         name:         data.params.name,
+        teamId:       list.teamId,
         folder:       list.folder,
         type:         list.type,
         personQuery:  list.personQuery,
@@ -187,7 +195,10 @@ exports.listEdit = {
   },
 
   run: function(api, data, next){
-    api.models.list.findOne({where: {id: data.params.listId}}).then(function(list){
+    api.models.list.findOne({where: {
+      id: data.params.listId,
+      teamId: data.session.teamId,
+    }}).then(function(list){
       if(!list){ return next(new Error('list not found')); }
 
       list.updateAttributes(data.params).then(function(){
@@ -212,7 +223,10 @@ exports.listDelete = {
   },
 
   run: function(api, data, next){
-    api.models.list.findOne({where: {id: data.params.listId}}).then(function(list){
+    api.models.list.findOne({where: {
+      id: data.params.listId,
+      teamId: data.session.teamId,
+    }}).then(function(list){
       if(!list){ return next(new Error('list not found')); }
       api.models.listPerson.destroy({where: {listId: list.id}}).then(function(){
         list.destroy().then(function(){

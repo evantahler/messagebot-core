@@ -8,7 +8,7 @@ exports.usersList = {
 
   run: function(api, data, next){
 
-    api.models.user.findAll().then(function(users){
+    api.models.user.findAll({where: {teamId: data.session.teamId}}).then(function(users){
       data.response.users = [];
       users.forEach(function(user){
         data.response.users.push(user.apiData(api));

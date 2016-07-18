@@ -21,13 +21,14 @@ exports.templatesList = {
   run: function(api, data, next){
 
     var query = {
+      where: { teamId: data.session.teamId },
       order: 'folder asc, name asc',
       offset: data.params.from,
       limit: data.params.size,
     };
 
     if(data.params.folder){
-      query.where = { folder: data.params.folder };
+      query.where.folder = data.params.folder;
     }
 
     api.models.template.findAndCountAll(query).then(function(response){
@@ -52,7 +53,7 @@ exports.campaignsFolders = {
   inputs: {},
 
   run: function(api, data, next){
-    api.models.template.aggregate('folder', 'DISTINCT', {plain: false}).then(function(response){
+    api.models.template.aggregate('folder', 'DISTINCT', {where: {teamId: data.session.teamId}, plain: false}).then(function(response){
       data.response.folders = [];
       response.forEach(function(r){ data.response.folders.push(r.DISTINCT); });
       data.response.folders.sort();
