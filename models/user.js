@@ -3,6 +3,10 @@ var bcryptComplexity = 10;
 
 module.exports = function(sequelize, DataTypes){
   return sequelize.define('user', {
+    'teamId': {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
     'email': {
       type: DataTypes.STRING,
       allowNull: false,

@@ -1,5 +1,5 @@
 module.exports = {
-  up: function (queryInterface, Sequelize) {
+  up: function(queryInterface, Sequelize){
     queryInterface.createTable(
       'campaigns',
       {
@@ -13,6 +13,11 @@ module.exports = {
         },
         updatedAt: {
           type: Sequelize.DATE
+        },
+
+        'teamId': {
+          type: Sequelize.INTEGER,
+          allowNull: false,
         },
 
         'name': {
@@ -47,7 +52,7 @@ module.exports = {
         'campaignVariables': {
           type: Sequelize.TEXT,
           allowNull: true,
-        }
+        },
 
         'sendAt': {
           type: Sequelize.DATE,
@@ -78,13 +83,13 @@ module.exports = {
     );
 
     queryInterface.addIndex(
-      'campaigns', ['name'],{
+      'campaigns', ['name'], {
         indicesType: 'UNIQUE'
       }
     );
   },
 
-  down: function (queryInterface, Sequelize) {
-    queryInterface.createTable('campaigns');
+  down: function(queryInterface, Sequelize){
+    queryInterface.deleteTable('campaigns');
   }
 };

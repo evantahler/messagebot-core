@@ -21,6 +21,7 @@ module.exports = {
 
         var sessionData = {
           userId:          user.id,
+          teamId:          user.teamId,
           status:          user.status,
           sesionCreatedAt: new Date().getTime()
         };

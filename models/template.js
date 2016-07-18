@@ -37,6 +37,10 @@ var allowedTags = [
 
 module.exports = function(sequelize, DataTypes){
   return sequelize.define('template', {
+    'teamId': {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
     'name': {
       type: DataTypes.STRING,
       allowNull: false,

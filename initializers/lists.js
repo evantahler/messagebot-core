@@ -111,6 +111,7 @@ module.exports = {
           queryResults.final.forEach(function(personGuid){
             bulk.push({
               personGuid: personGuid,
+              teamId: list.teamId,
               listId: list.id,
             });
           });

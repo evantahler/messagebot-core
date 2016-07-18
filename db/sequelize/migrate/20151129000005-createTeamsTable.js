@@ -1,7 +1,7 @@
 module.exports = {
   up: function(queryInterface, Sequelize){
     queryInterface.createTable(
-      'listPeople',
+      'teams',
       {
         id: {
           type: Sequelize.INTEGER,
@@ -15,43 +15,32 @@ module.exports = {
           type: Sequelize.DATE
         },
 
-        'teamId': {
-          type: Sequelize.INTEGER,
-          allowNull: false,
-        },
-
-        'listId': {
-          type: Sequelize.INTEGER,
-          allowNull: false,
-        },
-        'personGuid': {
+        'name': {
           type: Sequelize.STRING,
           allowNull: false,
         },
+        'urlRegexp': {
+          type: Sequelize.STRING,
+          allowNull: false,
+        }
+
       }
     );
 
     queryInterface.addIndex(
-      'listPeople', ['personGuid'], {
-        indexName: 'personGuidIndex'
+      'teams', ['name'], {
+        indicesType: 'UNIQUE'
       }
     );
 
     queryInterface.addIndex(
-      'listPeople', ['listId'], {
-        indexName: 'listIdIndex'
-      }
-    );
-
-    queryInterface.addIndex(
-      'listPeople', ['listId', 'personGuid'], {
-        indexName: 'listIdIndexLock',
+      'teams', ['urlRegexp'], {
         indicesType: 'UNIQUE'
       }
     );
   },
 
   down: function(queryInterface, Sequelize){
-    queryInterface.deleteTable('listPeople');
+    queryInterface.createTable('teams');
   }
 };

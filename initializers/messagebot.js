@@ -5,6 +5,11 @@ module.exports = {
   startPriority: 9999,
 
   initialize: function(api, next){
+    /* --- Teams --- */
+    api.teams = {
+      teams: [],
+      timer: null,
+    };
 
     /* --- Transports --- */
     api.transports = [];
@@ -85,32 +90,73 @@ module.exports = {
   start: function(api, next){
     var jobs = [];
 
-    // ensure that the first admin user exists
+    var loadTeams = function(){
+      clearTimeout(api.teams.timer);
+      api.models.team.findAll().then(function(teams){
+        api.teams.teams = teams;
+        api.log('loaded ' + teams.length + ' teams into memory');
+        api.teams.timer = setTimeout(loadTeams, (60 * 1000));
+      });
+    };
+
+    // load in the teams list periodically to have the latest list of regexp URL matches
     jobs.push(function(done){
-      api.models.user.count({where: {status: 'admin'}}).then(function(count){
+      loadTeams();
+      done();
+    });
+
+    // ensure the first team existsjobs.push(function(done){
+    jobs.push(function(done){
+      api.models.team.count().then(function(count){
         if(count > 0){
           done();
         }else{
-          var user = api.models.user.build({
-            email:     'admin@localhost.com',
-            status:    'admin',
-            firstName: 'admin',
-            lastName:  'admin',
-            personGuid:  '0',
+          var team = api.models.team.build({
+            name: 'MessageBot',
+            urlRegexp: '^.*$',
           });
 
-          user.updatePassword('password', function(error){
-            if(error){ return done(error); }
-            user.save().then(function(){
-              api.log('*** created first admin user `admin@localhost.com` with password `password` ***', 'alert');
-              done();
-            }).catch(function(error){
-              api.log(error, 'error');
-              done(error);
-            });
+          team.save().then(function(){
+            api.log('*** created first team called `' + team.name + '` ***', 'alert');
+            done();
+          }).catch(function(error){
+            api.log(error, 'error');
+            done(error);
           });
         }
       }).catch(done);
+    });
+
+    // ensure that the first admin user exists
+    jobs.push(function(done){
+      api.models.team.findAll().then(function(teams){
+        var team = teams[0];
+        api.models.user.count({where: {status: 'admin'}}).then(function(count){
+          if(count > 0){
+            done();
+          }else{
+            var user = api.models.user.build({
+              teamId:     team.id,
+              email:      'admin@localhost.com',
+              status:     'admin',
+              firstName:  'admin',
+              lastName:   'admin',
+              personGuid: '0',
+            });
+
+            user.updatePassword('password', function(error){
+              if(error){ return done(error); }
+              user.save().then(function(){
+                api.log('*** created first admin user `admin@localhost.com` with password `password` on team `' +  team.name + '` ***', 'alert');
+                done();
+              }).catch(function(error){
+                api.log(error, 'error');
+                done(error);
+              });
+            });
+          }
+        }).catch(done);
+      });
     });
 
     async.series(jobs, next);

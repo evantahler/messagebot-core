@@ -1,5 +1,9 @@
 module.exports = function(sequelize, DataTypes){
   return sequelize.define('campaign', {
+    'teamId': {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
     'name': {
       type: DataTypes.STRING,
       allowNull: false,
