@@ -208,6 +208,7 @@ app.controller('campaigns:list', ['$scope', '$rootScope', '$location', 'ngNotify
   $scope.transports = [];
   $scope.types = ['simple', 'recurring', 'trigger'];
   $scope.forms = {};
+  $scope.folder = {name: ($routeParams.folder || '_all')};
   $scope.pagination = {};
   $scope.forms.createCampaign = {};
   $scope.forms.editCampaign   = {};
@@ -216,13 +217,17 @@ app.controller('campaigns:list', ['$scope', '$rootScope', '$location', 'ngNotify
   var perPage = 50;
 
   $scope.loadCampaigns = function(){
-    $rootScope.action($scope, {
+    var params =  {
       from: (currentPage * perPage),
       size: perPage,
-    }, '/api/campaigns', 'GET', function(data){
+    };
+    if($scope.folder.name != '_all'){ params.folder = $scope.folder.name; }
+    $rootScope.action($scope, params, '/api/campaigns', 'GET', function(data){
       $scope.campaigns = data.campaigns;
       $scope.total = data.total;
       $scope.pagination = $rootScope.genratePagination(currentPage, perPage, $scope.total);
+
+      if($scope.campaigns.length === 0 && currentPage !== 0){ $location.path('/campaigns/list/' + $scope.folder.name + '/0'); }
     });
   };
 
@@ -239,6 +244,13 @@ app.controller('campaigns:list', ['$scope', '$rootScope', '$location', 'ngNotify
       $scope.lists = data.lists;
     });
   };
+
+  $scope.loadFolders = function(){
+    $rootScope.action($scope, {}, '/api/campaigns/folders', 'GET', function(data){
+      $scope.folders = data.folders;
+    });
+  };
+
 
   $scope.loadTemplates = function(){
     //TODO: Pagination
@@ -272,6 +284,7 @@ app.controller('campaigns:list', ['$scope', '$rootScope', '$location', 'ngNotify
     $rootScope.action($scope, $scope.forms.editCampaign, '/api/campaign', 'PUT', function(data){
       $rootScope.clearModals('#editCampaignModal');
       $scope.loadCampaigns();
+      $scope.loadFolders();
       ngNotify.set('Campaign Updated', 'success');
     });
   };
@@ -294,12 +307,18 @@ app.controller('campaigns:list', ['$scope', '$rootScope', '$location', 'ngNotify
       $rootScope.action($scope, {campaignId: campaignId}, '/api/campaign', 'DELETE', function(data){
         ngNotify.set('Campaign Deleted', 'success');
         $scope.loadCampaigns();
+        $scope.loadFolders();
       });
     }
   };
 
+  $scope.$watch('folder.name', function(){
+    $location.path('/campaigns/list/' + $scope.folder.name + '/' + currentPage);
+  });
+
   $scope.loadCampaigns();
   $scope.loadTemplates();
   $scope.loadLists();
+  $scope.loadFolders();
   $scope.loadTransports();
 }]);

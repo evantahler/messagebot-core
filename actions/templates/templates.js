@@ -2,7 +2,7 @@ exports.templatesList = {
   name:                   'templates:list',
   description:            'templates:list',
   outputExample:          {},
-  middleware:             ['logged-in-session'],
+  middleware:             ['logged-in-session', 'status-required-admin'],
 
   inputs: {
     from: {
@@ -38,6 +38,24 @@ exports.templatesList = {
         data.response.templates.push(template.apiData(api));
       });
 
+      next();
+    }).catch(next);
+  }
+};
+
+exports.campaignsFolders = {
+  name:                   'templates:folders',
+  description:            'templates:folders',
+  outputExample:          {},
+  middleware:             ['logged-in-session', 'status-required-admin'],
+
+  inputs: {},
+
+  run: function(api, data, next){
+    api.models.template.aggregate('folder', 'DISTINCT', {plain: false}).then(function(response){
+      data.response.folders = [];
+      response.forEach(function(r){ data.response.folders.push(r.DISTINCT); });
+      data.response.folders.sort();
       next();
     }).catch(next);
   }

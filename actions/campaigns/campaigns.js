@@ -2,7 +2,7 @@ exports.campaignsList = {
   name:                   'campaigns:list',
   description:            'campaigns:list',
   outputExample:          {},
-  middleware:             ['logged-in-session'],
+  middleware:             ['logged-in-session', 'status-required-admin'],
 
   inputs: {
     from: {
@@ -53,6 +53,24 @@ exports.campaignsList = {
         data.response.campaigns.push(campaign.apiData(api));
       });
 
+      next();
+    }).catch(next);
+  }
+};
+
+exports.campaignsFolders = {
+  name:                   'campaigns:folders',
+  description:            'campaigns:folders',
+  outputExample:          {},
+  middleware:             ['logged-in-session', 'status-required-admin'],
+
+  inputs: {},
+
+  run: function(api, data, next){
+    api.models.campaign.aggregate('folder', 'DISTINCT', {plain: false}).then(function(response){
+      data.response.folders = [];
+      response.forEach(function(r){ data.response.folders.push(r.DISTINCT); });
+      data.response.folders.sort();
       next();
     }).catch(next);
   }

@@ -144,58 +144,80 @@
 
   <a ng-click="createCampaign();" class="btn btn-primary">Create Campaign</a>
 
+  <div class="row">
+    <div class="col-md-3">
+      <br />
+      <div class="panel panel-default">
+        <div class="panel-heading">Folders</div>
+        <div class="panel-body">
+          <div class="form-group">
+            <div class="radio">
+              <label><input type="radio" ng-model="folder.name" value="_all">Show All</label>
+            </div>
+            <hr ng-if="folders.length > 0" />
+            <div class="radio" ng-repeat="f in folders">
+              <label><input type="radio" ng-model="folder.name" value="{{ f }}">{{ f }}</label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
 
-  <table class="table table-striped table-hover">
+    <div class="col-md-9">
 
-    <thead>
-      <tr>
-        <th>&nbsp;</th>
-        <th>&nbsp;</th>
-        <th>&nbsp;</th>
-        <th>createdAt</th>
-        <th>updatedAt</th>
-        <th>sentAt</th>
-        <th>name</th>
-        <th>description</th>
-        <th>folder</th>
-        <th>transport</th>
-        <th>type</th>
-        <th>stats</th>
-        <th>&nbsp;</th>
-        <th>&nbsp;</th>
-        <th>&nbsp;</th>
-      </tr>
-    </thead>
+      <table class="table table-striped table-hover">
 
-    <tbody ng-repeat="campaign in campaigns">
-      <tr>
-        <td><a href="/#/campaign/{{ campaign.id }}"><span class="glyphicon glyphicon-edit">&nbsp;</span></a></td>
-        <td><a href="/#/campaign/{{ campaign.id }}/stats"><span class="glyphicon glyphicon-signal">&nbsp;</span></a></td>
-        <td><a href="/#/messages/search/campaignId:{{ campaign.id }}"><span class="glyphicon glyphicon-envelope">&nbsp;</span></a></td>
-        <td>{{ campaign.createdAt }}</td>
-        <td>{{ campaign.updatedAt }}</td>
-        <td>{{ campaign.sentAt }}</td>
-        <td><strong>{{ campaign.name }}</strong></td>
-        <td>{{ campaign.description }}</td>
-        <td>{{ campaign.folder }}</td>
-        <td>{{ campaign.transport }}</td>
-        <td>{{ campaign.type }}</td>
-        <td><span ng-click="copyCampaign(campaign.id);" class="glyphicon glyphicon-duplicate">&nbsp;</span></td>
-        <td><span ng-click="editCampaign(campaign.id);" class="glyphicon glyphicon-pencil">&nbsp;</span></td>
-        <td><span ng-click="deleteCampaign(campaign.id);" class="glyphicon glyphicon-remove">&nbsp;</span></td>
-      </tr>
-    </tbody>
+        <thead>
+          <tr>
+            <th>&nbsp;</th>
+            <th>&nbsp;</th>
+            <th>&nbsp;</th>
+            <th>createdAt</th>
+            <th>updatedAt</th>
+            <th>sentAt</th>
+            <th>name</th>
+            <th>description</th>
+            <th>folder</th>
+            <th>transport</th>
+            <th>type</th>
+            <th>stats</th>
+            <th>&nbsp;</th>
+            <th>&nbsp;</th>
+            <th>&nbsp;</th>
+          </tr>
+        </thead>
 
-  </table>
+        <tbody ng-repeat="campaign in campaigns">
+          <tr>
+            <td><a href="/#/campaign/{{ campaign.id }}"><span class="glyphicon glyphicon-edit">&nbsp;</span></a></td>
+            <td><a href="/#/campaign/{{ campaign.id }}/stats"><span class="glyphicon glyphicon-signal">&nbsp;</span></a></td>
+            <td><a href="/#/messages/search/campaignId:{{ campaign.id }}"><span class="glyphicon glyphicon-envelope">&nbsp;</span></a></td>
+            <td>{{ campaign.createdAt }}</td>
+            <td>{{ campaign.updatedAt }}</td>
+            <td>{{ campaign.sentAt }}</td>
+            <td><strong>{{ campaign.name }}</strong></td>
+            <td>{{ campaign.description }}</td>
+            <td>{{ campaign.folder }}</td>
+            <td>{{ campaign.transport }}</td>
+            <td>{{ campaign.type }}</td>
+            <td><span ng-click="copyCampaign(campaign.id);" class="glyphicon glyphicon-duplicate">&nbsp;</span></td>
+            <td><span ng-click="editCampaign(campaign.id);" class="glyphicon glyphicon-pencil">&nbsp;</span></td>
+            <td><span ng-click="deleteCampaign(campaign.id);" class="glyphicon glyphicon-remove">&nbsp;</span></td>
+          </tr>
+        </tbody>
+
+      </table>
+    </div>
+  </div>
 
   <ul class="pagination pagination-sm" ng-if="campaigns.length > 0">
-    <li ng-class="pagination.showBack ? '' : 'disabled'" ><a href="/#/campaigns/list/{{ pagination.firstPage }}">&laquo;</a></li>
+    <li ng-class="pagination.showBack ? '' : 'disabled'" ><a href="/#/campaigns/list/{{ folder.name }}/{{ pagination.firstPage }}">&laquo;</a></li>
 
     <li ng-repeat="p in pagination.pages" ng-class="p.active ? 'active' : ''">
-      <a href="/#/campaigns/list/{{ p.page }}">{{ p.page }}</a>
+      <a href="/#/campaigns/list/{{ folder.name }}/{{ p.page }}">{{ p.page }}</a>
     </li>
 
-    <li ng-class="pagination.showForward ? '' : 'disabled'"><a href="/#/campaigns/list/{{ pagination.lastPage }}">&raquo;</a></li>
+    <li ng-class="pagination.showForward ? '' : 'disabled'"><a href="/#/campaigns/list/{{ folder.name }}/{{ pagination.lastPage }}">&raquo;</a></li>
   </ul>
 
 </div>

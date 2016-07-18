@@ -2,7 +2,7 @@ exports.listsList = {
   name:                   'lists:list',
   description:            'lists:list',
   outputExample:          {},
-  middleware:             ['logged-in-session'],
+  middleware:             ['logged-in-session', 'status-required-admin'],
 
   inputs: {
     from: {
@@ -38,6 +38,24 @@ exports.listsList = {
         data.response.lists.push(list.apiData(api));
       });
 
+      next();
+    }).catch(next);
+  }
+};
+
+exports.listsFolders = {
+  name:                   'lists:folders',
+  description:            'lists:folders',
+  outputExample:          {},
+  middleware:             ['logged-in-session', 'status-required-admin'],
+
+  inputs: {},
+
+  run: function(api, data, next){
+    api.models.list.aggregate('folder', 'DISTINCT', {plain: false}).then(function(response){
+      data.response.folders = [];
+      response.forEach(function(r){ data.response.folders.push(r.DISTINCT); });
+      data.response.folders.sort();
       next();
     }).catch(next);
   }

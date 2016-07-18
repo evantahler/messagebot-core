@@ -102,49 +102,71 @@
 
   <a ng-click="createTemplate();" class="btn btn-primary">Create Template</a>
 
+  <div class="row">
+    <div class="col-md-3">
+      <br />
+      <div class="panel panel-default">
+        <div class="panel-heading">Folders</div>
+        <div class="panel-body">
+          <div class="form-group">
+            <div class="radio">
+              <label><input type="radio" ng-model="folder.name" value="_all">Show All</label>
+            </div>
+            <hr ng-if="folders.length > 0" />
+            <div class="radio" ng-repeat="f in folders">
+              <label><input type="radio" ng-model="folder.name" value="{{ f }}">{{ f }}</label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
 
-  <table class="table table-striped table-hover">
+    <div class="col-md-9">
 
-    <thead>
-      <tr>
-        <th>&nbsp;</th>
-        <th>createdAt</th>
-        <th>updatedAt</th>
-        <th>name</th>
-        <th>description</th>
-        <th>folder</th>
-        <th>transport</th>
-        <th>&nbsp;</th>
-        <th>&nbsp;</th>
-        <th>&nbsp;</th>
-      </tr>
-    </thead>
+      <table class="table table-striped table-hover">
 
-    <tbody ng-repeat="template in templates">
-      <tr>
-        <td><a href="/#/template/{{ template.id }}"><span class="glyphicon glyphicon-edit">&nbsp;</span></a></td>
-        <td>{{ template.createdAt }}</td>
-        <td>{{ template.updatedAt }}</td>
-        <td><strong>{{ template.name }}</strong></td>
-        <td>{{ template.description }}</td>
-        <td>{{ template.folder }}</td>
-        <td>{{ template.transport }}</td>
-        <td><span ng-click="copyTemplate(template.id);" class="glyphicon glyphicon-duplicate">&nbsp;</span></td>
-        <td><span ng-click="editTemplate(template.id);" class="glyphicon glyphicon-pencil">&nbsp;</span></td>
-        <td><span ng-click="deleteTemplate(template.id);" class="glyphicon glyphicon-remove">&nbsp;</span></td>
-      </tr>
-    </tbody>
+        <thead>
+          <tr>
+            <th>&nbsp;</th>
+            <th>createdAt</th>
+            <th>updatedAt</th>
+            <th>name</th>
+            <th>description</th>
+            <th>folder</th>
+            <th>transport</th>
+            <th>&nbsp;</th>
+            <th>&nbsp;</th>
+            <th>&nbsp;</th>
+          </tr>
+        </thead>
 
-  </table>
+        <tbody ng-repeat="template in templates">
+          <tr>
+            <td><a href="/#/template/{{ template.id }}"><span class="glyphicon glyphicon-edit">&nbsp;</span></a></td>
+            <td>{{ template.createdAt }}</td>
+            <td>{{ template.updatedAt }}</td>
+            <td><strong>{{ template.name }}</strong></td>
+            <td>{{ template.description }}</td>
+            <td>{{ template.folder }}</td>
+            <td>{{ template.transport }}</td>
+            <td><span ng-click="copyTemplate(template.id);" class="glyphicon glyphicon-duplicate">&nbsp;</span></td>
+            <td><span ng-click="editTemplate(template.id);" class="glyphicon glyphicon-pencil">&nbsp;</span></td>
+            <td><span ng-click="deleteTemplate(template.id);" class="glyphicon glyphicon-remove">&nbsp;</span></td>
+          </tr>
+        </tbody>
 
-  <ul class="pagination pagination-sm" ng-if="templates.length > 0">
-    <li ng-class="pagination.showBack ? '' : 'disabled'" ><a href="/#/templates/list/{{ pagination.firstPage }}">&laquo;</a></li>
+      </table>
+    </div>
 
-    <li ng-repeat="p in pagination.pages" ng-class="p.active ? 'active' : ''">
-      <a href="/#/templates/list/{{ p.page }}">{{ p.page }}</a>
-    </li>
+    <ul class="pagination pagination-sm" ng-if="templates.length > 0">
+      <li ng-class="pagination.showBack ? '' : 'disabled'" ><a href="/#/templates/list/{{ folder.name }}/{{ pagination.firstPage }}">&laquo;</a></li>
 
-    <li ng-class="pagination.showForward ? '' : 'disabled'"><a href="/#/templates/list/{{ pagination.lastPage }}">&raquo;</a></li>
-  </ul>
+      <li ng-repeat="p in pagination.pages" ng-class="p.active ? 'active' : ''">
+        <a href="/#/templates/list/{{ folder.name }}/{{ p.page }}">{{ p.page }}</a>
+      </li>
 
+      <li ng-class="pagination.showForward ? '' : 'disabled'"><a href="/#/templates/list/{{ folder.name }}/{{ pagination.lastPage }}">&raquo;</a></li>
+    </ul>
+
+  </div>
 </div>

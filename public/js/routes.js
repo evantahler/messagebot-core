@@ -30,18 +30,21 @@ var routes = [
   [ '/message/:guid',                'pages/message/view.html',     'MessageBot: Message',     true ],
 
   [ '/lists/list',                   'pages/lists/list.html',       'MessageBot: Lists',       true ],
-  [ '/lists/list/:page',             'pages/lists/list.html',       'MessageBot: Lists',       true ],
+  [ '/lists/list/:folder',           'pages/lists/list.html',       'MessageBot: Lists',       true ],
+  [ '/lists/list/:folder/:page',     'pages/lists/list.html',       'MessageBot: Lists',       true ],
   [ '/list/:listId/people',          'pages/lists/people.html',     'MessageBot: List People', true ],
   [ '/list/:listId/people/:page',    'pages/lists/people.html',     'MessageBot: List People', true ],
 
   [ '/template/:templateId',         'pages/templates/edit.html',   'MessageBot: Template',    true ],
   [ '/templates/list',               'pages/templates/list.html',   'MessageBot: Templates',   true ],
-  [ '/templates/list/:page',         'pages/templates/list.html',   'MessageBot: Templates',   true ],
+  [ '/templates/list/:folder',       'pages/templates/list.html',   'MessageBot: Templates',   true ],
+  [ '/templates/list/:folder/:page', 'pages/templates/list.html',   'MessageBot: Templates',   true ],
 
   [ '/campaign/:campaignId',         'pages/campaigns/edit.html',   'MessageBot: Campaign',    true ],
   [ '/campaign/:campaignId/stats',   'pages/campaigns/stats.html',  'MessageBot: Campaign',    true ],
   [ '/campaigns/list',               'pages/campaigns/list.html',   'MessageBot: Campaigns',   true ],
-  [ '/campaigns/list/:page',         'pages/campaigns/list.html',   'MessageBot: Campaigns',   true ],
+  [ '/campaigns/list/:folder',       'pages/campaigns/list.html',   'MessageBot: Campaigns',   true ],
+  [ '/campaigns/list/:folder/:page', 'pages/campaigns/list.html',   'MessageBot: Campaigns',   true ],
 
   [ '/status',                       'pages/status.html',           'MessageBot: Status',      true ],
   [ '/account',                      'pages/account.html',          'MessageBot: Account',     true ],

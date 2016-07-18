@@ -2,6 +2,7 @@ app.controller('lists:list', ['$scope', '$rootScope', '$location', 'ngNotify', '
   $scope.lists = [];
   $scope.forms = {};
   $scope.pagination = {};
+  $scope.folder = {name: ($routeParams.folder || '_all')};
   $scope.forms.createList  = {};
   $scope.forms.editList   = {};
 
@@ -16,13 +17,23 @@ app.controller('lists:list', ['$scope', '$rootScope', '$location', 'ngNotify', '
   };
 
   $scope.loadLists = function(){
-    $rootScope.action($scope, {
+    var params = {
       from: (currentPage * perPage),
       size: perPage
-    }, '/api/lists', 'GET', function(data){
+    };
+    if($scope.folder.name != '_all'){ params.folder = $scope.folder.name; }
+    $rootScope.action($scope, params, '/api/lists', 'GET', function(data){
       $scope.lists = data.lists;
       $scope.total = data.total;
       $scope.pagination = $rootScope.genratePagination(currentPage, perPage, $scope.total);
+
+      if($scope.lists.length === 0 && currentPage !== 0){ $location.path('/lists/list/' + $scope.folder.name + '/0'); }
+    });
+  };
+
+  $scope.loadFolders = function(){
+    $rootScope.action($scope, {}, '/api/lists/folders', 'GET', function(data){
+      $scope.folders = data.folders;
     });
   };
 
@@ -55,6 +66,7 @@ app.controller('lists:list', ['$scope', '$rootScope', '$location', 'ngNotify', '
     $rootScope.action($scope, $scope.forms.editList, '/api/list', 'PUT', function(data){
       $rootScope.clearModals('#editListModal');
       $scope.loadLists();
+      $scope.loadFolders();
       ngNotify.set('List Updated', 'success');
     });
   };
@@ -83,11 +95,17 @@ app.controller('lists:list', ['$scope', '$rootScope', '$location', 'ngNotify', '
       $rootScope.action($scope, {listId: listId}, '/api/list', 'DELETE', function(data){
         ngNotify.set('List Deleted', 'success');
         $scope.loadLists();
+        $scope.loadFolders();
       });
     }
   };
 
+  $scope.$watch('folder.name', function(){
+    $location.path('/lists/list/' + $scope.folder.name + '/' + currentPage);
+  });
+
   $scope.loadLists();
+  $scope.loadFolders();
 }]);
 
 app.controller('lists:people:view', ['$scope', '$rootScope', '$location', 'ngNotify', '$routeParams', 'FileUploader', function($scope, $rootScope, $location, ngNotify, $routeParams, FileUploader){

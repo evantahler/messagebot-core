@@ -80,6 +80,7 @@ app.controller('templates:list', ['$scope', '$rootScope', '$location', 'ngNotify
   $scope.lists = [];
   $scope.transports = [];
   $scope.forms = {};
+  $scope.folder = {name: ($routeParams.folder || '_all')};
   $scope.pagination = {};
   $scope.forms.createTemplate = {};
   $scope.forms.editTemplate   = {};
@@ -94,13 +95,23 @@ app.controller('templates:list', ['$scope', '$rootScope', '$location', 'ngNotify
   };
 
   $scope.loadTemplates = function(){
-    $rootScope.action($scope, {
+    var params = {
       from: (currentPage * perPage),
       size: perPage
-    }, '/api/templates', 'GET', function(data){
+    };
+    if($scope.folder.name != '_all'){ params.folder = $scope.folder.name; }
+    $rootScope.action($scope, params, '/api/templates', 'GET', function(data){
       $scope.templates = data.templates;
       $scope.total = data.total;
       $scope.pagination = $rootScope.genratePagination(currentPage, perPage, $scope.total);
+
+      if($scope.templates.length === 0 && currentPage !== 0){ $location.path('/templates/list/' + $scope.folder.name + '/0'); }
+    });
+  };
+
+  $scope.loadFolders = function(){
+    $rootScope.action($scope, {}, '/api/templates/folders', 'GET', function(data){
+      $scope.folders = data.folders;
     });
   };
 
@@ -135,6 +146,7 @@ app.controller('templates:list', ['$scope', '$rootScope', '$location', 'ngNotify
     $rootScope.action($scope, $scope.forms.editTemplate, '/api/template', 'PUT', function(data){
       $rootScope.clearModals('#editTemplateModal');
       $scope.loadTemplates();
+      $scope.loadFolders();
       ngNotify.set('Template Updated', 'success');
     });
   };
@@ -157,10 +169,16 @@ app.controller('templates:list', ['$scope', '$rootScope', '$location', 'ngNotify
       $rootScope.action($scope, {templateId: templateId}, '/api/template', 'DELETE', function(data){
         ngNotify.set('Tepmplate Deleted', 'success');
         $scope.loadTemplates();
+        $scope.loadFolders();
       });
     }
   };
 
+  $scope.$watch('folder.name', function(){
+    $location.path('/templates/list/' + $scope.folder.name + '/' + currentPage);
+  });
+
   $scope.loadTemplates();
+  $scope.loadFolders();
   $scope.loadTransports();
 }]);
