@@ -21,7 +21,8 @@ exports.task = {
     var body;
     var transport;
 
-    var message = new api.models.message();
+    var team = api.utils.determineActionsTeam({params: params});
+    var message = new api.models.message(team);
     message.ensureGuid();
 
     jobs.push(function(done){
@@ -49,7 +50,7 @@ exports.task = {
     });
 
     jobs.push(function(done){
-      person = new api.models.person(listPerson.personGuid);
+      person = new api.models.person(team, listPerson.personGuid);
       person.hydrate(function(error){
         if(error){ return done(error); }
         done();
@@ -57,7 +58,7 @@ exports.task = {
     });
 
     jobs.push(function(done){
-      api.template.renderToDisk(campaign.templateId, person.data.guid, message, function(error, f){
+      api.template.renderToDisk(team, campaign.templateId, person.data.guid, message, function(error, f){
         if(error){ return done(error); }
         file = f;
         done();
@@ -80,11 +81,11 @@ exports.task = {
         var missingKey;
         transport.requiredDataKeys.person.forEach(function(k){
           if(!person.data.data[k]){ missingKey = k; }
-        })
+        });
 
         // TODO: Event validation
 
-        if(missingKey){ return done(new Error('person missing data.' + k)); }
+        if(missingKey){ return done(new Error('person missing data.' + missingKey)); }
         done();
       });
     });
@@ -92,7 +93,7 @@ exports.task = {
     jobs.push(function(done){
       Object.keys(campaign.campaignVariables).forEach(function(k){
         message.data[k] = campaign.campaignVariables[k];
-      })
+      });
 
       message.data.personGuid = person.data.guid;
       message.data.transport  = transport.name;

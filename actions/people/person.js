@@ -14,11 +14,14 @@ exports.personCreate = {
       formatter: function(p){
         return new Date(parseInt(p));
       }
-    },
+    }
   },
 
   run: function(api, data, next){
-    var person = new api.models.person();
+    var team = api.utils.determineActionsTeam(data);
+    if(!team){ return next(new Error('Team not found for this request')); }
+    var person = new api.models.person(team);
+
     if(data.params.guid){        person.data.guid = data.params.guid;               }
     if(data.params.source){      person.data.source = data.params.source;           }
     if(data.params.createdAt){   person.data.createdAt = data.params.createdAt;     }
@@ -60,11 +63,14 @@ exports.personEdit = {
   inputs: {
     guid:         { required: true },
     source:       { required: false },
-    data:         { required: true  },
+    data:         { required: true  }
   },
 
   run: function(api, data, next){
-    var person = new api.models.person(data.params.guid);
+    var team = api.utils.determineActionsTeam(data);
+    if(!team){ return next(new Error('Team not found for this request')); }
+    var person = new api.models.person(team, data.params.guid);
+
     if(data.params.source){ person.data.source = data.params.source; }
 
     for(var i in data.params.data){ person.data[i] = data.params.data[i]; }
@@ -84,11 +90,14 @@ exports.personView = {
   middleware:             [],
 
   inputs: {
-    guid: { required: true },
+    guid: { required: true }
   },
 
   run: function(api, data, next){
-    var person = new api.models.person(data.params.guid);
+    var team = api.utils.determineActionsTeam(data);
+    if(!team){ return next(new Error('Team not found for this request')); }
+    var person = new api.models.person(team, data.params.guid);
+
     person.hydrate(function(error){
       if(error){ return next(error); }
       data.response.person = person.data;
@@ -116,11 +125,14 @@ exports.personDelete = {
   middleware:             [],
 
   inputs: {
-    guid:         { required: true },
+    guid: { required: true }
   },
 
   run: function(api, data, next){
-    var person = new api.models.person(data.params.guid);
+    var team = api.utils.determineActionsTeam(data);
+    if(!team){ return next(new Error('Team not found for this request')); }
+    var person = new api.models.person(team, data.params.guid);
+
     person.hydrate(function(error){
       if(error){ return next(error); }
       api.models.listPerson.destroy({

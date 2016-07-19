@@ -20,11 +20,13 @@ exports.messageCreate = {
       formatter: function(p){
         return new Date(parseInt(p));
       }
-    },
+    }
   },
 
   run: function(api, data, next){
-    var message = new api.models.message();
+    var team = api.utils.determineActionsTeam(data);
+    if(!team){ return next(new Error('Team not found for this request')); }
+    var message = new api.models.message(team);
 
     if(data.params.guid){        message.data.guid = data.params.guid;             }
     if(data.params.personGuid){  message.data.personGuid = data.params.personGuid; }
@@ -63,11 +65,13 @@ exports.messageEdit = {
     data:       { required: false },
     sentAt:     { required: false },
     readAt:     { required: false },
-    actedAt:    { required: false },
+    actedAt:    { required: false }
   },
 
   run: function(api, data, next){
-    var message = new api.models.message(data.params.guid);
+    var team = api.utils.determineActionsTeam(data);
+    if(!team){ return next(new Error('Team not found for this request')); }
+    var message = new api.models.message(team, data.params.guid);
 
     if(data.params.guid){       message.data.guid = data.params.guid;             }
     if(data.params.personGuid){ message.data.personGuid = data.params.personGuid; }
@@ -94,11 +98,14 @@ exports.messageView = {
   middleware:             [],
 
   inputs: {
-    guid:         { required: true },
+    guid: { required: true }
   },
 
   run: function(api, data, next){
-    var message = new api.models.message(data.params.guid);
+    var team = api.utils.determineActionsTeam(data);
+    if(!team){ return next(new Error('Team not found for this request')); }
+    var message = new api.models.message(team, data.params.guid);
+
     message.hydrate(function(error){
       if(error){ return next(error); }
       data.response.message = message.data;
@@ -114,11 +121,14 @@ exports.messageDelete = {
   middleware:    [],
 
   inputs: {
-    guid:         { required: true },
+    guid: { required: true }
   },
 
   run: function(api, data, next){
-    var message = new api.models.message(data.params.guid);
+    var team = api.utils.determineActionsTeam(data);
+    if(!team){ return next(new Error('Team not found for this request')); }
+    var message = new api.models.message(team, data.params.guid);
+
     message.hydrate(function(error){
       if(error){ return next(error); }
       message.del(function(error){
@@ -157,7 +167,7 @@ exports.messageTrack = {
     lon: {
       required: false,
       formatter: function(p){ return parseFloat(p); }
-    },
+    }
   },
 
   run: function(api, data, next){
@@ -198,6 +208,8 @@ exports.messageTrack = {
     });
 
     jobs.push(function(done){
+      var team = api.utils.determineActionsTeam(data);
+      if(!team){ return done(new Error('Team not found for this request')); }
       event = new api.models.event();
 
       event.data.messageGuid = message.data.guid;

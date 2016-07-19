@@ -27,11 +27,13 @@ exports.eventCreate = {
       formatter: function(p){
         return new Date(parseInt(p));
       }
-    },
+    }
   },
 
   run: function(api, data, next){
-    var event = new api.models.event();
+    var team = api.utils.determineActionsTeam(data);
+    if(!team){ return next(new Error('Team not found for this request')); }
+    var event = new api.models.event(team);
 
     if(data.params.ip){          event.data.ip = data.params.ip;                   }
     if(data.params.device){      event.data.device = data.params.device;           }
@@ -41,15 +43,17 @@ exports.eventCreate = {
     if(data.params.type){        event.data.type = data.params.type;               }
     if(data.params.createdAt){   event.data.createdAt = data.params.createdAt;     }
 
+    if(!event.data.ip){ event.data.ip = data.connection.remoteIP; }
+
     event.data.location = { lat: 0, lon: 0 };
     if(data.params.lat && data.params.lon){
       event.data.location = {
         lat: data.params.lat,
         lon: data.params.location
       };
-    }else if(data.params.ip){
+    }else if(event.data.ip){
       try{
-        var location = api.maxmind.getLocation(data.params.ip);
+        var location = api.maxmind.getLocation(event.data.ip);
         if(location && location.latitude && location.longitude){
           event.data.location = {
             lat: location.latitude,
@@ -77,7 +81,7 @@ exports.eventCreate = {
         if(error){
           api.log('event creation error: ' + error, 'error', data.params);
         }else{
-          api.tasks.enqueueIn((5 * 1000), 'events:process', {events: [event.data.guid]}, 'messagebot:events');
+          api.tasks.enqueueIn((5 * 1000), 'events:process', {teamId: team.id, events: [event.data.guid]}, 'messagebot:events');
         }
       });
       data.response.guid = event.data.guid;
@@ -92,7 +96,7 @@ exports.eventCreate = {
           data.connection.sendFile('tracking.gif');
         }
 
-        api.tasks.enqueueIn((5 * 1000), 'events:process', {events: [event.data.guid]}, 'messagebot:events', next);
+        api.tasks.enqueueIn((5 * 1000), 'events:process', {teamId: team.id, events: [event.data.guid]}, 'messagebot:events', next);
       });
     }
   }
@@ -111,11 +115,13 @@ exports.eventEdit = {
     personGuid:   { required: false  },
     messageGuid:  { required: false  },
     type:         { required: false  },
-    data:         { required: false  },
+    data:         { required: false  }
   },
 
   run: function(api, data, next){
-    var event = new api.models.event(data.params.guid);
+    var team = api.utils.determineActionsTeam(data);
+    if(!team){ return next(new Error('Team not found for this request')); }
+    var event = new api.models.event(team, data.params.guid);
 
     if(data.params.ip){          event.data.ip = data.params.ip;                   }
     if(data.params.device){      event.data.device = data.params.device;           }
@@ -129,7 +135,7 @@ exports.eventEdit = {
     event.edit(function(error){
       if(error){ return next(error); }
       data.response.event = event.data;
-      api.tasks.enqueueIn((5 * 1000), 'events:process', {events: [event.data.guid]}, 'messagebot:events', next);
+      api.tasks.enqueueIn((5 * 1000), 'events:process', {teamId: team.id, events: [event.data.guid]}, 'messagebot:events', next);
     });
   }
 };
@@ -141,11 +147,14 @@ exports.eventView = {
   middleware:             [],
 
   inputs: {
-    guid:         { required: true },
+    guid: { required: true }
   },
 
   run: function(api, data, next){
-    var event = new api.models.event(data.params.guid);
+    var team = api.utils.determineActionsTeam(data);
+    if(!team){ return next(new Error('Team not found for this request')); }
+    var event = new api.models.event(team, data.params.guid);
+
     event.hydrate(function(error){
       if(error){ return next(error); }
       data.response.event = event.data;
@@ -161,11 +170,14 @@ exports.eventDelete = {
   middleware:             [],
 
   inputs: {
-    guid:         { required: true },
+    guid: { required: true }
   },
 
   run: function(api, data, next){
-    var event = new api.models.event(data.params.guid);
+    var team = api.utils.determineActionsTeam(data);
+    if(!team){ return next(new Error('Team not found for this request')); }
+    var event = new api.models.event(team, data.params.guid);
+
     event.hydrate(function(error){
       if(error){ return next(error); }
       event.del(function(error){

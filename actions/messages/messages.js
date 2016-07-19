@@ -1,8 +1,8 @@
 var dateformat = require('dateformat');
 var async      = require('async');
 
-var alias = function(api){
-  return api.env + '-' + 'messages';
+var alias = function(api, team){
+  return api.utils.cleanTeamName(team.name) + '-' + api.env + '-' + 'events';
 };
 
 exports.messagesSearch = {
@@ -24,11 +24,14 @@ exports.messagesSearch = {
       formatter: function(p){ return parseInt(p); },
       default:   function(p){ return 100; },
     },
-    sort:         { required: false },
+    sort:         { required: false }
   },
 
   run: function(api, data, next){
-    api.elasticsearch.search(api, alias(api), data.params.searchKeys, data.params.searchValues, data.params.from, data.params.size, data.params.sort, function(error, results, total){
+    var team = api.utils.determineActionsTeam(data);
+    if(!team){ return next(new Error('Team not found for this request')); }
+
+    api.elasticsearch.search(api, alias(api, team), data.params.searchKeys, data.params.searchValues, data.params.from, data.params.size, data.params.sort, function(error, results, total){
       if(error){ return next(error); }
       data.response.total    = total;
       data.response.messages = results;
@@ -78,10 +81,13 @@ exports.messagesAggregation = {
     var transports = [];
     data.response.aggregations = {};
 
+    var team = api.utils.determineActionsTeam(data);
+    if(!team){ return next(new Error('Team not found for this request')); }
+
     jobs.push(function(done){
       api.elasticsearch.distinct(
         api,
-        alias(api),
+        alias(api, team),
         data.params.searchKeys,
         data.params.searchValues,
         data.params.start,
@@ -104,7 +110,7 @@ exports.messagesAggregation = {
       aggJobs.push(function(aggDone){
         api.elasticsearch.aggregation(
           api,
-          alias(api),
+          alias(api, team),
           ['guid'],
           ['_exists'],
           data.params.start,
@@ -130,7 +136,7 @@ exports.messagesAggregation = {
           aggJobs.push(function(aggDone){
             api.elasticsearch.aggregation(
               api,
-              alias(api),
+              alias(api, team),
               ['transport'].concat(data.params.searchKeys),
               [transport].concat(data.params.searchValues),
               data.params.start,

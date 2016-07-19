@@ -38,6 +38,16 @@ module.exports = {
         indicesType: 'UNIQUE'
       }
     );
+
+    queryInterface.bulkInsert('teams', [
+      {
+        id: 1,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        name: 'MessageBot',
+        urlRegexp: '^.*$',
+      },
+    ]);
   },
 
   down: function(queryInterface, Sequelize){

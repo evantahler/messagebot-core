@@ -107,12 +107,12 @@ module.exports = {
       return view;
     };
 
-    api.template.renderToDisk = function(templateId, personGuid, message, callback){
+    api.template.renderToDisk = function(team, templateId, personGuid, message, callback){
       api.models.template.findOne({where: {id: templateId}}).then(function(template){
         if(!template){ return callback(new Error('template not found')); }
         if(!template.template || template.template.length === 0){ return callback(new Error('template empty')); }
 
-        var person = new api.models.person(personGuid);
+        var person = new api.models.person(team, personGuid);
         var events = []; //TODO: Do we load in the events?  How many?
         person.hydrate(function(error){
           if(error){ return callback(error); }

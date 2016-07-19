@@ -63,6 +63,20 @@ module.exports = {
 
     api.actions.addMiddleware(middleware['data-preperation']);
 
+    /*--- Inject team into Elasticsaerch models ---*/
+    api.models.orignalElasticSearch = {};
+    ['event', 'person', 'message'].forEach(function(key){
+      api.models.orignalElasticSearch[key] = api.models[key];
+
+      api.models[key] = function(team, guid, index, alias){
+        var instance = new api.models.orignalElasticSearch[key](guid, index, alias);
+        if(!index){ instance.index = api.utils.cleanTeamName(team.name) + '-' + instance.index; }
+        if(!alias){ instance.alias = api.utils.cleanTeamName(team.name) + '-' + instance.alias; }
+        return instance;
+      };
+    });
+
+
     /* --- Utils --- */
     api.utils.findInBatches = function(model, query, recordResponder, callback, limit, offset){
       if(!limit){ limit = 1000; }
@@ -84,6 +98,40 @@ module.exports = {
       }).catch(callback);
     };
 
+    api.utils.determineActionsTeam = function(data){
+      var team;
+
+      // leave this as an option for explicit tasks/internal use
+      // no action should have this allowed as a param
+      if(!team && data.params.teamId){
+        api.teams.teams.forEach(function(_team){
+          if(_team.id === data.params.teamId){ team = _team; }
+        });
+      }
+
+      if(!team && data.session && data.session.teamId){
+        api.teams.teams.forEach(function(_team){
+          if(_team.id === data.session.teamId){ team = _team; }
+        });
+      }
+
+      if(!team && data.connection && data.connection.type === 'web'){
+        api.teams.teams.forEach(function(_team){
+          var regexp = new RegExp(_team.urlRegexp);
+          if(data.connection.rawConnection.req.headers.host.match(regexp)){ team = _team; }
+        });
+      }
+
+      return team;
+    };
+
+    api.utils.cleanTeamName = function(name){
+      name = name.replace(/-/g, '');
+      name = name.replace(/\s/g, '');
+      name = name.toLowerCase();
+      return name;
+    };
+
     next();
   },
 
@@ -94,7 +142,7 @@ module.exports = {
       clearTimeout(api.teams.timer);
       api.models.team.findAll().then(function(teams){
         api.teams.teams = teams;
-        api.log('loaded ' + teams.length + ' teams into memory');
+        api.log('loaded ' + teams.length + ' teams into memory', 'debug');
         api.teams.timer = setTimeout(loadTeams, (60 * 1000));
       });
     };
@@ -103,60 +151,6 @@ module.exports = {
     jobs.push(function(done){
       loadTeams();
       done();
-    });
-
-    // ensure the first team existsjobs.push(function(done){
-    jobs.push(function(done){
-      api.models.team.count().then(function(count){
-        if(count > 0){
-          done();
-        }else{
-          var team = api.models.team.build({
-            name: 'MessageBot',
-            urlRegexp: '^.*$',
-          });
-
-          team.save().then(function(){
-            api.log('*** created first team called `' + team.name + '` ***', 'alert');
-            done();
-          }).catch(function(error){
-            api.log(error, 'error');
-            done(error);
-          });
-        }
-      }).catch(done);
-    });
-
-    // ensure that the first admin user exists
-    jobs.push(function(done){
-      api.models.team.findAll().then(function(teams){
-        var team = teams[0];
-        api.models.user.count({where: {status: 'admin'}}).then(function(count){
-          if(count > 0){
-            done();
-          }else{
-            var user = api.models.user.build({
-              teamId:     team.id,
-              email:      'admin@localhost.com',
-              status:     'admin',
-              firstName:  'admin',
-              lastName:   'admin',
-              personGuid: '0',
-            });
-
-            user.updatePassword('password', function(error){
-              if(error){ return done(error); }
-              user.save().then(function(){
-                api.log('*** created first admin user `admin@localhost.com` with password `password` on team `' +  team.name + '` ***', 'alert');
-                done();
-              }).catch(function(error){
-                api.log(error, 'error');
-                done(error);
-              });
-            });
-          }
-        }).catch(done);
-      });
     });
 
     async.series(jobs, next);

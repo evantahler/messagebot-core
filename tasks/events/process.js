@@ -15,9 +15,11 @@ exports.task = {
     var workJobs = [];
     var events = [];
 
+    var team = api.utils.determineActionsTeam({params: params});
+
     params.events.forEach(function(eventGuid){
       loadJobs.push(function(done){
-        var event = new api.models.event(eventGuid);
+        var event = new api.models.event(team, eventGuid);
         event.hydrate(function(error){
           if(error){ return done(error); }
           events.push(event);
@@ -30,11 +32,11 @@ exports.task = {
       events.forEach(function(event){
 
         workJobs.push(function(workDone){
-          api.events.triggerCampaign(event, workDone);
+          api.events.triggerCampaign(team, event, workDone);
         });
 
         workJobs.push(function(workDone){
-          api.events.propigateLocationToPerson(event, workDone);
+          api.events.propigateLocationToPerson(team, event, workDone);
         });
 
       });
@@ -43,7 +45,7 @@ exports.task = {
 
     loadJobs.push(function(done){
       async.series(workJobs, done);
-    })
+    });
 
     async.series(loadJobs, function(error){ next(error); });
   }

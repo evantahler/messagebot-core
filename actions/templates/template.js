@@ -84,11 +84,14 @@ exports.templateRender = {
   },
 
   run: function(api, data, next){
+    var team = api.utils.determineActionsTeam(data);
+    if(!team){ return next(new Error('Team not found for this request')); }
+
     api.models.template.findOne({where: {
       id: data.params.templateId,
       teamId: data.session.teamId,
     }}).then(function(template){
-      api.template.renderToDisk(data.params.templateId, data.params.personGuid, null, function(error, file, fileBase, view){
+      api.template.renderToDisk(team, data.params.templateId, data.params.personGuid, null, function(error, file, fileBase, view){
         if(data.connection.extension === 'html'){
           if(error){ return next(error); }
           data.toRender = false;

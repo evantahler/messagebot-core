@@ -16,10 +16,6 @@ module.exports = function(sequelize, DataTypes){
       type: DataTypes.TEXT,
       allowNull: false,
     },
-    'passwordSalt': {
-      type: DataTypes.TEXT,
-      allowNull: false,
-    },
     'personGuid': {
       type: DataTypes.TEXT,
       allowNull: false,
@@ -49,14 +45,10 @@ module.exports = function(sequelize, DataTypes){
 
       updatePassword: function(pw, callback){
         var self = this;
-        var salt = bcrypt.genSalt(bcryptComplexity, function(error, salt){
+        bcrypt.hash(pw, bcryptComplexity, function(error, hash){
           if(error){ return callback(error); }
-          bcrypt.hash(pw, salt, function(error, hash){
-            if(error){ return callback(error); }
-            self.passwordHash = hash;
-            self.passwordSalt = salt;
-            callback(null, self);
-          });
+          self.passwordHash = hash;
+          callback(null, self);
         });
       },
 
@@ -67,12 +59,12 @@ module.exports = function(sequelize, DataTypes){
 
       apiData: function(api){
         return {
-          id:        this.id,
-          personGuid:  this.personGuid,
-          email:     this.email,
-          status:    this.status,
-          firstName: this.firstName,
-          lastName:  this.lastName,
+          id:         this.id,
+          personGuid: this.personGuid,
+          email:      this.email,
+          status:     this.status,
+          firstName:  this.firstName,
+          lastName:   this.lastName,
         };
       }
     }

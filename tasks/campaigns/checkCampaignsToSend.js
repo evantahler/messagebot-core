@@ -24,10 +24,10 @@ exports.task = {
           sentAt:    {$eq: null},
         }
       }).then(function(camps){
-        camps.forEach(function(campaign){ campaigns.push(campaign); })
+        camps.forEach(function(campaign){ campaigns.push(campaign); });
         done();
-      }).catch(done)
-    })
+      }).catch(done);
+    });
 
     //TODO: Other types of campaigns
 
@@ -38,14 +38,14 @@ exports.task = {
             campaignId: campaign.id,
           }, 'messagebot:campaigns', more);
         });
-      })
+      });
 
       async.series(campaignJobs, done);
     });
 
     async.series(searchJobs, function(error){
       var campaignIds = [];
-      campaigns.forEach(function(campaign){ campaignIds.push(campaign.id); })
+      campaigns.forEach(function(campaign){ campaignIds.push(campaign.id); });
       next(error, campaignIds);
     });
   }

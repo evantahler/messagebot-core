@@ -1,3 +1,6 @@
+var bcrypt = require('bcrypt');
+var bcryptComplexity = 10;
+
 module.exports = {
   up: function(queryInterface, Sequelize){
     queryInterface.createTable(
@@ -28,12 +31,8 @@ module.exports = {
           type: Sequelize.TEXT,
           allowNull: false,
         },
-        'passwordSalt': {
-          type: Sequelize.TEXT,
-          allowNull: false,
-        },
         'personGuid': {
-          type: Sequelize.TEXT,
+          type: Sequelize.STRING,
           allowNull: false,
         },
         'status': {
@@ -57,16 +56,37 @@ module.exports = {
     );
 
     queryInterface.addIndex(
-      'users', ['teamId'],
+      'users', ['teamId']
+    );
+
+    queryInterface.addIndex(
       'users', ['email'], {
         indexName: 'emailUniqueIndex',
         indicesType: 'UNIQUE'
-      },
+      }
+    );
+
+    queryInterface.addIndex(
       'users', ['personGuid'], {
         indexName: 'personGuidUniqueIndex',
         indicesType: 'UNIQUE'
       }
     );
+
+    queryInterface.bulkInsert('users', [
+      {
+        id: 1,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        teamId: 1,
+        email: 'admin@localhost.com',
+        passwordHash: bcrypt.hashSync('password', bcryptComplexity),
+        personGuid: 0,
+        status: 'admin',
+        firstName: 'admin',
+        lastName: 'admin',
+      },
+    ]);
   },
 
   down: function(queryInterface, Sequelize){

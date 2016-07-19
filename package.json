@@ -13,7 +13,7 @@
   },
   "dependencies": {
     "actionhero": "^14.0.9",
-    "ah-elasticsearch-orm": "^0.0.3",
+    "ah-elasticsearch-orm": "^0.0.4",
     "ah-resque-ui": "^0.0.6",
     "ah-swagger-plugin": "^1.0.0",
     "async": "^2.0.0",
@@ -53,7 +53,7 @@
     "migrate": "npm run migrate:sequelize && npm run migrate:elasticsearch",
     "prepare": "npm update && npm run prepare:bower && npm run prepare:maxmind && npm run prepare:kibana",
     "bower": "bower",
-    "migrate:elasticsearch": "ah-elasticsearch-orm migrate",
+    "migrate:elasticsearch": "node ./db/elasticsearch/teamSeeder.js",
     "migrate:sequelize": "sequelize db:migrate",
     "prepare:maxmind": "./db/maxmind/download.sh",
     "prepare:bower": "bower install",
