@@ -3,7 +3,7 @@ var common  = require(__dirname + '/common.js');
 
 var seed = function(api, callback){
 
-  var routeBase = 'http://' + api.config.servers.web.bindIP + ':' + api.config.servers.web.port;
+  var routeBase = process.env.URL || 'http://' + api.config.servers.web.bindIP + ':' + api.config.servers.web.port;
   var usersCount = process.env.USERS_COUNT || 1000;
   var jobs = [];
 

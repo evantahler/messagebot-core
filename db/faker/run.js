@@ -4,7 +4,7 @@ var sleep   = parseInt(process.env.SLEEP) || (1000 * 2.2);
 
 var run = function(api){
 
-  var routeBase = 'http://' + api.config.servers.web.bindIP + ':' + api.config.servers.web.port;
+  var routeBase = process.env.URL || 'http://' + api.config.servers.web.bindIP + ':' + api.config.servers.web.port;
   var jobs = [];
   var person;
   var message = '';

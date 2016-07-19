@@ -43,8 +43,10 @@ exports.buildPerson = function(start, end, routeBase, callback){
     data: JSON.stringify(payloadData),
   };
 
-  request.post((routeBase + '/api/person'), {form: payload}, function(error, data){
+  request.post((routeBase + '/api/person'), {form: payload}, function(error, data, response){
     if(error){ return callback(error); }
+    response = JSON.parse(response);
+    if(response.error){ error = response.error; }
     person = payload;
     person.data = payloadData;
     person.guid = JSON.parse(data.body).guid;
@@ -64,7 +66,9 @@ exports.buildFunnel = function(person, routeBase, callback){
 
   var pushEvent = function(event, payload){
     jobs.push(function(next){
-      request.post(routeBase + '/api/event', {form: payload}, function(error){
+      request.post(routeBase + '/api/event', {form: payload}, function(error, data, response){
+        response = JSON.parse(response);
+        if(response.error && !error){ error = data.error; }
         next(error, event);
       });
     });
