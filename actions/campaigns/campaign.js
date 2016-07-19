@@ -257,7 +257,11 @@ exports.campaignStats = {
   run: function(api, data, next){
     var jobs = [];
     var campaign;
-    var alias = api.env + '-' + 'messages';
+
+    var team = api.utils.determineActionsTeam(data);
+    if(!team){ return next(new Error('Team not found for this request')); }
+
+    var alias = api.utils.cleanTeamName(team.name) + '-' + api.env + '-' + 'messages';
 
     jobs.push(function(done){
       api.models.campaign.findOne({where: {

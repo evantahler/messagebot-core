@@ -48,7 +48,7 @@ exports.status = {
           var start = process.hrtime();
           process.nextTick(function(){
             var delta = process.hrtime(start);
-            var ms = delta[1] / 1000000;
+            var ms = (delta[0] * 1000) + (delta[1] / 1000000);
             intervalTimes.push(ms);
             intervalDone();
           });

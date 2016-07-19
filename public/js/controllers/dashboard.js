@@ -7,7 +7,7 @@ app.controller('dashboard:view', ['$scope', '$rootScope', '$location', 'ngNotify
 
   $scope.ranges = {};
   $scope.stats = {};
-  $scope.sleep = 5000;
+  $scope.sleep = (1000 * 15);
   $scope.timer;
   $scope.campaigns = {};
   $scope.campaignFunnels = {};
