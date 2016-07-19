@@ -147,10 +147,11 @@ exports.messageTrack = {
   middleware:    [],
 
   inputs: {
-    guid: { required: true },
-    ip:   { required: false },
-    link: { required: false },
-    sync: { required: true, default: false },
+    guid:   { required: true },
+    ip:     { required: false },
+    link:   { required: false },
+    sync:   { required: true, default: false },
+    device: { required: false, default: 'message' },
     verb: {
       required: true,
       validator: function(p){
@@ -172,10 +173,14 @@ exports.messageTrack = {
 
   run: function(api, data, next){
     var jobs = [];
-    var message = new api.models.message(data.params.guid);
     var ip = data.params.ip;
     var eventType;
     var event;
+
+    var team = api.utils.determineActionsTeam(data);
+    if(!team){ return next(new Error('Team not found for this request')); }
+
+    var message = new api.models.message(team, data.params.guid);
 
     // testing GUID
     if(data.params.guid === '%%MESSAGEGUID%%'){
@@ -208,14 +213,13 @@ exports.messageTrack = {
     });
 
     jobs.push(function(done){
-      var team = api.utils.determineActionsTeam(data);
-      if(!team){ return done(new Error('Team not found for this request')); }
-      event = new api.models.event();
+      event = new api.models.event(team);
 
       event.data.messageGuid = message.data.guid;
       event.data.personGuid = message.data.personGuid;
       event.data.type = eventType;
       event.data.ip = ip;
+      event.data.device = data.params.device;
       event.data.data = {};
 
       if(data.params.link){
@@ -265,7 +269,7 @@ exports.messageTrack = {
         data.connection.sendFile('tracking.gif');
       }
 
-      next();
+      api.tasks.enqueueIn((5 * 1000), 'events:process', {teamId: team.id, events: [event.data.guid]}, 'messagebot:events', next);
     });
   }
 };

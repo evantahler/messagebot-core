@@ -8,7 +8,7 @@ exports.eventCreate = {
   inputs: {
     sync:         { required: true, default: false },
     ip:           { required: false },
-    device:       { required: false },
+    device:       { required: true  },
     guid:         { required: false },
     personGuid:   { required: true  },
     messageGuid:  { required: false },

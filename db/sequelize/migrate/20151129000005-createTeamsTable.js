@@ -19,7 +19,11 @@ module.exports = {
           type: Sequelize.STRING,
           allowNull: false,
         },
-        'urlRegexp': {
+        'trackingDomainRegexp': {
+          type: Sequelize.STRING,
+          allowNull: false,
+        },
+        'trackingDomain': {
           type: Sequelize.STRING,
           allowNull: false,
         }
@@ -34,7 +38,13 @@ module.exports = {
     );
 
     queryInterface.addIndex(
-      'teams', ['urlRegexp'], {
+      'teams', ['trackingDomainRegexp'], {
+        indicesType: 'UNIQUE'
+      }
+    );
+
+    queryInterface.addIndex(
+      'teams', ['trackingDomain'], {
         indicesType: 'UNIQUE'
       }
     );
@@ -45,7 +55,8 @@ module.exports = {
         createdAt: new Date(),
         updatedAt: new Date(),
         name: 'MessageBot',
-        urlRegexp: '^.*$',
+        trackingDomainRegexp: '^.*$',
+        trackingDomain: 'https://tracking.site.com',
       },
     ]);
   },

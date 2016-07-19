@@ -62,12 +62,12 @@ module.exports = {
       };
     };
 
-    api.template.buildView = function(person, events, template){
+    api.template.buildView = function(team, person, events, template){
       var view = {};
 
       // beacon
       view.beacon = '<img src="';
-      view.beacon += api.config.messagebot.url + '/api/message/track.gif?';
+      view.beacon += team.trackingDomain + '/api/message/track.gif?';
       view.beacon += 'verb=read&';
       view.beacon += 'guid=%%MESSAGEGUID%%';
       view.beacon += '" >';
@@ -75,7 +75,7 @@ module.exports = {
       view.track = function(){
         return function(val, render){
           var trackingURL = '';
-          trackingURL += api.config.messagebot.url + '/api/message/track.gif?';
+          trackingURL += team.trackingDomain + '/api/message/track.gif?';
           trackingURL += 'verb=act&';
           trackingURL += 'guid=%%MESSAGEGUID%%&';
           trackingURL += 'link=' + render(val);
@@ -111,31 +111,34 @@ module.exports = {
       api.models.template.findOne({where: {id: templateId}}).then(function(template){
         if(!template){ return callback(new Error('template not found')); }
         if(!template.template || template.template.length === 0){ return callback(new Error('template empty')); }
+        api.models.team.findOne({where: {id: template.teamId}}).then(function(team){
+          if(!team){ return callback(new Error('team not found')); }
 
-        var person = new api.models.person(team, personGuid);
-        var events = []; //TODO: Do we load in the events?  How many?
-        person.hydrate(function(error){
-          if(error){ return callback(error); }
-
-          var view = api.template.buildView(person, events, template);
-
-          try{
-            var fileBase = 'render/' + uuid.v4() + '.html';
-            var file = path.normalize(api.config.messagebot.tmpPath) + '/' + fileBase;
-            var html = mustache.render(template.template, view);
-            if(message){ html = html.replace(/%%MESSAGEGUID%%/g, message.data.guid); }
-          }catch(e){
-            return callback(e);
-          }
-
-          fs.writeFile(file, html, function(error){
+          var person = new api.models.person(team, personGuid);
+          var events = []; //TODO: Do we load in the events?  How many?
+          person.hydrate(function(error){
             if(error){ return callback(error); }
-            var logData = {};
-            if(message){ logData = {messageGuid: message.data.guid}; }
-            api.log('rendered template #' + template.id + ' for person #' + person.data.guid + ' to ' + file, 'info', logData);
-            callback(null, file, fileBase, view);
+
+            var view = api.template.buildView(team, person, events, template);
+
+            try{
+              var fileBase = 'render/' + uuid.v4() + '.html';
+              var file = path.normalize(api.config.messagebot.tmpPath) + '/' + fileBase;
+              var html = mustache.render(template.template, view);
+              if(message){ html = html.replace(/%%MESSAGEGUID%%/g, message.data.guid); }
+            }catch(e){
+              return callback(e);
+            }
+
+            fs.writeFile(file, html, function(error){
+              if(error){ return callback(error); }
+              var logData = {};
+              if(message){ logData = {messageGuid: message.data.guid}; }
+              api.log('rendered template #' + template.id + ' for person #' + person.data.guid + ' to ' + file, 'info', logData);
+              callback(null, file, fileBase, view);
+            });
           });
-        });
+        }).catch(callback);
       }).catch(callback);
     };
 

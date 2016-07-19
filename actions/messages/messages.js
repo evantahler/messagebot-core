@@ -2,7 +2,7 @@ var dateformat = require('dateformat');
 var async      = require('async');
 
 var alias = function(api, team){
-  return api.utils.cleanTeamName(team.name) + '-' + api.env + '-' + 'events';
+  return api.utils.cleanTeamName(team.name) + '-' + api.env + '-' + 'messages';
 };
 
 exports.messagesSearch = {

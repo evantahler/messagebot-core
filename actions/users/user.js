@@ -31,13 +31,16 @@ exports.userCreate = {
   },
 
   run: function(api, data, next){
+    var team = api.utils.determineActionsTeam(data);
+    if(!team){ return next(new Error('Team not found for this request')); }
+
     var user = api.models.user.build(data.params);
     user.teamId = data.session.teamId;
 
     user.updatePassword(data.params.password, function(error){
       if(error){ return next(error); }
 
-      var person = new api.models.person();
+      var person = new api.models.person(team);
 
       ['email', 'firstName', 'lastName', 'status'].forEach(function(p){
         person.data[p] = user[p];
@@ -128,6 +131,9 @@ exports.userEdit = {
   },
 
   run: function(api, data, next){
+    var team = api.utils.determineActionsTeam(data);
+    if(!team){ return next(new Error('Team not found for this request')); }
+
     var userId = data.session.userId;
     if(data.params.userId && data.session.status === 'admin'){
       userId = data.params.userId;

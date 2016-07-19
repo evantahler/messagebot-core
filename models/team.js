@@ -4,7 +4,11 @@ module.exports = function(sequelize, DataTypes){
       type: DataTypes.STRING,
       allowNull: false,
     },
-    'urlRegexp': {
+    'trackingDomainRegexp': {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    'trackingDomain': {
       type: DataTypes.STRING,
       allowNull: false,
     },
@@ -14,7 +18,8 @@ module.exports = function(sequelize, DataTypes){
         return {
           id:        this.id,
           name:      this.name,
-          urlRegexp: this.urlRegexp,
+          trackingDomainRegexp: this.trackingDomainRegexp,
+          trackingDomain: this.trackingDomain,
           createdAt: this.createdAt,
           updatedAt: this.updatedAt,
         };

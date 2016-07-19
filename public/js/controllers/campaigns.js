@@ -179,7 +179,7 @@ app.controller('campaign:edit', ['$scope', '$rootScope', '$location', 'ngNotify'
 
     $rootScope.action($scope, $scope.campaign, '/api/campaign', 'PUT', function(data){
       $scope.loadCampaign();
-      ngNotify.set('Template Updated', 'success');
+      ngNotify.set('Campaign Updated', 'success');
     });
   };
 

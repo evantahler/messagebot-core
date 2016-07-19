@@ -32,9 +32,11 @@ module.exports = {
       api.models.list.findOne({where: {id: listId}}).then(function(list){
         if(!list){ return callback(new Error('list not found')); }
 
+        var team = api.utils.determineActionsTeam({params: {teamId: list.teamId}});
+
         if(list.personQuery && list.personQuery !== ''){
           jobs.push(function(done){
-            var alias = api.env + '-people';
+            var alias = api.utils.cleanTeamName(team.name) + '-' + api.env + '-' + 'people';
             api.elasticsearch.scroll(api, alias, list.personQuery, ['guid', 'personGuid'], function(error, data, count){
               if(error){ return done(error); }
               queryResults.people = extractor(data);
@@ -45,7 +47,7 @@ module.exports = {
 
         if(list.eventQuery && list.eventQuery !== ''){
           jobs.push(function(done){
-            var alias = api.env + '-events';
+            var alias = api.utils.cleanTeamName(team.name) + '-' + api.env + '-' + 'events';
             api.elasticsearch.scroll(api, alias, list.eventQuery, ['guid', 'personGuid'], function(error, data, count){
               if(error){ return done(error); }
               queryResults.events = extractor(data);
@@ -56,7 +58,7 @@ module.exports = {
 
         if(list.messageQuery && list.messageQuery !== ''){
           jobs.push(function(done){
-            var alias = api.env + '-messages';
+            var alias = api.utils.cleanTeamName(team.name) + '-' + api.env + '-' + 'messages';
             api.elasticsearch.scroll(api, alias, list.messageQuery, ['guid', 'personGuid'], function(error, data, count){
               if(error){ return done(error); }
               queryResults.messages = extractor(data);

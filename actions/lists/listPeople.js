@@ -222,6 +222,9 @@ exports.listPeopleView = {
   },
 
   run: function(api, data, next){
+    var team = api.utils.determineActionsTeam(data);
+    if(!team){ return next(new Error('Team not found for this request')); }
+
     api.models.list.findOne({where: {
       id: data.params.listId,
       teamId: data.session.teamId,
@@ -244,7 +247,8 @@ exports.listPeopleView = {
           personGuids.push(listPerson.personGuid);
         });
 
-        api.elasticsearch.mget(api, (api.env + '-people'), personGuids, function(error, results){
+        var alias = api.utils.cleanTeamName(team.name) + '-' + api.env + '-' + 'people';
+        api.elasticsearch.mget(api, alias, personGuids, function(error, results){
           if(error){ return next(error); }
           data.response.people = results;
           next();

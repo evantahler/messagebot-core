@@ -13,7 +13,7 @@
   },
   "dependencies": {
     "actionhero": "^14.0.9",
-    "ah-elasticsearch-orm": "^0.0.4",
+    "ah-elasticsearch-orm": "^0.0.5",
     "ah-resque-ui": "^0.0.6",
     "ah-swagger-plugin": "^1.0.0",
     "async": "^2.0.0",

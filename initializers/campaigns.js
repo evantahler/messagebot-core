@@ -11,7 +11,6 @@ module.exports = {
     api.campaigns.send = function(campaignId, callback){
       var jobs = [];
       var campaign;
-      var team;
       var list;
 
       jobs.push(function(done){
@@ -31,14 +30,6 @@ module.exports = {
       });
 
       jobs.push(function(done){
-        api.models.team.findOne({where: {id: campaign.teamId}}).then(function(t){
-          team = t;
-          if(!team){ return done(new Error('team not found')); }
-          done();
-        }).catch(done);
-      });
-
-      jobs.push(function(done){
         campaign.updateAttributes({
           sendingAt: new Date()
         }).then(function(){
@@ -51,9 +42,9 @@ module.exports = {
       });
 
       jobs.push(function(done){
-        if(campaign.type === 'simple'){ api.campaigns.sendSimple(team, campaign, list, LIMIT, OFFSET, done); }
-        else if(campaign.type === 'recurring'){ api.campaigns.sendRecurring(team, campaign, list, LIMIT, OFFSET, done); }
-        else if(campaign.type === 'trigger'){ api.campaigns.sendTrigger(team, campaign, list, LIMIT, OFFSET, done); }
+        if(campaign.type === 'simple'){ api.campaigns.sendSimple(campaign, list, LIMIT, OFFSET, done); }
+        else if(campaign.type === 'recurring'){ api.campaigns.sendRecurring(campaign, list, LIMIT, OFFSET, done); }
+        else if(campaign.type === 'trigger'){ api.campaigns.sendTrigger(campaign, list, LIMIT, OFFSET, done); }
         else{ return done(new Error('campaign type not understood')); }
       });
 
@@ -68,19 +59,20 @@ module.exports = {
       async.series(jobs, callback);
     };
 
-    api.campaigns.sendSimple = function(team, campaign, list, limit, offset, callback){
+    api.campaigns.sendSimple = function(campaign, list, limit, offset, callback){
       var jobs = [];
 
       if(campaign.sentAt){ return callback(new Error('campaign already sent')); }
       if(campaign.sendAt - new Date().getTime() >= 0){ return callback(new Error('campaign should not be sent yet')); }
 
-      api.models.listPerson.findAll({where: {
-        listId: list.id
-      }, limit: limit, offset: offset}).then(function(listPeople){
+      api.models.listPerson.findAll({
+        where: { listId: list.id },
+        limit: limit,
+        offset: offset
+      }).then(function(listPeople){
         listPeople.forEach(function(listPerson){
           jobs.push(function(done){
             api.tasks.enqueue('campaigns:sendMessage', {
-              teamId: team.id,
               listId: list.id,
               campaignId: campaign.id,
               listPersonId: listPerson.id,
@@ -99,11 +91,11 @@ module.exports = {
       }).catch(callback);
     };
 
-    api.campaigns.sendRecurring = function(team, campaign, list, limit, offset, callback){
+    api.campaigns.sendRecurring = function(campaign, list, limit, offset, callback){
       throw new Error('not yet implemented');
     };
 
-    api.campaigns.sendTrigger = function(team, campaign, list, limit, offset, callback){
+    api.campaigns.sendTrigger = function(campaign, list, limit, offset, callback){
       throw new Error('not yet implemented');
     };
 

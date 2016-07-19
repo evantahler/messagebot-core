@@ -20,10 +20,8 @@ exports.task = {
     var file;
     var body;
     var transport;
-
-    var team = api.utils.determineActionsTeam({params: params});
-    var message = new api.models.message(team);
-    message.ensureGuid();
+    var message;
+    var team;
 
     jobs.push(function(done){
       api.models.campaign.findOne({where: {id: params.campaignId}}).then(function(c){
@@ -47,6 +45,20 @@ exports.task = {
         if(!listPerson){ return done(new Error('listPerson not found')); }
         done();
       }).catch(done);
+    });
+
+    jobs.push(function(done){
+      api.models.team.findOne({where: {id: campaign.teamId}}).then(function(t){
+        team = t;
+        if(!team){ return done(new Error('team not found')); }
+        done();
+      }).catch(done);
+    });
+
+    jobs.push(function(done){
+      message = new api.models.message(team);
+      message.ensureGuid();
+      done();
     });
 
     jobs.push(function(done){
@@ -100,6 +112,8 @@ exports.task = {
       message.data.campaignId = campaign.id;
       message.data.body       = body;
       message.data.sentAt     = new Date();
+      message.data.readAt     = 0;
+      message.data.actedAt    = 0;
 
       message.create(done);
     });

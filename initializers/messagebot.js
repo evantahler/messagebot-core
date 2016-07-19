@@ -117,7 +117,7 @@ module.exports = {
 
       if(!team && data.connection && data.connection.type === 'web'){
         api.teams.teams.forEach(function(_team){
-          var regexp = new RegExp(_team.urlRegexp);
+          var regexp = new RegExp(_team.trackingDomainRegexp);
           if(data.connection.rawConnection.req.headers.host.match(regexp)){ team = _team; }
         });
       }
