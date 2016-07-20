@@ -25,7 +25,7 @@ describe('models:lists', function(){
     list = api.models.list.build({
       teamId:      1,
       name:        'my list',
-      type:        'simple',
+      type:        'dynamic',
       folder:      'default'
     });
 
@@ -57,7 +57,7 @@ describe('models:lists', function(){
     list = api.models.list.build({
       teamId:      1,
       name:        'my list',
-      type:        'simple',
+      type:        'dynamic',
       folder:      'default'
     });
 
@@ -66,7 +66,7 @@ describe('models:lists', function(){
       var otherList = api.models.list.build({
         teamId:      1,
         name:        'my list',
-        type:        'simple',
+        type:        'dynamic',
         folder:      'default'
       });
 
