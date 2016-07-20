@@ -78,7 +78,6 @@ app.controller('template:edit', ['$scope', '$rootScope', '$location', 'ngNotify'
 
 app.controller('templates:list', ['$scope', '$rootScope', '$location', 'ngNotify', '$routeParams', function($scope, $rootScope, $location, ngNotify, $routeParams){
   $scope.lists = [];
-  $scope.transports = [];
   $scope.forms = {};
   $scope.folder = {name: ($routeParams.folder || '_all')};
   $scope.pagination = {};
@@ -112,12 +111,6 @@ app.controller('templates:list', ['$scope', '$rootScope', '$location', 'ngNotify
   $scope.loadFolders = function(){
     $rootScope.action($scope, {}, '/api/templates/folders', 'GET', function(data){
       $scope.folders = data.folders;
-    });
-  };
-
-  $scope.loadTransports = function(){
-    $rootScope.action($scope, {}, '/api/transports', 'GET', function(data){
-      $scope.transports = data.transports;
     });
   };
 
@@ -180,5 +173,4 @@ app.controller('templates:list', ['$scope', '$rootScope', '$location', 'ngNotify
 
   $scope.loadTemplates();
   $scope.loadFolders();
-  $scope.loadTransports();
 }]);

@@ -1,3 +1,5 @@
+var validTypes = ['simple', 'recurring', 'trigger'];
+
 module.exports = function(sequelize, DataTypes){
   return sequelize.define('list', {
     'teamId': {
@@ -16,6 +18,13 @@ module.exports = function(sequelize, DataTypes){
     'type': {
       type: DataTypes.STRING,
       allowNull: false,
+      validate: {
+        validTypes: function(value){
+          if(validTypes.indexOf(value) < 0){
+            throw new Error('type is invalid');
+          }
+        }
+      }
     },
 
     'personQuery': {
@@ -84,6 +93,10 @@ module.exports = function(sequelize, DataTypes){
     },
   }, {
     instanceMethods: {
+      validTypes: function(){
+        return validTypes;
+      },
+
       apiData: function(api){
         return {
           id:           this.id,

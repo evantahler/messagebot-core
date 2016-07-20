@@ -33,10 +33,6 @@ module.exports = {
           allowNull: false,
           defaultValue: 'default',
         },
-        'transport': {
-          type: Sequelize.STRING,
-          allowNull: false,
-        },
         'template': {
           type: Sequelize.TEXT,
           allowNull: true,
@@ -49,7 +45,7 @@ module.exports = {
     );
 
     queryInterface.addIndex(
-      'templates', ['name'], {
+      'templates', ['teamId', 'name'], {
         indicesType: 'UNIQUE'
       }
     );

@@ -1,15 +1,3 @@
-var transportValidator = function(p){
-  var api = this;
-  var transportNames = [];
-
-  api.transports.forEach(function(t){ transportNames.push(t.name); });
-  if(transportNames.indexOf(p) < 0){
-    return new Error(p + ' is not a valid transport');
-  }else{
-    return true;
-  }
-};
-
 exports.templateCreate = {
   name:                   'template:create',
   description:            'template:create',
@@ -23,10 +11,6 @@ exports.templateCreate = {
     folder: {
       required: true,
       default: function(){ return 'default'; }
-    },
-    transport: {
-      required: true,
-      validator: transportValidator
     }
   },
 
@@ -133,7 +117,6 @@ exports.templateCopy = {
         teamId:      template.teamId,
         description: template.description,
         folder:      template.folder,
-        transport:   template.transport,
         template:    template.template,
       });
       newTemplate.save().then(function(){
@@ -161,10 +144,6 @@ exports.templateEdit = {
     description:  { required: false },
     template:     { required: false },
     folder:       { required: false },
-    transport: {
-      required: false,
-      validator: transportValidator
-    }
   },
 
   run: function(api, data, next){

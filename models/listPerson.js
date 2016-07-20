@@ -18,7 +18,7 @@ module.exports = function(sequelize, DataTypes){
         return {
           id:           this.id,
           listId:       this.listId,
-          personGuid:     this.personGuid,
+          personGuid:   this.personGuid,
           createdAt:    this.createdAt,
           updatedAt:    this.updatedAt,
         };

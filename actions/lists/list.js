@@ -19,15 +19,6 @@ var JSONFormatter = function(p){
   else{ return p; }
 };
 
-var listTypes = ['dynamic', 'static'];
-var listTypeValidator = function(p){
-  if(listTypes.indexOf(p) < 0){
-    return new Error('type must be one of [' + listTypes.join(', ') + ']');
-  }else{
-    return true;
-  }
-};
-
 exports.listCreate = {
   name:                   'list:create',
   description:            'list:create',
@@ -40,12 +31,7 @@ exports.listCreate = {
       required: true,
       defualt: function(){ return 'default'; }
     },
-    type: {
-      required: true,
-      defualt: function(){ return listTypes[0]; },
-      validator: listTypeValidator
-    },
-
+    type: { required: true },
     personQuery:    {
       required: false,
       validator: JSONValidator,
@@ -75,6 +61,18 @@ exports.listCreate = {
     }).catch(function(errors){
       next(errors.errors[0].message);
     });
+  }
+};
+
+exports.listTypes = {
+  name:                   'list:typesList',
+  description:            'list:typesList',
+  outputExample:          {},
+  middleware:             ['logged-in-session'],
+  inputs:                 {},
+  run: function(api, data, next){
+    data.response.validTypes = api.models.list.prototype.validTypes();
+    next();
   }
 };
 
@@ -168,10 +166,7 @@ exports.listEdit = {
   inputs: {
     name:   { required: false },
     folder: { required: false },
-    type:   {
-      required: false,
-      validator: listTypeValidator
-    },
+    type:   { required: false },
 
     personQuery:    {
       required: false,

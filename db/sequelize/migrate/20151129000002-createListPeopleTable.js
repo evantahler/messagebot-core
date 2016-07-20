@@ -49,7 +49,6 @@ module.exports = {
 
     queryInterface.addIndex(
       'listPeople', ['listId', 'personGuid'], {
-        indexName: 'listIdIndexLock',
         indicesType: 'UNIQUE'
       }
     );

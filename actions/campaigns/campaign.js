@@ -1,14 +1,5 @@
 var async = require('async');
 
-var campaignTypes = ['simple', 'recurring', 'trigger'];
-var campaignTypeValidator = function(p){
-  if(campaignTypes.indexOf(p) < 0){
-    return new Error('type must be one of [' + campaignTypes.join(', ') + ']');
-  }else{
-    return true;
-  }
-};
-
 var transportValidator = function(p){
   var api = this;
   var transportNames = [];
@@ -43,11 +34,7 @@ exports.campaignCreate = {
       required: true,
       defualt: function(){ return 'default'; }
     },
-    type: {
-      required: true,
-      defualt: function(){ return campaignTypes[0]; },
-      validator: campaignTypeValidator
-    },
+    type: { required: true },
     transport: {
       required: true,
       validator: transportValidator
@@ -83,6 +70,18 @@ exports.campaignCreate = {
     }).catch(function(errors){
       next(errors.errors[0].message);
     });
+  }
+};
+
+exports.campaignTypes = {
+  name:                   'campaign:typesList',
+  description:            'campaign:typesList',
+  outputExample:          {},
+  middleware:             ['logged-in-session'],
+  inputs:                 {},
+  run: function(api, data, next){
+    data.response.validTypes = api.models.campaign.prototype.validTypes();
+    next();
   }
 };
 
@@ -178,11 +177,7 @@ exports.campaignEdit = {
       required: false,
       defualt: function(){ return 'default'; }
     },
-    type: {
-      required: false,
-      defualt: function(){ return campaignTypes[0]; },
-      validator: campaignTypeValidator
-    },
+    type: { required: false },
     transport: {
       required: false,
       validator: transportValidator

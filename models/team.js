@@ -7,6 +7,13 @@ module.exports = function(sequelize, DataTypes){
     'trackingDomainRegexp': {
       type: DataTypes.STRING,
       allowNull: false,
+      // set: function(value){
+      //   this.setDataValue('trackingDomainRegexp', value.toString());
+      // },
+      // get: function(){
+      //   var value = this.getDataValue('trackingDomainRegexp');
+      //   return new RegExp(value);
+      // }
     },
     'trackingDomain': {
       type: DataTypes.STRING,

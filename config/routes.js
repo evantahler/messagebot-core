@@ -10,6 +10,7 @@ exports.default = {
         { path: '/users',                action: 'users:list' },
         { path: '/user/statuses',        action: 'user:statusesList' },
         { path: '/list',                 action: 'list:view' },
+        { path: '/list/types',           action: 'list:typesList' },
         { path: '/list/people',          action: 'list:people:view' },
         { path: '/lists',                action: 'lists:list' },
         { path: '/lists/folders',        action: 'lists:folders' },
@@ -34,6 +35,7 @@ exports.default = {
         { path: '/campaign/stats',       action: 'campaign:stats' },
         { path: '/campaigns',            action: 'campaigns:list' },
         { path: '/campaigns/folders',    action: 'campaigns:folders' },
+        { path: '/campaigns/types',      action: 'campaign:typesList' },
         { path: '/transports',           action: 'transports:list' },
       ],
 

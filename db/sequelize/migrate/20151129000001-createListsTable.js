@@ -63,7 +63,7 @@ module.exports = {
     );
 
     queryInterface.addIndex(
-      'lists', ['name'], {
+      'lists', ['teamId', 'name'], {
         indicesType: 'UNIQUE'
       }
     );

@@ -87,7 +87,7 @@ module.exports = {
     );
 
     queryInterface.addIndex(
-      'campaigns', ['name'], {
+      'campaigns', ['teamId', 'name'], {
         indicesType: 'UNIQUE'
       }
     );

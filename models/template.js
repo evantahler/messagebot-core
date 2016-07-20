@@ -54,10 +54,6 @@ module.exports = function(sequelize, DataTypes){
       allowNull: false,
       defaultValue: 'default',
     },
-    'transport': {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
     'template': {
       type: DataTypes.TEXT,
       allowNull: true,
@@ -77,7 +73,6 @@ module.exports = function(sequelize, DataTypes){
           name:         this.name,
           description:  this.description,
           folder:       this.folder,
-          transport:    this.transport,
           template:     this.template,
 
           createdAt:    this.createdAt,

@@ -29,13 +29,6 @@
               <input type="text" name="folder" class="form-control" placeholder="default" ng-model="forms.createTemplate.folder">
             </div>
 
-            <div class="form-group">
-              <label>Transport</label>
-              <select name="status" class="form-control" ng-model="forms.createTemplate.transport">
-                <option ng-repeat="t in transports" value="{{t.name}}">{{t.name}}</option>
-              </select>
-            </div>
-
             <div class="row">
               <div class="col-md-12">
                 <button type="submit" class="btn btn-success btn-lg btn-block">
@@ -76,13 +69,6 @@
             <div class="form-group">
               <label>Folder</label>
               <input type="text" name="folder" class="form-control" placeholder="default" ng-model="forms.editTemplate.folder">
-            </div>
-
-            <div class="form-group">
-              <label>Transport</label>
-              <select name="status" class="form-control" ng-model="forms.editTemplate.transport">
-                <option ng-repeat="t in transports" value="{{t.name}}">{{t.name}}</option>
-              </select>
             </div>
 
             <div class="row">
@@ -133,7 +119,6 @@
             <th>name</th>
             <th>description</th>
             <th>folder</th>
-            <th>transport</th>
             <th>&nbsp;</th>
             <th>&nbsp;</th>
             <th>&nbsp;</th>
@@ -148,7 +133,6 @@
             <td><strong>{{ template.name }}</strong></td>
             <td>{{ template.description }}</td>
             <td>{{ template.folder }}</td>
-            <td>{{ template.transport }}</td>
             <td><span ng-click="copyTemplate(template.id);" class="glyphicon glyphicon-duplicate">&nbsp;</span></td>
             <td><span ng-click="editTemplate(template.id);" class="glyphicon glyphicon-pencil">&nbsp;</span></td>
             <td><span ng-click="deleteTemplate(template.id);" class="glyphicon glyphicon-remove">&nbsp;</span></td>
