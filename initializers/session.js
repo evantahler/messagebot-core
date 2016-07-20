@@ -22,7 +22,7 @@ module.exports = {
         var sessionData = {
           userId:          user.id,
           teamId:          user.teamId,
-          status:          user.status,
+          role:            user.role,
           sesionCreatedAt: new Date().getTime()
         };
 
@@ -60,13 +60,13 @@ module.exports = {
           }
         },
 
-        'status-required-admin': {
-          name: 'status-required-admin',
+        'role-required-admin': {
+          name: 'role-required-admin',
           global: false,
           priority: 9999,
           preProcessor: function(data, callback){
-            if(data.session.status !== 'admin'){
-              return callback(new Error('admin status requried'));
+            if(data.session.role !== 'admin'){
+              return callback(new Error('admin role requried'));
             }else{
               return callback();
             }
@@ -77,7 +77,7 @@ module.exports = {
     };
 
     api.actions.addMiddleware(api.session.middleware['logged-in-session']);
-    api.actions.addMiddleware(api.session.middleware['status-required-admin']);
+    api.actions.addMiddleware(api.session.middleware['role-required-admin']);
 
     next();
   }

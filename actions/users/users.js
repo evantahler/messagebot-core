@@ -1,3 +1,16 @@
+exports.userRoles = {
+  name:                   'users:roles',
+  description:            'users:roles',
+  outputExample:          {},
+  middleware:             ['logged-in-session'],
+  inputs:                 {},
+  run: function(api, data, next){
+    console.log(api.models.user)
+    data.response.validRoles = api.models.user.build().validRoles();
+    next();
+  }
+};
+
 exports.usersList = {
   name:                   'users:list',
   description:            'users:list',

@@ -1,7 +1,7 @@
 var bcrypt = require('bcrypt');
 var bcryptComplexity = 10;
 
-var validStatuses = [
+var validRoles = [
   'new',
   'disabled',
   'admin',
@@ -30,14 +30,14 @@ module.exports = function(sequelize, DataTypes){
       type: DataTypes.TEXT,
       allowNull: false,
     },
-    'status': {
+    'role': {
       type: DataTypes.STRING,
       allowNull: false,
       defaultValue: 'new',
       validate: {
-        validStatus: function(value){
-          if(validStatuses.indexOf(value) < 0){
-            throw new Error('status is invalid');
+        validRole: function(value){
+          if(validRoles.indexOf(value) < 0){
+            throw new Error('role is invalid');
           }
         }
       }
@@ -60,8 +60,8 @@ module.exports = function(sequelize, DataTypes){
         return [this.firstName, this.lastName].join(' ');
       },
 
-      validStatuses: function(){
-        return validStatuses;
+      validRoles: function(){
+        return validRoles;
       },
 
       updatePassword: function(pw, callback){
@@ -83,7 +83,7 @@ module.exports = function(sequelize, DataTypes){
           id:         this.id,
           personGuid: this.personGuid,
           email:      this.email,
-          status:     this.status,
+          role:       this.role,
           firstName:  this.firstName,
           lastName:   this.lastName,
         };

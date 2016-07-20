@@ -2,7 +2,7 @@ exports.templateCreate = {
   name:                   'template:create',
   description:            'template:create',
   outputExample:          {},
-  middleware:             ['logged-in-session', 'status-required-admin'],
+  middleware:             ['logged-in-session', 'role-required-admin'],
 
   inputs: {
     name:         { required: true },
@@ -96,7 +96,7 @@ exports.templateCopy = {
   name:                   'template:copy',
   description:            'template:copy',
   outputExample:          {},
-  middleware:             ['logged-in-session', 'status-required-admin'],
+  middleware:             ['logged-in-session', 'role-required-admin'],
 
   inputs: {
     name: { required: true },
@@ -133,7 +133,7 @@ exports.templateEdit = {
   name:                   'template:edit',
   description:            'template:edit',
   outputExample:          {},
-  middleware:             ['logged-in-session', 'status-required-admin'],
+  middleware:             ['logged-in-session', 'role-required-admin'],
 
   inputs: {
     templateId: {
@@ -164,7 +164,7 @@ exports.templateDelete = {
   name:                   'template:delete',
   description:            'template:delete',
   outputExample:          {},
-  middleware:             ['logged-in-session', 'status-required-admin'],
+  middleware:             ['logged-in-session', 'role-required-admin'],
 
   inputs: {
     templateId: {

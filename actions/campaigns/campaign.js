@@ -17,7 +17,7 @@ exports.campaignCreate = {
   name:                   'campaign:create',
   description:            'campaign:create',
   outputExample:          {},
-  middleware:             ['logged-in-session', 'status-required-admin'],
+  middleware:             ['logged-in-session', 'role-required-admin'],
 
   inputs: {
     name:        { required: true },
@@ -73,18 +73,6 @@ exports.campaignCreate = {
   }
 };
 
-exports.campaignTypes = {
-  name:                   'campaign:typesList',
-  description:            'campaign:typesList',
-  outputExample:          {},
-  middleware:             ['logged-in-session'],
-  inputs:                 {},
-  run: function(api, data, next){
-    data.response.validTypes = api.models.campaign.prototype.validTypes();
-    next();
-  }
-};
-
 exports.campaignView = {
   name:                   'campaign:view',
   description:            'campaign:view',
@@ -114,7 +102,7 @@ exports.campaignCopy = {
   name:                   'campaign:copy',
   description:            'campaign:copy',
   outputExample:          {},
-  middleware:             ['logged-in-session', 'status-required-admin'],
+  middleware:             ['logged-in-session', 'role-required-admin'],
 
   inputs: {
     name: { required: true },
@@ -160,7 +148,7 @@ exports.campaignEdit = {
   name:                   'campaign:edit',
   description:            'campaign:edit',
   outputExample:          {},
-  middleware:             ['logged-in-session', 'status-required-admin'],
+  middleware:             ['logged-in-session', 'role-required-admin'],
 
   inputs: {
     name:        { required: false },
@@ -226,7 +214,7 @@ exports.campaignStats = {
   name:                   'campaign:stats',
   description:            'campaign:stats',
   outputExample:          {},
-  middleware:             ['logged-in-session', 'status-required-admin'],
+  middleware:             ['logged-in-session', 'role-required-admin'],
 
   inputs: {
     campaignId: {
@@ -309,7 +297,7 @@ exports.campaignDelete = {
   name:                   'campaign:delete',
   description:            'campaign:delete',
   outputExample:          {},
-  middleware:             ['logged-in-session', 'status-required-admin'],
+  middleware:             ['logged-in-session', 'role-required-admin'],
 
   inputs: {
     campaignId: {

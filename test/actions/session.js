@@ -45,7 +45,7 @@ describe('actions:session', function(){
         should.not.exist(error);
         data = JSON.parse(data);
         data.userId.should.equal(1);
-        data.status.should.equal('admin');
+        data.role.should.equal('admin');
         api.redis.clients.client.ttl(key, function(error, ttl){
           should.not.exist(error);
           ttl.should.be.within((api.session.ttl - 5000), (api.session.ttl));

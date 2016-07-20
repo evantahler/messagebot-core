@@ -1,8 +1,20 @@
+exports.campaignsTypes = {
+  name:                   'campaigns:types',
+  description:            'campaigns:types',
+  outputExample:          {},
+  middleware:             ['logged-in-session'],
+  inputs:                 {},
+  run: function(api, data, next){
+    data.response.validTypes = api.models.campaign.build().validTypes();
+    next();
+  }
+};
+
 exports.campaignsList = {
   name:                   'campaigns:list',
   description:            'campaigns:list',
   outputExample:          {},
-  middleware:             ['logged-in-session', 'status-required-admin'],
+  middleware:             ['logged-in-session', 'role-required-admin'],
 
   inputs: {
     from: {
@@ -64,7 +76,7 @@ exports.campaignsFolders = {
   name:                   'campaigns:folders',
   description:            'campaigns:folders',
   outputExample:          {},
-  middleware:             ['logged-in-session', 'status-required-admin'],
+  middleware:             ['logged-in-session', 'role-required-admin'],
 
   inputs: {},
 

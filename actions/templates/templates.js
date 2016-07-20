@@ -2,7 +2,7 @@ exports.templatesList = {
   name:                   'templates:list',
   description:            'templates:list',
   outputExample:          {},
-  middleware:             ['logged-in-session', 'status-required-admin'],
+  middleware:             ['logged-in-session', 'role-required-admin'],
 
   inputs: {
     from: {
@@ -48,7 +48,7 @@ exports.campaignsFolders = {
   name:                   'templates:folders',
   description:            'templates:folders',
   outputExample:          {},
-  middleware:             ['logged-in-session', 'status-required-admin'],
+  middleware:             ['logged-in-session', 'role-required-admin'],
 
   inputs: {},
 

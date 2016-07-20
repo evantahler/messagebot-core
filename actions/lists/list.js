@@ -23,7 +23,7 @@ exports.listCreate = {
   name:                   'list:create',
   description:            'list:create',
   outputExample:          {},
-  middleware:             ['logged-in-session', 'status-required-admin'],
+  middleware:             ['logged-in-session', 'role-required-admin'],
 
   inputs: {
     name:   { required: true },
@@ -64,18 +64,6 @@ exports.listCreate = {
   }
 };
 
-exports.listTypes = {
-  name:                   'list:typesList',
-  description:            'list:typesList',
-  outputExample:          {},
-  middleware:             ['logged-in-session'],
-  inputs:                 {},
-  run: function(api, data, next){
-    data.response.validTypes = api.models.list.prototype.validTypes();
-    next();
-  }
-};
-
 exports.listView = {
   name:                   'list:view',
   description:            'list:view',
@@ -109,7 +97,7 @@ exports.listCopy = {
   name:                   'list:copy',
   description:            'list:copy',
   outputExample:          {},
-  middleware:             ['logged-in-session', 'status-required-admin'],
+  middleware:             ['logged-in-session', 'role-required-admin'],
 
   inputs: {
     name: { required: true },
@@ -161,7 +149,7 @@ exports.listEdit = {
   name:                   'list:edit',
   description:            'list:edit',
   outputExample:          {},
-  middleware:             ['logged-in-session', 'status-required-admin'],
+  middleware:             ['logged-in-session', 'role-required-admin'],
 
   inputs: {
     name:   { required: false },
@@ -208,7 +196,7 @@ exports.listDelete = {
   name:                   'list:delete',
   description:            'list:delete',
   outputExample:          {},
-  middleware:             ['logged-in-session', 'status-required-admin'],
+  middleware:             ['logged-in-session', 'role-required-admin'],
 
   inputs: {
     listId: {

@@ -12,7 +12,7 @@ exports.listPeopleAdd = {
   name:                   'list:people:add',
   description:            'list:people:add',
   outputExample:          {},
-  middleware:             ['logged-in-session', 'status-required-admin'],
+  middleware:             ['logged-in-session', 'role-required-admin'],
 
   inputs: {
     listId: {
@@ -115,7 +115,7 @@ exports.listPeopleDelete = {
   name:                   'list:people:delete',
   description:            'list:people:delete',
   outputExample:          {},
-  middleware:             ['logged-in-session', 'status-required-admin'],
+  middleware:             ['logged-in-session', 'role-required-admin'],
 
   inputs: {
     listId: {
@@ -176,7 +176,7 @@ exports.listPeopleCount = {
   name:                   'list:people:count',
   description:            'list:people:count',
   outputExample:          {},
-  middleware:             ['logged-in-session', 'status-required-admin'],
+  middleware:             ['logged-in-session', 'role-required-admin'],
 
   inputs: {
     listId: {
@@ -202,7 +202,7 @@ exports.listPeopleView = {
   name:                   'list:people:view',
   description:            'list:people:view',
   outputExample:          {},
-  middleware:             ['logged-in-session', 'status-required-admin'],
+  middleware:             ['logged-in-session', 'role-required-admin'],
 
   inputs: {
     listId: {

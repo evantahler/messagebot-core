@@ -29,7 +29,7 @@ describe('models:users', function(){
       passwordHash: 'xxx',
       firstName:    'fname',
       lastName:     'lname',
-      status:       'admin',
+      role:         'admin',
     });
 
     user.save().then(function(){
@@ -66,7 +66,7 @@ describe('models:users', function(){
       passwordHash: 'xxx',
       firstName:    'fname',
       lastName:     'lname',
-      status:       'admin',
+      role:         'admin',
     });
 
     user.save().then(function(){
@@ -78,7 +78,7 @@ describe('models:users', function(){
     });
   });
 
-  it('will not create new users with invalid params (bad status)', function(done){
+  it('will not create new users with invalid params (bad role)', function(done){
     user = api.models.user.build({
       teamId:       1,
       email:        'admin5@localhost.com',
@@ -86,14 +86,14 @@ describe('models:users', function(){
       passwordHash: 'xxx',
       firstName:    'fname',
       lastName:     'lname',
-      status:       'bacon',
+      role:         'bacon',
     });
 
     user.save().then(function(){
       throw new Error('should not get here');
     }).catch(function(errors){
       errors.errors.length.should.equal(1);
-      errors.errors[0].message.should.equal('status is invalid');
+      errors.errors[0].message.should.equal('role is invalid');
       done();
     });
   });
@@ -105,7 +105,7 @@ describe('models:users', function(){
       email:      'aaa@b.com',
       firstName:  'fname',
       lastName:   'lname',
-      status:     'admin',
+      role:       'admin',
     });
 
     user.updatePassword('password', function(error){
@@ -127,7 +127,7 @@ describe('models:users', function(){
       email:      'bbb@b.com',
       firstName:  'fname',
       lastName:   'lname',
-      status:     'admin',
+      role:       'admin',
     });
 
     user.updatePassword('password', function(error){

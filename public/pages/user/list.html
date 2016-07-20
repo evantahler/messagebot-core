@@ -33,9 +33,9 @@
             </div>
 
             <div class="form-group">
-              <label>Status</label>
-              <select name="status" class="form-control" ng-model="forms.createUser.status">
-                <option ng-repeat="s in validStatuses" value="{{s}}">{{s}}</option>
+              <label>Role</label>
+              <select name="role" class="form-control" ng-model="forms.createUser.role">
+                <option ng-repeat="r in validRoles" value="{{r}}">{{r}}</option>
               </select>
             </div>
 
@@ -83,9 +83,9 @@
             </div>
 
             <div class="form-group">
-              <label>Status</label>
-              <select name="status" class="form-control" ng-model="forms.editUser.status">
-                <option ng-repeat="s in validStatuses" value="{{s}}">{{s}}</option>
+              <label>Role</label>
+              <select name="role" class="form-control" ng-model="forms.editUser.role">
+                <option ng-repeat="r in validRoles" value="{{r}}">{{r}}</option>
               </select>
             </div>
 
@@ -114,7 +114,7 @@
         <th>email</th>
         <th>firstName</th>
         <th>lastName</th>
-        <th>status</th>
+        <th>role</th>
         <th>&nbsp;</th>
         <th>&nbsp;</th>
       </tr>
@@ -125,7 +125,7 @@
         <td>{{ user.email }}</td>
         <td>{{ user.firstName }}</td>
         <td>{{ user.lastName }}</td>
-        <td>{{ user.status }}</td>
+        <td>{{ user.role }}</td>
         <td ng-click="editUser(user.id);"><span class="glyphicon glyphicon-pencil">&nbsp;</span></td>
         <td ng-click="deleteUser(user.id);"><span class="glyphicon glyphicon-remove">&nbsp;</span></td>
       </tr>

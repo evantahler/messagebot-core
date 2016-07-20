@@ -1,8 +1,20 @@
+exports.listsTypes = {
+  name:                   'lists:types',
+  description:            'lists:types',
+  outputExample:          {},
+  middleware:             ['logged-in-session'],
+  inputs:                 {},
+  run: function(api, data, next){
+    data.response.validTypes = api.models.list.build().validTypes();
+    next();
+  }
+};
+
 exports.listsList = {
   name:                   'lists:list',
   description:            'lists:list',
   outputExample:          {},
-  middleware:             ['logged-in-session', 'status-required-admin'],
+  middleware:             ['logged-in-session', 'role-required-admin'],
 
   inputs: {
     from: {
@@ -48,7 +60,7 @@ exports.listsFolders = {
   name:                   'lists:folders',
   description:            'lists:folders',
   outputExample:          {},
-  middleware:             ['logged-in-session', 'status-required-admin'],
+  middleware:             ['logged-in-session', 'role-required-admin'],
 
   inputs: {},
 

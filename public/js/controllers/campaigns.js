@@ -112,7 +112,7 @@ app.controller('campaign:stats', ['$scope', '$rootScope', '$location', 'ngNotify
 
 app.controller('campaign:edit', ['$scope', '$rootScope', '$location', 'ngNotify', '$routeParams', function($scope, $rootScope, $location, ngNotify, $routeParams){
   $scope.campaign = {};
-  $scope.types = ['simple', 'recurring', 'trigger'];
+  $scope.types = [];
   $scope.lists = [];
   $scope.templates = [];
   $scope.transports = [];
@@ -145,6 +145,12 @@ app.controller('campaign:edit', ['$scope', '$rootScope', '$location', 'ngNotify'
       $scope.lists = data.lists;
     });
   };
+
+  $scope.loadTypes = function(){
+    $rootScope.action($scope, {}, '/api/campaigns/types', 'GET', function(data){
+      $scope.types = data.validTypes;
+    });
+  });
 
   $scope.loadTemplates = function(){
     //TODO: Pagination
@@ -197,6 +203,7 @@ app.controller('campaign:edit', ['$scope', '$rootScope', '$location', 'ngNotify'
   });
 
   $scope.loadCampaign();
+  $scope.loadTypes();
   $scope.loadTemplates();
   $scope.loadLists();
 }]);
@@ -206,7 +213,7 @@ app.controller('campaigns:list', ['$scope', '$rootScope', '$location', 'ngNotify
   $scope.lists = [];
   $scope.templates = [];
   $scope.transports = [];
-  $scope.types = ['simple', 'recurring', 'trigger'];
+  $scope.types = [];
   $scope.forms = {};
   $scope.folder = {name: ($routeParams.folder || '_all')};
   $scope.pagination = {};
@@ -230,6 +237,12 @@ app.controller('campaigns:list', ['$scope', '$rootScope', '$location', 'ngNotify
       if($scope.campaigns.length === 0 && currentPage !== 0){ $location.path('/campaigns/list/' + $scope.folder.name + '/0'); }
     });
   };
+
+  $scope.loadTypes = function(){
+    $rootScope.action($scope, {}, '/api/campaigns/types', 'GET', function(data){
+      $scope.types = data.validTypes;
+    });
+  });
 
   $scope.loadTransports = function(){
     //TODO: Pagination
@@ -318,6 +331,7 @@ app.controller('campaigns:list', ['$scope', '$rootScope', '$location', 'ngNotify
 
   $scope.loadCampaigns();
   $scope.loadTemplates();
+  $scope.loadTypes();
   $scope.loadLists();
   $scope.loadFolders();
   $scope.loadTransports();

@@ -35,7 +35,7 @@ module.exports = {
           type: Sequelize.STRING,
           allowNull: false,
         },
-        'status': {
+        'role': {
           type: Sequelize.STRING,
           allowNull: false,
           defaultValue: 'new',
@@ -82,7 +82,7 @@ module.exports = {
         email: 'admin@localhost.com',
         passwordHash: bcrypt.hashSync('password', bcryptComplexity),
         personGuid: 0,
-        status: 'admin',
+        role: 'admin',
         firstName: 'admin',
         lastName: 'admin',
       },

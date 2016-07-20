@@ -12,8 +12,8 @@ app.controller('users:list', ['$scope', '$rootScope', '$location', 'ngNotify', f
   $scope.forms.createUser = {};
   $scope.forms.editUser   = {};
 
-  $rootScope.action($scope, {}, '/api/user/statuses', 'GET', function(data){
-    $scope.validStatuses = data.validStatuses;
+  $rootScope.action($scope, {}, '/api/users/roles', 'GET', function(data){
+    $scope.validRoles = data.validRoles;
   });
 
   $scope.loadUsers = function(){
@@ -68,8 +68,8 @@ app.controller('users:list', ['$scope', '$rootScope', '$location', 'ngNotify', f
 
 app.controller('user:edit', ['$scope', '$rootScope', '$location', 'ngNotify', function($scope, $rootScope, $location, ngNotify){
 
-  $rootScope.action($scope, {}, '/api/user/statuses', 'GET', function(data){
-    $scope.validStatuses = data.validStatuses;
+  $rootScope.action($scope, {}, '/api/users/roles', 'GET', function(data){
+    $scope.validRoles = data.validRoles;
   });
 
   $rootScope.action($scope, {userId: $rootScope.user.id}, '/api/user', 'GET', function(data){

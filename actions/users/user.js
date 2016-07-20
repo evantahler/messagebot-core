@@ -2,14 +2,14 @@ exports.userCreate = {
   name:                   'user:create',
   description:            'user:create',
   outputExample:          {},
-  middleware:             ['logged-in-session', 'status-required-admin'],
+  middleware:             ['logged-in-session', 'role-required-admin'],
 
   inputs: {
     email:       { required: true },
     password:    { required: true },
     firstName:   { required: true },
     lastName:    { required: true },
-    status:      { required: true },
+    role:        { required: true },
   },
 
   run: function(api, data, next){
@@ -24,7 +24,7 @@ exports.userCreate = {
 
       var person = new api.models.person(team);
 
-      ['email', 'firstName', 'lastName', 'status'].forEach(function(p){
+      ['email', 'firstName', 'lastName', 'role'].forEach(function(p){
         person.data[p] = user[p];
       });
 
@@ -48,18 +48,6 @@ exports.userCreate = {
   }
 };
 
-exports.userStatuses = {
-  name:                   'user:statusesList',
-  description:            'user:statusesList',
-  outputExample:          {},
-  middleware:             ['logged-in-session'],
-  inputs:                 {},
-  run: function(api, data, next){
-    data.response.validStatuses = api.models.user.prototype.validStatuses();
-    next();
-  }
-};
-
 exports.userView = {
   name:                   'user:view',
   description:            'user:view',
@@ -75,7 +63,7 @@ exports.userView = {
 
   run: function(api, data, next){
     var userId = data.session.userId;
-    if(data.params.userId && data.session.status === 'admin'){
+    if(data.params.userId && data.session.role === 'admin'){
       userId = data.params.userId;
     }
 
@@ -102,7 +90,7 @@ exports.userEdit = {
     password:    { required: false },
     firstName:   { required: false },
     lastName:    { required: false },
-    status:      { required: false },
+    role:        { required: false },
     userId: {
       required: false,
       formatter: function(p){ return parseInt(p); }
@@ -114,7 +102,7 @@ exports.userEdit = {
     if(!team){ return next(new Error('Team not found for this request')); }
 
     var userId = data.session.userId;
-    if(data.params.userId && data.session.status === 'admin'){
+    if(data.params.userId && data.session.role === 'admin'){
       userId = data.params.userId;
     }
 
@@ -124,11 +112,11 @@ exports.userEdit = {
     }}).then(function(user){
       if(!user){ return next(new Error('user not found')); }
 
-      if(data.params.status && user.status !== data.params.status && data.session.status !== 'admin'){
-        return next(new Error('only admin role can modify status'));
+      if(data.params.role && user.role !== data.params.role && data.session.role !== 'admin'){
+        return next(new Error('only admin role can modify role'));
       }
 
-      if(data.params.userId && data.params.userId !== user.id && data.session.status !== 'admin'){
+      if(data.params.userId && data.params.userId !== user.id && data.session.role !== 'admin'){
         return next(new Error('only admin role can modify other users'));
       }
 
@@ -137,7 +125,7 @@ exports.userEdit = {
 
         var person = new api.models.person(user.personGuid);
 
-        ['email', 'firstName', 'lastName', 'status'].forEach(function(p){
+        ['email', 'firstName', 'lastName', 'role'].forEach(function(p){
           person.data[p] = user[p];
         });
 
@@ -164,7 +152,7 @@ exports.userDelete = {
   name:                   'user:delete',
   description:            'user:delete',
   outputExample:          {},
-  middleware:             ['logged-in-session', 'status-required-admin'],
+  middleware:             ['logged-in-session', 'role-required-admin'],
 
   inputs: {
     userId: {

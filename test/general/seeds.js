@@ -28,7 +28,7 @@ describe('general:seeds', function(){
       user.id.should.equal(1);
       user.teamId.should.equal(1);
       user.email.should.equal('admin@localhost.com');
-      user.status.should.equal('admin');
+      user.role.should.equal('admin');
 
       user.checkPassword('password', function(error, match){
         should.not.exist(error);
