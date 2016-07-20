@@ -1,61 +1,149 @@
 var actionheroPrototype = require('actionhero').actionheroPrototype;
-var elasticsearchMigrator = require(__dirname + '/../db/elasticsearch/migrate.js').migrate
 var async   = require('async');
 var should  = require('should');
 var request = require('request');
+var exec    = require('child_process').exec;
 
-specHelper = {
+var specHelper = {
   actionhero: new actionheroPrototype(),
   api: null,
 
-  startServer: function(callback){
+  doBash: function(commands, callback, silent){
+    if(!silent){ silent = false; }
+    if(!Array.isArray(commands)){ commands = [commands]; }
+    var fullCommand = '/bin/bash -c \'' + commands.join(' && ') + '\'';
+    if(!silent){ console.log('>> ' + fullCommand); }
+    exec(fullCommand, callback);
+  },
+
+  doMySQLBash: function(cmd, callback){
     var self = this;
 
-    self.actionhero.start(function(error, a){
-      if(error){throw error;}
+    // TODO: this assumes mySQL
+    if(self.api.config.sequelize.dialect !== 'mysql'){ return callback(new Error('I only know how to work with mySQL')); }
+    var command = 'mysql';
+    if(self.api.config.sequelize.username){ command += ' -u ' + self.api.config.sequelize.username; }
+    if(self.api.config.sequelize.password){ command += ' -p' + self.api.config.sequelize.password; }
+    if(self.api.config.sequelize.host){ command += ' -h ' + self.api.config.sequelize.host; }
+    if(self.api.config.sequelize.port){ command += ' --port ' + self.api.config.sequelize.port; }
+    command += ' -e "' + cmd + '"';
+    self.doBash(command, callback);
+  },
+
+  doElasticSearchBash: function(verb, pattern, callback){
+    var self = this;
+
+    var command = 'curl';
+    command += ' -X ' + verb;
+    command += ' ' + self.api.config.elasticsearch.urls[0];
+    command += '/' + pattern;
+    self.doBash(command, callback);
+  },
+
+  migrate: function(callback){
+    var self = this;
+    var jobs = [];
+
+    console.log('\r\n*** MIGRATIING TEST DATABASES ***\r\n');
+
+    jobs.push(function(done){
+      if(self.api){ return done(); }
+      self.initialize(done);
+    });
+
+    jobs.push(function(done){
+      self.doMySQLBash('create database if not exists messagebot_test', done);
+    });
+
+    jobs.push(function(done){
+      self.doBash('NODE_ENV=test npm run migrate:sequelize', done);
+    });
+
+    jobs.push(function(done){
+      self.doBash('NODE_ENV=test NUMBER_OF_SHARDS=1 npm run migrate:elasticsearch', done);
+    });
+
+    jobs.push(function(done){
+      console.log('\r\n*** TEST DATABASES MIGRATED***\r\n');
+      done();
+    });
+
+    async.series(jobs, callback);
+  },
+
+  clear: function(callback){
+    var self = this;
+    var jobs = [];
+
+    console.log('\r\n*** CLEARING TEST DATABASES ***\r\n');
+
+    jobs.push(function(done){
+      if(self.api){ return done(); }
+      self.initialize(done);
+    });
+
+    jobs.push(function(done){
+      self.doMySQLBash('drop database if exists messagebot_test', done);
+    });
+
+    jobs.push(function(done){
+      self.doElasticSearchBash('DELETE', '*-test-*', done);
+    });
+
+    jobs.push(function(done){
+      console.log('\r\n*** TEST DATABASES CLEARED***\r\n');
+      done();
+    });
+
+    async.series(jobs, callback);
+  },
+
+  initialize: function(callback){
+    var self = this;
+    self.actionhero.initialize(function(error, a){
       self.api = a;
-      callback();
+      callback(error);
     });
   },
 
-  stopServer: function(callback){
+  start: function(callback){
+    var self = this;
+    self.actionhero.start(function(error, a){
+      self.api = a;
+      callback(error, self.api);
+    });
+  },
+
+  stop: function(callback){
     var self = this;
     self.actionhero.stop(callback);
   },
 
-  rebuildElasticsearch: function(callback){
+  refresh: function(callback){
     var self = this;
-    self.api.elasticsearch.client.indices.delete({index: 'test-*'}, function(){
-      elasticsearchMigrator(self.api, callback);
-    });
+    self.doBash('curl -X POST http://localhost:9200/_refresh?wait_for_ongoing', callback, true);
   },
 
-  flushIndices: function(callback){
+  flush: function(callback){
     var self = this;
-    var jobs = [];
-    // TODO: This doesn't work on Travis.ci?
-    if(process.env.TRAVIS || process.env.SLOW){
-      setTimeout(callback, 5001);
-    }else{
-      self.api.elasticsearch.client.indices.get({index: '*'}, function(error, indices){
-        Object.keys(indices).forEach(function(index){
-          if(index.indexOf('test-') === 0){
-            jobs.push(function(done){
-              self.api.elasticsearch.client.indices.flushSynced({index: index}, done);
-            });
-            // jobs.push(function(done){ setTimeout(done, 1); });
-          }
-        });
+    self.doBash('curl -X POST http://localhost:9200/_flush?wait_for_ongoing', callback, true);
+  },
 
-        async.series(jobs, callback);
-      });
-    }
+  ensureWrite: function(callback){
+    var self = this;
+    async.series([
+      function(done){ self.flush(done); },
+      function(done){ self.refresh(done); },
+      // TOOD: Why doesn't FLUSH + REFERSH force index to be in sync?
+      function(done){ console.log('....................(sleeping for commit)'); done(); },
+      function(done){ setTimeout(done, 10001); },
+    ], callback);
   },
 
   login: function(jar, email, password, callback){
     var self = this;
     request.post({
-      url: 'http://localhost:18080/api/session',
+      url: 'http://' + self.api.config.servers.web.bindIP + ':' + self.api.config.servers.web.port + '/api/session',
       jar: jar,
       form: { email: email, password: password }
     }, function(error, response){
@@ -63,24 +151,41 @@ specHelper = {
       var body = JSON.parse(response.body);
       body.success.should.equal(true);
       body.user.email.should.equal(email);
+
+      callback(null);
     });
   },
 
   requestWithLogin: function(email, password, route, verb, params, callback){
     var self = this;
     var jar = request.jar();
-    self.login(jar, email, password, function(){
+    self.login(jar, email, password, function(error){
+      if(error){ return callback(error); }
+
       if(verb === 'get'){
         route += '?';
         for(var key in params){ route += key + '=' + params[key] + '&'; }
       }
+
+      var url = 'http://' + self.api.config.servers.web.bindIP + ':' + self.api.config.servers.web.port + route;
+
       request[verb]({
-        url: route,
+        url: url,
         jar: jar,
         form: params
-      }, callback);
+      }, function(error, data, response){
+        if(error){ return callback(error); }
+        return callback(error, JSON.parse(response));
+      });
     });
   },
 };
+
+/*--- Always Clear and Migrate before eacn run ---*/
+
+if(process.env.SKIP_MIGRATE !== 'true'){
+  before(function(done){ specHelper.clear(done); });
+  before(function(done){ specHelper.migrate(done); });
+}
 
 module.exports = specHelper;

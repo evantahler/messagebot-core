@@ -103,7 +103,7 @@ module.exports = {
 
       // leave this as an option for explicit tasks/internal use
       // no action should have this allowed as a param
-      if(!team && data.params.teamId){
+      if(!team && data.params && data.params.teamId){
         api.teams.teams.forEach(function(_team){
           if(_team.id === data.params.teamId){ team = _team; }
         });

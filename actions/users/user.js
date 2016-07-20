@@ -1,18 +1,3 @@
-var validStatuses = [
-  'new',
-  'disabled',
-  'admin',
-  'marketer',
-  'analyst',
-  'developer',
-  'designer',
-];
-
-var validateSatuses = function(p){
-  if(validStatuses.indexOf(p) < 0){ return false; }
-  return true;
-};
-
 exports.userCreate = {
   name:                   'user:create',
   description:            'user:create',
@@ -24,10 +9,7 @@ exports.userCreate = {
     password:    { required: true },
     firstName:   { required: true },
     lastName:    { required: true },
-    status:      {
-      required: false,
-      validator: validateSatuses,
-    },
+    status:      { required: true },
   },
 
   run: function(api, data, next){
@@ -73,7 +55,7 @@ exports.userStatuses = {
   middleware:             ['logged-in-session'],
   inputs:                 {},
   run: function(api, data, next){
-    data.response.validStatuses = validStatuses;
+    data.response.validStatuses = api.models.user.prototype.validStatuses();
     next();
   }
 };
@@ -120,10 +102,7 @@ exports.userEdit = {
     password:    { required: false },
     firstName:   { required: false },
     lastName:    { required: false },
-    status:      {
-      required: false,
-      validator: validateSatuses,
-    },
+    status:      { required: false },
     userId: {
       required: false,
       formatter: function(p){ return parseInt(p); }

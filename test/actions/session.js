@@ -1,15 +1,23 @@
 var should     = require('should');
 var request    = require('request');
 var specHelper = require(__dirname + '/../specHelper');
-var route      = 'http://localhost:18080/api/session';
+var route      = '/api/session';
+var api;
+var url;
 
 describe('actions:session', function(){
 
-  before(function(done){ specHelper.startServer(done); });
-  after(function(done){  specHelper.stopServer(done);  });
+  before(function(done){
+    specHelper.start(function(error, a){
+      api = a; done(error);
+      url = 'http://' + api.config.servers.web.bindIP + ':' + api.config.servers.web.port + route;
+    });
+  });
+
+  after(function(done){ specHelper.stop(done); });
 
   it('can login (happy)', function(done){
-    request.post(route, {form: { email: 'admin@localhost.com', password: 'password' }}, function(error, response){
+    request.post(url, {form: { email: 'admin@localhost.com', password: 'password' }}, function(error, response){
       should.not.exist(error);
       var body = JSON.parse(response.body);
       body.success.should.equal(true);
@@ -20,7 +28,7 @@ describe('actions:session', function(){
   });
 
   it('can login (sad)', function(done){
-    request.post(route, {form: { email: 'admin@localhost.com', password: 'xxx' }}, function(error, response){
+    request.post(url, {form: { email: 'admin@localhost.com', password: 'xxx' }}, function(error, response){
       should.not.exist(error);
       var body = JSON.parse(response.body);
       body.success.should.equal(false);
@@ -29,26 +37,34 @@ describe('actions:session', function(){
   });
 
   it('when logging in, a session object is created in redis', function(done){
-    request.post(route, {form: { email: 'admin@localhost.com', password: 'password' }}, function(error, response){
+    request.post(url, {form: { email: 'admin@localhost.com', password: 'password' }}, function(error, response){
       should.not.exist(error);
       var body = JSON.parse(response.body);
-      var key = specHelper.api.session.prefix + body.requesterInformation.fingerprint;
-      specHelper.api.redis.client.get(key, function(error, data){
+      var key = api.session.prefix + body.requesterInformation.fingerprint;
+      api.redis.clients.client.get(key, function(error, data){
         should.not.exist(error);
         data = JSON.parse(data);
         data.userId.should.equal(1);
         data.status.should.equal('admin');
-        specHelper.api.redis.client.ttl(key, function(error, ttl){
+        api.redis.clients.client.ttl(key, function(error, ttl){
           should.not.exist(error);
-          ttl.should.be.within((specHelper.api.session.ttl - 5000), (specHelper.api.session.ttl));
+          ttl.should.be.within((api.session.ttl - 5000), (api.session.ttl));
           done();
         });
       });
     });
   });
 
-  it('actions can require a logged-in user', function(done){
-    request.del('http://localhost:18080/api/user', {}, function(error, response){
+  it('actions can require a logged-in user (success)', function(done){
+    specHelper.requestWithLogin('admin@localhost.com', 'password', '/api/user', 'get', {}, function(error, data){
+      should.not.exist(error);
+      should.not.exist(data.error);
+      done();
+    });
+  });
+
+  it('actions can require a logged-in user (failure)', function(done){
+    request.get('http://localhost:18080/api/user', {}, function(error, response){
       should.not.exist(error);
       var body = JSON.parse(response.body);
       body.error.should.equal('Please log in to continue');

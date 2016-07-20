@@ -49,7 +49,7 @@
     "actionhero": "actionhero",
     "startCluster": "actionhero startCluster",
     "console": "actionhero console",
-    "test": "NODE_ENV=test npm run migrate && NODE_ENV=test mocha",
+    "test": "NODE_ENV=test mocha --reporter dot",
     "migrate": "npm run migrate:sequelize && npm run migrate:elasticsearch",
     "prepare": "npm update && npm run prepare:bower && npm run prepare:maxmind && npm run prepare:kibana",
     "bower": "bower",

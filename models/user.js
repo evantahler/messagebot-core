@@ -1,6 +1,16 @@
 var bcrypt = require('bcrypt');
 var bcryptComplexity = 10;
 
+var validStatuses = [
+  'new',
+  'disabled',
+  'admin',
+  'marketer',
+  'analyst',
+  'developer',
+  'designer',
+];
+
 module.exports = function(sequelize, DataTypes){
   return sequelize.define('user', {
     'teamId': {
@@ -24,6 +34,13 @@ module.exports = function(sequelize, DataTypes){
       type: DataTypes.STRING,
       allowNull: false,
       defaultValue: 'new',
+      validate: {
+        validStatus: function(value){
+          if(validStatuses.indexOf(value) < 0){
+            throw new Error('status is invalid');
+          }
+        }
+      }
     },
     'firstName': {
       type: DataTypes.STRING,
@@ -41,6 +58,10 @@ module.exports = function(sequelize, DataTypes){
     instanceMethods: {
       name: function(){
         return [this.firstName, this.lastName].join(' ');
+      },
+
+      validStatuses: function(){
+        return validStatuses;
       },
 
       updatePassword: function(pw, callback){

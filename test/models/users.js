@@ -1,29 +1,35 @@
 var should     = require('should');
 var specHelper = require(__dirname + '/../specHelper');
+var api;
+var user;
 
 describe('models:users', function(){
 
-  before(function(done){ specHelper.startServer(done); });
-  after(function(done){  specHelper.stopServer(done);  });
-  after(function(done){  specHelper.api.sequelize.query('truncate table users', true, done); });
-
-  it('the first admin users should be automatically created', function(done){
-    specHelper.api.sequelize.query('select * from users', function(error, rows){
-      should.not.exist(error);
-      rows.length.should.equal(1);
-      rows[0].email.should.equal('admin@localhost.com');
-      rows[0].status.should.equal('admin');
-      done();
+  before(function(done){
+    specHelper.start(function(error, a){
+      api = a; done(error);
     });
   });
 
+  after(function(done){ specHelper.stop(done); });
+
+  afterEach(function(done){
+    if(user.isNewRecord === false){
+      user.destroy().then(function(){ done(); });
+    }else{
+      done();
+    }
+  });
+
   it('can create new users with valid params', function(done){
-    var user = specHelper.api.models.user.build({
+    user = specHelper.api.models.user.build({
+      teamId:       1,
       email:        'a@b.com',
+      personGuid:   Math.random(),
       passwordHash: 'xxx',
-      passwordSalt: 'xxx',
       firstName:    'fname',
       lastName:     'lname',
+      status:       'admin',
     });
 
     user.save().then(function(){
@@ -35,29 +41,32 @@ describe('models:users', function(){
   });
 
   it('will not create new users with invalid params (missing requirement)', function(done){
-    var user = specHelper.api.models.user.build({
+    user = specHelper.api.models.user.build({
+      teamId:       1,
       passwordHash: 'xxx',
-      passwordSalt: 'xxx',
       lastName:     'lname',
     });
 
     user.save().then(function(){
       throw new Error('should not get here');
     }).catch(function(errors){
-      errors.errors.length.should.equal(2);
+      errors.errors.length.should.equal(3);
       errors.errors[0].message.should.equal('email cannot be null');
-      errors.errors[1].message.should.equal('firstName cannot be null');
+      errors.errors[1].message.should.equal('personGuid cannot be null');
+      errors.errors[2].message.should.equal('firstName cannot be null');
       done();
     });
   });
 
   it('will not create new users with invalid params (duplicate key)', function(done){
-    var user = specHelper.api.models.user.build({
+    user = specHelper.api.models.user.build({
+      teamId:       1,
       email:        'admin@localhost.com',
+      personGuid:   Math.random(),
       passwordHash: 'xxx',
-      passwordSalt: 'xxx',
       firstName:    'fname',
       lastName:     'lname',
+      status:       'admin',
     });
 
     user.save().then(function(){
@@ -69,11 +78,34 @@ describe('models:users', function(){
     });
   });
 
+  it('will not create new users with invalid params (bad status)', function(done){
+    user = specHelper.api.models.user.build({
+      teamId:       1,
+      email:        'admin5@localhost.com',
+      personGuid:   Math.random(),
+      passwordHash: 'xxx',
+      firstName:    'fname',
+      lastName:     'lname',
+      status:       'bacon',
+    });
+
+    user.save().then(function(){
+      throw new Error('should not get here');
+    }).catch(function(errors){
+      errors.errors.length.should.equal(1);
+      errors.errors[0].message.should.equal('status is invalid');
+      done();
+    });
+  });
+
   it('passwords can be checked (success)', function(done){
-    var user = specHelper.api.models.user.build({
-      email:     'aaa@b.com',
-      firstName: 'fname',
-      lastName:  'lname',
+    user = specHelper.api.models.user.build({
+      teamId:     1,
+      personGuid: Math.random(),
+      email:      'aaa@b.com',
+      firstName:  'fname',
+      lastName:   'lname',
+      status:     'admin',
     });
 
     user.updatePassword('password', function(error){
@@ -89,10 +121,13 @@ describe('models:users', function(){
   });
 
   it('passwords can be checked (failure)', function(done){
-    var user = specHelper.api.models.user.build({
-      email:     'bbb@b.com',
-      firstName: 'fname',
-      lastName:  'lname',
+    user = specHelper.api.models.user.build({
+      teamId:     1,
+      personGuid: Math.random(),
+      email:      'bbb@b.com',
+      firstName:  'fname',
+      lastName:   'lname',
+      status:     'admin',
     });
 
     user.updatePassword('password', function(error){
