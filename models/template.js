@@ -1,84 +1,193 @@
+var Sequelize    = require('sequelize');
 var sanitizeHtml = require('sanitize-html');
-var allowedTags = [
-  'html',
-  'body',
-  'h1',
-  'h2',
-  'h3',
-  'h4',
-  'h5',
-  'h6',
-  'blockquote',
-  'p',
-  'a',
-  'ul',
-  'ol',
-  'nl',
-  'li',
-  'b',
-  'i',
-  'strong',
-  'em',
-  'strike',
-  'code',
-  'hr',
-  'br',
-  'div',
-  'span',
-  'table',
-  'thead',
-  'caption',
-  'tbody',
-  'tr',
-  'th',
-  'td',
-  'pre'
-];
+var uuid         = require('node-uuid');
+var mustache     = require('mustache');
+var async        = require('async');
 
-module.exports = function(sequelize, DataTypes){
-  return sequelize.define('template', {
-    'teamId': {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-    },
-    'name': {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    'description': {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    'folder': {
-      type: DataTypes.STRING,
-      allowNull: false,
-      defaultValue: 'default',
-    },
-    'template': {
-      type: DataTypes.TEXT,
-      allowNull: true,
-      set: function(q){
-        this.setDataValue('template', sanitizeHtml(q, {
-          allowedTags: allowedTags,
-          allowedAttributes: false
-        }));
+var loader = function(api){
+
+  /*--- Priave Methods ---*/
+
+  var allowedTags = [
+    'html', 'body',
+    'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
+    'blockquote', 'pre',
+    'p', 'a', 'ul', 'ol', 'nl', 'li', 'b', 'i', 'strong', 'em',
+    'strike', 'code',
+    'hr', 'br', 'div', 'span', 'table', 'thead', 'caption', 'tbody', 'tr', 'th', 'td',
+  ];
+
+  var expandDate = function(d){
+    var monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+
+    return {
+      string: d.toString(),
+      date: d.getDate(),
+      day: d.getDay(),
+      fullYear: d.getFullYear(),
+      hours: d.getHours(),
+      milisseconds: d.getMilliseconds(),
+      minutes: d.getMinutes(),
+      monthName: monthNames[d.getMonth()],
+      month: (d.getMonth() + 1),
+      seconds: d.getSeconds(),
+      time: d.getTime(),
+      timezoneOffset: d.getTimezoneOffset(),
+      // UTCDate: d.getUTCDate(),
+      // UTCDay: d.getUTCDay(),
+      // UTCFullYear: d.getUTCFullYear(),
+      // UTCHours: d.getUTCHours(),
+      // UTCMilliseconds: d.getUTCMilliseconds(),
+      // UTCMinutes: d.getUTCMinutes(),
+      // UTCMonth: d.getUTCMonth(),
+      // UTCSeconds: d.getUTCSeconds(),
+      // year: d.getYear(),
+    };
+  };
+
+  var buildView = function(team, person, events, template){
+    var view = {};
+
+    // beacon
+    view.beacon = '<img src="';
+    view.beacon += team.trackingDomain + '/api/message/track.gif?';
+    view.beacon += 'verb=read&';
+    view.beacon += 'guid=%%MESSAGEGUID%%';
+    view.beacon += '" >';
+
+    view.track = function(){
+      return function(val, render){
+        var trackingURL = '';
+        trackingURL += team.trackingDomain + '/api/message/track.gif?';
+        trackingURL += 'verb=act&';
+        trackingURL += 'guid=%%MESSAGEGUID%%&';
+        trackingURL += 'link=' + render(val);
+        return trackingURL;
+      };
+    };
+
+    // person
+    view.person = person.data;
+    view.person.createdAt = expandDate(view.person.createdAt);
+    view.person.updatedAt = expandDate(view.person.updatedAt);
+    Object.keys(view.person.data).forEach(function(k){
+      if(view.person.data[k] instanceof Date){
+        view.person.data[k] = expandDate(view.person.data[k]);
       }
-    }
-  }, {
-    instanceMethods: {
-      apiData: function(api){
-        return {
-          id:           this.id,
+    });
 
-          name:         this.name,
-          description:  this.description,
-          folder:       this.folder,
-          template:     this.template,
+    // events
+    view.events = events;
 
-          createdAt:    this.createdAt,
-          updatedAt:    this.updatedAt,
-        };
+    // template
+    view.template = template.apiData(api);
+    delete view.template.template;
+    view.template.createdAt = expandDate(view.template.createdAt);
+    view.template.updatedAt = expandDate(view.template.updatedAt);
+
+    // time
+    view.now = expandDate(new Date());
+    return view;
+  };
+
+  /*--- Public Model ---*/
+
+  return {
+    name: 'template',
+    model: api.sequelize.sequelize.define('template',
+      {
+        'teamId': {
+          type: Sequelize.INTEGER,
+          allowNull: false,
+        },
+        'name': {
+          type: Sequelize.STRING,
+          allowNull: false,
+        },
+        'description': {
+          type: Sequelize.STRING,
+          allowNull: false,
+        },
+        'folder': {
+          type: Sequelize.STRING,
+          allowNull: false,
+          defaultValue: 'default',
+        },
+        'template': {
+          type: Sequelize.TEXT,
+          allowNull: true,
+          set: function(q){
+            this.setDataValue('template', sanitizeHtml(q, {
+              allowedTags: allowedTags,
+              allowedAttributes: false
+            }));
+          }
+        }
+      },
+
+      {
+        instanceMethods: {
+          render: function(person, message, callback){
+            var template = this;
+            var jobs     = [];
+            var events   = []; //TODO: Do we load in the events?  How many?
+            var team;
+            var person;
+            var view;
+            var html;
+
+            if(!template.template || template.template.length === 0){ return callback(new Error('template empty')); }
+
+            jobs.push(function(done){
+              api.models.team.findOne({where: {id: template.teamId}}).then(function(t){
+                team = t;
+                if(!team){ return done(new Error('team not found')); }
+                done();
+              }).catch(done);
+            });
+
+            jobs.push(function(done){
+              view = buildView(team, person, events, template);
+              done();
+            });
+
+            jobs.push(function(done){
+              try{
+                html = mustache.render(template.template, view);
+                if(message){ html = html.replace(/%%MESSAGEGUID%%/g, message.data.guid); }
+                done();
+              }catch(e){
+                return done(e);
+              }
+            });
+
+            async.series(jobs, function(error){
+              if(error){ return callback(error); }
+              var logData = {};
+              if(message){ logData = {messageGuid: message.data.guid}; }
+              api.log('rendered template #' + template.id + ' for person #' + person.data.guid, 'info', logData);
+              callback(null, html, view);
+            });
+          },
+
+          apiData: function(api){
+            return {
+              id:           this.id,
+
+              name:         this.name,
+              description:  this.description,
+              folder:       this.folder,
+              template:     this.template,
+
+              createdAt:    this.createdAt,
+              updatedAt:    this.updatedAt,
+            };
+          }
+        }
       }
-    }
-  });
+    )
+  };
+
 };
+
+module.exports = loader;

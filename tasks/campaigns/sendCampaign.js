@@ -9,8 +9,8 @@ exports.task = {
   pluginOptions: {},
 
   run: function(api, params, next){
-    api.campaigns.send(params.campaignId, function(error){
-      next(error);
-    });
+    api.models.campaign.find({where:{id: params.campaignId}}).then(function(campaign){
+      campaign.send(next);
+    }).catch(next);
   }
 };

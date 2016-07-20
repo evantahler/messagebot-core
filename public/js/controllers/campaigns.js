@@ -150,7 +150,7 @@ app.controller('campaign:edit', ['$scope', '$rootScope', '$location', 'ngNotify'
     $rootScope.action($scope, {}, '/api/campaigns/types', 'GET', function(data){
       $scope.types = data.validTypes;
     });
-  });
+  };
 
   $scope.loadTemplates = function(){
     //TODO: Pagination
@@ -242,7 +242,7 @@ app.controller('campaigns:list', ['$scope', '$rootScope', '$location', 'ngNotify
     $rootScope.action($scope, {}, '/api/campaigns/types', 'GET', function(data){
       $scope.types = data.validTypes;
     });
-  });
+  };
 
   $scope.loadTransports = function(){
     //TODO: Pagination

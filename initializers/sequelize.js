@@ -1,6 +1,6 @@
-var path              = require('path');
-var fs                = require('fs');
-var Sequelize         = require('sequelize');
+var path      = require('path');
+var fs        = require('fs');
+var Sequelize = require('sequelize');
 
 module.exports = {
   loadPriority:  100,
@@ -25,12 +25,37 @@ module.exports = {
         fs.readdirSync(dir).forEach(function(file){
           var nameParts = file.split('/');
           var name = nameParts[(nameParts.length - 1)].split('.')[0];
-          api.models[name] = api.sequelize.sequelize.import(dir + '/' + file);
+          var loader = require(dir + path.sep + file)(api);
+          api.models[loader.name] = loader.model;
         });
 
-        // associations
+        /*--- associations ---*/
+
+        // Campaign
+        api.models.campaign.belongsTo(api.models.list);
+        api.models.campaign.belongsTo(api.models.team);
+        api.models.campaign.belongsTo(api.models.template);
+
+        // List
         api.models.list.hasMany(api.models.listPerson);
+        api.models.list.belongsTo(api.models.team);
+
+        // List Person
         api.models.listPerson.belongsTo(api.models.list);
+        api.models.listPerson.belongsTo(api.models.team);
+
+        // Team
+        api.models.team.hasMany(api.models.campaign);
+        api.models.team.hasMany(api.models.list);
+        api.models.team.hasMany(api.models.listPerson);
+        api.models.team.hasMany(api.models.template);
+        api.models.team.hasMany(api.models.user);
+
+        // Template
+        api.models.template.belongsTo(api.models.team);
+
+        // User
+        api.models.user.belongsTo(api.models.team);
 
         callback();
       },

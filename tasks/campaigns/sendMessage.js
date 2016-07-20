@@ -1,6 +1,5 @@
 'use strict';
 
-var fs = require('fs');
 var async = require('async');
 
 exports.task = {
@@ -17,8 +16,8 @@ exports.task = {
     var list;
     var listPerson;
     var person;
-    var file;
     var body;
+    var view;
     var transport;
     var message;
     var team;
@@ -70,18 +69,13 @@ exports.task = {
     });
 
     jobs.push(function(done){
-      api.template.renderToDisk(team, campaign.templateId, person.data.guid, message, function(error, f){
-        if(error){ return done(error); }
-        file = f;
-        done();
-      });
-    });
-
-    jobs.push(function(done){
-      fs.readFile(file, function(error, buffer){
-        if(error){ return done(error); }
-        body = buffer.toString();
-        done();
+      api.models.template.find({where: {id: campaign.templateId}}).then(function(template){
+        template.render(person, message, function(error, _body, _view){
+          if(error){ return done(error); }
+          body = _body;
+          view = _view;
+          done();
+        });
       });
     });
 
@@ -111,6 +105,7 @@ exports.task = {
       message.data.transport  = transport.name;
       message.data.campaignId = campaign.id;
       message.data.body       = body;
+      message.data.view       = view;
       message.data.sentAt     = new Date();
       message.data.readAt     = 0;
       message.data.actedAt    = 0;

@@ -75,18 +75,23 @@ exports.templateRender = {
       id: data.params.templateId,
       teamId: data.session.teamId,
     }}).then(function(template){
-      api.template.renderToDisk(team, data.params.templateId, data.params.personGuid, null, function(error, file, fileBase, view){
-        if(data.connection.extension === 'html'){
+      var person = new api.models.person(team, data.params.personGuid);
+      person.hydrate(function(error){
+        if(error){ return next(error); }
+        template.render(person, null, function(error, html, view){
           if(error){ return next(error); }
-          data.toRender = false;
-          data.connection.rawConnection.responseHttpCode = 200;
-          data.connection.sendFile(fileBase);
-          next();
-        }else{
-          if(error && !view){ return next(error); }
-          data.response.view = view;
-          next();
-        }
+          if(data.connection.extension === 'html'){
+            data.toRender = false;
+            data.connection.rawConnection.responseHeaders.push(['Content-Type', 'text/html']);
+            data.connection.rawConnection.res.writeHead(200, data.connection.rawConnection.responseHeaders);
+            data.connection.rawConnection.res.end(html);
+            data.connection.destroy();
+            next();
+          }else{
+            data.response.view = view;
+            next();
+          }
+        });
       });
     }).catch(next);
   }

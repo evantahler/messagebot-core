@@ -29,6 +29,9 @@ exports.listPeopleAdd = {
   },
 
   run: function(api, data, next){
+    var team = api.utils.determineActionsTeam(data);
+    if(!team){ return next(new Error('Team not found for this request')); }
+
     api.models.list.findOne({where: {
       id: data.params.listId,
       teamId: data.session.teamId,
@@ -49,7 +52,7 @@ exports.listPeopleAdd = {
       if(data.params.personGuids){
         data.params.personGuids.forEach(function(personGuid){
           jobs.push(function(done){
-            var person = new api.models.person(personGuid);
+            var person = new api.models.person(team, personGuid);
             person.hydrate(function(error){
               if(error){ return done(new Error('Error adding guid #' + personGuid + ': ' + String(error))); }
               api.models.listPerson.findOrCreate({
@@ -77,7 +80,7 @@ exports.listPeopleAdd = {
           trim: true,
         }).on('data', function(d){
           jobs.push(function(done){
-            var person = new api.models.person();
+            var person = new api.models.person(team);
 
             if(d.guid){        person.data.guid = d.guid;               }
             if(d.createdAt){   person.data.createdAt = d.createdAt;     }

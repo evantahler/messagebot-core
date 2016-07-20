@@ -123,7 +123,7 @@ exports.userEdit = {
       user.updateAttributes(data.params).then(function(){
         data.response.user = user.apiData(api);
 
-        var person = new api.models.person(user.personGuid);
+        var person = new api.models.person(team, user.personGuid);
 
         ['email', 'firstName', 'lastName', 'role'].forEach(function(p){
           person.data[p] = user[p];

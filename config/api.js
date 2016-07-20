@@ -40,7 +40,7 @@ exports.default = {
       paths: {
         'action':      [__dirname + '/../actions'],
         'task':        [__dirname + '/../tasks'],
-        'public':      [__dirname + '/../public', '/tmp/messagebot'],
+        'public':      [__dirname + '/../public'],
         'pid':         [__dirname + '/../pids'],
         'log':         [__dirname + '/../log'],
         'server':      [__dirname + '/../servers'],
