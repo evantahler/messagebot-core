@@ -51,7 +51,6 @@ describe('integartion:campaigns', function(){
         teamId:      1,
         name:        'my template',
         description: 'my template',
-        type:        'simple',
         folder:      'default',
         template:    'Hello there, {{ person.data.firstName }}'
       });

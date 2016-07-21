@@ -4,7 +4,7 @@ var specHelper = require(__dirname + '/../../specHelper');
 var api;
 
 describe('integartion:lists', function(){
-  describe('#associateListPeople', function(done){
+  describe('#associateListPeople', function(){
     var people = [];
     var event;
     var campaign;

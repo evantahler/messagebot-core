@@ -67,7 +67,7 @@ var loader = function(api){
     };
 
     // person
-    view.person = person.data;
+    view.person = Object.assign({}, person.data);
     view.person.createdAt = expandDate(view.person.createdAt);
     view.person.updatedAt = expandDate(view.person.updatedAt);
     Object.keys(view.person.data).forEach(function(k){
@@ -154,7 +154,10 @@ var loader = function(api){
             jobs.push(function(done){
               try{
                 html = mustache.render(template.template, view);
-                if(message){ html = html.replace(/%%MESSAGEGUID%%/g, message.data.guid); }
+                if(message){
+                  html = html.replace(/%%MESSAGEGUID%%/g, message.data.guid);
+                  view.beacon = view.beacon.replace(/%%MESSAGEGUID%%/g, message.data.guid);
+                }
                 done();
               }catch(e){
                 return done(e);
