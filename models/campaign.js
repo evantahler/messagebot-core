@@ -15,7 +15,7 @@ var loader = function(api){
       api.tasks.enqueue('campaigns:sendMessage', {
         listId: list.id,
         campaignId: campaign.id,
-        listPersonId: listPerson.id,
+        personGuid: listPerson.personGuid,
       }, 'messagebot:campaigns', done);
     }, callback);
   };
@@ -168,7 +168,7 @@ var loader = function(api){
             async.series(jobs, callback);
           },
 
-          apiData: function(api){
+          apiData: function(){
             return {
               id:                this.id,
               name:              this.name,

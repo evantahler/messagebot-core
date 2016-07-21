@@ -35,7 +35,7 @@ var loader = function(api){
 
       {
         instanceMethods: {
-          apiData: function(api){
+          apiData: function(){
             return {
               id:        this.id,
               name:      this.name,

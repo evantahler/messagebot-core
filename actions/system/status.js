@@ -33,7 +33,7 @@ exports.status = {
       data.response.node.actionheroVersion = api.actionheroVersion;
       data.response.node.uptime            = new Date().getTime() - api.bootTime;
       data.response.node.version           = packageJSON.version,
-      data.response.node.team              = team.apiData(api);
+      data.response.node.team              = team.apiData();
 
       done();
     });

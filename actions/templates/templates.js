@@ -36,7 +36,7 @@ exports.templatesList = {
       data.response.templates = [];
 
       response.rows.forEach(function(template){
-        data.response.templates.push(template.apiData(api));
+        data.response.templates.push(template.apiData());
       });
 
       next();

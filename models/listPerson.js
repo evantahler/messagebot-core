@@ -25,7 +25,7 @@ var loader = function(api){
       },
       {
         instanceMethods: {
-          apiData: function(api){
+          apiData: function(){
             return {
               id:           this.id,
               listId:       this.listId,

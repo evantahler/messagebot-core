@@ -3,14 +3,7 @@ var specHelper = require(__dirname + '/../specHelper');
 var api;
 
 describe('general:applicaiton', function(){
-
-  before(function(done){
-    specHelper.start(function(error, a){
-      api = a; done(error);
-    });
-  });
-
-  after(function(done){ specHelper.stop(done); });
+  beforeEach(function(){ api = specHelper.api; });
 
   it('can boot', function(done){
     api.running.should.equal(true);

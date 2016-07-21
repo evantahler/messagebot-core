@@ -107,7 +107,7 @@ exports.personView = {
         personGuid: person.data.guid
       }, include: [api.models.list]}).then(function(listPeople){
         listPeople.forEach(function(listPerson){
-          var d = listPerson.list.apiData(api);
+          var d = listPerson.list.apiData();
           d.joinedAt = listPerson.createdAt;
           data.response.lists.push(d);
         });

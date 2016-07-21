@@ -65,7 +65,7 @@ exports.campaignCreate = {
     campaign.teamId = data.session.teamId;
 
     campaign.save().then(function(){
-      data.response.campaign = campaign.apiData(api);
+      data.response.campaign = campaign.apiData();
       next();
     }).catch(function(errors){
       next(errors.errors[0].message);
@@ -92,7 +92,7 @@ exports.campaignView = {
       teamId: data.session.teamId,
     }}).then(function(campaign){
       if(!campaign){ return next(new Error('campaign not found')); }
-      data.response.campaign = campaign.apiData(api);
+      data.response.campaign = campaign.apiData();
       next();
     }).catch(next);
   }
@@ -135,7 +135,7 @@ exports.campaignCopy = {
 
       });
       newCampaign.save().then(function(){
-        data.response.campaign = newCampaign.apiData(api);
+        data.response.campaign = newCampaign.apiData();
         next();
       }).catch(function(errors){
         next(errors.errors[0].message);
@@ -203,7 +203,7 @@ exports.campaignEdit = {
       if(!campaign){ return next(new Error('campaign not found')); }
 
       campaign.updateAttributes(data.params).then(function(){
-        data.response.campaign = campaign.apiData(api);
+        data.response.campaign = campaign.apiData();
         next();
       }).catch(next);
     }).catch(next);

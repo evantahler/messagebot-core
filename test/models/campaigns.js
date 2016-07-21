@@ -1,17 +1,10 @@
 var should     = require('should');
 var specHelper = require(__dirname + '/../specHelper');
-var api;
 var campaign;
+var api;
 
 describe('models:campaigns', function(){
-
-  before(function(done){
-    specHelper.start(function(error, a){
-      api = a; done(error);
-    });
-  });
-
-  after(function(done){ specHelper.stop(done); });
+  beforeEach(function(){ api = specHelper.api; });
 
   afterEach(function(done){
     if(campaign.isNewRecord === false){
@@ -114,6 +107,12 @@ describe('models:campaigns', function(){
       errors.errors[0].message.should.equal('type is invalid');
       done();
     });
+  });
+
+  it('returns valid types', function(done){
+    campaign = api.models.campaign.build();
+    var validTypes = campaign.validTypes().should.deepEqual(['simple', 'recurring', 'trigger']);
+    done();
   });
 
 });

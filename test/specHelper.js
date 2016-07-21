@@ -116,7 +116,9 @@ var specHelper = {
 
   stop: function(callback){
     var self = this;
-    self.actionhero.stop(callback);
+    self.actionhero.stop(function(error){
+      callback(error);
+    });
   },
 
   refresh: function(callback){
@@ -129,14 +131,24 @@ var specHelper = {
     self.doBash('curl -X POST http://localhost:9200/_flush?wait_for_ongoing', callback, true);
   },
 
-  ensureWrite: function(callback){
+  ensureWrite: function(testName, callback){
     var self = this;
+    var counter = 0;
+    var sleepAndWrite = function(totalSeconds, callback){
+      if(counter >= totalSeconds){ console.log(''); return callback(); }
+      process.stdout.write('.');
+      setTimeout(function(){ sleepAndWrite(totalSeconds, callback); }, 1000);
+      counter++;
+    };
+
     async.series([
       function(done){ self.flush(done); },
       function(done){ self.refresh(done); },
       // TOOD: Why doesn't FLUSH + REFERSH force index to be in sync?
-      function(done){ console.log('....................(sleeping for commit)'); done(); },
-      function(done){ setTimeout(done, 10001); },
+      function(done){ console.log(''); done(); },
+      function(done){ process.stdout.write('>> sleeping for commit (' + testName + ')'); done(); },
+      function(done){ sleepAndWrite(10, done); },
+      function(done){ process.nextTick(done); },
     ], callback);
   },
 
@@ -187,5 +199,9 @@ if(process.env.SKIP_MIGRATE !== 'true'){
   before(function(done){ specHelper.clear(done); });
   before(function(done){ specHelper.migrate(done); });
 }
+
+/*--- Start up the server ---*/
+before(function(done){ specHelper.start(done); });
+after(function(done){ specHelper.stop(done); });
 
 module.exports = specHelper;

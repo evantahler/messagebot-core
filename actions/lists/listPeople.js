@@ -195,7 +195,7 @@ exports.listPeopleCount = {
     }}).then(function(list){
       if(!list){ return next(new Error('list not found')); }
 
-      data.response.list = list.apiData(api);
+      data.response.list = list.apiData();
       api.tasks.enqueue('lists:peopleCount', {listId: list.id}, 'messagebot:lists', next);
     }).catch(next);
   }

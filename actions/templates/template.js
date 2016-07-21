@@ -19,7 +19,7 @@ exports.templateCreate = {
     template.teamId = data.session.teamId;
 
     template.save().then(function(){
-      data.response.template = template.apiData(api);
+      data.response.template = template.apiData();
       next();
     }).catch(function(errors){
       next(errors.errors[0].message);
@@ -46,7 +46,7 @@ exports.templateView = {
       teamId: data.session.teamId,
     }}).then(function(template){
       if(!template){ return next(new Error('template not found')); }
-      data.response.template = template.apiData(api);
+      data.response.template = template.apiData();
       next();
     }).catch(next);
   }
@@ -125,7 +125,7 @@ exports.templateCopy = {
         template:    template.template,
       });
       newTemplate.save().then(function(){
-        data.response.template = newTemplate.apiData(api);
+        data.response.template = newTemplate.apiData();
         next();
       }).catch(function(errors){
         next(errors.errors[0].message);
@@ -158,7 +158,7 @@ exports.templateEdit = {
     }}).then(function(template){
       if(!template){ return next(new Error('template not found')); }
       template.updateAttributes(data.params).then(function(){
-        data.response.template = template.apiData(api);
+        data.response.template = template.apiData();
         next();
       }).catch(next);
     }).catch(next);

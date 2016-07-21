@@ -18,7 +18,7 @@ exports.sessionCreate = {
         else{
           api.session.create(data.connection, user, function(error, sessionData){
             if(error){ return next(error); }
-            data.response.user      = user.apiData(api);
+            data.response.user      = user.apiData();
             data.response.success   = true;
             next();
           });
@@ -56,7 +56,7 @@ exports.sessionCheck = {
       }else{
         api.models.user.findOne({where: {id: sessionData.userId}}).then(function(user){
           if(!user){ return next(new Error('user not found')); }
-          data.response.user      = user.apiData(api);
+          data.response.user      = user.apiData();
           data.response.success   = true;
           next();
         }).catch(next);

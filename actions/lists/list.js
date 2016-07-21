@@ -56,7 +56,7 @@ exports.listCreate = {
     list.save().then(
       api.models.list.findOne({where: {name: data.params.name}})
     ).then(function(listObj){
-      data.response.list = listObj.apiData(api);
+      data.response.list = listObj.apiData();
       api.tasks.enqueue('lists:peopleCount', {listId: listObj.id}, 'messagebot:lists', next);
     }).catch(function(errors){
       next(errors.errors[0].message);
@@ -87,7 +87,7 @@ exports.listView = {
       teamId: data.session.teamId,
     }}).then(function(list){
       if(!list){ return next(new Error('list not found')); }
-      data.response.list = list.apiData(api);
+      data.response.list = list.apiData();
       next();
     }).catch(next);
   }
@@ -123,7 +123,7 @@ exports.listCopy = {
         messageQuery: list.messageQuery,
       });
       newList.save().then(function(){
-        data.response.list = newList.apiData(api);
+        data.response.list = newList.apiData();
 
         api.utils.findInBatches(api.models.listPerson, {where: {listId: list.id}}, function(listPerson, done){
           var newListPerson = api.models.listPerson.build({
@@ -185,7 +185,7 @@ exports.listEdit = {
       if(!list){ return next(new Error('list not found')); }
 
       list.updateAttributes(data.params).then(function(){
-        data.response.list = list.apiData(api);
+        data.response.list = list.apiData();
         api.tasks.enqueue('lists:peopleCount', {listId: list.id}, 'messagebot:lists', next);
       }).catch(next);
     }).catch(next);

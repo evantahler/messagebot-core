@@ -39,7 +39,10 @@ exports.task = {
     });
 
     jobs.push(function(done){
-      api.models.listPerson.findOne({where: {id: params.listPersonId}}).then(function(lp){
+      api.models.listPerson.findOne({where: {
+        personGuid: params.personGuid,
+        listId: list.id,
+      }}).then(function(lp){
         listPerson = lp;
         if(!listPerson){ return done(new Error('listPerson not found')); }
         done();
@@ -114,12 +117,17 @@ exports.task = {
     });
 
     jobs.push(function(done){
-      var sendParams = {body: body};
-      transport.campaignVariables.forEach(function(v){
-        sendParams[v] = campaign.campaignVariables[v];
-      });
+      if(api.env !== 'test'){
+        var sendParams = {body: body};
+        transport.campaignVariables.forEach(function(v){
+          sendParams[v] = campaign.campaignVariables[v];
+        });
 
-      transport.deliver(sendParams, person, done);
+        transport.deliver(sendParams, person, done);
+      }else{
+        api.log('not sending messages in env=test');
+        done();
+      }
     });
 
     async.series(jobs, next);

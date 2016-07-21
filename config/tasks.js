@@ -62,8 +62,9 @@ exports.default = {
 exports.test = {
   tasks: function(api){
     return {
-      timeout: 100,
-      checkTimeout: 50
+      minTaskProcessors: 0,
+      minTaskProcessors: 0,
+      timeout: 0,
     };
   }
 };

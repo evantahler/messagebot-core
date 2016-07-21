@@ -48,7 +48,7 @@ exports.listsList = {
       data.response.lists = [];
 
       response.rows.forEach(function(list){
-        data.response.lists.push(list.apiData(api));
+        data.response.lists.push(list.apiData());
       });
 
       next();

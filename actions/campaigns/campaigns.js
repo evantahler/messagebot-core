@@ -64,7 +64,7 @@ exports.campaignsList = {
       data.response.campaigns = [];
 
       response.rows.forEach(function(campaign){
-        data.response.campaigns.push(campaign.apiData(api));
+        data.response.campaigns.push(campaign.apiData());
       });
 
       next();

@@ -6,15 +6,10 @@ var api;
 var url;
 
 describe('actions:session', function(){
-
-  before(function(done){
-    specHelper.start(function(error, a){
-      api = a; done(error);
-      url = 'http://' + api.config.servers.web.bindIP + ':' + api.config.servers.web.port + route;
-    });
+  beforeEach(function(){
+    api = specHelper.api;
+    url = 'http://' + api.config.servers.web.bindIP + ':' + api.config.servers.web.port + route;
   });
-
-  after(function(done){ specHelper.stop(done); });
 
   it('can login (happy)', function(done){
     request.post(url, {form: { email: 'admin@localhost.com', password: 'password' }}, function(error, response){

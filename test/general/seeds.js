@@ -3,14 +3,7 @@ var specHelper = require(__dirname + '/../specHelper');
 var api;
 
 describe('general:seeds', function(){
-
-  before(function(done){
-    specHelper.start(function(error, a){
-      api = a; done(error);
-    });
-  });
-
-  after(function(done){ specHelper.stop(done); });
+  beforeEach(function(){ api = specHelper.api; });
 
   it('has the first team', function(done){
     api.models.team.findOne({where: {id: 1}}).then(function(team){

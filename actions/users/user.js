@@ -38,7 +38,7 @@ exports.userCreate = {
 
         user.personGuid = person.data.guid;
         user.save().then(function(){
-          data.response.user = user.apiData(api);
+          data.response.user = user.apiData();
           next(error);
         }).catch(function(errors){
           next(errors.errors[0].message);
@@ -72,7 +72,7 @@ exports.userView = {
       teamId: data.session.teamId,
     }}).then(function(user){
       if(!user){ return next(new Error('user not found')); }
-      data.response.user = user.apiData(api);
+      data.response.user = user.apiData();
       next();
     }).catch(next)
     ;
@@ -121,7 +121,7 @@ exports.userEdit = {
       }
 
       user.updateAttributes(data.params).then(function(){
-        data.response.user = user.apiData(api);
+        data.response.user = user.apiData();
 
         var person = new api.models.person(team, user.personGuid);
 

@@ -203,7 +203,7 @@ var loader = function(api){
             }
           },
 
-          apiData: function(api){
+          apiData: function(){
             return {
               id:           this.id,
               name:         this.name,

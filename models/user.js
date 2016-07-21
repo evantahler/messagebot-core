@@ -90,7 +90,7 @@ var loader = function(api){
             bcrypt.compare(pw, self.passwordHash, callback);
           },
 
-          apiData: function(api){
+          apiData: function(){
             return {
               id:         this.id,
               personGuid: this.personGuid,

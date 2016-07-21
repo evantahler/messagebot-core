@@ -4,14 +4,7 @@ var api;
 var template;
 
 describe('models:templates', function(){
-
-  before(function(done){
-    specHelper.start(function(error, a){
-      api = a; done(error);
-    });
-  });
-
-  after(function(done){ specHelper.stop(done); });
+  beforeEach(function(){ api = specHelper.api; });
 
   afterEach(function(done){
     if(template.isNewRecord === false){

@@ -80,7 +80,7 @@ var loader = function(api){
     view.events = events;
 
     // template
-    view.template = template.apiData(api);
+    view.template = template.apiData();
     delete view.template.template;
     view.template.createdAt = expandDate(view.template.createdAt);
     view.template.updatedAt = expandDate(view.template.updatedAt);
@@ -170,7 +170,7 @@ var loader = function(api){
             });
           },
 
-          apiData: function(api){
+          apiData: function(){
             return {
               id:           this.id,
 
