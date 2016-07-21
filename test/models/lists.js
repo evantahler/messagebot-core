@@ -91,4 +91,10 @@ describe('models:lists', function(){
     });
   });
 
+  it('returns valid types', function(done){
+    list = api.models.list.build();
+    list.validTypes().should.deepEqual(['dynamic', 'static']);
+    done();
+  });
+
 });

@@ -109,6 +109,7 @@ var specHelper = {
   start: function(callback){
     var self = this;
     self.actionhero.start(function(error, a){
+      console.log('*** ActionHero Started (test) ***');
       self.api = a;
       callback(error, self.api);
     });
@@ -117,6 +118,7 @@ var specHelper = {
   stop: function(callback){
     var self = this;
     self.actionhero.stop(function(error){
+      console.log('*** ActionHero Stopped (test) ***');
       callback(error);
     });
   },

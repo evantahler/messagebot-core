@@ -1,18 +1,18 @@
 var should     = require('should');
 var async      = require('async');
-var specHelper = require(__dirname + '/../specHelper');
+var specHelper = require(__dirname + '/../../specHelper');
 var api;
 
 describe('integartion:campaigns', function(){
-  beforeEach(function(){ api = specHelper.api; });
-
-  describe('sending a campaign', function(done){
+  describe('#send', function(done){
     var campaign;
     var person;
     var list;
     var listPerson;
     var template;
     var team;
+
+    beforeEach(function(){ api = specHelper.api; });
 
     beforeEach(function(done){
       api.models.team.findOne().then(function(_team){
@@ -90,9 +90,9 @@ describe('integartion:campaigns', function(){
     afterEach(function(done){ list.destroy().then(function(){ done(); }); });
     afterEach(function(done){ listPerson.destroy().then(function(){ done(); }); });
 
-    it('can send a campaign', function(done){
+    it('#send (creating messages)', function(done){
       this.timeout(30 * 1000);
-      var testName = this.test.fullTitle()
+      var testName = this.test.fullTitle();
       var jobs = [];
 
       jobs.push(function(next){

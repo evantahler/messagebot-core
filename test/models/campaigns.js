@@ -111,7 +111,7 @@ describe('models:campaigns', function(){
 
   it('returns valid types', function(done){
     campaign = api.models.campaign.build();
-    var validTypes = campaign.validTypes().should.deepEqual(['simple', 'recurring', 'trigger']);
+    campaign.validTypes().should.deepEqual(['simple', 'recurring', 'trigger']);
     done();
   });
 

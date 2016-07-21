@@ -160,15 +160,23 @@ var loader = function(api){
 
               jobs.push(function(done){
                 var o = {};
+                var needed = 0;
+                queryResults.final = [];
+
                 ['people', 'events', 'messages'].forEach(function(type){
                   if(queryResults[type] !== false){
+                    needed++;
                     queryResults[type].forEach(function(guid){
-                      o[guid] = guid;
+                      if(!o[guid]){ o[guid] = 0; }
+                      o[guid] = o[guid] + 1;
                     });
                   }
                 });
 
-                queryResults.final = Object.keys(o);
+                Object.keys(o).forEach(function(guid){
+                  if(o[guid] === needed){ queryResults.final.push(guid); }
+                });
+
                 done();
               });
 
