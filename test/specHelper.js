@@ -1,7 +1,6 @@
 var actionheroPrototype = require('actionhero').actionheroPrototype;
 var async   = require('async');
 var should  = require('should');
-var request = require('request');
 var exec    = require('child_process').exec;
 
 var specHelper = {
@@ -121,43 +120,23 @@ var specHelper = {
     });
   },
 
-  login: function(jar, email, password, callback){
+  login: function(connection, email, password, callback){
     var self = this;
-    request.post({
-      url: 'http://' + self.api.config.servers.web.bindIP + ':' + self.api.config.servers.web.port + '/api/session',
-      jar: jar,
-      form: { email: email, password: password }
-    }, function(error, response){
-      should.not.exist(error);
-      var body = JSON.parse(response.body);
-      body.success.should.equal(true);
-      body.user.email.should.equal(email);
+    connection.params = {
+      email: email,
+      password: password
+    };
 
-      callback(null);
-    });
+    self.api.specHelper.runAction('session:create', connection, callback);
   },
 
-  requestWithLogin: function(email, password, route, verb, params, callback){
+  requestWithLogin: function(email, password, action, params, callback){
     var self = this;
-    var jar = request.jar();
-    self.login(jar, email, password, function(error){
-      if(error){ return callback(error); }
-
-      if(verb === 'get'){
-        route += '?';
-        for(var key in params){ route += key + '=' + params[key] + '&'; }
-      }
-
-      var url = 'http://' + self.api.config.servers.web.bindIP + ':' + self.api.config.servers.web.port + route;
-
-      request[verb]({
-        url: url,
-        jar: jar,
-        form: params
-      }, function(error, data, response){
-        if(error){ return callback(error); }
-        return callback(error, JSON.parse(response));
-      });
+    var connection = new self.api.specHelper.connection();
+    self.login(connection, email, password, function(loginResponse){
+      if(loginResponse.error){ return callback(loginResponse); }
+      connection.params = params;
+      self.api.specHelper.runAction(action, connection, callback);
     });
   },
 };
