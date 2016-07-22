@@ -251,7 +251,7 @@ exports.listPeopleView = {
         });
 
         var alias = api.utils.cleanTeamName(team.name) + '-' + api.env + '-' + 'people';
-        api.elasticsearch.mget(api, alias, personGuids, function(error, results){
+        api.elasticsearch.mget(alias, personGuids, function(error, results){
           if(error){ return next(error); }
           data.response.people = results;
           next();

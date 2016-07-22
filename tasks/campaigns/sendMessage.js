@@ -110,8 +110,6 @@ exports.task = {
       message.data.body       = body;
       // message.data.view       = view;
       message.data.sentAt     = new Date();
-      message.data.readAt     = 0;
-      message.data.actedAt    = 0;
 
       message.create(done);
     });

@@ -149,7 +149,7 @@ var loader = function(api){
               ].forEach(function(collection){
                 if(collection.q){
                   jobs.push(function(done){
-                    api.elasticsearch.scroll(api, collection.alias, collection.q, ['guid', 'personGuid'], function(error, data, count){
+                    api.elasticsearch.scroll(collection.alias, collection.q, ['guid', 'personGuid'], function(error, data, count){
                       if(error){ return done(error); }
                       queryResults[collection.set] = extractor(data);
                       done();

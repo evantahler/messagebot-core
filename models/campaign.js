@@ -125,6 +125,46 @@ var loader = function(api){
             return validTypes;
           },
 
+          stats: function(start, end, interval, callback){
+            var campaign = this;
+            var jobs = [];
+            var terms = {};
+            var totals = {};
+            var searchTerms = ['sentAt', 'readAt', 'actedAt'];
+
+            var team = api.utils.determineActionsTeam({params: {teamId: campaign.teamId}});
+            var alias = api.utils.cleanTeamName(team.name) + '-' + api.env + '-' + 'messages';
+
+            searchTerms.forEach(function(term){
+              jobs.push(function(done){
+                api.elasticsearch.aggregation(
+                  alias,
+                  ['campaignId', term],
+                  [campaign.id, '_exists'],
+                  start,
+                  end,
+                  'createdAt',
+                  'date_histogram',
+                  'createdAt',
+                  interval,
+                  function(error, buckets){
+                    if(error){ return done(error); }
+
+                    terms[term] = buckets.buckets;
+                    var total = 0;
+                    buckets.buckets.forEach(function(bucket){ total += bucket.doc_count; });
+                    totals[term] = total;
+                    done();
+                  }
+                );
+              });
+            });
+
+            async.series(jobs, function(error){
+              callback(error, terms, totals);
+            });
+          },
+
           send: function(callback){
             var campaign = this;
             var jobs = [];

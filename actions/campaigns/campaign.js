@@ -238,58 +238,25 @@ exports.campaignStats = {
   },
 
   run: function(api, data, next){
-    var jobs = [];
-    var campaign;
-
     var team = api.utils.determineActionsTeam(data);
     if(!team){ return next(new Error('Team not found for this request')); }
 
-    var alias = api.utils.cleanTeamName(team.name) + '-' + api.env + '-' + 'messages';
+    api.models.campaign.findOne({where: {
+      id: data.params.campaignId,
+      teamId: data.session.teamId,
+    }}).then(function(campaign){
+      if(!campaign){ return next(new Error('campaign not found')); }
 
-    jobs.push(function(done){
-      api.models.campaign.findOne({where: {
-        id: data.params.campaignId,
-        teamId: data.session.teamId,
-      }}).then(function(_campaign){
-        campaign = _campaign;
-        if(!campaign){ return next(new Error('campaign not found')); }
-        done();
-      }).catch(done);
-    });
-
-    data.response.totals = {};
-
-    [
-      'sentAt',
-      'readAt',
-      'actedAt'
-    ].forEach(function(term){
-      jobs.push(function(done){
-        api.elasticsearch.aggregation(
-          api,
-          alias,
-          ['campaignId', term],
-          [campaign.id, '_exists'],
-          data.params.start,
-          data.params.end,
-          'createdAt',
-          'date_histogram',
-          'createdAt',
-          data.params.interval,
-          function(error, buckets){
-            if(error){ return done(error); }
-
-            data.response[term] = buckets.buckets;
-            var total = 0;
-            buckets.buckets.forEach(function(bucket){ total += bucket.doc_count; });
-            data.response.totals[term] = total;
-            done();
-          }
-        );
+      campaign.stats(data.params.start, data.params.end, data.params.interval, function(error, terms, totals){
+        if(error){ return next(error); }
+        data.response.totals = totals;
+        Object.keys(terms).forEach(function(term){
+          data.response[term] = terms[term];
+        });
+        next(error);
       });
-    });
 
-    async.series(jobs, next);
+    }).catch(next);
   }
 };
 

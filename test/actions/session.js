@@ -1,5 +1,4 @@
 var should     = require('should');
-var request    = require('request');
 var async      = require('async');
 var specHelper = require(__dirname + '/../specHelper');
 var api;

@@ -30,18 +30,18 @@ module.exports = {
       ],
 
       'properties': {
-        'guid':       { 'type': 'string' },
-        'createdAt':  { 'type':  'date'  },
-        'updatedAt':  { 'type':  'date'  },
-        'data':       { 'type': 'object' },
+        'guid':       { 'type': 'string', 'required': true },
+        'createdAt':  { 'type':  'date', 'required': true  },
+        'updatedAt':  { 'type':  'date', 'required': true  },
+        'data':       { 'type': 'object', 'required': true },
 
-        'personGuid': { 'type': 'string'  },
-        'campaignId': { 'type': 'integer' },
-        'transport':  { 'type': 'string'  },
-        'body':       { 'type': 'string'  },
-        'sentAt':     { 'type':  'date'   },
-        'readAt':     { 'type':  'date'   },
-        'actedAt':    { 'type':  'date'   }
+        'personGuid': { 'type': 'string', 'required': true  },
+        'campaignId': { 'type': 'integer', 'required': true },
+        'transport':  { 'type': 'string', 'required': true  },
+        'body':       { 'type': 'string', 'required': true  },
+        'sentAt':     { 'type':  'date', 'required': false  },
+        'readAt':     { 'type':  'date', 'required': false  },
+        'actedAt':    { 'type':  'date', 'required': false  }
       }
     }
   },

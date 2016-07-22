@@ -31,7 +31,7 @@ exports.peopleSearch = {
     var team = api.utils.determineActionsTeam(data);
     if(!team){ return next(new Error('Team not found for this request')); }
 
-    api.elasticsearch.search(api, alias(api, team), data.params.searchKeys, data.params.searchValues, data.params.from, data.params.size, data.params.sort, function(error, results, total){
+    api.elasticsearch.search(alias(api, team), data.params.searchKeys, data.params.searchValues, data.params.from, data.params.size, data.params.sort, function(error, results, total){
       if(error){ return next(error); }
       data.response.total  = total;
       data.response.people = results;
@@ -86,7 +86,6 @@ exports.peopleAggregation = {
 
     jobs.push(function(done){
       api.elasticsearch.distinct(
-        api,
         alias(api, team),
         data.params.searchKeys,
         data.params.searchValues,
@@ -109,7 +108,6 @@ exports.peopleAggregation = {
     jobs.push(function(done){
       aggJobs.push(function(aggDone){
         api.elasticsearch.aggregation(
-          api,
           alias(api, team),
           ['guid'],
           ['_exists'],
@@ -135,7 +133,6 @@ exports.peopleAggregation = {
         if(aggJobs.length <= data.params.maximumSelections && (data.params.selections.length === 0 || data.params.selections.indexOf(source) >= 0)){
           aggJobs.push(function(aggDone){
             api.elasticsearch.aggregation(
-              api,
               alias(api, team),
               ['source'].concat(data.params.searchKeys),
               [source].concat(data.params.searchValues),

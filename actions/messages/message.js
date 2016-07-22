@@ -28,14 +28,14 @@ exports.messageCreate = {
     if(!team){ return next(new Error('Team not found for this request')); }
     var message = new api.models.message(team);
 
-    if(data.params.guid){        message.data.guid = data.params.guid;             }
-    if(data.params.personGuid){  message.data.personGuid = data.params.personGuid; }
-    if(data.params.transport){   message.data.transport = data.params.transport;   }
-    if(data.params.body){        message.data.body = data.params.body;             }
-    if(data.params.createdAt){   message.data.createdAt = data.params.createdAt;   }
-    if(data.params.sentAt){      message.data.sentAt = data.params.sentAt;         }
-    if(data.params.readAt){      message.data.readAt = data.params.readAt;         }
-    if(data.params.actedAt){     message.data.actedAt = data.params.actedAt;       }
+    if(data.params.guid){        message.data.guid = data.params.guid;                 }
+    if(data.params.personGuid){  message.data.personGuid = data.params.personGuid;     }
+    if(data.params.transport){   message.data.transport = data.params.transport;       }
+    if(data.params.body){        message.data.body = data.params.body;                 }
+    if(data.params.createdAt){   message.data.createdAt = data.params.createdAt;       }
+    if(data.params.sentAt){      message.data.sentAt = new Date(data.params.sentAt);   }
+    if(data.params.readAt){      message.data.readAt = new Date(data.params.readAt);   }
+    if(data.params.actedAt){     message.data.actedAt = new Date(data.params.actedAt); }
 
     for(var i in data.params.data){
       if(message.data[i] === null || message.data[i] === undefined){
@@ -73,13 +73,13 @@ exports.messageEdit = {
     if(!team){ return next(new Error('Team not found for this request')); }
     var message = new api.models.message(team, data.params.guid);
 
-    if(data.params.guid){       message.data.guid = data.params.guid;             }
-    if(data.params.personGuid){ message.data.personGuid = data.params.personGuid; }
-    if(data.params.transport){  message.data.transport = data.params.transport;   }
-    if(data.params.body){       message.data.body = data.params.body;             }
-    if(data.params.sentAt){     message.data.sentAt = data.params.sentAt;         }
-    if(data.params.readAt){     message.data.readAt = data.params.readAt;         }
-    if(data.params.actedAt){    message.data.actedAt = data.params.actedAt;       }
+    if(data.params.guid){       message.data.guid = data.params.guid;                 }
+    if(data.params.personGuid){ message.data.personGuid = data.params.personGuid;     }
+    if(data.params.transport){  message.data.transport = data.params.transport;       }
+    if(data.params.body){       message.data.body = data.params.body;                 }
+    if(data.params.sentAt){     message.data.sentAt = new Date(data.params.sentAt);   }
+    if(data.params.readAt){     message.data.readAt = new Date(data.params.readAt);   }
+    if(data.params.actedAt){    message.data.actedAt = new Date(data.params.actedAt); }
 
     for(var i in data.params.data){ message.data[i] = data.params.data[i]; }
 
