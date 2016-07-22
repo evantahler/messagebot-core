@@ -90,26 +90,25 @@ describe('integartion:campaigns', function(){
     afterEach(function(done){ listPerson.destroy().then(function(){ done(); }); });
 
     it('#send (creating messages)', function(done){
-      this.timeout(30 * 1000);
       var testName = this.test.fullTitle();
       var jobs = [];
-
-      jobs.push(function(next){
-        specHelper.ensureWrite(testName, next);
-      });
 
       jobs.push(function(next){
         campaign.send(next);
       });
 
       jobs.push(function(next){
-        specHelper.ensureWrite(testName, next);
+        api.specHelper.runTask('campaigns:sendMessage', {
+          listId: list.id,
+          campaignId: campaign.id,
+          personGuid: listPerson.personGuid,
+        }, next);
       });
 
       async.series(jobs, function(error){
         should.not.exist(error);
         var alias = api.utils.cleanTeamName(team.name) + '-' + api.env + '-' + 'messages';
-        api.elasticsearch.search(api, alias, ['campaignId'], [campaign.id], 0, 10, null, function(error, results, total){
+        api.elasticsearch.search(api, alias, ['campaignId'], [campaign.id], 0, 10, null, 1, function(error, results, total){
           should.not.exist(error);
           results.length.should.equal(1);
           results[0].body.should.equal('Hello there, fname');

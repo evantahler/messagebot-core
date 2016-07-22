@@ -53,11 +53,6 @@ describe('integartion:lists', function(){
     });
 
     before(function(done){
-      this.timeout(1000 * 15);
-      specHelper.ensureWrite(this.test.fullTitle(), done);
-    });
-
-    before(function(done){
       list = api.models.list.build({
         teamId:      1,
         name:        'my list',

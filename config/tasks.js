@@ -62,9 +62,9 @@ exports.default = {
 exports.test = {
   tasks: function(api){
     return {
+      scheduler: false,
       minTaskProcessors: 0,
-      minTaskProcessors: 0,
-      timeout: 0,
+      maxTaskProcessors: 0,
     };
   }
 };

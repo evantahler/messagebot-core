@@ -60,11 +60,6 @@ describe('integartion:template', function(){
       message.create(done);
     });
 
-    before(function(done){
-      this.timeout(1000 * 15);
-      specHelper.ensureWrite(this.test.fullTitle(), done);
-    });
-
     before(function(done){ person.hydrate(done); });
 
     after(function(done){ person.del(done); });
