@@ -127,6 +127,7 @@ describe('integartion:campaigns', function(){
       list = api.models.list.build({
         teamId:      1,
         name:        'my list',
+        description: 'my list',
         type:        'static',
         folder:      'default'
       });

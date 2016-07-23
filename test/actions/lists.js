@@ -173,6 +173,8 @@ describe('actions:lists', function(){
 
   describe('list:people', function(){
     var dynamicListId;
+    var person;
+    var csvPeople = [];
 
     before(function(done){
       specHelper.requestWithLogin(email, password, 'list:create', {
@@ -186,36 +188,34 @@ describe('actions:lists', function(){
       });
     });
 
-    describe('list:people:add', function(){
-      var person;
-      var csvPeople = [];
+    before(function(done){
+      person = new api.models.person(team);
+      person.data.source = 'tester';
+      person.data.device = 'phone';
+      person.data.location = [0, 0];
+      person.data.data = {
+        firstName: 'fname',
+        lastName: 'lame',
+        email: 'fake@faker.fake',
+      };
 
-      before(function(done){
-        person = new api.models.person(team);
-        person.data.source = 'tester';
-        person.data.device = 'phone';
-        person.data.location = [0, 0];
-        person.data.data = {
-          firstName: 'fname',
-          lastName: 'lame',
-          email: 'fake@faker.fake',
-        };
+      person.create(done);
+    });
 
-        person.create(done);
-      });
-
-      after(function(done){ person.del(done); });
-      after(function(done){
-        var jobs = [];
-        csvPeople.forEach(function(guid){
-          jobs.push(function(next){
-            var p = new api.models.person(team, guid);
-            p.del(next);
-          });
+    after(function(done){ person.del(done); });
+    after(function(done){
+      var jobs = [];
+      csvPeople.forEach(function(guid){
+        jobs.push(function(next){
+          var p = new api.models.person(team, guid);
+          p.del(next);
         });
-
-        async.series(jobs, done);
       });
+
+      async.series(jobs, done);
+    });
+
+    describe('list:people:add', function(){
 
       it('succeeds with personGuids via Form', function(done){
         specHelper.requestWithLogin(email, password, 'list:people:add', {
@@ -245,7 +245,7 @@ describe('actions:lists', function(){
           file: {path: __dirname + '/../../samples/email-upload.csv' }
         }, function(response){
           should.not.exist(response.error);
-          response.personGuids.length.should.equal(2);
+          response.personGuids.length.should.equal(3);
           csvPeople = response.personGuids;
           done();
         });
@@ -283,20 +283,106 @@ describe('actions:lists', function(){
     });
 
     describe('list:people:delete', function(){
-      it('succeeds with personGuids');
-      it('fails (list is not found)');
-      it('fails (list is not static)');
+      it('succeeds with personGuids', function(done){
+        specHelper.requestWithLogin(email, password, 'list:people:delete', {
+          listId: listId,
+          personGuids: person.data.guid
+        }, function(response){
+          should.not.exist(response.error);
+          response.deletedListPeople.length.should.equal(1);
+          response.deletedListPeople[0].personGuid.should.equal(person.data.guid);
+          done();
+        });
+      });
+
+      it('fails (person not in list)', function(done){
+        specHelper.requestWithLogin(email, password, 'list:people:delete', {
+          listId: listId,
+          personGuids: 'abc123'
+        }, function(response){
+          response.error.should.equal('Error: List Person (guid abc123) not found in this list');
+          done();
+        });
+      });
+
+      it('fails (list is not found)', function(done){
+        specHelper.requestWithLogin(email, password, 'list:people:delete', {
+          listId: 999,
+          personGuids: person.data.guid
+        }, function(response){
+          response.error.should.equal('Error: list not found');
+          done();
+        });
+      });
+
+      it('fails (list is not static)', function(done){
+        specHelper.requestWithLogin(email, password, 'list:people:add', {
+          listId: dynamicListId,
+          personGuids: person.data.guid
+        }, function(response){
+          response.error.should.equal('Error: you can only modify static list membership via this method');
+          done();
+        });
+      });
     });
 
     describe('list:people:count', function(){
-      it('succeeds with personGuids');
-      it('fails (list is not found)');
+      it('succeeds with personGuids', function(done){
+        specHelper.requestWithLogin(email, password, 'list:people:count', {
+          listId: listId,
+        }, function(response){
+          should.not.exist(response.error);
+          done();
+        });
+      });
+
+      it('fails (list is not found)', function(done){
+        specHelper.requestWithLogin(email, password, 'list:people:count', {
+          listId: 999,
+        }, function(response){
+          response.error.should.equal('Error: list not found');
+          done();
+        });
+      });
     });
 
     describe('list:people:view', function(){
-      it('succeeds with all');
-      it('succeeds with limit/offset');
-      it('fails (list is not found)');
+      it('succeeds with all', function(done){
+        specHelper.requestWithLogin(email, password, 'list:people:view', {
+          listId: listId,
+        }, function(response){
+          should.not.exist(response.error);
+          response.total.should.equal(3);
+          response.people.length.should.equal(3);
+          csvPeople.should.containEql(response.people[0].guid);
+          csvPeople.should.containEql(response.people[1].guid);
+          csvPeople.should.containEql(response.people[2].guid);
+          done();
+        });
+      });
+
+      it('succeeds with from/size', function(done){
+        specHelper.requestWithLogin(email, password, 'list:people:view', {
+          listId: listId,
+          from: 1,
+          size: 1
+        }, function(response){
+          should.not.exist(response.error);
+          response.total.should.equal(3);
+          response.people.length.should.equal(1);
+          csvPeople.should.containEql(response.people[0].guid);
+          done();
+        });
+      });
+
+      it('fails (list is not found)', function(done){
+        specHelper.requestWithLogin(email, password, 'list:people:view', {
+          listId: 999,
+        }, function(response){
+          response.error.should.equal('Error: list not found');
+          done();
+        });
+      });
     });
   });
 

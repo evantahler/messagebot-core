@@ -18,6 +18,7 @@ describe('models:lists', function(){
     list = api.models.list.build({
       teamId:      1,
       name:        'my list',
+      description: 'my list',
       type:        'dynamic',
       folder:      'default'
     });
@@ -33,6 +34,7 @@ describe('models:lists', function(){
   it('will not create new list with invalid params (missing requirement)', function(done){
     list = api.models.list.build({
       teamId:      1,
+      description: 'my list',
       folder:      'default'
     });
 
@@ -50,6 +52,7 @@ describe('models:lists', function(){
     list = api.models.list.build({
       teamId:      1,
       name:        'my list',
+      description: 'my list',
       type:        'dynamic',
       folder:      'default'
     });
@@ -59,6 +62,7 @@ describe('models:lists', function(){
       var otherList = api.models.list.build({
         teamId:      1,
         name:        'my list',
+        description: 'my list',
         type:        'dynamic',
         folder:      'default'
       });
@@ -78,6 +82,7 @@ describe('models:lists', function(){
     list = api.models.list.build({
       teamId:      1,
       name:        'my list',
+      description: 'my list',
       type:        'wacky',
       folder:      'default'
     });

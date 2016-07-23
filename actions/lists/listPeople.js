@@ -150,30 +150,25 @@ exports.listPeopleDelete = {
       if(!list){ return next(new Error('list not found')); }
       if(list.type !== 'static'){ return next(new Error('you can only modify static list membership via this method')); }
 
-      if(data.params.personGuids){
-        data.params.personGuids.forEach(function(personGuid){
-          jobs.push(function(done){
-            api.models.listPerson.find({
-              where:{
-                personGuid: personGuid,
-                listId: list.id,
-                teamId: list.teamId
-              }
-            }).then(function(listPerson){
-              if(!listPerson){ return done(); }
-              listPerson.destroy().then(function(){
-                return done();
-              }).catch(done);
+      data.response.deletedListPeople = [];
+      data.params.personGuids.forEach(function(personGuid){
+        jobs.push(function(done){
+          api.models.listPerson.find({
+            where:{
+              personGuid: personGuid,
+              listId: list.id,
+              teamId: list.teamId
+            }
+          }).then(function(listPerson){
+            if(!listPerson){ return done(new Error('List Person (guid ' + personGuid + ') not found in this list')); }
+            data.response.deletedListPeople.push(listPerson.apiData());
+            listPerson.destroy().then(function(){
+              return done();
             }).catch(done);
-          });
+          }).catch(done);
         });
-      }
+      });
 
-      else if(data.params.file){
-        // TODO: this
-      }
-
-      if(jobs.length === 0){ return next(new Error('nothing to edit')); }
       async.series(jobs, function(error){
         if(!error){ api.tasks.enqueue('lists:peopleCount', {listId: list.id}, 'messagebot:lists', next); }
         else{ return next(error); }
@@ -265,7 +260,6 @@ exports.listPeopleView = {
         });
 
       }).catch(next);
-
     }).catch(next);
   }
 };
