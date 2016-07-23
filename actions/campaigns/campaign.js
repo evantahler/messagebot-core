@@ -31,7 +31,7 @@ exports.campaignCreate = {
       formatter: function(p){ return parseInt(p); }
     },
     folder: {
-      required: true,
+      required: false,
       defualt: function(){ return 'default'; }
     },
     type: { required: true },

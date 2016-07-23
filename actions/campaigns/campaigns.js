@@ -34,14 +34,13 @@ exports.campaignsList = {
     },
     order: {
       required: false,
-      default: 'sentAt DESC, createdAt DESC'
+      default: 'sentAt DESC, name ASC, createdAt DESC'
     }
   },
 
   run: function(api, data, next){
 
     var query = {
-      order: 'folder asc, name asc',
       offset: data.params.from,
       limit: data.params.size,
       order: data.params.order,

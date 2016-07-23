@@ -97,6 +97,13 @@ var specHelper = {
     async.series(jobs, callback);
   },
 
+  truncate: function(table, callback){
+    var self = this;
+    self.api.sequelize.sequelize.query('truncate table `' + table + '`').then(function(){
+      callback();
+    }).catch(callback);
+  },
+
   initialize: function(callback){
     var self = this;
     self.actionhero.initialize(function(error, a){
