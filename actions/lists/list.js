@@ -26,9 +26,10 @@ exports.listCreate = {
   middleware:             ['logged-in-session', 'role-required-admin'],
 
   inputs: {
-    name:   { required: true },
+    name:        { required: true },
+    description: { required: true },
     folder: {
-      required: true,
+      required: false,
       defualt: function(){ return 'default'; }
     },
     type: { required: true },
@@ -115,6 +116,7 @@ exports.listCopy = {
       if(!list){ return next(new Error('list not found')); }
       var newList = api.models.list.build({
         name:         data.params.name,
+        description:  list.description,
         teamId:       list.teamId,
         folder:       list.folder,
         type:         list.type,
@@ -152,9 +154,10 @@ exports.listEdit = {
   middleware:             ['logged-in-session', 'role-required-admin'],
 
   inputs: {
-    name:   { required: false },
-    folder: { required: false },
-    type:   { required: false },
+    name:        { required: false },
+    description: { required: false },
+    folder:      { required: false },
+    type:        { required: false },
 
     personQuery:    {
       required: false,

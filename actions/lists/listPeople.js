@@ -3,9 +3,14 @@ var fs           = require('fs');
 var csv          = require('fast-csv');
 
 var guidListFormatter = function(p){
+  var arr = [];
   if(Array.isArray(p)){ return p; }
   p = p.replace(/\s/g, '');
-  return p.split(',');
+  p.split(',').forEach(function(guid){
+    if(guid && guid.length > 0){ arr.push(guid); }
+  });
+
+  return arr;
 };
 
 exports.listPeopleAdd = {
@@ -30,13 +35,15 @@ exports.listPeopleAdd = {
 
   run: function(api, data, next){
     var team = api.utils.determineActionsTeam(data);
+    var jobs = [];
+    data.response.personGuids = [];
+
     if(!team){ return next(new Error('Team not found for this request')); }
 
     api.models.list.findOne({where: {
       id: data.params.listId,
       teamId: data.session.teamId,
     }}).then(function(list){
-      var jobs = [];
       if(!list){ return next(new Error('list not found')); }
       if(list.type !== 'static'){ return next(new Error('you can only modify static list membership via this method')); }
 
@@ -49,19 +56,18 @@ exports.listPeopleAdd = {
         });
       };
 
-      if(data.params.personGuids){
+      if(data.params.personGuids && data.params.personGuids.length > 0){
         data.params.personGuids.forEach(function(personGuid){
           jobs.push(function(done){
             var person = new api.models.person(team, personGuid);
             person.hydrate(function(error){
               if(error){ return done(new Error('Error adding guid #' + personGuid + ': ' + String(error))); }
-              api.models.listPerson.findOrCreate({
-                where:{
-                  personGuid: personGuid,
-                  listId: list.id,
-                  teamId: list.teamId,
-                }
+              api.models.listPerson.create({
+                personGuid: person.data.guid,
+                listId: list.id,
+                teamId: list.teamId,
               }).then(function(){
+                data.response.personGuids.push(person.data.guid);
                 done();
               }).catch(done);
             });
@@ -82,8 +88,8 @@ exports.listPeopleAdd = {
           jobs.push(function(done){
             var person = new api.models.person(team);
 
-            if(d.guid){        person.data.guid = d.guid;               }
-            if(d.createdAt){   person.data.createdAt = d.createdAt;     }
+            if(d.guid){        person.data.guid = d.guid;           }
+            if(d.createdAt){   person.data.createdAt = d.createdAt; }
 
             for(var i in d){
               if(person.data[i] === null || person.data[i] === undefined){
@@ -91,15 +97,16 @@ exports.listPeopleAdd = {
               }
             }
 
+            if(!person.data.location){ person.data.location = []; }
+
             person.create(function(error){
               if(error){ return done(new Error('Error adding person ' + JSON.stringify(d) + ' | ' + error)); }
-              api.models.listPerson.findOrCreate({
-                where:{
-                  personGuid: person.data.guid,
-                  listId: list.id,
-                  teamId: list.teamId,
-                }
+              api.models.listPerson.create({
+                personGuid: person.data.guid,
+                listId: list.id,
+                teamId: list.teamId,
               }).then(function(){
+                data.response.personGuids.push(person.data.guid);
                 done();
               }).catch(done);
             });
@@ -109,7 +116,7 @@ exports.listPeopleAdd = {
         fileStream.pipe(csvStream);
       }
 
-      else{ return next(new Error('no people provided')); }
+      else{ return next(new Error('No people are provided')); }
     }).catch(next);
   }
 };

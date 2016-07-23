@@ -33,6 +33,10 @@ var loader = function(api){
           type: Sequelize.STRING,
           allowNull: false,
         },
+        'description': {
+          type: Sequelize.TEXT,
+          allowNull: false,
+        },
         'folder': {
           type: Sequelize.STRING,
           allowNull: false,
@@ -215,6 +219,7 @@ var loader = function(api){
             return {
               id:           this.id,
               name:         this.name,
+              description:  this.description,
               folder:       this.folder,
               type:         this.type,
 

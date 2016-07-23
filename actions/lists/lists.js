@@ -28,13 +28,17 @@ exports.listsList = {
       default:   function(p){ return 100; },
     },
     folder: { required: false },
+    order: {
+      required: false,
+      default: 'name ASC, createdAt DESC'
+    }
   },
 
   run: function(api, data, next){
 
     var query = {
       where: { teamId: data.session.teamId },
-      order: 'folder asc, name asc',
+      order: data.params.order,
       offset: data.params.from,
       limit: data.params.size,
     };

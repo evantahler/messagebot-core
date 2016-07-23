@@ -1,5 +1,3 @@
-firstName, lastName, email
-Evan, Tahler, evan.tahler@gmail.com
-Christina, Hussain, christina.hussain@gmail.com
-Andy, Jih, andy.jih@gmail.com
-Heather, Tahler, heather.tahler@gmail.com
+firstName, lastName, email, source, device
+Evan, Tahler, evan@delicioushat.com, form_upload, phone
+Christina, Hussain, christina@delicioushat.com, form_upload, phone

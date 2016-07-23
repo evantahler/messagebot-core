@@ -20,6 +20,11 @@
             </div>
 
             <div class="form-group">
+              <label>Description</label>
+              <input type="text" name="description" class="form-control" placeholder="new users" ng-model="forms.createList.description">
+            </div>
+
+            <div class="form-group">
               <label>Folder</label>
               <input type="text" name="folder" class="form-control" placeholder="default" ng-model="forms.createList.folder">
             </div>
@@ -71,6 +76,11 @@
             <div class="form-group">
               <label>Name</label>
               <input type="text" name="name" class="form-control" placeholder="new users" ng-model="forms.editList.name">
+            </div>
+
+            <div class="form-group">
+              <label>Description</label>
+              <input type="text" name="name" class="form-control" placeholder="new users" ng-model="forms.editList.description">
             </div>
 
             <div class="form-group">
@@ -142,6 +152,7 @@
             <th>createdAt</th>
             <th>updatedAt</th>
             <th>name</th>
+            <th>description</th>
             <th>folder</th>
             <th>type</th>
             <th>people count</th>
@@ -159,6 +170,7 @@
             <td>{{ list.createdAt }}</td>
             <td>{{ list.updatedAt }}</td>
             <td><strong>{{ list.name }}</strong></td>
+            <td>{{ list.description }}</td>
             <td>{{ list.folder }}</td>
             <td>{{ list.type }}</td>
             <td>{{ list.peopleCount }}</td>
