@@ -35,7 +35,7 @@
             <div class="form-group">
               <label>Role</label>
               <select name="role" class="form-control" ng-model="forms.createUser.role">
-                <option ng-repeat="r in validRoles" value="{{r}}">{{r}}</option>
+                <option ng-repeat="r in roles" value="{{r}}">{{r}}</option>
               </select>
             </div>
 
@@ -85,7 +85,7 @@
             <div class="form-group">
               <label>Role</label>
               <select name="role" class="form-control" ng-model="forms.editUser.role">
-                <option ng-repeat="r in validRoles" value="{{r}}">{{r}}</option>
+                <option ng-repeat="r in roles" value="{{r}}">{{r}}</option>
               </select>
             </div>
 

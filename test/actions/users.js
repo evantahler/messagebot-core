@@ -1,194 +1,394 @@
-// var should     = require('should');
-// var request    = require('request');
-// var specHelper = require(__dirname + '/../specHelper');
-// var route      = 'http://localhost:18080/api/user';
-// var otherUserId;
-//
-// describe('actions:users', function(){
-//
-//   before(function(done){ specHelper.startServer(done); });
-//   after(function(done){ specHelper.api.models.user.truncate().then(done); });
-//   after(function(done){ specHelper.stopServer(done);  });
-//
-//   it('users can see thier info', function(done){
-//     specHelper.requestWithLogin('admin@localhost.com', 'password', route, 'get', {}, function(error, response){
-//       should.not.exist(error);
-//       var body = JSON.parse(response.body);
-//       should.not.exist(body.error);
-//       body.user.email.should.equal('admin@localhost.com');
-//       done();
-//     });
-//   });
-//
-//   it('users see lists of all the users', function(done){
-//     specHelper.requestWithLogin('admin@localhost.com', 'password', 'http://localhost:18080/api/users', 'get', {}, function(error, response){
-//       should.not.exist(error);
-//       var body = JSON.parse(response.body);
-//       should.not.exist(body.error);
-//       body.users.length.should.be.above(0);
-//       body.users.forEach(function(user){
-//         should.exist(user.email);
-//       });
-//       done();
-//     });
-//   });
-//
-//   it('admin users can create another user (happy)(1)', function(done){
-//     specHelper.requestWithLogin('admin@localhost.com', 'password', route, 'post', {
-//       email: 'other-user@gmail.com',
-//       password: 'pass',
-//       firstName: 'f',
-//       lastName: 'l',
-//     }, function(error, response){
-//       should.not.exist(error);
-//       var body = JSON.parse(response.body);
-//       should.not.exist(body.error);
-//       otherUserId = body.user.id;
-//       done();
-//     });
-//   });
-//
-//   it('admin users can create another user (happy)(2)', function(done){
-//     specHelper.requestWithLogin('admin@localhost.com', 'password', route, 'post', {
-//       email: 'other-guy2@gmail.com',
-//       password: 'pass',
-//       firstName: 'f',
-//       lastName: 'l',
-//     }, function(error, response){
-//       should.not.exist(error);
-//       var body = JSON.parse(response.body);
-//       should.not.exist(body.error);
-//       done();
-//     });
-//   });
-//
-//   it('admin users can create another user (sad)', function(done){
-//     specHelper.requestWithLogin('admin@localhost.com', 'password', route, 'post', {
-//       email: 'other-user@gmail.com',
-//       firstName: 'f',
-//       lastName: 'l',
-//     }, function(error, response){
-//       should.not.exist(error);
-//       var body = JSON.parse(response.body);
-//       body.error.should.equal('password is a required parameter for this action');
-//       done();
-//     });
-//   });
-//
-//   it('non-admin users canot create a user', function(done){
-//     specHelper.requestWithLogin('other-user@gmail.com', 'pass', route, 'post', {
-//       email: 'event-another-usre@gmail.com',
-//       password: 'pass',
-//       firstName: 'f',
-//       lastName: 'l',
-//     }, function(error, response){
-//       should.not.exist(error);
-//       var body = JSON.parse(response.body);
-//       body.error.should.equal('admin status requried');
-//       done();
-//     });
-//   });
-//
-//   it('all users can edit thier settings', function(done){
-//     specHelper.requestWithLogin('other-user@gmail.com', 'pass', route, 'put', {
-//       firstName: 'myRealFirstName'
-//     }, function(error, response){
-//       should.not.exist(error);
-//       var body = JSON.parse(response.body);
-//       should.not.exist(body.error);
-//       body.user.firstName.should.equal('myRealFirstName');
-//       done();
-//     });
-//   });
-//
-//   it('admin users can edit another user', function(done){
-//     specHelper.requestWithLogin('admin@localhost.com', 'password', route, 'put', {
-//       firstName: 'fullFirstName',
-//       userId: otherUserId
-//     }, function(error, response){
-//       should.not.exist(error);
-//       var body = JSON.parse(response.body);
-//       should.not.exist(body.error);
-//       body.user.firstName.should.equal('fullFirstName');
-//       done();
-//     });
-//   });
-//
-//   it('non-admin users cannot edit thier state', function(done){
-//     specHelper.requestWithLogin('other-user@gmail.com', 'pass', route, 'put', {
-//       status: 'admin'
-//     }, function(error, response){
-//       should.not.exist(error);
-//       var body = JSON.parse(response.body);
-//       body.error.should.equal('only admin role can modify status');
-//       done();
-//     });
-//   });
-//
-//   it('non-admin users cannot edit a user', function(done){
-//     specHelper.requestWithLogin('other-guy2@gmail.com', 'pass', route, 'put', {
-//       firstName: 'anotherFirstName',
-//       userId: otherUserId
-//     }, function(error, response){
-//       should.not.exist(error);
-//       var body = JSON.parse(response.body);
-//       body.error.should.equal('only admin role can modify other users');
-//       done();
-//     });
-//   });
-//
-//   it('non-admin users cannot delete another user', function(done){
-//     specHelper.requestWithLogin('other-guy2@gmail.com', 'pass', route, 'put', {
-//       firstName: 'anotherFirstName',
-//       userId: otherUserId
-//     }, function(error, response){
-//       should.not.exist(error);
-//       var body = JSON.parse(response.body);
-//       body.error.should.equal('only admin role can modify other users');
-//       done();
-//     });
-//   });
-//
-//   it('admin users can delete another user', function(done){
-//     specHelper.requestWithLogin('other-guy2@gmail.com', 'pass', route, 'del', {
-//       userId: otherUserId
-//     }, function(error, response){
-//       should.not.exist(error);
-//       var body = JSON.parse(response.body);
-//       body.error.should.equal('admin status requried');
-//       done();
-//     });
-//   });
-//
-//   it('admin users cannot delete themselves', function(done){
-//     specHelper.requestWithLogin('admin@localhost.com', 'password', route, 'del', {
-//       userId: 1
-//     }, function(error, response){
-//       should.not.exist(error);
-//       var body = JSON.parse(response.body);
-//       body.error.should.equal('you cannot delete yourself');
-//       done();
-//     });
-//   });
-//
-//   it('can get a list of acceptable statuses', function(done){
-//     specHelper.requestWithLogin('admin@localhost.com', 'password', 'http://localhost:18080/api/user/statuses', 'get', {
-//       userId: 1
-//     }, function(error, response){
-//       should.not.exist(error);
-//       var body = JSON.parse(response.body);
-//       should.not.exist(body.error);
-//       body.validStatuses.should.deepEqual([
-//         'new',
-//         'disabled',
-//         'admin',
-//         'marketer',
-//         'analyst',
-//         'developer',
-//         'designer'
-//       ]);
-//       done();
-//     });
-//   });
-//
-// });
+var should     = require('should');
+var async      = require('async');
+var specHelper = require(__dirname + '/../specHelper');
+var email      = 'admin@localhost.com';
+var password   = 'password';
+var api;
+var team;
+var userId;
+var otherUserId;
+
+describe('actions:user', function(){
+  before(function(){ api = specHelper.api; });
+
+  before(function(done){
+    api.models.team.findOne().then(function(_team){
+      team = _team;
+      done();
+    });
+  });
+
+  var cleanUsersTable = function(callback){
+    var jobs = [];
+    api.models.user.findAll().then(function(users){
+      users.forEach(function(user){
+        if(user.email !== 'admin@localhost.com'){
+          jobs.push(function(next){
+            var person = api.models.person(team, user.personGuid);
+            person.del(next);
+          });
+
+          jobs.push(function(next){
+            user.destroy().then(function(){ next(); }).catch(next);
+          });
+        }
+      });
+
+      async.series(jobs, function(error){
+        if(error){ return callback(error); }
+        callback();
+      });
+    }).catch(callback);
+  };
+
+  before(function(done){ cleanUsersTable(done); });
+  after(function(done){ cleanUsersTable(done); });
+
+  describe('user:create', function(){
+    it('succeeds (admin)', function(done){
+      specHelper.requestWithLogin(email, password, 'user:create', {
+        email: 'user@fake.com',
+        firstName: 'user',
+        lastName: 'user',
+        password: 'abc123',
+        role: 'admin',
+      }, function(response){
+        should.not.exist(response.error);
+        response.user.email.should.equal('user@fake.com');
+        response.user.role.should.equal('admin');
+        should.not.exist(response.user.pasword);
+        userId = response.user.id;
+        done();
+      });
+    });
+
+    it('creates a person with each uesr', function(done){
+      var user = api.models.user.find({where: {id: userId}}).then(function(user){
+        var person = new api.models.person(team, user.personGuid);
+        person.hydrate(function(error){
+          should.not.exist(error);
+          person.data.data.firstName.should.equal('user');
+          done();
+        });
+      }).catch(done);
+    });
+
+    it('succeeds (other role)', function(done){
+      specHelper.requestWithLogin(email, password, 'user:create', {
+        email: 'otherUser@fake.com',
+        firstName: 'user',
+        lastName: 'user',
+        password: 'abc123',
+        role: 'marketer',
+      }, function(response){
+        should.not.exist(response.error);
+        response.user.email.should.equal('otherUser@fake.com');
+        response.user.role.should.equal('marketer');
+        should.not.exist(response.user.pasword);
+        otherUserId = response.user.id;
+        done();
+      });
+    });
+
+    it('succeeds (creates the proper person)', function(done){
+      api.models.user.find({where: {id: userId}}).then(function(user){
+        should.exist(user);
+        var person = api.models.person(team, user.personGuid);
+        person.hydrate(function(error){
+          should.not.exist(error);
+          person.data.data.firstName.should.equal(user.firstName);
+          person.data.data.lastName.should.equal(user.lastName);
+          person.data.data.email.should.equal(user.email);
+          done();
+        });
+      }).catch(done);
+    });
+
+    it('fails (only admin roles can create other uers)', function(done){
+      specHelper.requestWithLogin('otherUser@fake.com', 'abc123', 'user:create', {
+        email: 'someoneElse@fake.com',
+        firstName: 'user',
+        lastName: 'user',
+        password: 'abc123',
+        role: 'admin',
+      }, function(response){
+        response.error.should.equal('Error: admin role requried');
+        done();
+      });
+    });
+
+    it('fails (uniqueness failure)', function(done){
+      specHelper.requestWithLogin(email, password, 'user:create', {
+        email: 'user@fake.com',
+        firstName: 'user',
+        lastName: 'user',
+        password: 'abc123',
+        role: 'admin',
+      }, function(response){
+        response.error.should.equal('Error: emailUniqueIndex must be unique');
+        done();
+      });
+    });
+
+    it('fails (missing param)', function(done){
+      specHelper.requestWithLogin(email, password, 'user:create', {
+        firstName: 'user',
+        lastName: 'user',
+        password: 'abc123',
+        role: 'admin',
+      }, function(response){
+        response.error.should.equal('Error: email is a required parameter for this action');
+        done();
+      });
+    });
+
+  });
+
+  describe('user:view', function(){
+    it('succeeds (admin, self)', function(done){
+      specHelper.requestWithLogin(email, password, 'user:view', {}, function(response){
+        should.not.exist(response.error);
+        response.user.email.should.equal('admin@localhost.com');
+        done();
+      });
+    });
+
+    it('succeeds (admin, other user)', function(done){
+      specHelper.requestWithLogin(email, password, 'user:view', {
+        userId: userId
+      }, function(response){
+        should.not.exist(response.error);
+        response.user.email.should.equal('user@fake.com');
+        done();
+      });
+    });
+
+    it('succeeds (non-admin, self)', function(done){
+      specHelper.requestWithLogin('otherUser@fake.com', 'abc123', 'user:view', {}, function(response){
+        should.not.exist(response.error);
+        response.user.email.should.equal('otherUser@fake.com');
+        done();
+      });
+    });
+
+    it('fails (non-admin, other user)', function(done){
+      specHelper.requestWithLogin('otherUser@fake.com', 'abc123', 'user:view', {
+        userId: userId
+      }, function(response){
+        should.not.exist(response.error);
+        done();
+      });
+    });
+
+    it('fails (not found)', function(done){
+      specHelper.requestWithLogin(email, password, 'user:view', {
+        userId: 999
+      }, function(response){
+        response.error.should.equal('Error: user not found');
+        done();
+      });
+    });
+  });
+
+  describe('user:edit', function(){
+    it('succeeds (admin, self)', function(done){
+      specHelper.requestWithLogin('user@fake.com', 'abc123', 'user:edit', {
+        firstName: 'new first name',
+      }, function(response){
+        should.not.exist(response.error);
+        response.user.firstName.should.equal('new first name');
+        done();
+      });
+    });
+
+    it('edits the person as well', function(done){
+      var user = api.models.user.find({where: {id: userId}}).then(function(user){
+        var person = new api.models.person(team, user.personGuid);
+        person.hydrate(function(error){
+          should.not.exist(error);
+          person.data.data.firstName.should.equal('new first name');
+          done();
+        });
+      });
+    });
+
+    it('succeeds (admin, other user)', function(done){
+      specHelper.requestWithLogin('user@fake.com', 'abc123', 'user:edit', {
+        userId: otherUserId,
+        firstName: 'new first name',
+      }, function(response){
+        should.not.exist(response.error);
+        response.user.firstName.should.equal('new first name');
+        done();
+      });
+    });
+
+    it('succeeds (non-admin, sef)', function(done){
+      specHelper.requestWithLogin('otherUser@fake.com', 'abc123', 'user:edit', {
+        firstName: 'some other first name',
+      }, function(response){
+        should.not.exist(response.error);
+        response.user.firstName.should.equal('some other first name');
+        done();
+      });
+    });
+
+    it('succeeds (non-admin, can change own password)', function(done){
+      specHelper.requestWithLogin('otherUser@fake.com', 'abc123', 'user:edit', {
+        password: 'xyz123',
+      }, function(response){
+        should.not.exist(response.error);
+        done();
+      });
+    });
+
+    it('succeeds (admin, can change other users password)', function(done){
+      specHelper.requestWithLogin('user@fake.com', 'abc123', 'user:edit', {
+        password: 'abc123',
+        userId: otherUserId
+      }, function(response){
+        should.not.exist(response.error);
+        done();
+      });
+    });
+
+    it('succeeds (admin, can change other users role)', function(done){
+      specHelper.requestWithLogin('user@fake.com', 'abc123', 'user:edit', {
+        role: 'analyst',
+        userId: otherUserId
+      }, function(response){
+        should.not.exist(response.error);
+        response.user.role.should.equal('analyst');
+        done();
+      });
+    });
+
+    it('fails (non-admin, can change other users password)', function(done){
+      specHelper.requestWithLogin('otherUser@fake.com', 'abc123', 'user:edit', {
+        password: 'xyz123',
+        userId: userId
+      }, function(response){
+        response.error.should.equal('Error: only admin role can modify other users');
+        done();
+      });
+    });
+
+    it('fails (non-admin, self, change role)', function(done){
+      specHelper.requestWithLogin('otherUser@fake.com', 'abc123', 'user:edit', {
+        role: 'admin',
+      }, function(response){
+        response.error.should.equal('Error: only admin role can modify role');
+        done();
+      });
+    });
+
+    it('fails (non-admin, other user, change role)', function(done){
+      specHelper.requestWithLogin('otherUser@fake.com', 'abc123', 'user:edit', {
+        role: 'admin',
+        userId: userId,
+      }, function(response){
+        response.error.should.equal('Error: only admin role can modify role');
+        done();
+      });
+    });
+
+    it('fails (admin, uniqueness failure)', function(done){
+      specHelper.requestWithLogin('otherUser@fake.com', 'abc123', 'user:edit', {
+        email: 'admin@localhost.com',
+      }, function(response){
+        response.error.should.equal('Error: Validation error');
+        done();
+      });
+    });
+  });
+
+  describe('users:roles', function(){
+    it('succeeds', function(done){
+      specHelper.requestWithLogin(email, password, 'users:roles', {}, function(response){
+        should.not.exist(response.error);
+        response.roles.should.deepEqual([
+          'new',
+          'disabled',
+          'admin',
+          'marketer',
+          'analyst',
+          'developer',
+          'designer',
+        ]);
+        done();
+      });
+    });
+  });
+
+  describe('users:list', function(){
+    it('succeeds', function(done){
+      specHelper.requestWithLogin(email, password, 'users:list', {}, function(response){
+        should.not.exist(response.error);
+        response.users.length.should.equal(3);
+        response.users[0].email.should.equal('admin@localhost.com');
+        response.users[1].email.should.equal('user@fake.com');
+        response.users[2].email.should.equal('otherUser@fake.com');
+        done();
+      });
+    });
+  });
+
+  describe('user:delete', function(){
+    it('succeeds (admin, other user)', function(done){
+      var user = api.models.user.find({where: {id: userId}}).then(function(user){
+        specHelper.requestWithLogin(email, password, 'user:delete', {
+          userId: userId
+        }, function(response){
+          should.not.exist(response.error);
+          var person = new api.models.person(team, user.personGuid);
+          person.hydrate(function(error){
+            String(error).should.equal('Error: person (' + user.personGuid + ') not found');
+            done();
+          });
+        });
+      }).catch(done);
+    });
+
+    it('fails (admin, self (null))', function(done){
+      specHelper.requestWithLogin(email, password, 'user:delete', {}, function(response){
+        response.error.should.equal('Error: userId is a required parameter for this action');
+        done();
+      });
+    });
+
+    it('fails (admin, self (explicit))', function(done){
+      specHelper.requestWithLogin(email, password, 'user:delete', {
+        userId: 1,
+      }, function(response){
+        response.error.should.equal('Error: you cannot delete yourself');
+        done();
+      });
+    });
+
+    it('fails (admin, not-found)', function(done){
+      specHelper.requestWithLogin(email, password, 'user:delete', {
+        userId: 999
+      }, function(response){
+        response.error.should.equal('Error: user not found');
+        done();
+      });
+    });
+
+    it('fails (non-admin, other user)', function(done){
+      specHelper.requestWithLogin('otherUser@fake.com', 'abc123', 'user:delete', {
+        userId: 1
+      }, function(response){
+        response.error.should.equal('Error: admin role requried');
+        done();
+      });
+    });
+
+    it('fails (non-admin, self)', function(done){
+      specHelper.requestWithLogin('otherUser@fake.com', 'abc123', 'user:delete', {}, function(response){
+        response.error.should.equal('Error: admin role requried');
+        done();
+      });
+    });
+  });
+
+});

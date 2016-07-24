@@ -162,13 +162,19 @@ exports.userDelete = {
   },
 
   run: function(api, data, next){
+    var team = api.utils.determineActionsTeam(data);
+    if(!team){ return next(new Error('Team not found for this request')); }
+
     api.models.user.findOne({where: {
       id: data.params.userId,
       teamId: data.session.teamId,
     }}).then(function(user){
       if(!user){ return next(new Error('user not found')); }
       if(data.session.userId === user.id){ return next(new Error('you cannot delete yourself')); }
-      user.destroy().then(function(){ next(); }).catch(next);
+      user.destroy().then(function(){
+        var person = new api.models.person(team, user.personGuid);
+        person.del(next);
+      }).catch(next);
     }).catch(next);
   }
 };

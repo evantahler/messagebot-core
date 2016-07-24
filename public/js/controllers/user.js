@@ -13,7 +13,7 @@ app.controller('users:list', ['$scope', '$rootScope', '$location', 'ngNotify', f
   $scope.forms.editUser   = {};
 
   $rootScope.action($scope, {}, '/api/users/roles', 'GET', function(data){
-    $scope.validRoles = data.validRoles;
+    $scope.roles = data.roles;
   });
 
   $scope.loadUsers = function(){
@@ -69,7 +69,7 @@ app.controller('users:list', ['$scope', '$rootScope', '$location', 'ngNotify', f
 app.controller('user:edit', ['$scope', '$rootScope', '$location', 'ngNotify', function($scope, $rootScope, $location, ngNotify){
 
   $rootScope.action($scope, {}, '/api/users/roles', 'GET', function(data){
-    $scope.validRoles = data.validRoles;
+    $scope.roles = data.roles;
   });
 
   $rootScope.action($scope, {userId: $rootScope.user.id}, '/api/user', 'GET', function(data){

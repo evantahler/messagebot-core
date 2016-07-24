@@ -1,7 +1,7 @@
 exports.status = {
   name: 'transports:list',
   description: 'transports:list',
-  middleware: ['logged-in-session', 'role-required-admin'],
+  middleware: ['logged-in-session'],
   outputExample: {},
 
   run: function(api, data, next){

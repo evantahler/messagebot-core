@@ -5,7 +5,7 @@ exports.userRoles = {
   middleware:             ['logged-in-session'],
   inputs:                 {},
   run: function(api, data, next){
-    data.response.validRoles = api.models.user.build().validRoles();
+    data.response.roles = api.models.user.build().validRoles();
     next();
   }
 };
@@ -20,7 +20,10 @@ exports.usersList = {
 
   run: function(api, data, next){
 
-    api.models.user.findAll({where: {teamId: data.session.teamId}}).then(function(users){
+    api.models.user.findAll({
+      where: { teamId: data.session.teamId },
+      order: 'id asc',
+    }).then(function(users){
       data.response.users = [];
       users.forEach(function(user){
         data.response.users.push(user.apiData());
