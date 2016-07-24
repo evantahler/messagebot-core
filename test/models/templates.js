@@ -76,4 +76,8 @@ describe('models:templates', function(){
     });
   });
 
+  describe('tempalte#render', function(){
+    // See tests/integartion/template
+  });
+
 });

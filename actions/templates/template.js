@@ -82,12 +82,19 @@ exports.templateRender = {
           if(error){ return next(error); }
           if(data.connection.extension === 'html'){
             data.toRender = false;
+            for(var i in data.connection.rawConnection.responseHeaders){
+              if(data.connection.rawConnection.responseHeaders[i][0] === 'Content-Type'){
+                delete data.connection.rawConnection.responseHeaders[i];
+              }
+            }
+
             data.connection.rawConnection.responseHeaders.push(['Content-Type', 'text/html']);
             data.connection.rawConnection.res.writeHead(200, data.connection.rawConnection.responseHeaders);
             data.connection.rawConnection.res.end(html);
             data.connection.destroy();
             next();
           }else{
+            data.response.html = html;
             data.response.view = view;
             next();
           }

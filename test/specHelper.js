@@ -1,5 +1,6 @@
 var actionheroPrototype = require('actionhero').actionheroPrototype;
 var async   = require('async');
+var request = require('request');
 var should  = require('should');
 var exec    = require('child_process').exec;
 
@@ -144,6 +145,38 @@ var specHelper = {
       if(loginResponse.error){ return callback(loginResponse); }
       connection.params = params;
       self.api.specHelper.runAction(action, connection, callback);
+    });
+  },
+
+  WebRequestWithLogin: function(email, password, verb, route, params, callback){
+    var self = this;
+    var j = request.jar();
+    var baseUrl = 'http://' + self.api.config.servers.web.bindIP + ':' + self.api.config.servers.web.port;
+    request.post({
+      url: baseUrl + '/api/session',
+      jar: j,
+      form: {email: email, password: password}
+    }, function(error, response, body){
+      if(error){ return callback({error: error}); }
+      body = JSON.parse(body);
+      if(body.error){ return callback(body); }
+
+      var actionUrl = baseUrl + route + '?';
+      if(verb === 'get'){
+        for(var key in params){ actionUrl += key + '=' + params[key] + '&'; }
+      }
+
+      request[verb]({
+        url: actionUrl,
+        jar: j,
+        form: params
+      }, function(error, response, body){
+        if(error){ return callback({error: error}); }
+        try{
+          body = JSON.parse(body);
+        }catch(e){ }
+        return callback(body, response);
+      });
     });
   },
 };

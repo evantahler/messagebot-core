@@ -109,6 +109,15 @@ describe('integartion:template', function(){
       });
     });
 
+    it('removes bad HTML entities', function(done){
+      template.template = 'ABC<script>alert("boom");</script>XYZ';
+      template.render(person, message, function(error, html, view){
+        should.not.exist(error);
+        html.should.equal('ABCXYZ');
+        done();
+      });
+    });
+
     it('tracks links properly', function(done){
       template.template = 'Hello there, <a href="{{#track}}http://messagebot.io{{/track}}">click me</a>';
       template.render(person, message, function(error, html, view){
