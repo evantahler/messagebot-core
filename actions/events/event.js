@@ -6,6 +6,7 @@ exports.eventCreate = {
   middleware:             [],
 
   inputs: {
+    teamId:       { required: false, formatter: function(p){ return parseInt(p); } },
     sync:         { required: true, default: false },
     ip:           { required: false },
     device:       { required: true  },
@@ -109,6 +110,7 @@ exports.eventEdit = {
   middleware:             [],
 
   inputs: {
+    teamId:       { required: false, formatter: function(p){ return parseInt(p); } },
     ip:           { required: false  },
     device:       { required: false  },
     guid:         { required: true   },
@@ -147,7 +149,8 @@ exports.eventView = {
   middleware:             [],
 
   inputs: {
-    guid: { required: true }
+    teamId: { required: false, formatter: function(p){ return parseInt(p); } },
+    guid:   { required: true }
   },
 
   run: function(api, data, next){
@@ -170,7 +173,8 @@ exports.eventDelete = {
   middleware:             [],
 
   inputs: {
-    guid: { required: true }
+    teamId: { required: false, formatter: function(p){ return parseInt(p); } },
+    guid:   { required: true }
   },
 
   run: function(api, data, next){

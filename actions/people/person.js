@@ -1,3 +1,5 @@
+var async = require('async');
+
 exports.personCreate = {
   name:                   'person:create',
   description:            'person:create',
@@ -5,6 +7,7 @@ exports.personCreate = {
   middleware:             [],
 
   inputs: {
+    teamId:       { required: false, formatter: function(p){ return parseInt(p); } },
     sync:         { required: true, default: false },
     guid:         { required: false },
     data:         { required: true  },
@@ -61,6 +64,7 @@ exports.personEdit = {
   middleware:             [],
 
   inputs: {
+    teamId:       { required: false, formatter: function(p){ return parseInt(p); } },
     guid:         { required: true },
     source:       { required: false },
     data:         { required: true  }
@@ -90,7 +94,8 @@ exports.personView = {
   middleware:             [],
 
   inputs: {
-    guid: { required: true }
+    teamId: { required: false, formatter: function(p){ return parseInt(p); } },
+    guid:   { required: true }
   },
 
   run: function(api, data, next){
@@ -125,24 +130,89 @@ exports.personDelete = {
   middleware:             [],
 
   inputs: {
-    guid: { required: true }
+    teamId: { required: false, formatter: function(p){ return parseInt(p); } },
+    guid:   { required: true }
   },
 
   run: function(api, data, next){
-    var team = api.utils.determineActionsTeam(data);
-    if(!team){ return next(new Error('Team not found for this request')); }
-    var person = new api.models.person(team, data.params.guid);
+    var jobs = [];
+    var team;
+    var person;
 
-    person.hydrate(function(error){
-      if(error){ return next(error); }
-      api.models.listPerson.destroy({
-        where: {personGuid: person.data.guid}
-      }).then(function(){
-        person.del(function(error){
-          if(error){ return next(error); }
-          next();
-        });
-      }).catch(next);
+    jobs.push(function(done){
+      team = api.utils.determineActionsTeam(data);
+      if(!team){ return done(new Error('Team not found for this request')); }
+      done();
     });
+
+    jobs.push(function(done){
+      person = new api.models.person(team, data.params.guid);
+      person.hydrate(done);
+    });
+
+    jobs.push(function(done){
+      api.models.listPerson.destroy({
+        where: {
+          personGuid: person.data.guid,
+          teamId: team.id,
+        }
+      }).then(function(){
+        done();
+      }).catch(done);
+    });
+
+    [
+      ['events', 'event'],
+      ['messages', 'message'],
+    ].forEach(function(typeGroup){
+      jobs.push(function(done){
+        // since the delete operation is async, we need to keep track of what we have already trigged to delete
+        // otherwise our delete operation will error
+        var deletedGuids = [];
+
+        var total = 1;
+        var alias = api.utils.cleanTeamName(team.name) + '-' + api.env + '-' + typeGroup[0];
+        async.whilst(function(){
+          if(total > 0){ return true; }
+          return false;
+        }, function(again){
+
+          api.elasticsearch.search(
+            alias,
+            ['personGuid'],
+            [person.data.guid],
+            0,
+            1000,
+            null,
+            1,
+            function(error, results, _total){
+              if(error){ return again(error); }
+              total = _total;
+              var deleteJobs = [];
+              results.forEach(function(result){
+                if(deletedGuids.indexOf(result.guid) < 0){
+                  deleteJobs.push(function(deleteDone){
+                    deletedGuids.push(result.guid);
+                    var instnce = new api.models[typeGroup[1]](team, result.guid);
+                    instnce.del(deleteDone);
+                  });
+                }
+              });
+
+              async.series(deleteJobs, function(error){
+                if(error){ return again(error); }
+                setTimeout(again, 500);
+              });
+            }
+          );
+        }, done);
+      });
+    });
+
+    jobs.push(function(done){
+      person.del(done);
+    });
+
+    async.series(jobs, next);
   }
 };

@@ -7,6 +7,7 @@ exports.messageCreate = {
   middleware:             [],
 
   inputs: {
+    teamId:     { required: false, formatter: function(p){ return parseInt(p); } },
     guid:       { required: false },
     personGuid: { required: true  },
     transport:  { required: true  },
@@ -58,6 +59,7 @@ exports.messageEdit = {
   middleware:             [],
 
   inputs: {
+    teamId:     { required: false, formatter: function(p){ return parseInt(p); } },
     guid:       { required: true  },
     personGuid: { required: false },
     transport:  { required: false },
@@ -98,7 +100,8 @@ exports.messageView = {
   middleware:             [],
 
   inputs: {
-    guid: { required: true }
+    teamId: { required: false, formatter: function(p){ return parseInt(p); } },
+    guid:   { required: true }
   },
 
   run: function(api, data, next){
@@ -121,7 +124,8 @@ exports.messageDelete = {
   middleware:    [],
 
   inputs: {
-    guid: { required: true }
+    teamId: { required: false, formatter: function(p){ return parseInt(p); } },
+    guid:  { required: true }
   },
 
   run: function(api, data, next){
@@ -147,6 +151,7 @@ exports.messageTrack = {
   middleware:    [],
 
   inputs: {
+    teamId: { required: false, formatter: function(p){ return parseInt(p); } },
     guid:   { required: true },
     ip:     { required: false },
     link:   { required: false },

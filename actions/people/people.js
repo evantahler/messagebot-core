@@ -72,7 +72,7 @@ exports.peopleAggregation = {
       formatter: function(p){ return new Date(parseInt(p)); },
       default:   function(p){ return new Date().getTime(); },
     },
-    interval: { required: false }
+    interval: { required: true }
   },
 
   run: function(api, data, next){
