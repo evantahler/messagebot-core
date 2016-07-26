@@ -14,7 +14,7 @@ exports.eventCreate = {
     personGuid:   { required: true  },
     messageGuid:  { required: false },
     type:         { required: true  },
-    data:         { required: true  },
+    data:         { required: false, default: {} },
     lat: {
       required: false,
       formatter: function(p){ return parseFloat(p); }

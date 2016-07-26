@@ -16,7 +16,7 @@ var specHelper = {
     exec(fullCommand, callback);
   },
 
-  doMySQLBash: function(cmd, callback){
+  doMySQLBash: function(cmd, callback, silent){
     var self = this;
 
     // TODO: this assumes mySQL
@@ -27,17 +27,17 @@ var specHelper = {
     if(self.api.config.sequelize.host){ command += ' -h ' + self.api.config.sequelize.host; }
     if(self.api.config.sequelize.port){ command += ' --port ' + self.api.config.sequelize.port; }
     command += ' -e "' + cmd + '"';
-    self.doBash(command, callback);
+    self.doBash(command, callback, silent);
   },
 
-  doElasticSearchBash: function(verb, pattern, callback){
+  doElasticSearchBash: function(verb, pattern, callback, silent){
     var self = this;
 
     var command = 'curl';
     command += ' -X ' + verb;
     command += ' ' + self.api.config.elasticsearch.urls[0];
     command += '/' + pattern;
-    self.doBash(command, callback);
+    self.doBash(command, callback, silent);
   },
 
   migrate: function(callback){

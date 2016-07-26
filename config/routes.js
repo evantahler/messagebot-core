@@ -18,7 +18,7 @@ exports.default = {
         { path: '/people/search',        action: 'people:search' },
         { path: '/people/aggregation',   action: 'people:aggregation' },
         { path: '/event',                action: 'event:view' },
-        { path: '/event.gif',            action: 'event:create' },
+        { path: '/event/create.gif',     action: 'event:create' },
         { path: '/events/search',        action: 'events:search' },
         { path: '/events/aggregation',   action: 'events:aggregation' },
         { path: '/message',              action: 'message:view' },

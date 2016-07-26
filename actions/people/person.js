@@ -10,7 +10,7 @@ exports.personCreate = {
     teamId:       { required: false, formatter: function(p){ return parseInt(p); } },
     sync:         { required: true, default: false },
     guid:         { required: false },
-    data:         { required: true  },
+    data:         { required: false, default: {} },
     source:       { required: true },
     createdAt:    {
       required: false,

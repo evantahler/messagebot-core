@@ -6,7 +6,6 @@ var password   = 'password';
 var api;
 var messageGuid;
 var team;
-var otherMessage;
 
 describe('actions:message', function(){
   before(function(){ api = specHelper.api; });
@@ -18,26 +17,12 @@ describe('actions:message', function(){
     });
   });
 
-  before(function(done){
-    otherMessage = new api.models.message(team);
-    otherMessage.data.personGuid  = 'abc123';
-    otherMessage.data.transport   = 'smtp';
-    otherMessage.data.campaignId  = 1;
-    otherMessage.data.body        = '';
-    otherMessage.data.view        = {};
-    otherMessage.data.sentAt      = new Date();
-
-    otherMessage.create(done);
-  });
-
-  after(function(done){ otherMessage.del(done); });
-
   describe('message:create', function(){
     it('succeeds', function(done){
       api.specHelper.runAction('message:create', {
         teamId: team.id,
         sync: true,
-        personGuid: 'abc123',
+        personGuid: 'messagesTestPersonGuid',
         transport: 'smtp',
         campaignId: 1,
         body: 'hello',
@@ -56,7 +41,7 @@ describe('actions:message', function(){
         teamId: team.id,
         sync: true,
         guid: messageGuid,
-        personGuid: 'abc123',
+        personGuid: 'messagesTestPersonGuid',
         transport: 'smtp',
         campaignId: 1,
         body: 'hello',
@@ -261,11 +246,11 @@ describe('actions:message', function(){
     it('fails (not found)', function(done){
       api.specHelper.runAction('message:track', {
         teamId: team.id,
-        guid: 'abc123',
+        guid: 'messagesTestPersonGuid',
         sync: true,
         verb: 'act',
       }, function(response){
-        response.error.should.equal('Error: message (abc123) not found');
+        response.error.should.equal('Error: message (messagesTestPersonGuid) not found');
         done();
       });
     });
@@ -275,12 +260,12 @@ describe('actions:message', function(){
     it('succeeds', function(done){
       specHelper.requestWithLogin(email, password, 'messages:search', {
         searchKeys: ['personGuid'],
-        searchValues: ['abc123'],
+        searchValues: ['messagesTestPersonGuid'],
         form: 0,
         size: 1,
       }, function(response){
         should.not.exist(response.error);
-        response.total.should.equal(2);
+        response.total.should.equal(1);
         response.messages.length.should.equal(1);
         done();
       });
@@ -289,7 +274,7 @@ describe('actions:message', function(){
     it('fails (not logged in)', function(done){
       api.specHelper.runAction('people:search', {
         searchKeys: ['personGuid'],
-        searchValues: ['abc123'],
+        searchValues: ['messagesTestPersonGuid'],
       }, function(response){
         response.error.should.equal('Error: Please log in to continue');
         done();
@@ -301,13 +286,12 @@ describe('actions:message', function(){
     it('succeeds', function(done){
       specHelper.requestWithLogin(email, password, 'messages:aggregation', {
         searchKeys: ['personGuid'],
-        searchValues: ['abc123'],
+        searchValues: ['messagesTestPersonGuid'],
         interval: 'day',
       }, function(response){
         should.not.exist(response.error);
         Object.keys(response.aggregations).length.should.equal(2);
-        response.aggregations._all[0].doc_count.should.equal(2);
-        response.aggregations.smtp[0].doc_count.should.equal(2);
+        response.aggregations.smtp[0].doc_count.should.equal(1);
         response.selections.should.deepEqual(['smtp']);
         response.selectionsName.should.equal('transports');
         done();
@@ -317,7 +301,7 @@ describe('actions:message', function(){
     it('fails (not logged in)', function(done){
       api.specHelper.runAction('messages:aggregation', {
         searchKeys: ['personGuid'],
-        searchValues: ['abc123'],
+        searchValues: ['messagesTestPersonGuid'],
         interval: 'day',
       }, function(response){
         response.error.should.equal('Error: Please log in to continue');

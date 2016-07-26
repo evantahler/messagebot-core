@@ -16,7 +16,7 @@ exports.messageCreate = {
     },
     transport:  { required: true  },
     body:       { required: true  },
-    data:       { required: false },
+    data:       { required: false, default: {} },
     sentAt:     { required: false  },
     readAt:     { required: false  },
     actedAt:    { required: false  },
