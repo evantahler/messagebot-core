@@ -10,6 +10,10 @@ exports.messageCreate = {
     teamId:     { required: false, formatter: function(p){ return parseInt(p); } },
     guid:       { required: false },
     personGuid: { required: true  },
+    campaignId: {
+      required: true,
+      formatter: function(p){ return parseInt(p); }
+    },
     transport:  { required: true  },
     body:       { required: true  },
     data:       { required: false },
@@ -31,6 +35,7 @@ exports.messageCreate = {
 
     if(data.params.guid){        message.data.guid = data.params.guid;                 }
     if(data.params.personGuid){  message.data.personGuid = data.params.personGuid;     }
+    if(data.params.campaignId){  message.data.campaignId = data.params.campaignId;     }
     if(data.params.transport){   message.data.transport = data.params.transport;       }
     if(data.params.body){        message.data.body = data.params.body;                 }
     if(data.params.createdAt){   message.data.createdAt = data.params.createdAt;       }
@@ -62,6 +67,10 @@ exports.messageEdit = {
     teamId:     { required: false, formatter: function(p){ return parseInt(p); } },
     guid:       { required: true  },
     personGuid: { required: false },
+    campaignId: {
+      required: false,
+      formatter: function(p){ return parseInt(p); }
+    },
     transport:  { required: false },
     body:       { required: false },
     data:       { required: false },
@@ -77,6 +86,7 @@ exports.messageEdit = {
 
     if(data.params.guid){       message.data.guid = data.params.guid;                 }
     if(data.params.personGuid){ message.data.personGuid = data.params.personGuid;     }
+    if(data.params.campaignId){ message.data.campaignId = data.params.campaignId;     }
     if(data.params.transport){  message.data.transport = data.params.transport;       }
     if(data.params.body){       message.data.body = data.params.body;                 }
     if(data.params.sentAt){     message.data.sentAt = new Date(data.params.sentAt);   }
@@ -231,6 +241,7 @@ exports.messageTrack = {
         event.data.data.link = data.params.link;
       }
 
+      event.data.location = {lat: 0, lon: 0};
       if(data.params.lat && data.params.lon){
         event.data.location = {
           lat: data.params.lat,
