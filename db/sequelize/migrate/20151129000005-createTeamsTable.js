@@ -56,6 +56,6 @@ module.exports = {
   },
 
   down: function(queryInterface, Sequelize){
-    queryInterface.createTable('teams');
+    queryInterface.deleteTable('teams');
   }
 };

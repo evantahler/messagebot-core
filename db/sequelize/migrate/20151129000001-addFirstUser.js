@@ -18,9 +18,5 @@ module.exports = {
       },
     ]);
 
-  },
-
-  down: function(queryInterface, Sequelize){
-    queryInterface.deleteTable('users');
   }
 };
