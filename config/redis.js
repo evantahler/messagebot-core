@@ -1,6 +1,6 @@
 var host     = process.env.REDIS_HOST || '127.0.0.1';
 var port     = process.env.REDIS_PORT || 6379;
-var db       = process.env.REDIS_DB   || 0;
+var db       = parseInt(process.env.REDIS_DB || 0);
 var password = process.env.REDIS_PASS || null;
 
 exports.default = {
@@ -11,6 +11,8 @@ exports.default = {
     // buildNew: is it `new konstructor()` or just `konstructor()`?
 
     if(process.env.FAKEREDIS === 'false' || process.env.REDIS_HOST !== undefined){
+
+      if(api.env === 'test'){ db = db + 1; }
 
       return {
         '_toExpand': false,

@@ -6,6 +6,6 @@ if(config[process.env.NODE_ENV]){ env = process.env.NODE_ENV; }
 config = config[env].sequelize();
 
 config.config = __filename;
-config['migrations-path'] = path.resolve('db', 'sequelize', 'migrate');
+config['migrations-path'] = path.resolve('db', 'sequelize', 'migrations');
 
 module.exports = config;
