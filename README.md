@@ -1,7 +1,7 @@
 # MessageBot.io
 *A modern customer relationship and analytics platform*
 
-[![Build Status](https://travis-ci.org/messagebot/messagebot-core.svg)](https://travis-ci.org/messagebot/messagebot-core)
+[![CircleCI](https://circleci.com/gh/messagebot/messagebot-core.svg?style=svg)](https://circleci.com/gh/messagebot/messagebot-core)
 
 ## Requirements
 
@@ -37,7 +37,7 @@
 ## Migrations
 
 Run `npm run migrate` to migrate all databases (relational and ElasticSearch).
-`npm run migrate` is a composition of `npm run migrate:sequelize` and `npm run migrate:elasticsearh`, which you can also run separately if desired. 
+`npm run migrate` is a composition of `npm run migrate:sequelize` and `npm run migrate:elasticsearh`, which you can also run separately if desired.
 
 ElasticSearch migrations can be effected via a few environment variables, available for inspection at `db/ElasticSearch/indexes`:
 
