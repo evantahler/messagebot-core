@@ -30,6 +30,8 @@
     "mustache": "^2.2.1",
     "mysql": "^2.9.0",
     "node-uuid": "^1.4.7",
+    "pg": "^6.0.3",
+    "pg-hstore": "^2.3.2",
     "qs": "^6.1.0",
     "request": "^2.69.0",
     "sanitize-html": "^1.11.4",
