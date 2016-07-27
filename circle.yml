@@ -2,19 +2,9 @@ machine:
   environment:
     MAXMIND_DB: ./tmp/maxmind/GeoLiteCity.dat
 
-    SEQUELIZE_DIALECT: mysql
     SEQUELIZE_HOST: localhost
-    SEQUELIZE_PORT: 3306
     SEQUELIZE_DATABASE: messagebot_development
-    SEQUELIZE_USER: root
     SEQUELIZE_PASSWORD:
-
-    # SEQUELIZE_DIALECT: postgres
-    # SEQUELIZE_HOST: localhost
-    # SEQUELIZE_PORT: 5432
-    # SEQUELIZE_DATABASE: messagebot_development
-    # SEQUELIZE_USER: postgres
-    # SEQUELIZE_PASSWORD:
 
     REDIS_HOST: 127.0.0.1
     REDIS_PORT: 6379
@@ -45,5 +35,14 @@ dependencies:
 
 test:
   override:
-    - nvm install 4 && nvm use 4 && rm -rf node_modules && npm install && npm test
-    - nvm install 6 && nvm use 6 && rm -rf node_modules && npm install && npm test
+    # TESTING NODE V4.X
+    - nvm install 4 && nvm use 4
+    - rm -rf node_modules && npm install
+    - SEQUELIZE_DIALECT=mysql    SEQUELIZE_USER=root     SEQUELIZE_PORT=3306 npm test
+    - SEQUELIZE_DIALECT=postgres SEQUELIZE_USER=postgres SEQUELIZE_PORT=5432 npm test
+
+    # TESTING NODE V6.X
+    - nvm install 6 && nvm use 6
+    - rm -rf node_modules && npm install
+    - SEQUELIZE_DIALECT=mysql    SEQUELIZE_USER=root     SEQUELIZE_PORT=3306 npm test
+    - SEQUELIZE_DIALECT=postgres SEQUELIZE_USER=postgres SEQUELIZE_PORT=5432 npm test
