@@ -20,10 +20,12 @@ module.exports = {
             person.data.device = event.data.device;
           }
 
-          person.data.location = {
-            lat: event.data.location.lat,
-            lon: event.data.location.lon
-          };
+          if(event.data.location && event.data.location.lat && event.data.location.lon){
+            person.data.location = {
+              lat: event.data.location.lat,
+              lon: event.data.location.lon
+            };
+          }
 
           person.edit(callback);
         });

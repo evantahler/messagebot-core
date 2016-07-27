@@ -4,7 +4,7 @@ exports.messageCreate = {
   name:                   'message:create',
   description:            'message:create',
   outputExample:          {},
-  middleware:             [],
+  middleware:             ['require-team'],
 
   inputs: {
     teamId:     { required: false, formatter: function(p){ return parseInt(p); } },
@@ -29,25 +29,8 @@ exports.messageCreate = {
   },
 
   run: function(api, data, next){
-    var team = api.utils.determineActionsTeam(data);
-    if(!team){ return next(new Error('Team not found for this request')); }
-    var message = new api.models.message(team);
-
-    if(data.params.guid){        message.data.guid = data.params.guid;                 }
-    if(data.params.personGuid){  message.data.personGuid = data.params.personGuid;     }
-    if(data.params.campaignId){  message.data.campaignId = data.params.campaignId;     }
-    if(data.params.transport){   message.data.transport = data.params.transport;       }
-    if(data.params.body){        message.data.body = data.params.body;                 }
-    if(data.params.createdAt){   message.data.createdAt = data.params.createdAt;       }
-    if(data.params.sentAt){      message.data.sentAt = new Date(data.params.sentAt);   }
-    if(data.params.readAt){      message.data.readAt = new Date(data.params.readAt);   }
-    if(data.params.actedAt){     message.data.actedAt = new Date(data.params.actedAt); }
-
-    for(var i in data.params.data){
-      if(message.data[i] === null || message.data[i] === undefined){
-        message.data[i] = data.params.data[i];
-      }
-    }
+    var message = new api.models.message(data.team);
+    message.data = data.params;
 
     message.create(function(error){
       if(!error){ data.response.guid = message.data.guid; }
@@ -61,7 +44,7 @@ exports.messageEdit = {
   name:                   'message:edit',
   description:            'message:edit',
   outputExample:          {},
-  middleware:             [],
+  middleware:             ['require-team'],
 
   inputs: {
     teamId:     { required: false, formatter: function(p){ return parseInt(p); } },
@@ -80,20 +63,8 @@ exports.messageEdit = {
   },
 
   run: function(api, data, next){
-    var team = api.utils.determineActionsTeam(data);
-    if(!team){ return next(new Error('Team not found for this request')); }
-    var message = new api.models.message(team, data.params.guid);
-
-    if(data.params.guid){       message.data.guid = data.params.guid;                 }
-    if(data.params.personGuid){ message.data.personGuid = data.params.personGuid;     }
-    if(data.params.campaignId){ message.data.campaignId = data.params.campaignId;     }
-    if(data.params.transport){  message.data.transport = data.params.transport;       }
-    if(data.params.body){       message.data.body = data.params.body;                 }
-    if(data.params.sentAt){     message.data.sentAt = new Date(data.params.sentAt);   }
-    if(data.params.readAt){     message.data.readAt = new Date(data.params.readAt);   }
-    if(data.params.actedAt){    message.data.actedAt = new Date(data.params.actedAt); }
-
-    for(var i in data.params.data){ message.data[i] = data.params.data[i]; }
+    var message = new api.models.message(data.team, data.params.guid);
+    message.data = data.params;
 
     message.edit(function(error){
       if(error){ return next(error); }
@@ -107,7 +78,7 @@ exports.messageView = {
   name:                   'message:view',
   description:            'message:view',
   outputExample:          {},
-  middleware:             [],
+  middleware:             ['require-team'],
 
   inputs: {
     teamId: { required: false, formatter: function(p){ return parseInt(p); } },
@@ -115,9 +86,7 @@ exports.messageView = {
   },
 
   run: function(api, data, next){
-    var team = api.utils.determineActionsTeam(data);
-    if(!team){ return next(new Error('Team not found for this request')); }
-    var message = new api.models.message(team, data.params.guid);
+    var message = new api.models.message(data.team, data.params.guid);
 
     message.hydrate(function(error){
       if(error){ return next(error); }
@@ -131,7 +100,7 @@ exports.messageDelete = {
   name:          'message:delete',
   description:   'message:delete',
   outputExample: {},
-  middleware:    [],
+  middleware:    ['require-team'],
 
   inputs: {
     teamId: { required: false, formatter: function(p){ return parseInt(p); } },
@@ -139,9 +108,7 @@ exports.messageDelete = {
   },
 
   run: function(api, data, next){
-    var team = api.utils.determineActionsTeam(data);
-    if(!team){ return next(new Error('Team not found for this request')); }
-    var message = new api.models.message(team, data.params.guid);
+    var message = new api.models.message(data.team, data.params.guid);
 
     message.hydrate(function(error){
       if(error){ return next(error); }
@@ -158,7 +125,7 @@ exports.messageTrack = {
   description:   'message:track',
   outputExample: {},
   matchExtensionMimeType: true,
-  middleware:    [],
+  middleware:    ['require-team'],
 
   inputs: {
     teamId: { required: false, formatter: function(p){ return parseInt(p); } },
@@ -192,10 +159,7 @@ exports.messageTrack = {
     var eventType;
     var event;
 
-    var team = api.utils.determineActionsTeam(data);
-    if(!team){ return next(new Error('Team not found for this request')); }
-
-    var message = new api.models.message(team, data.params.guid);
+    var message = new api.models.message(data.team, data.params.guid);
 
     // testing GUID
     if(data.params.guid === '%%MESSAGEGUID%%'){
@@ -228,38 +192,17 @@ exports.messageTrack = {
     });
 
     jobs.push(function(done){
-      event = new api.models.event(team);
+      event = new api.models.event(data.team);
 
       event.data.messageGuid = message.data.guid;
       event.data.personGuid = message.data.personGuid;
       event.data.type = eventType;
       event.data.ip = ip;
       event.data.device = data.params.device;
-      event.data.data = {};
 
-      if(data.params.link){
-        event.data.data.link = data.params.link;
-      }
+      if(data.params.link){ event.data.data.link = data.params.link; }
 
-      event.data.location = {lat: 0, lon: 0};
-      if(data.params.lat && data.params.lon){
-        event.data.location = {
-          lat: data.params.lat,
-          lon: data.params.location
-        };
-      }else{
-        try{
-          var location = api.maxmind.getLocation(ip);
-          if(location && location.latitude && location.longitude){
-            event.data.location = {
-              lat: location.latitude,
-              lon: location.longitude
-            };
-          }
-        }catch(e){
-          api.log('Geocoding Error: ' +  String(e), 'error');
-        }
-      }
+      event.data.location = api.geolocation.build(data.params, event.data.ip);
 
       if(data.params.sync === false){
         event.create(function(error){
@@ -285,7 +228,7 @@ exports.messageTrack = {
         data.connection.sendFile('tracking.gif');
       }
 
-      api.tasks.enqueueIn((5 * 1000), 'events:process', {teamId: team.id, events: [event.data.guid]}, 'messagebot:events', next);
+      api.tasks.enqueueIn((5 * 1000), 'events:process', {teamId: data.team.id, events: [event.data.guid]}, 'messagebot:events', next);
     });
   }
 };

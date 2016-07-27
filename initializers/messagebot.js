@@ -58,10 +58,21 @@ module.exports = {
 
           return callback();
         }
+      },
+
+      'require-team': {
+        name: 'require-team',
+        global: false,
+        preProcessor: function(data, callback){
+          data.team = api.utils.determineActionsTeam(data);
+          if(!data.team){ return callback(new Error('Team not found for this request')); }
+          return callback();
+        }
       }
     };
 
     api.actions.addMiddleware(middleware['data-preperation']);
+    api.actions.addMiddleware(middleware['require-team']);
 
     /*--- Inject team into Elasticsaerch models ---*/
     api.models.orignalElasticSearch = {};

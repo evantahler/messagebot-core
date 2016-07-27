@@ -17,7 +17,7 @@ exports.listPeopleAdd = {
   name:                   'list:people:add',
   description:            'list:people:add',
   outputExample:          {},
-  middleware:             ['logged-in-session', 'role-required-admin'],
+  middleware:             ['logged-in-session', 'require-team', 'role-required-admin'],
 
   inputs: {
     listId: {
@@ -34,11 +34,8 @@ exports.listPeopleAdd = {
   },
 
   run: function(api, data, next){
-    var team = api.utils.determineActionsTeam(data);
     var jobs = [];
     data.response.personGuids = [];
-
-    if(!team){ return next(new Error('Team not found for this request')); }
 
     api.models.list.findOne({where: {
       id: data.params.listId,
@@ -59,7 +56,7 @@ exports.listPeopleAdd = {
       if(data.params.personGuids && data.params.personGuids.length > 0){
         data.params.personGuids.forEach(function(personGuid){
           jobs.push(function(done){
-            var person = new api.models.person(team, personGuid);
+            var person = new api.models.person(data.team, personGuid);
             person.hydrate(function(error){
               if(error){ return done(new Error('Error adding guid #' + personGuid + ': ' + String(error))); }
               api.models.listPerson.create({
@@ -86,7 +83,7 @@ exports.listPeopleAdd = {
           trim: true,
         }).on('data', function(d){
           jobs.push(function(done){
-            var person = new api.models.person(team);
+            var person = new api.models.person(data.team);
 
             if(d.guid){        person.data.guid = d.guid;           }
             if(d.createdAt){   person.data.createdAt = d.createdAt; }
@@ -97,8 +94,6 @@ exports.listPeopleAdd = {
               }
             }
 
-            if(!person.data.location){ person.data.location = []; }
-
             person.create(function(error){
               if(error){ return done(new Error('Error adding person ' + JSON.stringify(d) + ' | ' + error)); }
               api.models.listPerson.create({
@@ -107,7 +102,7 @@ exports.listPeopleAdd = {
                 teamId: list.teamId,
               }).then(function(){
                 data.response.personGuids.push(person.data.guid);
-                done();
+                api.tasks.enqueue('people:buildCreateEvent', {guid: person.data.guid, teamId: data.team.id}, 'messagebot:people', done);
               }).catch(done);
             });
           });
@@ -125,7 +120,7 @@ exports.listPeopleDelete = {
   name:                   'list:people:delete',
   description:            'list:people:delete',
   outputExample:          {},
-  middleware:             ['logged-in-session', 'role-required-admin'],
+  middleware:             ['logged-in-session', 'require-team', 'role-required-admin'],
 
   inputs: {
     listId: {
@@ -181,7 +176,7 @@ exports.listPeopleCount = {
   name:                   'list:people:count',
   description:            'list:people:count',
   outputExample:          {},
-  middleware:             ['logged-in-session', 'role-required-admin'],
+  middleware:             ['logged-in-session', 'require-team', 'role-required-admin'],
 
   inputs: {
     listId: {
@@ -207,7 +202,7 @@ exports.listPeopleView = {
   name:                   'list:people:view',
   description:            'list:people:view',
   outputExample:          {},
-  middleware:             ['logged-in-session', 'role-required-admin'],
+  middleware:             ['logged-in-session', 'require-team', 'role-required-admin'],
 
   inputs: {
     listId: {
@@ -227,9 +222,6 @@ exports.listPeopleView = {
   },
 
   run: function(api, data, next){
-    var team = api.utils.determineActionsTeam(data);
-    if(!team){ return next(new Error('Team not found for this request')); }
-
     api.models.list.findOne({where: {
       id: data.params.listId,
       teamId: data.session.teamId,
@@ -252,7 +244,7 @@ exports.listPeopleView = {
           personGuids.push(listPerson.personGuid);
         });
 
-        var alias = api.utils.cleanTeamName(team.name) + '-' + api.env + '-' + 'people';
+        var alias = api.utils.cleanTeamName(data.team.name) + '-' + api.env + '-' + 'people';
         api.elasticsearch.mget(alias, personGuids, function(error, results){
           if(error){ return next(error); }
           data.response.people = results;

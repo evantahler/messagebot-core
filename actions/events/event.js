@@ -3,7 +3,7 @@ exports.eventCreate = {
   description:            'event:create',
   matchExtensionMimeType: true,
   outputExample:          {},
-  middleware:             [],
+  middleware:             ['require-team'],
 
   inputs: {
     teamId:       { required: false, formatter: function(p){ return parseInt(p); } },
@@ -32,47 +32,13 @@ exports.eventCreate = {
   },
 
   run: function(api, data, next){
-    var team = api.utils.determineActionsTeam(data);
-    if(!team){ return next(new Error('Team not found for this request')); }
-    var event = new api.models.event(team);
-
-    if(data.params.ip){          event.data.ip = data.params.ip;                   }
-    if(data.params.device){      event.data.device = data.params.device;           }
-    if(data.params.guid){        event.data.guid = data.params.guid;               }
-    if(data.params.personGuid){  event.data.personGuid = data.params.personGuid;   }
-    if(data.params.messageGuid){ event.data.messageGuid = data.params.messageGuid; }
-    if(data.params.type){        event.data.type = data.params.type;               }
-    if(data.params.createdAt){   event.data.createdAt = data.params.createdAt;     }
+    var event = new api.models.event(data.team);
+    event.data = data.params;
 
     if(!event.data.ip){ event.data.ip = data.connection.remoteIP; }
-
-    event.data.location = { lat: 0, lon: 0 };
-    if(data.params.lat && data.params.lon){
-      event.data.location = {
-        lat: data.params.lat,
-        lon: data.params.location
-      };
-    }else if(event.data.ip){
-      try{
-        var location = api.maxmind.getLocation(event.data.ip);
-        if(location && location.latitude && location.longitude){
-          event.data.location = {
-            lat: location.latitude,
-            lon: location.longitude
-          };
-        }
-      }catch(e){
-        api.log('Geocoding Error: ' +  String(e), 'error');
-      }
-    }
+    event.data.location = api.geolocation.build(data.params, event.data.ip);
 
     if(!event.data.messageGuid){ event.data.messageGuid = 'unknown'; }
-
-    for(var i in data.params.data){
-      if(event.data[i] === null || event.data[i] === undefined){
-        event.data[i] = data.params.data[i];
-      }
-    }
 
     // return without waiting for the crete callback; log errors
     // this effectivley allows the tracking request to 'buffer' in RAM & returning to the client quickly
@@ -82,7 +48,7 @@ exports.eventCreate = {
         if(error){
           api.log('event creation error: ' + error, 'error', data.params);
         }else{
-          api.tasks.enqueueIn((5 * 1000), 'events:process', {teamId: team.id, events: [event.data.guid]}, 'messagebot:events');
+          api.tasks.enqueueIn((5 * 1000), 'events:process', {teamId: data.team.id, events: [event.data.guid]}, 'messagebot:events');
         }
       });
       data.response.guid = event.data.guid;
@@ -97,7 +63,7 @@ exports.eventCreate = {
           data.connection.sendFile('tracking.gif');
         }
 
-        api.tasks.enqueueIn((5 * 1000), 'events:process', {teamId: team.id, events: [event.data.guid]}, 'messagebot:events', next);
+        api.tasks.enqueueIn((5 * 1000), 'events:process', {teamId: data.team.id, events: [event.data.guid]}, 'messagebot:events', next);
       });
     }
   }
@@ -107,7 +73,7 @@ exports.eventEdit = {
   name:                   'event:edit',
   description:            'event:edit',
   outputExample:          {},
-  middleware:             [],
+  middleware:             ['require-team'],
 
   inputs: {
     teamId:       { required: false, formatter: function(p){ return parseInt(p); } },
@@ -117,27 +83,28 @@ exports.eventEdit = {
     personGuid:   { required: false  },
     messageGuid:  { required: false  },
     type:         { required: false  },
-    data:         { required: false  }
+    data:         { required: false  },
+    lat: {
+      required: false,
+      formatter: function(p){ return parseFloat(p); }
+    },
+    lon: {
+      required: false,
+      formatter: function(p){ return parseFloat(p); }
+    },
   },
 
   run: function(api, data, next){
-    var team = api.utils.determineActionsTeam(data);
-    if(!team){ return next(new Error('Team not found for this request')); }
-    var event = new api.models.event(team, data.params.guid);
+    var event = new api.models.event(data.team, data.params.guid);
+    event.data = data.params;
 
-    if(data.params.ip){          event.data.ip = data.params.ip;                   }
-    if(data.params.device){      event.data.device = data.params.device;           }
-    if(data.params.guid){        event.data.guid = data.params.guid;               }
-    if(data.params.personGuid){  event.data.personGuid = data.params.personGuid;   }
-    if(data.params.messageGuid){ event.data.messageGuid = data.params.messageGuid; }
-    if(data.params.type){        event.data.type = data.params.type;               }
-
-    for(var i in data.params.data){ event.data[i] = data.params.data[i]; }
+    var newLocation = api.geolocation.build(data.params, event.data.ip);
+    if(newLocation){ event.data.location = newLocation; }
 
     event.edit(function(error){
       if(error){ return next(error); }
       data.response.event = event.data;
-      api.tasks.enqueueIn((5 * 1000), 'events:process', {teamId: team.id, events: [event.data.guid]}, 'messagebot:events', next);
+      api.tasks.enqueueIn((5 * 1000), 'events:process', {teamId: data.team.id, events: [event.data.guid]}, 'messagebot:events', next);
     });
   }
 };
@@ -146,7 +113,7 @@ exports.eventView = {
   name:                   'event:view',
   description:            'event:view',
   outputExample:          {},
-  middleware:             [],
+  middleware:             ['require-team'],
 
   inputs: {
     teamId: { required: false, formatter: function(p){ return parseInt(p); } },
@@ -154,9 +121,7 @@ exports.eventView = {
   },
 
   run: function(api, data, next){
-    var team = api.utils.determineActionsTeam(data);
-    if(!team){ return next(new Error('Team not found for this request')); }
-    var event = new api.models.event(team, data.params.guid);
+    var event = new api.models.event(data.team, data.params.guid);
 
     event.hydrate(function(error){
       if(error){ return next(error); }
@@ -170,7 +135,7 @@ exports.eventDelete = {
   name:                   'event:delete',
   description:            'event:delete',
   outputExample:          {},
-  middleware:             [],
+  middleware:             ['require-team'],
 
   inputs: {
     teamId: { required: false, formatter: function(p){ return parseInt(p); } },
@@ -178,9 +143,7 @@ exports.eventDelete = {
   },
 
   run: function(api, data, next){
-    var team = api.utils.determineActionsTeam(data);
-    if(!team){ return next(new Error('Team not found for this request')); }
-    var event = new api.models.event(team, data.params.guid);
+    var event = new api.models.event(data.team, data.params.guid);
 
     event.hydrate(function(error){
       if(error){ return next(error); }

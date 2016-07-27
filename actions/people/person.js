@@ -4,7 +4,7 @@ exports.personCreate = {
   name:                   'person:create',
   description:            'person:create',
   outputExample:          {},
-  middleware:             [],
+  middleware:             ['require-team'],
 
   inputs: {
     teamId:       { required: false, formatter: function(p){ return parseInt(p); } },
@@ -21,22 +21,11 @@ exports.personCreate = {
   },
 
   run: function(api, data, next){
-    var team = api.utils.determineActionsTeam(data);
-    if(!team){ return next(new Error('Team not found for this request')); }
-    var person = new api.models.person(team);
-
-    if(data.params.guid){        person.data.guid = data.params.guid;               }
-    if(data.params.source){      person.data.source = data.params.source;           }
-    if(data.params.createdAt){   person.data.createdAt = data.params.createdAt;     }
-
-    for(var i in data.params.data){
-      if(person.data[i] === null || person.data[i] === undefined){
-        person.data[i] = data.params.data[i];
-      }
-    }
+    var person = new api.models.person(data.team);
+    person.data = data.params;
 
     // location and device will be updated by events as they come in
-    person.data.location = {lat: 0, lon: 0};
+
     person.data.device = 'unknown';
 
     // return without waiting for the crete callback; log errors
@@ -44,14 +33,18 @@ exports.personCreate = {
     // guid will be hydrated syncrhonusly before the save operation
     if(data.params.sync === false){
       person.create(function(error){
-        if(error){ api.log('person creation error: ' + error, 'error', data.params); }
+        if(error){ return api.log('person creation error: ' + error, 'error', data.params); }
+        api.tasks.enqueue('people:buildCreateEvent', {guid: person.data.guid, teamId: data.team.id}, 'messagebot:people', function(error){
+          return api.log('person creation error: ' + error, 'error', data.params);
+        });
       });
       data.response.guid = person.data.guid;
       next();
     }else{
       person.create(function(error){
-        if(!error){ data.response.guid = person.data.guid; }
-        next(error);
+        if(error){ return next(error); }
+        data.response.guid = person.data.guid;
+        api.tasks.enqueue('people:buildCreateEvent', {guid: person.data.guid, teamId: data.team.id}, 'messagebot:people', next);
       });
     }
   }
@@ -61,7 +54,7 @@ exports.personEdit = {
   name:                   'person:edit',
   description:            'person:edit',
   outputExample:          {},
-  middleware:             [],
+  middleware:             ['require-team'],
 
   inputs: {
     teamId:       { required: false, formatter: function(p){ return parseInt(p); } },
@@ -71,13 +64,8 @@ exports.personEdit = {
   },
 
   run: function(api, data, next){
-    var team = api.utils.determineActionsTeam(data);
-    if(!team){ return next(new Error('Team not found for this request')); }
-    var person = new api.models.person(team, data.params.guid);
-
-    if(data.params.source){ person.data.source = data.params.source; }
-
-    for(var i in data.params.data){ person.data[i] = data.params.data[i]; }
+    var person = new api.models.person(data.team, data.params.guid);
+    person.data = data.params;
 
     person.edit(function(error){
       if(error){ return next(error); }
@@ -91,7 +79,7 @@ exports.personView = {
   name:                   'person:view',
   description:            'person:view',
   outputExample:          {},
-  middleware:             [],
+  middleware:             ['require-team'],
 
   inputs: {
     teamId: { required: false, formatter: function(p){ return parseInt(p); } },
@@ -99,9 +87,8 @@ exports.personView = {
   },
 
   run: function(api, data, next){
-    var team = api.utils.determineActionsTeam(data);
-    if(!team){ return next(new Error('Team not found for this request')); }
-    var person = new api.models.person(team, data.params.guid);
+    var person = new api.models.person(data.team, data.params.guid);
+    person.data = data.params;
 
     person.hydrate(function(error){
       if(error){ return next(error); }
@@ -127,7 +114,7 @@ exports.personDelete = {
   name:                   'person:delete',
   description:            'person:delete',
   outputExample:          {},
-  middleware:             [],
+  middleware:             ['require-team'],
 
   inputs: {
     teamId: { required: false, formatter: function(p){ return parseInt(p); } },
@@ -136,17 +123,10 @@ exports.personDelete = {
 
   run: function(api, data, next){
     var jobs = [];
-    var team;
     var person;
 
     jobs.push(function(done){
-      team = api.utils.determineActionsTeam(data);
-      if(!team){ return done(new Error('Team not found for this request')); }
-      done();
-    });
-
-    jobs.push(function(done){
-      person = new api.models.person(team, data.params.guid);
+      person = new api.models.person(data.team, data.params.guid);
       person.hydrate(done);
     });
 
@@ -154,7 +134,7 @@ exports.personDelete = {
       api.models.listPerson.destroy({
         where: {
           personGuid: person.data.guid,
-          teamId: team.id,
+          teamId: data.team.id,
         }
       }).then(function(){
         done();
@@ -171,7 +151,7 @@ exports.personDelete = {
         var deletedGuids = [];
 
         var total = 1;
-        var alias = api.utils.cleanTeamName(team.name) + '-' + api.env + '-' + typeGroup[0];
+        var alias = api.utils.cleanTeamName(data.team.name) + '-' + api.env + '-' + typeGroup[0];
         async.whilst(function(){
           if(total > 0){ return true; }
           return false;
@@ -193,7 +173,7 @@ exports.personDelete = {
                 if(deletedGuids.indexOf(result.guid) < 0){
                   deleteJobs.push(function(deleteDone){
                     deletedGuids.push(result.guid);
-                    var instnce = new api.models[typeGroup[1]](team, result.guid);
+                    var instnce = new api.models[typeGroup[1]](data.team, result.guid);
                     instnce.del(deleteDone);
                   });
                 }

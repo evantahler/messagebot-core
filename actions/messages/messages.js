@@ -9,7 +9,7 @@ exports.messagesSearch = {
   name:                   'messages:search',
   description:            'messages:search',
   outputExample:          {},
-  middleware:             ['logged-in-session', 'role-required-admin'],
+  middleware:             ['logged-in-session', 'require-team', 'role-required-admin'],
 
   inputs: {
     searchKeys:   { required: true },
@@ -28,10 +28,7 @@ exports.messagesSearch = {
   },
 
   run: function(api, data, next){
-    var team = api.utils.determineActionsTeam(data);
-    if(!team){ return next(new Error('Team not found for this request')); }
-
-    api.elasticsearch.search(alias(api, team), data.params.searchKeys, data.params.searchValues, data.params.from, data.params.size, data.params.sort, function(error, results, total){
+    api.elasticsearch.search(alias(api, data.team), data.params.searchKeys, data.params.searchValues, data.params.from, data.params.size, data.params.sort, function(error, results, total){
       if(error){ return next(error); }
       data.response.total    = total;
       data.response.messages = results;
@@ -44,7 +41,7 @@ exports.messagesAggregation = {
   name:                   'messages:aggregation',
   description:            'messages:aggregation',
   outputExample:          {},
-  middleware:             ['logged-in-session', 'role-required-admin'],
+  middleware:             ['logged-in-session', 'require-team', 'role-required-admin'],
 
   inputs: {
     searchKeys:   { required: true },
@@ -81,12 +78,9 @@ exports.messagesAggregation = {
     var transports = [];
     data.response.aggregations = {};
 
-    var team = api.utils.determineActionsTeam(data);
-    if(!team){ return next(new Error('Team not found for this request')); }
-
     jobs.push(function(done){
       api.elasticsearch.distinct(
-        alias(api, team),
+        alias(api, data.team),
         data.params.searchKeys,
         data.params.searchValues,
         data.params.start,
@@ -108,7 +102,7 @@ exports.messagesAggregation = {
     jobs.push(function(done){
       aggJobs.push(function(aggDone){
         api.elasticsearch.aggregation(
-          alias(api, team),
+          alias(api, data.team),
           ['guid'],
           ['_exists'],
           data.params.start,
@@ -133,7 +127,7 @@ exports.messagesAggregation = {
         if(aggJobs.length <= data.params.maximumSelections && (data.params.selections.length === 0 || data.params.selections.indexOf(transport) >= 0)){
           aggJobs.push(function(aggDone){
             api.elasticsearch.aggregation(
-              alias(api, team),
+              alias(api, data.team),
               ['transport'].concat(data.params.searchKeys),
               [transport].concat(data.params.searchValues),
               data.params.start,

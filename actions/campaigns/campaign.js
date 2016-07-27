@@ -214,7 +214,7 @@ exports.campaignStats = {
   name:                   'campaign:stats',
   description:            'campaign:stats',
   outputExample:          {},
-  middleware:             ['logged-in-session', 'role-required-admin'],
+  middleware:             ['logged-in-session', 'role-required-admin', 'require-team'],
 
   inputs: {
     campaignId: {
@@ -236,14 +236,10 @@ exports.campaignStats = {
       default: 'hour',
     },
   },
-
   run: function(api, data, next){
-    var team = api.utils.determineActionsTeam(data);
-    if(!team){ return next(new Error('Team not found for this request')); }
-
     api.models.campaign.findOne({where: {
       id: data.params.campaignId,
-      teamId: data.session.teamId,
+      teamId: data.team.id,
     }}).then(function(campaign){
       if(!campaign){ return next(new Error('campaign not found')); }
 

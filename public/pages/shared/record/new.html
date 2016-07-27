@@ -35,7 +35,7 @@
         <div class="col-md-12">
           <div class="form-group"
             ng-repeat="(input, inputData) in action.inputs"
-            ng-if="input !== 'createdAt' && input !== 'sync' && input !== 'data'"
+            ng-if="input !== 'createdAt' && input !== 'sync' && input !== 'data' && input !== 'teamId'"
           >
             <label>{{ input }} <span ng-if="inputData.required">(required)</span></label>
             <input type="text" name="{{ input }}" class="form-control" ng-model="formData[input]">

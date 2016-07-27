@@ -2,7 +2,7 @@ exports.userCreate = {
   name:                   'user:create',
   description:            'user:create',
   outputExample:          {},
-  middleware:             ['logged-in-session', 'role-required-admin'],
+  middleware:             ['logged-in-session', 'require-team', 'role-required-admin'],
 
   inputs: {
     email:       { required: true },
@@ -13,23 +13,19 @@ exports.userCreate = {
   },
 
   run: function(api, data, next){
-    var team = api.utils.determineActionsTeam(data);
-    if(!team){ return next(new Error('Team not found for this request')); }
-
     var user = api.models.user.build(data.params);
     user.teamId = data.session.teamId;
 
     user.updatePassword(data.params.password, function(error){
       if(error){ return next(error); }
 
-      var person = new api.models.person(team);
+      var person = new api.models.person(data.team);
 
       ['email', 'firstName', 'lastName', 'role'].forEach(function(p){
         person.data[p] = user[p];
       });
 
       person.data.source = 'admin';
-      person.data.location = {lat: 0, lon: 0};
       person.data.device = 'unknown';
       person.data.teamId = user.teamId;
 
@@ -39,7 +35,7 @@ exports.userCreate = {
         user.personGuid = person.data.guid;
         user.save().then(function(){
           data.response.user = user.apiData();
-          next(error);
+          api.tasks.enqueue('people:buildCreateEvent', {guid: person.data.guid, teamId: data.team.id}, 'messagebot:people', next);
         }).catch(function(errors){
           next(errors.errors[0].message);
         });
@@ -83,7 +79,7 @@ exports.userEdit = {
   name:                   'user:edit',
   description:            'user:edit',
   outputExample:          {},
-  middleware:             ['logged-in-session'],
+  middleware:             ['logged-in-session', 'require-team'],
 
   inputs: {
     email:       { required: false },
@@ -98,9 +94,6 @@ exports.userEdit = {
   },
 
   run: function(api, data, next){
-    var team = api.utils.determineActionsTeam(data);
-    if(!team){ return next(new Error('Team not found for this request')); }
-
     var userId = data.session.userId;
     if(data.params.userId && data.session.role === 'admin'){
       userId = data.params.userId;
@@ -123,7 +116,7 @@ exports.userEdit = {
       user.updateAttributes(data.params).then(function(){
         data.response.user = user.apiData();
 
-        var person = new api.models.person(team, user.personGuid);
+        var person = new api.models.person(data.team, user.personGuid);
 
         ['email', 'firstName', 'lastName', 'role'].forEach(function(p){
           person.data[p] = user[p];
@@ -152,7 +145,7 @@ exports.userDelete = {
   name:                   'user:delete',
   description:            'user:delete',
   outputExample:          {},
-  middleware:             ['logged-in-session', 'role-required-admin'],
+  middleware:             ['logged-in-session', 'require-team', 'role-required-admin'],
 
   inputs: {
     userId: {
@@ -162,9 +155,6 @@ exports.userDelete = {
   },
 
   run: function(api, data, next){
-    var team = api.utils.determineActionsTeam(data);
-    if(!team){ return next(new Error('Team not found for this request')); }
-
     api.models.user.findOne({where: {
       id: data.params.userId,
       teamId: data.session.teamId,
@@ -172,7 +162,7 @@ exports.userDelete = {
       if(!user){ return next(new Error('user not found')); }
       if(data.session.userId === user.id){ return next(new Error('you cannot delete yourself')); }
       user.destroy().then(function(){
-        var person = new api.models.person(team, user.personGuid);
+        var person = new api.models.person(data.team, user.personGuid);
         person.del(next);
       }).catch(next);
     }).catch(next);

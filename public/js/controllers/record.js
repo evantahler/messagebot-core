@@ -53,6 +53,7 @@ app.controller('record:new', ['$scope', '$rootScope', '$location', 'ngNotify', '
     };
 
     payload.createdAt = payload.createdAt.getTime();
+    payload.teamId    = $rootScope.user.teamId;
 
     $rootScope.action($scope, payload, '/api/' + $scope.recordType, 'POST', function(data){
       $location.path('/' + $scope.recordType + '/' + data.guid);

@@ -27,7 +27,6 @@ describe('integartion:lists', function(){
         person = new api.models.person(team);
         person.data.source = 'tester';
         person.data.device = 'phone';
-        person.data.location = [0, 0];
         person.data.data = {
           firstName: fname,
           lastName: 'lname',
@@ -48,7 +47,6 @@ describe('integartion:lists', function(){
       event.data.type = 'boughtTheThing';
       event.data.ip = '0.0.0.0';
       event.data.device = 'phone';
-      event.data.location = {lat: 0, lon: 0};
       event.create(done);
     });
 

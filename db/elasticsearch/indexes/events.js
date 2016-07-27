@@ -38,13 +38,13 @@ module.exports = {
         'ip':          { 'type': 'string', 'required': true },
         'device':      { 'type': 'string', 'required': true },
         'personGuid':  { 'type': 'string', 'required': true },
-        'messageGuid': { 'type': 'string', 'required': true },
+        'messageGuid': { 'type': 'string', 'required': false },
         'type':        { 'type': 'string', 'required': true },
 
         'location': {
           'type': 'geo_point',
           'geohash_precision': (process.env.GEOHASH_PRECISION || '1km'),
-          'required': true,
+          'required': false,
         },
       }
     }

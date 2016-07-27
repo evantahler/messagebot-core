@@ -9,7 +9,7 @@ exports.peopleSearch = {
   name:                   'people:search',
   description:            'people:search',
   outputExample:          {},
-  middleware:             ['logged-in-session', 'role-required-admin'],
+  middleware:             ['logged-in-session', 'require-team', 'role-required-admin'],
 
   inputs: {
     searchKeys:   { required: true },
@@ -28,10 +28,7 @@ exports.peopleSearch = {
   },
 
   run: function(api, data, next){
-    var team = api.utils.determineActionsTeam(data);
-    if(!team){ return next(new Error('Team not found for this request')); }
-
-    api.elasticsearch.search(alias(api, team), data.params.searchKeys, data.params.searchValues, data.params.from, data.params.size, data.params.sort, function(error, results, total){
+    api.elasticsearch.search(alias(api, data.team), data.params.searchKeys, data.params.searchValues, data.params.from, data.params.size, data.params.sort, function(error, results, total){
       if(error){ return next(error); }
       data.response.total  = total;
       data.response.people = results;
@@ -44,7 +41,7 @@ exports.peopleAggregation = {
   name:                   'people:aggregation',
   description:            'people:aggregation',
   outputExample:          {},
-  middleware:             ['logged-in-session', 'role-required-admin'],
+  middleware:             ['logged-in-session', 'require-team', 'role-required-admin'],
 
   inputs: {
     searchKeys:   { required: true },
@@ -81,12 +78,9 @@ exports.peopleAggregation = {
     var sources = [];
     data.response.aggregations = {};
 
-    var team = api.utils.determineActionsTeam(data);
-    if(!team){ return next(new Error('Team not found for this request')); }
-
     jobs.push(function(done){
       api.elasticsearch.distinct(
-        alias(api, team),
+        alias(api, data.team),
         data.params.searchKeys,
         data.params.searchValues,
         data.params.start,
@@ -108,7 +102,7 @@ exports.peopleAggregation = {
     jobs.push(function(done){
       aggJobs.push(function(aggDone){
         api.elasticsearch.aggregation(
-          alias(api, team),
+          alias(api, data.team),
           ['guid'],
           ['_exists'],
           data.params.start,
@@ -133,7 +127,7 @@ exports.peopleAggregation = {
         if(aggJobs.length <= data.params.maximumSelections && (data.params.selections.length === 0 || data.params.selections.indexOf(source) >= 0)){
           aggJobs.push(function(aggDone){
             api.elasticsearch.aggregation(
-              alias(api, team),
+              alias(api, data.team),
               ['source'].concat(data.params.searchKeys),
               [source].concat(data.params.searchValues),
               data.params.start,

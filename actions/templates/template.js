@@ -57,7 +57,7 @@ exports.templateRender = {
   description:            'template:render',
   matchExtensionMimeType: true,
   outputExample:          {},
-  middleware:             ['logged-in-session'],
+  middleware:             ['logged-in-session', 'require-team'],
 
   inputs: {
     personGuid: { required: true },
@@ -68,14 +68,11 @@ exports.templateRender = {
   },
 
   run: function(api, data, next){
-    var team = api.utils.determineActionsTeam(data);
-    if(!team){ return next(new Error('Team not found for this request')); }
-
     api.models.template.findOne({where: {
       id: data.params.templateId,
       teamId: data.session.teamId,
     }}).then(function(template){
-      var person = new api.models.person(team, data.params.personGuid);
+      var person = new api.models.person(data.team, data.params.personGuid);
       person.hydrate(function(error){
         if(error){ return next(error); }
         template.render(person, null, function(error, html, view){

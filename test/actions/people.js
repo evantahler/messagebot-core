@@ -23,7 +23,6 @@ describe('action:person', function(){
     otherPerson = new api.models.person(team);
     otherPerson.data.source = 'tester';
     otherPerson.data.device = 'phone';
-    otherPerson.data.location = [0, 0];
     otherPerson.data.data = {
       firstName: 'fname',
       lastName: 'lame',
@@ -102,7 +101,6 @@ describe('action:person', function(){
         guid: personGuid,
       }, function(response){
         should.not.exist(response.error);
-        response.person.location.should.deepEqual({lat: 0, lon: 0});
         response.person.device.should.equal('unknown');
         response.person.data.email.should.equal('fake@faker.fake');
         done();
@@ -241,7 +239,6 @@ describe('action:person', function(){
       event.data.type = 'boughtTheThing';
       event.data.ip = '0.0.0.0';
       event.data.device = 'phone';
-      event.data.location = {lat: 0, lon: 0};
       event.create(done);
     });
 
