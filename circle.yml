@@ -27,20 +27,20 @@ machine:
   services:
     - mysql
     - postgresql
+    - redis
 
 dependencies:
-  pre:
-    - sudo apt-get update
-    - sudo apt-get upgrade
+  cache_directories:
+    - tmp/kibana
+    - tmp/maxmind
+    - public/bower_components
+
   post:
     # Install ElaticSearch
     - curl -O https://download.elastic.co/elasticsearch/release/org/elasticsearch/distribution/deb/elasticsearch/$ELASTICSEARCH_VERSION/elasticsearch-$ELASTICSEARCH_VERSION.deb
     - sudo dpkg -i --force-confnew elasticsearch-$ELASTICSEARCH_VERSION.deb
     - sudo service elasticsearch restart
     - sleep 10 && curl --retry 10 --retry-delay 5 -v http://127.0.0.1:9200/
-
-    # Install redis
-    - sudo apt-get install redis-server
 
 test:
   override:
