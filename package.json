@@ -20,6 +20,7 @@
     "bcrypt": "^0.8.5",
     "dateformat": "^1.0.12",
     "elasticsearch": "^11.0.1",
+    "fakeredis": "^1.0.3",
     "fast-csv": "^2.0.0",
     "glob": "^7.0.3",
     "ioredis": "^2.2.0",
