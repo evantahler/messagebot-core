@@ -9,12 +9,12 @@ machine:
     SEQUELIZE_USER: root
     SEQUELIZE_PASSWORD:
 
-    SEQUELIZE_DIALECT: postgres
-    SEQUELIZE_HOST: localhost
-    SEQUELIZE_PORT: 5432
-    SEQUELIZE_DATABASE: messagebot_development
-    SEQUELIZE_USER: postgres
-    SEQUELIZE_PASSWORD:
+    # SEQUELIZE_DIALECT: postgres
+    # SEQUELIZE_HOST: localhost
+    # SEQUELIZE_PORT: 5432
+    # SEQUELIZE_DATABASE: messagebot_development
+    # SEQUELIZE_USER: postgres
+    # SEQUELIZE_PASSWORD:
 
     REDIS_HOST: 127.0.0.1
     REDIS_PORT: 6379
@@ -26,7 +26,7 @@ machine:
 
   services:
     - mysql
-    - postgres
+    - postgresql
 
 dependencies:
   pre:
