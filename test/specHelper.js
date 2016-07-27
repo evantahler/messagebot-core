@@ -47,7 +47,7 @@ var specHelper = {
     if(self.api.config.sequelize.dialect === 'postgres'){
       self.doBash(['createdb ' + self.api.config.sequelize.database], callback, silent);
     }else{
-      self.doDatabaseBash('create database if not exists ' + self.api.config.sequelize.database);
+      self.doDatabaseBash('create database if not exists ' + self.api.config.sequelize.database, callback, silent);
     }
   },
 
@@ -56,7 +56,7 @@ var specHelper = {
     if(self.api.config.sequelize.dialect === 'postgres'){
       self.doBash(['dropdb --if-exists ' + self.api.config.sequelize.database], callback, silent);
     }else{
-      self.doDatabaseBash('drop database if not exists ' + self.api.config.sequelize.database, silent);
+      self.doDatabaseBash('drop database if exists ' + self.api.config.sequelize.database, callback, silent);
     }
   },
 
@@ -130,7 +130,9 @@ var specHelper = {
 
   truncate: function(table, callback){
     var self = this;
-    self.api.sequelize.sequelize.query('truncate table "' + table + '"').then(function(){
+    if(self.api.config.sequelize.dialect === 'postgres'){ table = '"' + table + '"'; }
+    if(self.api.config.sequelize.dialect === 'mysql'){ table = '`' + table + '`'; }
+    self.api.sequelize.sequelize.query('truncate table ' + table).then(function(){
       callback();
     }).catch(callback);
   },
