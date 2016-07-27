@@ -16,18 +16,48 @@ var specHelper = {
     exec(fullCommand, callback);
   },
 
-  doMySQLBash: function(cmd, callback, silent){
+  doDatabaseBash: function(cmd, callback, silent){
     var self = this;
 
-    // TODO: this assumes mySQL
-    if(self.api.config.sequelize.dialect !== 'mysql'){ return callback(new Error('I only know how to work with mySQL')); }
-    var command = 'mysql';
-    if(self.api.config.sequelize.username){ command += ' -u ' + self.api.config.sequelize.username; }
-    if(self.api.config.sequelize.password){ command += ' -p' + self.api.config.sequelize.password; }
-    if(self.api.config.sequelize.host){ command += ' -h ' + self.api.config.sequelize.host; }
-    if(self.api.config.sequelize.port){ command += ' --port ' + self.api.config.sequelize.port; }
-    command += ' -e "' + cmd + '"';
+    if(self.api.config.sequelize.dialect === 'mysql'){
+      var command = 'mysql';
+      if(self.api.config.sequelize.username){ command += ' -u ' + self.api.config.sequelize.username; }
+      if(self.api.config.sequelize.password){ command += ' -p' + self.api.config.sequelize.password; }
+      if(self.api.config.sequelize.host){ command += ' -h ' + self.api.config.sequelize.host; }
+      if(self.api.config.sequelize.port){ command += ' --port ' + self.api.config.sequelize.port; }
+      command += ' -e "' + cmd + '"';
+    }else if(self.api.config.sequelize.dialect === 'postgres'){
+      var command = 'psql';
+      if(self.api.config.sequelize.username){ command += ' --username=' + self.api.config.sequelize.username; }
+      if(self.api.config.sequelize.password){ command = ' PGPASSWORD=' + self.api.config.sequelize.password + ' ' + command; }
+      if(self.api.config.sequelize.host){ command += ' --host=' + self.api.config.sequelize.host; }
+      if(self.api.config.sequelize.port){ command += ' --port=' + self.api.config.sequelize.port; }
+      if(self.api.config.sequelize.database){ command += ' --dbname=' + self.api.config.sequelize.database; }
+      command += ' -c "' + cmd + '"';
+    }
+    else{
+      return callback(new Error('I do not know how to work with ' + self.api.config.sequelize.dialect));
+    }
+
     self.doBash(command, callback, silent);
+  },
+
+  createDatabase: function(callback, silent){
+    var self = this;
+    if(self.api.config.sequelize.dialect === 'postgres'){
+      self.doBash(['createdb ' + self.api.config.sequelize.database], callback, silent);
+    }else{
+      self.doDatabaseBash('create database if not exists ' + self.api.config.sequelize.database);
+    }
+  },
+
+  dropDatabase: function(callback, silent){
+    var self = this;
+    if(self.api.config.sequelize.dialect === 'postgres'){
+      self.doBash(['dropdb --if-exists ' + self.api.config.sequelize.database], callback, silent);
+    }else{
+      self.doDatabaseBash('drop database if not exists ' + self.api.config.sequelize.database, silent);
+    }
   },
 
   doElasticSearchBash: function(verb, pattern, callback, silent){
@@ -52,7 +82,7 @@ var specHelper = {
     });
 
     jobs.push(function(done){
-      self.doMySQLBash('create database if not exists messagebot_test', done);
+      self.createDatabase(done);
     });
 
     jobs.push(function(done){
@@ -83,7 +113,7 @@ var specHelper = {
     });
 
     jobs.push(function(done){
-      self.doMySQLBash('drop database if exists messagebot_test', done);
+      self.dropDatabase(done);
     });
 
     jobs.push(function(done){
@@ -100,7 +130,7 @@ var specHelper = {
 
   truncate: function(table, callback){
     var self = this;
-    self.api.sequelize.sequelize.query('truncate table `' + table + '`').then(function(){
+    self.api.sequelize.sequelize.query('truncate table "' + table + '"').then(function(){
       callback();
     }).catch(callback);
   },

@@ -1,6 +1,6 @@
 module.exports = {
   up: function(queryInterface, Sequelize){
-    queryInterface.createTable(
+    return queryInterface.createTable(
       'listPeople',
       {
         id: {
@@ -29,29 +29,35 @@ module.exports = {
           allowNull: false,
         },
       }
-    );
+    ).then(function(){
 
-    queryInterface.addIndex(
-      'listPeople', ['teamId']
-    );
+      return queryInterface.addIndex(
+        'listPeople', ['teamId']
+      ).then(function(){
 
-    queryInterface.addIndex(
-      'listPeople', ['personGuid'], {
-        indexName: 'personGuidIndex'
-      }
-    );
+        return queryInterface.addIndex(
+          'listPeople', ['personGuid'], {
+            indexName: 'personGuidIndex'
+          }
+        ).then(function(){
 
-    queryInterface.addIndex(
-      'listPeople', ['listId'], {
-        indexName: 'listIdIndex'
-      }
-    );
+          return queryInterface.addIndex(
+            'listPeople', ['listId'], {
+              indexName: 'listIdIndex'
+            }
+          ).then(function(){
 
-    queryInterface.addIndex(
-      'listPeople', ['listId', 'personGuid'], {
-        indicesType: 'UNIQUE'
-      }
-    );
+            return queryInterface.addIndex(
+              'listPeople', ['listId', 'personGuid'], {
+                indicesType: 'UNIQUE'
+              }
+            );
+
+          });
+        });
+      });
+    });
+
   },
 
   down: function(queryInterface, Sequelize){

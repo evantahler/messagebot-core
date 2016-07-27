@@ -43,7 +43,7 @@ describe('actions:lists', function(){
         description: 'test list',
         type: 'static',
       }, function(response){
-        response.error.should.equal('Error: lists_team_id_name must be unique');
+        response.error.should.match(/must be unique/);
         done();
       });
     });
@@ -100,7 +100,7 @@ describe('actions:lists', function(){
         listId: listId,
         name: 'test list',
       }, function(response){
-        response.error.should.equal('Error: lists_team_id_name must be unique');
+        response.error.should.match(/must be unique/);
         done();
       });
     });

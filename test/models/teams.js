@@ -38,7 +38,7 @@ describe('models:team', function(){
     team.save().then(function(){
       throw new Error('should not get here');
     }).catch(function(errors){
-      errors.errors.length.should.equal(2);
+      errors.errors.length.should.be.above(1);
       errors.errors[0].message.should.equal('trackingDomainRegexp cannot be null');
       errors.errors[1].message.should.equal('trackingDomain cannot be null');
       done();
@@ -63,8 +63,8 @@ describe('models:team', function(){
       otherTeam.save().then(function(){
         throw new Error('should not get here');
       }).catch(function(errors){
-        errors.errors.length.should.equal(1);
-        errors.errors[0].message.should.equal('teams_name must be unique');
+        errors.errors.length.should.be.above(0);
+        errors.errors[0].message.should.match(/must be unique/);
         done();
       });
     });

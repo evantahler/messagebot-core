@@ -33,7 +33,7 @@ describe('actions:template', function(){
         description: 'test template',
         template: '<h1>Hello, {{ data.firstName }}</h1>',
       }, function(response){
-        response.error.should.equal('Error: templates_team_id_name must be unique');
+        response.error.should.match(/must be unique/);
         done();
       });
     });
@@ -90,7 +90,7 @@ describe('actions:template', function(){
         templateId: templateId,
         name: 'test template',
       }, function(response){
-        response.error.should.equal('Error: templates_team_id_name must be unique');
+        response.error.should.match(/must be unique/);
         done();
       });
     });

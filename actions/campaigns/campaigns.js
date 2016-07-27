@@ -34,7 +34,11 @@ exports.campaignsList = {
     },
     order: {
       required: false,
-      default: 'sentAt DESC, name ASC, createdAt DESC'
+      default: [
+        ['sentAt', 'DESC'],
+        ['name', 'ASC'],
+        ['createdAt', 'DESC'],
+      ]
     }
   },
 

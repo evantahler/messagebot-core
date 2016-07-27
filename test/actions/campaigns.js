@@ -39,7 +39,7 @@ describe('actions:campaign', function(){
         type: 'simple',
         transport: 'smtp',
       }, function(response){
-        response.error.should.equal('Error: campaigns_team_id_name must be unique');
+        response.error.should.match(/must be unique/);
         done();
       });
     });
@@ -100,7 +100,7 @@ describe('actions:campaign', function(){
         campaignId: campaignId,
         name: 'test campaign',
       }, function(response){
-        response.error.should.equal('Error: campaigns_team_id_name must be unique');
+        response.error.should.match(/must be unique/);
         done();
       });
     });

@@ -37,7 +37,7 @@ describe('models:listPeople', function(){
     listPerson.save().then(function(){
       throw new Error('should not get here');
     }).catch(function(errors){
-      errors.errors.length.should.equal(2);
+      errors.errors.length.should.be.above(1);
       errors.errors[0].message.should.equal('listId cannot be null');
       errors.errors[1].message.should.equal('personGuid cannot be null');
       done();
@@ -62,8 +62,8 @@ describe('models:listPeople', function(){
       otherlistPerson.save().then(function(){
         throw new Error('should not get here');
       }).catch(function(errors){
-        errors.errors.length.should.equal(1);
-        errors.errors[0].message.should.equal('list_people_list_id_person_guid must be unique');
+        errors.errors.length.should.be.above(0);
+        errors.errors[0].message.should.match(/must be unique/);
         done();
       });
     });

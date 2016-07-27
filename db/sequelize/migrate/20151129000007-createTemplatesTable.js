@@ -1,6 +1,6 @@
 module.exports = {
   up: function(queryInterface, Sequelize){
-    queryInterface.createTable(
+    return queryInterface.createTable(
       'templates',
       {
         id: {
@@ -38,17 +38,21 @@ module.exports = {
           allowNull: true,
         }
       }
-    );
+    ).then(function(){
 
-    queryInterface.addIndex(
-      'templates', ['teamId']
-    );
+      return queryInterface.addIndex(
+        'templates', ['teamId']
+      ).then(function(){
 
-    queryInterface.addIndex(
-      'templates', ['teamId', 'name'], {
-        indicesType: 'UNIQUE'
-      }
-    );
+        return queryInterface.addIndex(
+          'templates', ['teamId', 'name'], {
+            indicesType: 'UNIQUE'
+          }
+        );
+
+      });
+    });
+
   },
 
   down: function(queryInterface, Sequelize){

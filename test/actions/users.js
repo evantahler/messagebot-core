@@ -125,7 +125,7 @@ describe('actions:user', function(){
         password: 'abc123',
         role: 'admin',
       }, function(response){
-        response.error.should.equal('Error: emailUniqueIndex must be unique');
+        response.error.should.match(/must be unique/);
         done();
       });
     });

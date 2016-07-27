@@ -47,7 +47,7 @@ describe('models:campaigns', function(){
     campaign.save().then(function(){
       throw new Error('should not get here');
     }).catch(function(errors){
-      errors.errors.length.should.equal(2);
+      errors.errors.length.should.be.above(1);
       errors.errors[0].message.should.equal('name cannot be null');
       errors.errors[1].message.should.equal('description cannot be null');
       done();
@@ -81,8 +81,8 @@ describe('models:campaigns', function(){
       otherCampaign.save().then(function(){
         throw new Error('should not get here');
       }).catch(function(errors){
-        errors.errors.length.should.equal(1);
-        errors.errors[0].message.should.equal('campaigns_team_id_name must be unique');
+        errors.errors.length.should.be.above(0);
+        errors.errors[0].message.should.match(/must be unique/);
         done();
       });
     });
@@ -103,7 +103,7 @@ describe('models:campaigns', function(){
     campaign.save().then(function(){
       throw new Error('should not get here');
     }).catch(function(errors){
-      errors.errors.length.should.equal(1);
+      errors.errors.length.should.be.above(0);
       errors.errors[0].message.should.equal('type is invalid');
       done();
     });

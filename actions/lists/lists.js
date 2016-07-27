@@ -30,7 +30,10 @@ exports.listsList = {
     folder: { required: false },
     order: {
       required: false,
-      default: 'name ASC, createdAt DESC'
+      default: [
+        ['name', 'asc'],
+        ['createdAt', 'desc']
+      ]
     }
   },
 

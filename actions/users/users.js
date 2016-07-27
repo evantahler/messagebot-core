@@ -22,7 +22,7 @@ exports.usersList = {
 
     api.models.user.findAll({
       where: { teamId: data.session.teamId },
-      order: 'id asc',
+      order: [['id', 'asc']],
     }).then(function(users){
       data.response.users = [];
       users.forEach(function(user){
