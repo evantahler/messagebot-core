@@ -1,4 +1,49 @@
+machine:
+  environment:
+    MAXMIND_DB: ./tmp/maxmind/GeoLiteCity.dat
+
+    SEQUELIZE_DIALECT: mysql
+    SEQUELIZE_HOST: localhost
+    SEQUELIZE_PORT: 3306
+    SEQUELIZE_DATABASE: messagebot_development
+    SEQUELIZE_USER: root
+    SEQUELIZE_PASSWORD:
+
+    SEQUELIZE_DIALECT: postgres
+    SEQUELIZE_HOST: localhost
+    SEQUELIZE_PORT: 5432
+    SEQUELIZE_DATABASE: messagebot_development
+    SEQUELIZE_USER: postgres
+    SEQUELIZE_PASSWORD:
+
+    REDIS_HOST: 127.0.0.1
+    REDIS_PORT: 6379
+    REDIS_DB: 1
+    REDIS_PASS:
+
+    ELASTICSEARCH_VERSION: 2.3.4
+    ELASTICSEARCH_URLS: "http://localhost:9200,http://localhost:9200"
+
+dependencies:
+  pre:
+    - sudo apt get update
+    - sudo apt get upgrade
+  post:
+    # Install ElaticSearch
+    - curl -O https://download.elastic.co/elasticsearch/release/org/elasticsearch/distribution/deb/elasticsearch/$ELASTICSEARCH_VERSION/elasticsearch-$ELASTICSEARCH_VERSION.deb
+    - sudo dpkg -i --force-confnew elasticsearch-$ELASTICSEARCH_VERSION.deb
+    - sudo service elasticsearch restart
+    - sleep 10 && curl --retry 10 --retry-delay 5 -v http://127.0.0.1:9200/
+
+    # Install redis
+    - sudo apt-get install redis-server
+
+machine:
+  services:
+    - mysql
+    - postgres
+
 test:
   override:
-    - nvm use 4 && npm test
-    - nvm use 6 && npm test
+    - nvm use 4.0 && npm test
+    - nvm use 6.0 && npm test
