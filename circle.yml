@@ -30,8 +30,8 @@ machine:
 
 dependencies:
   pre:
-    - sudo apt get update
-    - sudo apt get upgrade
+    - sudo apt-get update
+    - sudo apt-get upgrade
   post:
     # Install ElaticSearch
     - curl -O https://download.elastic.co/elasticsearch/release/org/elasticsearch/distribution/deb/elasticsearch/$ELASTICSEARCH_VERSION/elasticsearch-$ELASTICSEARCH_VERSION.deb
