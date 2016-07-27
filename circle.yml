@@ -24,6 +24,10 @@ machine:
     ELASTICSEARCH_VERSION: 2.3.4
     ELASTICSEARCH_URLS: "http://localhost:9200,http://localhost:9200"
 
+  services:
+    - mysql
+    - postgres
+
 dependencies:
   pre:
     - sudo apt get update
@@ -37,11 +41,6 @@ dependencies:
 
     # Install redis
     - sudo apt-get install redis-server
-
-machine:
-  services:
-    - mysql
-    - postgres
 
 test:
   override:
