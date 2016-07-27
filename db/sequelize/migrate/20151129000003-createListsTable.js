@@ -1,6 +1,6 @@
 module.exports = {
   up: function(queryInterface, Sequelize){
-    queryInterface.createTable(
+    return queryInterface.createTable(
       'lists',
       {
         id: {
@@ -60,17 +60,20 @@ module.exports = {
           type: Sequelize.DATE
         },
       }
-    );
+    ).then(function(){
 
-    queryInterface.addIndex(
-      'lists', ['teamId']
-    );
+      return queryInterface.addIndex(
+        'lists', ['teamId']
+      ).then(function(){
 
-    queryInterface.addIndex(
-      'lists', ['teamId', 'name'], {
-        indicesType: 'UNIQUE'
-      }
-    );
+        return queryInterface.addIndex(
+          'lists', ['teamId', 'name'], {
+            indicesType: 'UNIQUE'
+          }
+        );
+      });
+    });
+
   },
 
   down: function(queryInterface, Sequelize){

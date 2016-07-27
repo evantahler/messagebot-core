@@ -241,7 +241,7 @@ exports.listPeopleView = {
           listId: list.id,
           teamId: list.teamId,
         },
-        order: 'personGuid asc',
+        order: [['personGuid', 'asc']],
         offset: data.params.from,
         limit: data.params.size,
       }).then(function(response){

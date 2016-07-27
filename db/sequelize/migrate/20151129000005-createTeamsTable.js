@@ -1,6 +1,6 @@
 module.exports = {
   up: function(queryInterface, Sequelize){
-    queryInterface.createTable(
+    return queryInterface.createTable(
       'teams',
       {
         id: {
@@ -29,39 +29,33 @@ module.exports = {
         }
 
       }
-    );
+    ).then(function(){
 
-    queryInterface.addIndex(
-      'teams', ['name'], {
-        indicesType: 'UNIQUE'
-      }
-    );
+      return queryInterface.addIndex(
+        'teams', ['name'], {
+          indicesType: 'UNIQUE'
+        }
+      ).then(function(){
 
-    queryInterface.addIndex(
-      'teams', ['trackingDomainRegexp'], {
-        indicesType: 'UNIQUE'
-      }
-    );
+        return queryInterface.addIndex(
+          'teams', ['trackingDomainRegexp'], {
+            indicesType: 'UNIQUE'
+          }
+        ).then(function(){
 
-    queryInterface.addIndex(
-      'teams', ['trackingDomain'], {
-        indicesType: 'UNIQUE'
-      }
-    );
+          return queryInterface.addIndex(
+            'teams', ['trackingDomain'], {
+              indicesType: 'UNIQUE'
+            }
+          );
 
-    queryInterface.bulkInsert('teams', [
-      {
-        id: 1,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        name: 'MessageBot',
-        trackingDomainRegexp: '^.*$',
-        trackingDomain: 'https://tracking.site.com',
-      },
-    ]);
+        });
+      });
+    });
+
   },
 
   down: function(queryInterface, Sequelize){
-    queryInterface.createTable('teams');
+    queryInterface.deleteTable('teams');
   }
 };

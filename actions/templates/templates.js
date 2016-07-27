@@ -22,7 +22,10 @@ exports.templatesList = {
 
     var query = {
       where: { teamId: data.session.teamId },
-      order: 'folder asc, name asc',
+      order: [
+        ['folder', 'asc'],
+        ['name', 'asc'],
+      ],
       offset: data.params.from,
       limit: data.params.size,
     };

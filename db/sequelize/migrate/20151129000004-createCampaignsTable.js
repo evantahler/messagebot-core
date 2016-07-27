@@ -1,6 +1,6 @@
 module.exports = {
   up: function(queryInterface, Sequelize){
-    queryInterface.createTable(
+    return queryInterface.createTable(
       'campaigns',
       {
         id: {
@@ -80,17 +80,21 @@ module.exports = {
         },
 
       }
-    );
+    ).then(function(){
 
-    queryInterface.addIndex(
-      'campaigns', ['teamId']
-    );
+      return queryInterface.addIndex(
+        'campaigns', ['teamId']
+      ).then(function(){
 
-    queryInterface.addIndex(
-      'campaigns', ['teamId', 'name'], {
-        indicesType: 'UNIQUE'
-      }
-    );
+        return queryInterface.addIndex(
+          'campaigns', ['teamId', 'name'], {
+            indicesType: 'UNIQUE'
+          }
+        );
+
+      });
+    });
+
   },
 
   down: function(queryInterface, Sequelize){

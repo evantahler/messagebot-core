@@ -66,7 +66,7 @@ describe('models:users', function(){
       throw new Error('should not get here');
     }).catch(function(errors){
       errors.errors.length.should.equal(1);
-      errors.errors[0].message.should.equal('emailUniqueIndex must be unique');
+      errors.errors[0].message.should.match(/must be unique/);
       done();
     });
   });
