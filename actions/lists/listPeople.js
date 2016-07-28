@@ -102,7 +102,7 @@ exports.listPeopleAdd = {
                 teamId: list.teamId,
               }).then(function(){
                 data.response.personGuids.push(person.data.guid);
-                api.tasks.enqueue('people:buildCreateEvent', {guid: person.data.guid, teamId: data.team.id}, 'messagebot:people', done);
+                api.tasks.enqueueIn((1000 * 5), 'people:buildCreateEvent', {guid: person.data.guid, teamId: data.team.id}, 'messagebot:people', done);
               }).catch(done);
             });
           });

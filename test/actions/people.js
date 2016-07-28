@@ -67,12 +67,13 @@ describe('action:person', function(){
     });
 
     it('succeeds (enqueues a personCreated event)', function(done){
-      api.resque.queue.length('messagebot:people', function(error, length){
-        length.should.be.above(0);
-        api.tasks.queued('messagebot:people', (length - 1), (length + 1), function(error, queued){
+      api.resque.queue.timestamps(function(error, length){
+        should.not.exist(error);
+        var latestTimetamp = length[0];
+        latestTimetamp.should.be.above(new Date().getTime());
+        api.tasks.delayedAt(latestTimetamp, function(error, queued){
           should.not.exist(error);
-          queued.length.should.equal(1);
-          var job = queued[(queued.length - 1)];
+          var job = queued[0];
           job.args[0].guid.should.equal(personGuid);
           done();
         });
