@@ -38,8 +38,6 @@ exports.eventCreate = {
     if(!event.data.ip){ event.data.ip = data.connection.remoteIP; }
     event.data.location = api.geolocation.build(data.params, event.data.ip);
 
-    if(!event.data.messageGuid){ event.data.messageGuid = 'unknown'; }
-
     // return without waiting for the crete callback; log errors
     // this effectivley allows the tracking request to 'buffer' in RAM & returning to the client quickly
     // guid will be hydrated syncrhonusly before the save operation
@@ -48,7 +46,7 @@ exports.eventCreate = {
         if(error){
           api.log('event creation error: ' + error, 'error', data.params);
         }else{
-          api.tasks.enqueueIn((5 * 1000), 'events:process', {teamId: data.team.id, events: [event.data.guid]}, 'messagebot:events');
+          api.tasks.enqueueIn(api.config.elasticsearch.cacheTime * 2, 'events:process', {teamId: data.team.id, events: [event.data.guid]}, 'messagebot:events');
         }
       });
       data.response.guid = event.data.guid;
@@ -63,7 +61,7 @@ exports.eventCreate = {
           data.connection.sendFile('tracking.gif');
         }
 
-        api.tasks.enqueueIn((5 * 1000), 'events:process', {teamId: data.team.id, events: [event.data.guid]}, 'messagebot:events', next);
+        api.tasks.enqueueIn(api.config.elasticsearch.cacheTime * 2, 'events:process', {teamId: data.team.id, events: [event.data.guid]}, 'messagebot:events', next);
       });
     }
   }
@@ -104,7 +102,7 @@ exports.eventEdit = {
     event.edit(function(error){
       if(error){ return next(error); }
       data.response.event = event.data;
-      api.tasks.enqueueIn((5 * 1000), 'events:process', {teamId: data.team.id, events: [event.data.guid]}, 'messagebot:events', next);
+      api.tasks.enqueueIn(api.config.elasticsearch.cacheTime * 2, 'events:process', {teamId: data.team.id, events: [event.data.guid]}, 'messagebot:events', next);
     });
   }
 };
