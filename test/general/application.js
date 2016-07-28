@@ -47,14 +47,6 @@ describe('general:applicaiton', function(){
 
       done();
     });
-
-    it('api.utils.cleanTeamName', function(done){
-      api.utils.cleanTeamName('Message Bot').should.equal('messagebot');
-      api.utils.cleanTeamName('Message-Bot').should.equal('messagebot');
-      api.utils.cleanTeamName('Message_Bot').should.equal('message_bot');
-
-      done();
-    });
   });
 
 });

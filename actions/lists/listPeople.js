@@ -244,7 +244,7 @@ exports.listPeopleView = {
           personGuids.push(listPerson.personGuid);
         });
 
-        var alias = api.utils.cleanTeamName(data.team.name) + '-' + api.env + '-' + 'people';
+        var alias = api.utils.buildAlias(data.team, 'people');
         api.elasticsearch.mget(alias, personGuids, function(error, results){
           if(error){ return next(error); }
           data.response.people = results;

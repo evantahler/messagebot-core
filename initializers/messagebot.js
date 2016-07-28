@@ -1,5 +1,6 @@
 var async  = require('async');
 var qs     = require('qs');
+var exec   = require('child_process').exec;
 
 module.exports = {
   startPriority: 9999,
@@ -81,8 +82,8 @@ module.exports = {
 
       api.models[key] = function(team, guid, index, alias){
         var instance = new api.models.orignalElasticSearch[key](guid, index, alias);
-        if(!index){ instance.index = api.utils.cleanTeamName(team.name) + '-' + instance.index; }
-        if(!alias){ instance.alias = api.utils.cleanTeamName(team.name) + '-' + instance.alias; }
+        if(!index){ instance.index = team.id + '-' + instance.index; }
+        if(!alias){ instance.alias = team.id + '-' + instance.alias; }
         return instance;
       };
     });
@@ -136,11 +137,23 @@ module.exports = {
       return team;
     };
 
-    api.utils.cleanTeamName = function(name){
-      name = name.replace(/-/g, '');
-      name = name.replace(/\s/g, '');
-      name = name.toLowerCase();
-      return name;
+    api.utils.doBash = function(commands, callback, silent){
+      if(!silent){ silent = false; }
+      if(!Array.isArray(commands)){ commands = [commands]; }
+      var fullCommand = '/bin/bash -c \'' + commands.join(' && ') + '\'';
+      if(!silent){ console.log('>> ' + fullCommand); }
+      exec(fullCommand, function(error, data){
+        callback(error, data);
+      });
+    };
+
+    api.utils.buildAlias = function(team, type){
+      var alias = '';
+      alias += team.id + '-';
+      alias += api.env + '-';
+      alias += type;
+
+      return alias;
     };
 
     next();

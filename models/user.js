@@ -98,6 +98,8 @@ var loader = function(api){
               role:       this.role,
               firstName:  this.firstName,
               lastName:   this.lastName,
+              createdAt:  this.createdAt,
+              updatedAt:  this.updatedAt,
             };
           }
         }

@@ -1,0 +1,52 @@
+
+Usage: bin/messagebot METHOD [options]
+
+### MISC ###
+
+help:
+          Return this file.
+          options: none
+          example: `bin/messagebot help`
+
+version:
+          Return details about this MessageBot version.
+          options: none
+          example: `bin/messagebot version`
+
+### TEAMS ###
+
+teamsList:
+          List the teams on this instance
+          options: none
+          example: `bin/messagebot teamsList`
+
+teamCreate:
+          Create a new MessageBot team.
+          This method will also create the first user for this team.
+          options:
+            --name:
+                The name of the team
+            --trackingDomainRegexp:
+                Regular expression to match all actions from these URLs to this team.
+                This can be explicit, like "trakcing.app.com" or a wildcard, like ".*"
+            --trackingDomain
+                The main tracking URL you plan to use.  This URL will be the one appended to link tracking, etc.
+            --email (optional)
+                The first user in this team's email address
+                default: admin@localhost.com
+            --password (optional)
+                The first user in this team's password
+                default: (random)
+          example: `./bin/messagebot userCreate --name myTeam --trackingDomainRegexp "^.*.myapp.com" --trackingDomain "tracking.myapp.com"`
+
+teamDelete:
+          Deletes a team and all associated data.
+          ** This is unrecoverable! **
+          --teamId:
+            The ID of the team you are deleting
+
+### USERS ###
+
+----------------
+
+Learn more @ http://www.messagebot.io

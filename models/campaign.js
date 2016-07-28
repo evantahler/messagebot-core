@@ -133,7 +133,7 @@ var loader = function(api){
             var searchTerms = ['sentAt', 'readAt', 'actedAt'];
 
             var team = api.utils.determineActionsTeam({params: {teamId: campaign.teamId}});
-            var alias = api.utils.cleanTeamName(team.name) + '-' + api.env + '-' + 'messages';
+            var alias = api.utils.buildAlias(team, 'messages');
 
             searchTerms.forEach(function(term){
               jobs.push(function(done){

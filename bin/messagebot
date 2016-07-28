@@ -1,0 +1,41 @@
+#!/usr/bin/env node
+
+var optimist = require('optimist');
+
+var ActionHeroPrototype = require(process.cwd() + '/node_modules/actionhero/actionhero.js').actionheroPrototype;
+var actionhero = new ActionHeroPrototype();
+var configChanges = {
+  logger:  [],
+  general: { developmentMode: false }
+};
+
+actionhero.initialize({configChanges: configChanges}, function(error, api){
+
+  console.log('--------------------------');
+  console.log('----- MessageBot CLI -----');
+  console.log('--------------------------\r\n');
+
+  var end = function(error){
+    if(error){
+      console.error(error.message);
+      setTimeout(process.exit, 500, 1);
+    }else{
+      setTimeout(process.exit, 500, 0);
+    }
+  };
+
+  var runner;
+
+  try{
+    var method = 'help';
+    if(optimist.argv._[0]){ method = optimist.argv._[0]; }
+    runner = require(__dirname + '/methods/' + method + '.js');
+    runner(api, end);
+  }catch(e){
+    console.log('Error: `' + method + '` is not a method I can perform.');
+    console.log(e)
+    console.log('run `bin/messagebot help` to learn more.');
+    end();
+  }
+
+});

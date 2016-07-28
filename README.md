@@ -14,27 +14,31 @@
 
 ## Install
 
-- `npm install` (this will also run `npm run prepare`, installing needed geolocation databases, kibana, etc)
+- `npm install`
+  - this will also run `npm run prepare`, installing needed geolocation databases, kibana, etc
 - `cp .env.example .env`, and adjust according to your system/needs
 
 ## Configuration and Running
 
 - Start `redis`
+- Start `elasticsearch`
 - Start your relational database, IE: `mySQL`
   - be sure to create the database you need for development, IE:
     - (mysql) `mysql -u root -e "crete database messagebot_development"`
     - (postgres) `createdb messagebot_development`
-- Start `elasticsearch`
+  - Install any additional database drivers needed for your relational database:
+    - `npm install --save pg pg-hstore`
+    - `npm install --save mysql`
+    - etc
 - Configure `.env` with the secrets you need, or ensure that they are already present within the environment
   - ensure that the databases you listed exist and that the user(s) you have configured can reach & access them
-- Install any additional database drivers needed for your relational database:
-  - `npm install --save pg pg-hstore`
-  - `npm install --save mysql`
-  - etc
+- Source your environment, ie: `source .env`
+- Create the First Team from the CLI:
+  - `./bin/messagebot teamCreate --name MessageBot --trackingDomainRegexp "^.*$" --trackingDomain "tracking.myapp.com"`
+  - This will also create the first admin user for this team.  Take note of this user's email and password.
+- Start the App: `npm run migrate && npm start`
 
-`source .env && npm run migrate && npm start`
-
-## Migrations
+## Migration Options
 
 Run `npm run migrate` to migrate all databases (relational and ElasticSearch).
 `npm run migrate` is a composition of `npm run migrate:sequelize` and `npm run migrate:elasticsearh`, which you can also run separately if desired.
@@ -75,6 +79,10 @@ exports.sources = ['web', 'iphone', 'android', 'referral'];
 ```
 
 The funnel and sources can be modified via `db/fakers/common.js`
+
+## CLI
+
+The MessageBot CLI is used to manage system-level data, IE: the creation and removal of teams.  You can learn more about the CLI by running `./bin/messsagebot help`
 
 ## Testing
 

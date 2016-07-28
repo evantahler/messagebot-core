@@ -1,6 +1,5 @@
 #!/usr/bin/env node
 
-var exec  = require('child_process').exec;
 var async  = require('async');
 
 var ActionHeroPrototype = require(process.cwd() + '/node_modules/actionhero/actionhero.js').actionheroPrototype;
@@ -13,16 +12,6 @@ var configChanges = {
 var jobs = [];
 var api;
 var teams;
-
-var doBash = function(commands, callback, silent){
-  if(!silent){ silent = false; }
-  if(!Array.isArray(commands)){ commands = [commands]; }
-  var fullCommand = '/bin/bash -c \'' + commands.join(' && ') + '\'';
-  if(!silent){ console.log('>> ' + fullCommand); }
-  exec(fullCommand, function(error, data){
-    callback(error, data);
-  });
-};
 
 jobs.push(function(done){
   actionhero.initialize({configChanges: configChanges}, function(error, _api){
@@ -45,7 +34,7 @@ jobs.push(function(done){
     teams.forEach(function(team){
       var teamJob = function(next){
         console.log('>> Migrating ElasticSearch for Team #' + team.id + ', (' + team.name + ')');
-        doBash(['PREFIX="' + api.utils.cleanTeamName(team.name) + '" node ./node_modules/.bin/ah-elasticsearch-orm migrate'], function(error, lines){
+        api.utils.doBash(['PREFIX="' + team.id + '" node ./node_modules/.bin/ah-elasticsearch-orm migrate'], function(error, lines){
           console.log(lines);
           next(error);
         }, true);
