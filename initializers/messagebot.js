@@ -142,8 +142,9 @@ module.exports = {
       if(!Array.isArray(commands)){ commands = [commands]; }
       var fullCommand = '/bin/bash -c \'' + commands.join(' && ') + '\'';
       if(!silent){ console.log('>> ' + fullCommand); }
-      exec(fullCommand, function(error, data){
-        callback(error, data);
+      exec(fullCommand, function(error, stdout, stderr){
+        if(!error && stderr){ error = stderr; }
+        callback(error, stdout);
       });
     };
 

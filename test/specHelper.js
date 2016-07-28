@@ -8,14 +8,6 @@ var specHelper = {
   actionhero: new actionheroPrototype(),
   api: null,
 
-  doBash: function(commands, callback, silent){
-    if(!silent){ silent = false; }
-    if(!Array.isArray(commands)){ commands = [commands]; }
-    var fullCommand = '/bin/bash -c \'' + commands.join(' && ') + '\'';
-    if(!silent){ console.log('>> ' + fullCommand); }
-    exec(fullCommand, callback);
-  },
-
   doDatabaseBash: function(cmd, callback, silent){
     var self = this;
 
@@ -39,13 +31,13 @@ var specHelper = {
       return callback(new Error('I do not know how to work with ' + self.api.config.sequelize.dialect));
     }
 
-    self.doBash(command, callback, silent);
+    self.api.utils.doBash(command, callback, silent);
   },
 
   createDatabase: function(callback, silent){
     var self = this;
     if(self.api.config.sequelize.dialect === 'postgres'){
-      self.doBash(['createdb ' + self.api.config.sequelize.database], callback, silent);
+      self.api.utils.doBash(['createdb ' + self.api.config.sequelize.database], callback, silent);
     }else{
       self.doDatabaseBash('create database if not exists ' + self.api.config.sequelize.database, callback, silent);
     }
@@ -54,7 +46,7 @@ var specHelper = {
   dropDatabase: function(callback, silent){
     var self = this;
     if(self.api.config.sequelize.dialect === 'postgres'){
-      self.doBash(['dropdb --if-exists ' + self.api.config.sequelize.database], callback, silent);
+      self.api.utils.doBash(['dropdb --if-exists ' + self.api.config.sequelize.database], callback, silent);
     }else{
       self.doDatabaseBash('drop database if exists ' + self.api.config.sequelize.database, callback, silent);
     }
@@ -64,10 +56,11 @@ var specHelper = {
     var self = this;
 
     var command = 'curl';
+    command += ' -s '
     command += ' -X ' + verb;
     command += ' ' + self.api.config.elasticsearch.urls[0];
     command += '/' + pattern;
-    self.doBash(command, callback, silent);
+    self.api.utils.doBash(command, callback, silent);
   },
 
   migrate: function(callback){
@@ -86,11 +79,11 @@ var specHelper = {
     });
 
     jobs.push(function(done){
-      self.doBash('NODE_ENV=test npm run migrate:sequelize', done);
+      self.api.utils.doBash('NODE_ENV=test npm run migrate:sequelize', done);
     });
 
     jobs.push(function(done){
-      self.doBash('NODE_ENV=test NUMBER_OF_SHARDS=1 npm run migrate:elasticsearch', done);
+      self.api.utils.doBash('NODE_ENV=test NUMBER_OF_SHARDS=1 npm run migrate:elasticsearch', done);
     });
 
     jobs.push(function(done){
@@ -135,6 +128,26 @@ var specHelper = {
     self.api.sequelize.sequelize.query('truncate table ' + table).then(function(){
       callback();
     }).catch(callback);
+  },
+
+  createTeam: function(callback){
+    var self = this;
+    var command = '';
+    command += ' NODE_ENV=test';
+    command += ' NUMBER_OF_SHARDS=1';
+    command += ' ./bin/messagebot teamCreate';
+    command += ' --name TestTeam';
+    command += ' --trackingDomainRegexp "^.*$"';
+    command += ' --trackingDomain "http://tracking.site.com"';
+    command += ' --email "admin@localhost.com"';
+    command += ' --password "password"';
+
+    console.log('\r\n*** Creating Test Team ***\r\n');
+    self.api.utils.doBash(command, function(error){
+      if(error){ console.log('error', error); return callback(error); }
+      console.log('\r\n*** Test Team Created ***\r\n');
+      return callback();
+    }, false);
   },
 
   flushRedis: function(callback){
@@ -218,6 +231,11 @@ var specHelper = {
   },
 };
 
+/*--- Init the server ---*/
+before(function(done){
+  specHelper.initialize(done);
+});
+
 /*--- Always Clear and Migrate before eacn run ---*/
 
 if(process.env.SKIP_MIGRATE !== 'true'){
@@ -232,18 +250,21 @@ if(process.env.SKIP_MIGRATE !== 'true'){
   });
 
   before(function(done){
+    specHelper.createTeam(done);
+  });
+
+  before(function(done){
     specHelper.flushRedis(done);
   });
 }
 
 /*--- Start up the server ---*/
 before(function(done){
-  this.timeout(10 * 1000);
   specHelper.start(done);
 });
 
+/*--- Stop the server ---*/
 after(function(done){
-  this.timeout(10 * 1000);
   specHelper.stop(done);
 });
 

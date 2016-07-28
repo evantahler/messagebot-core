@@ -7,6 +7,7 @@ var help = function(api, callback){
   console.log('Name: '        + pkg.name);
   console.log('Description: ' + pkg.description);
   console.log('Version: '     + pkg.version);
+  console.log('');
 
   console.log(content);
 

@@ -32,10 +32,9 @@ actionhero.initialize({configChanges: configChanges}, function(error, api){
     runner = require(__dirname + '/methods/' + method + '.js');
     runner(api, end);
   }catch(e){
-    console.log('Error: `' + method + '` is not a method I can perform.');
-    console.log(e)
-    console.log('run `bin/messagebot help` to learn more.');
-    end();
+    console.error('Error: `' + method + '` is not a method I can perform.');
+    console.error('run `bin/messagebot help` to learn more.');
+    end(e);
   }
 
 });

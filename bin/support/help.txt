@@ -1,32 +1,36 @@
-
 Usage: bin/messagebot METHOD [options]
 
-### MISC ###
-
 help:
-          Return this file.
-          options: none
-          example: `bin/messagebot help`
+          Description:
+            Return this file.
+          Options:
+            none
+          Example:
+            bin/messagebot help
 
 version:
           Return details about this MessageBot version.
-          options: none
-          example: `bin/messagebot version`
-
-### TEAMS ###
+          Options:
+            none
+          Example:
+            bin/messagebot version
 
 teamsList:
-          List the teams on this instance
-          options: none
-          example: `bin/messagebot teamsList`
+          Description:
+            List the teams on this instance
+          Options:
+            none
+          Example:
+            bin/messagebot teamsList
 
 teamCreate:
-          Create a new MessageBot team.
-          This method will also create the first user for this team.
-          options:
-            --name:
+          Description:
+            Create a new MessageBot team.
+            This method will also create the first user for this team.
+          Options:
+            --name
                 The name of the team
-            --trackingDomainRegexp:
+            --trackingDomainRegexp
                 Regular expression to match all actions from these URLs to this team.
                 This can be explicit, like "trakcing.app.com" or a wildcard, like ".*"
             --trackingDomain
@@ -37,15 +41,34 @@ teamCreate:
             --password (optional)
                 The first user in this team's password
                 default: (random)
-          example: `./bin/messagebot userCreate --name myTeam --trackingDomainRegexp "^.*.myapp.com" --trackingDomain "tracking.myapp.com"`
+          Example:
+            ./bin/messagebot userCreate --name myTeam --trackingDomainRegexp "^.*.myapp.com" --trackingDomain "tracking.myapp.com"
+
+teamEdit:
+          Description:
+            Edit the properties of an existing team
+          Options:
+            --teamId:
+              The ID of the team in question
+            --name (optional)
+                The name of the team
+            --trackingDomainRegexp (optional)
+                Regular expression to match all actions from these URLs to this team.
+                This can be explicit, like "trakcing.app.com" or a wildcard, like ".*"
+            --trackingDomain (optional)
+                The main tracking URL you plan to use.  This URL will be the one appended to link tracking, etc.
+          Example:
+            ./bin/messagebot teamEdit  --id 1 --name 'MessageBot!'
 
 teamDelete:
-          Deletes a team and all associated data.
-          ** This is unrecoverable! **
-          --teamId:
-            The ID of the team you are deleting
-
-### USERS ###
+          Description:
+            Deletes a team and all associated data from your relational database and ElasticSearch.
+            ** This is unrecoverable! **
+          Options:
+            --teamId:
+              The ID of the team in question
+          Example:
+            ./bin/messagebot teamDelete  --id 1
 
 ----------------
 
