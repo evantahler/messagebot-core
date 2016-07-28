@@ -10,6 +10,7 @@ var person;
 
 describe('actions:event', function(){
   before(function(){ api = specHelper.api; });
+  before(function(done){ specHelper.flushRedis(done); });
 
   before(function(done){
     api.models.team.findOne().then(function(_team){
