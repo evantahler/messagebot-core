@@ -66,6 +66,39 @@ describe('action:person', function(){
       });
     });
 
+    it('succeeds (enqueues a personCreated event)', function(done){
+      api.resque.queue.length('messagebot:people', function(error, length){
+        length.should.be.above(0);
+        api.tasks.queued('messagebot:people', (length - 1), (length + 1), function(error, queued){
+          should.not.exist(error);
+          queued.length.should.equal(1);
+          var job = queued[(queued.length - 1)];
+          job.args[0].guid.should.equal(personGuid);
+          done();
+        });
+      });
+    });
+
+    it('succeeds (can run people:buildCreateEvent)', function(done){
+      api.specHelper.runTask('people:buildCreateEvent', {
+        teamId: team.id,
+        guid: personGuid
+      }, function(error){
+        specHelper.requestWithLogin(email, password, 'events:search', {
+          searchKeys: ['personGuid'],
+          searchValues: [personGuid],
+          form: 0,
+          size: 999,
+        }, function(response){
+          should.not.exist(response.error);
+          response.total.should.equal(1);
+          response.events[0].type.should.equal('personCreated');
+          response.events[0].ip.should.equal('internal');
+          done();
+        });
+      });
+    });
+
     it('fails (uniqueness failure)', function(done){
       api.specHelper.runAction('person:create', {
         teamId: team.id,

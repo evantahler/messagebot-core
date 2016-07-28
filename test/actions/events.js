@@ -6,6 +6,7 @@ var password   = 'password';
 var api;
 var eventGuid;
 var team;
+var person;
 
 describe('actions:event', function(){
   before(function(){ api = specHelper.api; });
@@ -17,6 +18,24 @@ describe('actions:event', function(){
     });
   });
 
+  before(function(done){
+    person = new api.models.person(team);
+    person.data.source = 'someSource';
+    person.data.device = 'unknown';
+    person.data.data = {
+      firstName: 'fname',
+      lastName: 'lame',
+      email: 'fake@faker.fake',
+    };
+
+    person.create(function(error){
+      should.not.exist(error);
+      person.hydrate(done);
+    });
+  });
+
+  after(function(done){ person.del(done); });
+
   describe('event:create', function(){
     it('succeeds', function(done){
       api.specHelper.runAction('event:create', {
@@ -24,8 +43,9 @@ describe('actions:event', function(){
         sync: true,
         device: 'tester',
         type: 'tester',
-        personGuid: 'eventTestGuid',
+        personGuid: person.data.guid,
         data: {thing: 'stuff'},
+        ip: '173.247.192.214'
       }, function(response){
         should.not.exist(response.error);
         should.exist(response.guid);
@@ -40,7 +60,7 @@ describe('actions:event', function(){
         sync: true,
         device: 'tester',
         type: 'tester',
-        personGuid: 'eventTestGuid',
+        personGuid: person.data.guid,
       }, function(response, res){
         response.toString().indexOf('GIF').should.equal(0);
         res.statusCode.should.equal(200);
@@ -56,7 +76,7 @@ describe('actions:event', function(){
         sync: true,
         device: 'tester',
         type: 'tester',
-        personGuid: 'eventTestGuid',
+        personGuid: person.data.guid,
         data: {thing: 'stuff'},
         ip: '173.247.192.214'
       }, function(response){
@@ -73,14 +93,45 @@ describe('actions:event', function(){
       });
     });
 
-    it('succeeds (updates the person)');
+    it('succeeds (enqueues a events:process event in the future)', function(done){
+      api.resque.queue.timestamps(function(error, length){
+        should.not.exist(error);
+        var latestTimetamp = length[0];
+        latestTimetamp.should.be.above(new Date().getTime());
+        api.tasks.delayedAt(latestTimetamp, function(error, queued){
+          should.not.exist(error);
+          var job = queued[0];
+          job.args[0].events.should.deepEqual([eventGuid]);
+          done();
+        });
+      });
+    });
+
+    it('succeeds (can run events:process and update the user)', function(done){
+      person.data.device.should.equal('unknown');
+      should.not.exist(person.data.location);
+
+      api.specHelper.runTask('events:process', {
+        teamId: team.id,
+        events: [eventGuid],
+      }, function(error){
+        should.not.exist(error);
+        person.hydrate(function(error){
+          should.not.exist(error);
+          Math.round(person.data.location.lat).should.equal(38);
+          Math.round(person.data.location.lon).should.equal(-122);
+          person.data.device.should.equal('tester');
+          done();
+        });
+      });
+    });
 
     it('fails (missing param)', function(done){
       api.specHelper.runAction('event:create', {
         teamId: team.id,
         sync: true,
         type: 'tester',
-        personGuid: 'eventTestGuid',
+        personGuid: person.data.guid,
         data: {thing: 'stuff'},
       }, function(response){
         response.error.should.equal('Error: device is a required parameter for this action');
@@ -97,7 +148,7 @@ describe('actions:event', function(){
       }, function(response){
         should.not.exist(response.error);
         response.event.data.thing.should.equal('stuff');
-        response.event.personGuid.should.equal('eventTestGuid');
+        response.event.personGuid.should.equal(person.data.guid);
         should.exist(response.event.createdAt);
         should.exist(response.event.updatedAt);
         done();
@@ -208,7 +259,7 @@ describe('actions:event', function(){
         teamId: team.id,
         guid: eventGuid,
       }, function(response){
-        response.error.should.equal('Error: event (' + eventGuid + ') not found')
+        response.error.should.equal('Error: event (' + eventGuid + ') not found');
         done();
       });
     });

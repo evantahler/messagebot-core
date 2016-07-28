@@ -137,6 +137,11 @@ var specHelper = {
     }).catch(callback);
   },
 
+  flushRedis: function(callback){
+    var self = this;
+    self.api.redis.clients.tasks.flushdb(callback);
+  },
+
   initialize: function(callback){
     var self = this;
     self.actionhero.initialize(function(error, a){
@@ -224,6 +229,10 @@ if(process.env.SKIP_MIGRATE !== 'true'){
   before(function(done){
     this.timeout(10 * 1000);
     specHelper.migrate(done);
+  });
+
+  before(function(done){
+    specHelper.flushRedis(done);
   });
 }
 
