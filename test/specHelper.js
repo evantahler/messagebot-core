@@ -47,7 +47,7 @@ var specHelper = {
     var self = this;
     if(self.api.config.sequelize.dialect === 'postgres'){
       self.api.utils.doBash(['dropdb --if-exists ' + self.api.config.sequelize.database], function(error){
-        if(!error.match(/NOTICE/)){ return callback(error); }
+        if(error && !error.match(/NOTICE/)){ return callback(error); }
         return callback();
       }, silent);
     }else{
@@ -59,7 +59,7 @@ var specHelper = {
     var self = this;
 
     var command = 'curl';
-    command += ' -s '
+    command += ' -s ';
     command += ' -X ' + verb;
     command += ' ' + self.api.config.elasticsearch.urls[0];
     command += '/' + pattern;

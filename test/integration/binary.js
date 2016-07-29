@@ -10,6 +10,7 @@ describe('integartion:binary', function(){
   before(function(){ api = specHelper.api; });
 
   it('chooses #help as the default method', function(done){
+    this.timeout(10 * 1000);
     var command = './bin/messagebot';
     api.utils.doBash(command, function(error, data){
       should.not.exist(error);
@@ -19,6 +20,7 @@ describe('integartion:binary', function(){
   });
 
   it('returns an error when the method called cannot be found', function(done){
+    this.timeout(10 * 1000);
     var command = './bin/messagebot xxx';
     api.utils.doBash(command, function(error, data){
       error.message.should.containEql('Error: `xxx` is not a method I can perform');
@@ -28,6 +30,7 @@ describe('integartion:binary', function(){
 
   describe('#help', function(){
     it('returns the help file', function(done){
+      this.timeout(10 * 1000);
       var command = './bin/messagebot help';
       api.utils.doBash(command, function(error, data){
         should.not.exist(error);
@@ -38,6 +41,7 @@ describe('integartion:binary', function(){
     });
 
     it('returns the version number and name', function(done){
+      this.timeout(10 * 1000);
       var pkg = require(__dirname + '/../../package.json');
       var command = './bin/messagebot help';
       api.utils.doBash(command, function(error, data){
@@ -51,6 +55,7 @@ describe('integartion:binary', function(){
 
   describe('#version', function(){
     it('returns the help file', function(done){
+      this.timeout(10 * 1000);
       var pkg = require(__dirname + '/../../package.json');
       var command = './bin/messagebot version';
       api.utils.doBash(command, function(error, data){
@@ -65,6 +70,7 @@ describe('integartion:binary', function(){
 
   describe('#teamCreate', function(){
     it('succeeds', function(done){
+      this.timeout(10 * 1000);
       var command = '';
       command += ' NODE_ENV=test';
       command += ' ./bin/messagebot teamCreate';
@@ -108,6 +114,7 @@ describe('integartion:binary', function(){
     });
 
     it('fails (missing params)', function(done){
+      this.timeout(10 * 1000);
       var command = '';
       command += ' NODE_ENV=test';
       command += ' ./bin/messagebot teamCreate';
@@ -123,6 +130,7 @@ describe('integartion:binary', function(){
     });
 
     it('fails (uniqueness)', function(done){
+      this.timeout(10 * 1000);
       var command = '';
       command += ' NODE_ENV=test';
       command += ' ./bin/messagebot teamCreate';
@@ -141,6 +149,7 @@ describe('integartion:binary', function(){
 
   describe('#teamEdit', function(){
     it('succeeds', function(done){
+      this.timeout(10 * 1000);
       var command = '';
       command += ' NODE_ENV=test';
       command += ' ./bin/messagebot teamEdit';
@@ -156,6 +165,7 @@ describe('integartion:binary', function(){
     });
 
     it('fails (uniqueness)', function(done){
+      this.timeout(10 * 1000);
       var command = '';
       command += ' NODE_ENV=test';
       command += ' ./bin/messagebot teamEdit';
@@ -171,6 +181,7 @@ describe('integartion:binary', function(){
 
   describe('#teamsView', function(){
     it('succeeds', function(done){
+      this.timeout(10 * 1000);
       var command = '';
       command += ' NODE_ENV=test';
       command += ' ./bin/messagebot teamsList';
@@ -187,6 +198,7 @@ describe('integartion:binary', function(){
 
   describe('#teamDelete', function(){
     it('succeeds', function(done){
+      this.timeout(10 * 1000);
       var command = '';
       command += ' NODE_ENV=test';
       command += ' ./bin/messagebot teamDelete';
@@ -221,6 +233,7 @@ describe('integartion:binary', function(){
     });
 
     it('fails (missing team)', function(done){
+      this.timeout(10 * 1000);
       var command = '';
       command += ' NODE_ENV=test';
       command += ' ./bin/messagebot teamDelete';
