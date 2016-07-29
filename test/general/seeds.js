@@ -8,8 +8,8 @@ describe('general:seeds', function(){
   it('has the first team', function(done){
     api.models.team.findOne({where: {id: 1}}).then(function(team){
       team.id.should.equal(1);
-      team.name.should.equal('MessageBot');
-      team.trackingDomain.should.equal('https://tracking.site.com');
+      team.name.should.equal('TestTeam');
+      team.trackingDomain.should.equal('http://tracking.site.com');
       team.trackingDomainRegexp.should.equal('^.*$');
 
       done();

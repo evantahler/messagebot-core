@@ -69,7 +69,7 @@ describe('integartion:template', function(){
         html.should.equal('Hello there, fname');
         view.person.data.firstName.should.equal('fname');
         view.template.id.should.equal(template.id);
-        view.beacon.should.equal('<img src="https://tracking.site.com/api/message/track.gif?verb=read&guid=%%MESSAGEGUID%%" >');
+        view.beacon.should.equal('<img src="http://tracking.site.com/api/message/track.gif?verb=read&guid=%%MESSAGEGUID%%" >');
         done();
       });
     });
@@ -80,7 +80,7 @@ describe('integartion:template', function(){
         html.should.equal('Hello there, fname');
         view.person.data.firstName.should.equal('fname');
         view.template.id.should.equal(template.id);
-        view.beacon.should.equal('<img src="https://tracking.site.com/api/message/track.gif?verb=read&guid=' + message.data.guid + '" >');
+        view.beacon.should.equal('<img src="http://tracking.site.com/api/message/track.gif?verb=read&guid=' + message.data.guid + '" >');
         done();
       });
     });
@@ -89,8 +89,8 @@ describe('integartion:template', function(){
       template.template = 'Hello there, {{ person.data.firstName }} {{{ beacon }}}';
       template.render(person, message, function(error, html, view){
         should.not.exist(error);
-        html.should.equal('Hello there, fname <img src="https://tracking.site.com/api/message/track.gif?verb=read&guid=' + message.data.guid + '" >');
-        view.beacon.should.equal('<img src="https://tracking.site.com/api/message/track.gif?verb=read&guid=' + message.data.guid + '" >');
+        html.should.equal('Hello there, fname <img src="http://tracking.site.com/api/message/track.gif?verb=read&guid=' + message.data.guid + '" >');
+        view.beacon.should.equal('<img src="http://tracking.site.com/api/message/track.gif?verb=read&guid=' + message.data.guid + '" >');
         done();
       });
     });
@@ -121,7 +121,7 @@ describe('integartion:template', function(){
       template.template = 'Hello there, <a href="{{#track}}http://messagebot.io{{/track}}">click me</a>';
       template.render(person, message, function(error, html, view){
         should.not.exist(error);
-        html.should.equal('Hello there, <a href="https://tracking.site.com/api/message/track.gif?verb=act&guid=' + message.data.guid + '&link=http://messagebot.io">click me</a>');
+        html.should.equal('Hello there, <a href="http://tracking.site.com/api/message/track.gif?verb=act&guid=' + message.data.guid + '&link=http://messagebot.io">click me</a>');
         done();
       });
     });

@@ -243,7 +243,6 @@ describe('action:person', function(){
       }, function(response){
         should.not.exist(response.error);
         Object.keys(response.aggregations).length.should.equal(2);
-        response.aggregations._all[0].doc_count.should.equal(2);
         response.aggregations.tester[0].doc_count.should.equal(2);
         response.selections.should.deepEqual(['tester']);
         response.selectionsName.should.equal('sources');

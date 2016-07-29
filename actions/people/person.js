@@ -151,7 +151,7 @@ exports.personDelete = {
         var deletedGuids = [];
 
         var total = 1;
-        var alias = api.utils.cleanTeamName(data.team.name) + '-' + api.env + '-' + typeGroup[0];
+        var alias = api.utils.buildAlias(data.team, typeGroup[0]);
         async.whilst(function(){
           if(total > 0){ return true; }
           return false;

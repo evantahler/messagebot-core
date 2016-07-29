@@ -147,9 +147,9 @@ var loader = function(api){
               var team = api.utils.determineActionsTeam({params: {teamId: list.teamId}});
 
               [
-                {alias: api.utils.cleanTeamName(team.name) + '-' + api.env + '-' + 'people',   q: list.personQuery,  set: 'people'  },
-                {alias: api.utils.cleanTeamName(team.name) + '-' + api.env + '-' + 'events',   q: list.eventQuery,   set: 'events'  },
-                {alias: api.utils.cleanTeamName(team.name) + '-' + api.env + '-' + 'messages', q: list.messageQuery, set: 'messages'},
+                {alias: api.utils.buildAlias(team, 'people'),   q: list.personQuery,  set: 'people'  },
+                {alias: api.utils.buildAlias(team, 'events'),   q: list.eventQuery,   set: 'events'  },
+                {alias: api.utils.buildAlias(team, 'messages'), q: list.messageQuery, set: 'messages'},
               ].forEach(function(collection){
                 if(collection.q){
                   jobs.push(function(done){

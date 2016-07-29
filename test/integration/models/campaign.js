@@ -195,7 +195,7 @@ describe('integartion:campaigns', function(){
 
       async.series(jobs, function(error){
         should.not.exist(error);
-        var alias = api.utils.cleanTeamName(team.name) + '-' + api.env + '-' + 'messages';
+        var alias = api.utils.buildAlias(team, 'messages');
         api.elasticsearch.search(alias, ['campaignId'], [campaign.id], 0, 10, null, 1, function(error, results, total){
           should.not.exist(error);
           results.length.should.equal(1);
