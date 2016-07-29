@@ -145,7 +145,7 @@ var loader = function(api){
                   end,
                   'createdAt',
                   'date_histogram',
-                  'createdAt',
+                  term,
                   interval,
                   function(error, buckets){
                     if(error){ return done(error); }

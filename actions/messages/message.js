@@ -199,6 +199,7 @@ exports.messageTrack = {
       event.data.type = eventType;
       event.data.ip = ip;
       event.data.device = data.params.device;
+      event.data.data = {};
 
       if(data.params.link){ event.data.data.link = data.params.link; }
 
