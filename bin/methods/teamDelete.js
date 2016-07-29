@@ -28,7 +28,7 @@ var teamDelete = function(api, callback){
 
   jobs.push(function(done){
     console.log('Deleting all ElasticSearch data for Team #' + team.id + ', (' + team.name + ')');
-    var command = 'curl -X DELETE';
+    var command = 'curl -s -X DELETE';
     command += ' ' + api.config.elasticsearch.urls[0];
     command += '/' + team.id + '-' + api.env + '-*';
     api.utils.doBash([command], function(error, lines){

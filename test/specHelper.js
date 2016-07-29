@@ -250,6 +250,7 @@ if(process.env.SKIP_MIGRATE !== 'true'){
   });
 
   before(function(done){
+    this.timeout(10 * 1000);
     specHelper.createTeam(done);
   });
 
