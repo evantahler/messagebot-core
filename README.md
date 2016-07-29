@@ -10,7 +10,7 @@
 | Node.JS           | >=4.0.0   |
 | ElasticSearch     | >=2.0.0   |
 | Redis             | >=2.0.0   |
-| MySQL || Postgres | "modern"  |
+| MySQL or Postgres | "modern"  |
 
 ## Install
 
