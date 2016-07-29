@@ -34,7 +34,7 @@ jobs.push(function(done){
     teams.forEach(function(team){
       var teamJob = function(next){
         console.log('>> Migrating ElasticSearch for Team #' + team.id + ', (' + team.name + ')');
-        api.utils.doBash(['PREFIX="' + team.id + '" node ./node_modules/.bin/ah-elasticsearch-orm migrate'], function(error, lines){
+        api.utils.doShell(['PREFIX="' + team.id + '" node ./node_modules/.bin/ah-elasticsearch-orm migrate'], function(error, lines){
           console.log(lines);
           next(error);
         }, true);

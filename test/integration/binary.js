@@ -12,7 +12,7 @@ describe('integartion:binary', function(){
   it('chooses #help as the default method', function(done){
     this.timeout(10 * 1000);
     var command = './bin/messagebot';
-    api.utils.doBash(command, function(error, data){
+    api.utils.doShell(command, function(error, data){
       should.not.exist(error);
       data.should.containEql('help:');
       done();
@@ -22,7 +22,7 @@ describe('integartion:binary', function(){
   it('returns an error when the method called cannot be found', function(done){
     this.timeout(10 * 1000);
     var command = './bin/messagebot xxx';
-    api.utils.doBash(command, function(error, data){
+    api.utils.doShell(command, function(error, data){
       error.message.should.containEql('Error: `xxx` is not a method I can perform');
       done();
     }, true);
@@ -32,7 +32,7 @@ describe('integartion:binary', function(){
     it('returns the help file', function(done){
       this.timeout(10 * 1000);
       var command = './bin/messagebot help';
-      api.utils.doBash(command, function(error, data){
+      api.utils.doShell(command, function(error, data){
         should.not.exist(error);
         data.should.containEql('help:');
         data.should.containEql('Learn more @ http://www.messagebot.io');
@@ -44,7 +44,7 @@ describe('integartion:binary', function(){
       this.timeout(10 * 1000);
       var pkg = require(__dirname + '/../../package.json');
       var command = './bin/messagebot help';
-      api.utils.doBash(command, function(error, data){
+      api.utils.doShell(command, function(error, data){
         should.not.exist(error);
         data.should.containEql('Name: messagebot-core');
         data.should.containEql('Version: ' + pkg.version);
@@ -58,7 +58,7 @@ describe('integartion:binary', function(){
       this.timeout(10 * 1000);
       var pkg = require(__dirname + '/../../package.json');
       var command = './bin/messagebot version';
-      api.utils.doBash(command, function(error, data){
+      api.utils.doShell(command, function(error, data){
         should.not.exist(error);
         data.should.containEql('Name: messagebot-core');
         data.should.containEql('Version: ' + pkg.version);
@@ -80,7 +80,7 @@ describe('integartion:binary', function(){
       command += ' --email "admin@app.com"';
       command += ' --password "password"';
 
-      api.utils.doBash(command, function(error, data){
+      api.utils.doShell(command, function(error, data){
         should.not.exist(error);
         data.should.containEql('New Team');
         data.should.containEql('New User');
@@ -123,7 +123,7 @@ describe('integartion:binary', function(){
       command += ' --email "admin@app.com"';
       command += ' --password "password"';
 
-      api.utils.doBash(command, function(error, data){
+      api.utils.doShell(command, function(error, data){
         error.message.should.containEql('Missing required arguments: trackingDomainRegexp');
         done();
       }, true);
@@ -140,7 +140,7 @@ describe('integartion:binary', function(){
       command += ' --email "admin@app.com"';
       command += ' --password "password"';
 
-      api.utils.doBash(command, function(error, data){
+      api.utils.doShell(command, function(error, data){
         error.message.should.containEql('Validation error');
         done();
       }, true);
@@ -156,7 +156,7 @@ describe('integartion:binary', function(){
       command += ' --id ' + team.id;
       command += ' --name AnotherTestTeamNewName';
 
-      api.utils.doBash(command, function(error, data){
+      api.utils.doShell(command, function(error, data){
         should.not.exist(error);
         data.should.containEql('AnotherTestTeamNewName');
         data.should.containEql('http://tracking.app.com');
@@ -172,7 +172,7 @@ describe('integartion:binary', function(){
       command += ' --id ' + team.id;
       command += ' --name TestTeam';
 
-      api.utils.doBash(command, function(error, data){
+      api.utils.doShell(command, function(error, data){
         error.message.should.containEql('Validation error');
         done();
       }, true);
@@ -186,7 +186,7 @@ describe('integartion:binary', function(){
       command += ' NODE_ENV=test';
       command += ' ./bin/messagebot teamsList';
 
-      api.utils.doBash(command, function(error, data){
+      api.utils.doShell(command, function(error, data){
         should.not.exist(error);
         data.should.containEql('2 Total Teams');
         data.should.containEql('TestTeam');
@@ -204,7 +204,7 @@ describe('integartion:binary', function(){
       command += ' ./bin/messagebot teamDelete';
       command += ' --id ' + team.id;
 
-      api.utils.doBash(command, function(error, data){
+      api.utils.doShell(command, function(error, data){
         should.not.exist(error);
         done();
       }, true);
@@ -239,7 +239,7 @@ describe('integartion:binary', function(){
       command += ' ./bin/messagebot teamDelete';
       command += ' --id ' + team.id;
 
-      api.utils.doBash(command, function(error, data){
+      api.utils.doShell(command, function(error, data){
         error.message.should.containEql('Team not found');
         done();
       }, true);

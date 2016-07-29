@@ -31,13 +31,13 @@ var specHelper = {
       return callback(new Error('I do not know how to work with ' + self.api.config.sequelize.dialect));
     }
 
-    self.api.utils.doBash(command, callback, silent);
+    self.api.utils.doShell(command, callback, silent);
   },
 
   createDatabase: function(callback, silent){
     var self = this;
     if(self.api.config.sequelize.dialect === 'postgres'){
-      self.api.utils.doBash(['createdb ' + self.api.config.sequelize.database], callback, silent);
+      self.api.utils.doShell(['createdb ' + self.api.config.sequelize.database], callback, silent);
     }else{
       self.doDatabaseBash('create database if not exists ' + self.api.config.sequelize.database, callback, silent);
     }
@@ -46,7 +46,7 @@ var specHelper = {
   dropDatabase: function(callback, silent){
     var self = this;
     if(self.api.config.sequelize.dialect === 'postgres'){
-      self.api.utils.doBash(['dropdb --if-exists ' + self.api.config.sequelize.database], function(error){
+      self.api.utils.doShell(['dropdb --if-exists ' + self.api.config.sequelize.database], function(error){
         if(error && !error.match(/NOTICE/)){ return callback(error); }
         return callback();
       }, silent);
@@ -63,7 +63,7 @@ var specHelper = {
     command += ' -X ' + verb;
     command += ' ' + self.api.config.elasticsearch.urls[0];
     command += '/' + pattern;
-    self.api.utils.doBash(command, callback, silent);
+    self.api.utils.doShell(command, callback, silent);
   },
 
   migrate: function(callback){
@@ -82,11 +82,11 @@ var specHelper = {
     });
 
     jobs.push(function(done){
-      self.api.utils.doBash('NODE_ENV=test npm run migrate:sequelize', done);
+      self.api.utils.doShell('NODE_ENV=test npm run migrate:sequelize', done);
     });
 
     jobs.push(function(done){
-      self.api.utils.doBash('NODE_ENV=test NUMBER_OF_SHARDS=1 npm run migrate:elasticsearch', done);
+      self.api.utils.doShell('NODE_ENV=test NUMBER_OF_SHARDS=1 npm run migrate:elasticsearch', done);
     });
 
     jobs.push(function(done){
@@ -146,7 +146,7 @@ var specHelper = {
     command += ' --password "password"';
 
     console.log('\r\n*** Creating Test Team ***\r\n');
-    self.api.utils.doBash(command, function(error){
+    self.api.utils.doShell(command, function(error){
       if(error){ console.log('error', error); return callback(error); }
       console.log('\r\n*** Test Team Created ***\r\n');
       return callback();

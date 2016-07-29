@@ -137,10 +137,10 @@ module.exports = {
       return team;
     };
 
-    api.utils.doBash = function(commands, callback, silent){
+    api.utils.doShell = function(commands, callback, silent){
       if(!silent){ silent = false; }
       if(!Array.isArray(commands)){ commands = [commands]; }
-      var fullCommand = '/bin/bash -c \'' + commands.join(' && ') + '\'';
+      var fullCommand = '/bin/sh -c \'' + commands.join(' && ') + '\'';
       if(!silent){ console.log('>> ' + fullCommand); }
       exec(fullCommand, function(error, stdout, stderr){
         if(!error && stderr){ error = stderr; }

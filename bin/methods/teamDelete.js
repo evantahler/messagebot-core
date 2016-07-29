@@ -31,7 +31,7 @@ var teamDelete = function(api, callback){
     var command = 'curl -s -X DELETE';
     command += ' ' + api.config.elasticsearch.urls[0];
     command += '/' + team.id + '-' + api.env + '-*';
-    api.utils.doBash([command], function(error, lines){
+    api.utils.doShell([command], function(error, lines){
       console.log(lines);
       done(error);
     }, true);

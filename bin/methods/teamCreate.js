@@ -36,7 +36,7 @@ var teamCreate = function(api, callback){
 
   jobs.push(function(done){
     console.log('Migrating ElasticSearch for Team #' + team.id + ', (' + team.name + ')');
-    api.utils.doBash(['PREFIX="' + team.id + '" node ./node_modules/.bin/ah-elasticsearch-orm migrate'], function(error, lines){
+    api.utils.doShell(['PREFIX="' + team.id + '" node ./node_modules/.bin/ah-elasticsearch-orm migrate'], function(error, lines){
       console.log(lines);
       done(error);
     }, true);
