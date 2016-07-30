@@ -31,7 +31,7 @@ exports.task = {
     jobs.push(function(done){
       event = new api.models.event(team);
       event.data.personGuid = person.data.guid;
-      event.data.type = 'personCreated';
+      event.data.type = 'person_created';
       event.data.ip = 'internal';
       event.data.device = person.data.device;
       event.create(done);

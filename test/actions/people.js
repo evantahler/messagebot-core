@@ -67,7 +67,7 @@ describe('action:person', function(){
       });
     });
 
-    it('succeeds (enqueues a personCreated event)', function(done){
+    it('succeeds (enqueues a person_created event)', function(done){
       api.resque.queue.timestamps(function(error, length){
         should.not.exist(error);
         var latestTimetamp = length[0];
@@ -94,7 +94,7 @@ describe('action:person', function(){
         }, function(response){
           should.not.exist(response.error);
           response.total.should.equal(1);
-          response.events[0].type.should.equal('personCreated');
+          response.events[0].type.should.equal('person_created');
           response.events[0].ip.should.equal('internal');
           done();
         });
