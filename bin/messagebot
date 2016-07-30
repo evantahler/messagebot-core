@@ -27,12 +27,16 @@ actionhero.initialize({configChanges: configChanges}, function(error, api){
   var runner;
 
   try{
-    var method = 'help';
-    if(optimist.argv._[0]){ method = optimist.argv._[0]; }
-    runner = require(__dirname + '/methods/' + method + '.js');
+    var commands = [];
+    if(!optimist.argv._ || optimist.argv._.length === 0){ commands.push('help'); }
+    optimist.argv._.forEach(function(arg){
+      commands.push(arg);
+    });
+
+    runner = require(__dirname + '/methods/' + commands.join('/') + '.js');
     runner(api, end);
   }catch(e){
-    console.error('Error: `' + method + '` is not a method I can perform.');
+    console.error('Error: `' + commands.join(' ') + '` is not a method I can perform.');
     console.error('run `bin/messagebot help` to learn more.');
     end(e);
   }

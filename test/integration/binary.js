@@ -73,7 +73,7 @@ describe('integartion:binary', function(){
       this.timeout(10 * 1000);
       var command = '';
       command += ' NODE_ENV=test';
-      command += ' ./bin/messagebot teamCreate';
+      command += ' ./bin/messagebot team create';
       command += ' --name AnotherTestTeam';
       command += ' --trackingDomainRegexp "^.*.app.com$"';
       command += ' --trackingDomain "http://tracking.app.com"';
@@ -117,7 +117,7 @@ describe('integartion:binary', function(){
       this.timeout(10 * 1000);
       var command = '';
       command += ' NODE_ENV=test';
-      command += ' ./bin/messagebot teamCreate';
+      command += ' ./bin/messagebot team create';
       command += ' --name AnotherTestTeam';
       command += ' --trackingDomain "http://tracking.app.com"';
       command += ' --email "admin@app.com"';
@@ -133,7 +133,7 @@ describe('integartion:binary', function(){
       this.timeout(10 * 1000);
       var command = '';
       command += ' NODE_ENV=test';
-      command += ' ./bin/messagebot teamCreate';
+      command += ' ./bin/messagebot team create';
       command += ' --name AnotherTestTeam';
       command += ' --trackingDomainRegexp "^.*.app.com$"';
       command += ' --trackingDomain "http://tracking.app.com"';
@@ -152,7 +152,7 @@ describe('integartion:binary', function(){
       this.timeout(10 * 1000);
       var command = '';
       command += ' NODE_ENV=test';
-      command += ' ./bin/messagebot teamEdit';
+      command += ' ./bin/messagebot team edit';
       command += ' --id ' + team.id;
       command += ' --name AnotherTestTeamNewName';
 
@@ -168,7 +168,7 @@ describe('integartion:binary', function(){
       this.timeout(10 * 1000);
       var command = '';
       command += ' NODE_ENV=test';
-      command += ' ./bin/messagebot teamEdit';
+      command += ' ./bin/messagebot team edit';
       command += ' --id ' + team.id;
       command += ' --name TestTeam';
 
@@ -184,7 +184,7 @@ describe('integartion:binary', function(){
       this.timeout(10 * 1000);
       var command = '';
       command += ' NODE_ENV=test';
-      command += ' ./bin/messagebot teamsList';
+      command += ' ./bin/messagebot teams list';
 
       api.utils.doShell(command, function(error, data){
         should.not.exist(error);
@@ -201,7 +201,7 @@ describe('integartion:binary', function(){
       this.timeout(10 * 1000);
       var command = '';
       command += ' NODE_ENV=test';
-      command += ' ./bin/messagebot teamDelete';
+      command += ' ./bin/messagebot team delete';
       command += ' --id ' + team.id;
 
       api.utils.doShell(command, function(error, data){
@@ -236,7 +236,7 @@ describe('integartion:binary', function(){
       this.timeout(10 * 1000);
       var command = '';
       command += ' NODE_ENV=test';
-      command += ' ./bin/messagebot teamDelete';
+      command += ' ./bin/messagebot team delete';
       command += ' --id ' + team.id;
 
       api.utils.doShell(command, function(error, data){

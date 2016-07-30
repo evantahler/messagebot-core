@@ -15,15 +15,15 @@ version:
           Example:
             bin/messagebot version
 
-teamsList:
+teams list:
           Description:
             List the teams on this instance
           Options:
             none
           Example:
-            bin/messagebot teamsList
+            bin/messagebot teams list
 
-teamCreate:
+team create:
           Description:
             Create a new MessageBot team.
             This method will also create the first user for this team.
@@ -42,9 +42,9 @@ teamCreate:
                 The first user in this team's password
                 default: (random)
           Example:
-            ./bin/messagebot userCreate --name myTeam --trackingDomainRegexp "^.*.myapp.com" --trackingDomain "tracking.myapp.com"
+            ./bin/messagebot user create --name myTeam --trackingDomainRegexp "^.*.myapp.com" --trackingDomain "tracking.myapp.com"
 
-teamEdit:
+team edit:
           Description:
             Edit the properties of an existing team
           Options:
@@ -58,9 +58,9 @@ teamEdit:
             --trackingDomain (optional)
                 The main tracking URL you plan to use.  This URL will be the one appended to link tracking, etc.
           Example:
-            ./bin/messagebot teamEdit  --id 1 --name 'MessageBot!'
+            ./bin/messagebot team edit  --id 1 --name 'MessageBot!'
 
-teamDelete:
+team delete:
           Description:
             Deletes a team and all associated data from your relational database and ElasticSearch.
             ** This is unrecoverable! **
@@ -68,7 +68,7 @@ teamDelete:
             --teamId:
               The ID of the team in question
           Example:
-            ./bin/messagebot teamDelete  --id 1
+            ./bin/messagebot team delete  --id 1
 
 ----------------
 

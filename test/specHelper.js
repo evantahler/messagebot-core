@@ -138,7 +138,7 @@ var specHelper = {
     var command = '';
     command += ' NODE_ENV=test';
     command += ' NUMBER_OF_SHARDS=1';
-    command += ' ./bin/messagebot teamCreate';
+    command += ' ./bin/messagebot team create';
     command += ' --name TestTeam';
     command += ' --trackingDomainRegexp "^.*$"';
     command += ' --trackingDomain "http://tracking.site.com"';
