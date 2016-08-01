@@ -24,16 +24,12 @@ actionhero.initialize({configChanges: configChanges}, function(error, api){
     }
   };
 
-  var runner;
-
   try{
     var commands = [];
     if(!optimist.argv._ || optimist.argv._.length === 0){ commands.push('help'); }
-    optimist.argv._.forEach(function(arg){
-      commands.push(arg);
-    });
+    optimist.argv._.forEach(function(arg){ commands.push(arg); });
 
-    runner = require(__dirname + '/methods/' + commands.join('/') + '.js');
+    var runner = require(__dirname + '/methods/' + commands.join('/') + '.js');
     runner(api, end);
   }catch(e){
     console.error('Error: `' + commands.join(' ') + '` is not a method I can perform.');
