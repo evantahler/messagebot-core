@@ -142,6 +142,9 @@ describe('actions:event', function(){
   });
 
   describe('event:view', function(){
+    // we need to prevent resque delayed job collisiosn for the same timestamp
+    before(function(done){ setTimeout(done, 1001); });
+
     it('succeeds', function(done){
       api.specHelper.runAction('event:view', {
         teamId: team.id,

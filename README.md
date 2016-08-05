@@ -91,3 +91,7 @@ The MessageBot CLI is used to manage system-level data, IE: the creation and rem
 **Notes**
 - At this time, the test suite will only run on MySQL or Postgres, and assumes the test databases are local (on the same host) as where you are running the test suite code.
 - The test suite will configure a new redis database to be used equal to your normal database ID + 1
+
+## Notes
+
+This product includes GeoLite2 data created by MaxMind, available from [www.maxmind.com](http://www.maxmind.com).

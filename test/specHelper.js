@@ -242,6 +242,7 @@ before(function(done){
 /*--- Always Clear and Migrate before eacn run ---*/
 
 if(process.env.SKIP_MIGRATE !== 'true'){
+  console.log('You can set SKIP_MIGRATE=true to skip the migration preperation steps of this test suite');
   before(function(done){
     this.timeout(10 * 1000);
     specHelper.clear(done);
