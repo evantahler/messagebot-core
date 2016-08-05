@@ -1,11 +1,10 @@
-var maxmind = require('maxmind');
+var MaxMind = require('maxmind');
 
 module.exports = {
   loadPriority:  1000,
 
   initialize: function(api, next){
-    maxmind.init(process.env.MAXMIND_DB);
-    api.maxmind = maxmind;
+    api.maxmind = MaxMind.open(process.env.MAXMIND_DB);
 
     api.geolocation = {
       build: function(params, ip){
@@ -16,11 +15,16 @@ module.exports = {
           };
         }else if(ip){
           try{
-            var location = api.maxmind.getLocation(ip);
-            if(location && location.latitude && location.longitude){
+            var geoDetails = api.maxmind.get(ip);
+            if(
+              geoDetails &&
+              geoDetails.location &&
+              geoDetails.location.latitude &&
+              geoDetails.location.longitude
+            ){
               return {
-                lat: location.latitude,
-                lon: location.longitude
+                lat: geoDetails.location.latitude,
+                lon: geoDetails.location.longitude
               };
             }
           }catch(e){

@@ -6,8 +6,7 @@ pids/*
 locales/*
 tmp/*
 
-public/javascript/actionheroClient.js
-public/javascript/actionheroClient.min.js
+public/js/actionhero/actionheroClient.*
 public/bower_components/*
 
 npm-debug.log
