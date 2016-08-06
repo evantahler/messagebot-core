@@ -2,7 +2,7 @@ machine:
   environment:
     MOCHA_FILE: $CIRCLE_TEST_REPORTS/junit/test-results.xml
 
-    MAXMIND_DB: ./tmp/maxmind/GeoLiteCity.dat
+    MAXMIND_DB: ./tmp/maxmind/GeoLite2-City.mmdb
 
     SEQUELIZE_HOST: localhost
     SEQUELIZE_DATABASE: messagebot_development
