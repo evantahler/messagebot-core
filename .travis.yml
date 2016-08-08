@@ -1,19 +1,41 @@
-sudo: false
+sudo: true
 
 language: node_js
 
 node_js:
   - "4"
-  - "5"
+  - "6"
 
 env:
-  - CXX=g++-4.8
-addons:
-  apt:
-    sources:
-      - ubuntu-toolchain-r-test
-    packages:
-      - g++-4.8
+  global:
+    - MAXMIND_DB="./tmp/maxmind/GeoLite2-City.mmdb"
+
+    - SEQUELIZE_HOST="localhost"
+    - SEQUELIZE_DATABASE="messagebot_test"
+    - SEQUELIZE_PASSWORD=""
+
+    - REDIS_HOST="127.0.0.1"
+    - REDIS_PORT="6379"
+    - REDIS_DB="1"
+    - REDIS_PASS=""
+
+    - ELASTICSEARCH_VERSION="2.3.4"
+    - ELASTICSEARCH_URLS="http://localhost:9200"
+  matrix:
+    - SEQUELIZE_DIALECT=mysql    SEQUELIZE_USER=root     SEQUELIZE_PORT=3306
+    - SEQUELIZE_DIALECT=postgres SEQUELIZE_USER=postgres SEQUELIZE_PORT=5432
+
+before_install:
+  # Install build tools needed for some NPM packages
+  - sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
+  - sudo apt-get update -q
+  - sudo apt-get install gcc-4.8 -y
+
+  # Install Elasticsearch Latest Version
+  - curl -O https://download.elastic.co/elasticsearch/release/org/elasticsearch/distribution/deb/elasticsearch/$ELASTICSEARCH_VERSION/elasticsearch-$ELASTICSEARCH_VERSION.deb
+  - sudo dpkg -i --force-confnew elasticsearch-$ELASTICSEARCH_VERSION.deb
+  - sudo service elasticsearch restart
+  - sleep 10
 
 os:
   - linux
@@ -23,7 +45,4 @@ script: npm run test
 services:
   - redis-server
   - mysql
-  - elasticsearch
-
-before_script:
-  - mysql -e 'create database IF NOT EXISTS messagebot_test'
+  - postgres
