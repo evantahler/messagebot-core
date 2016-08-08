@@ -86,7 +86,13 @@ var specHelper = {
     });
 
     jobs.push(function(done){
-      self.api.utils.doShell('NODE_ENV=test npm run migrate:sequelize', done);
+      self.api.utils.doShell('NODE_ENV=test npm run migrate:sequelize', function(error){
+        if(error && !error.toString().match(/graceful-fs/)){
+          done(error);
+        }else{
+          done();
+        }
+      });
     });
 
     jobs.push(function(done){
