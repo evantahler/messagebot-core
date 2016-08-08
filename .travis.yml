@@ -8,17 +8,15 @@ node_js:
 
 env:
   global:
+    - CXX=g++-4.8
     - MAXMIND_DB="./tmp/maxmind/GeoLite2-City.mmdb"
-
     - SEQUELIZE_HOST="localhost"
     - SEQUELIZE_DATABASE="messagebot_test"
     - SEQUELIZE_PASSWORD=""
-
     - REDIS_HOST="127.0.0.1"
     - REDIS_PORT="6379"
     - REDIS_DB="1"
     - REDIS_PASS=""
-
     - ELASTICSEARCH_VERSION="2.3.4"
     - ELASTICSEARCH_URLS="http://localhost:9200"
   matrix:
@@ -29,7 +27,7 @@ before_install:
   # Install build tools needed for some NPM packages
   - sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
   - sudo apt-get update -q
-  - sudo apt-get install gcc-4.8 -y
+  - sudo apt-get install gcc-4.8 g++-4.8 -y
 
   # Install Elasticsearch Latest Version
   - curl -O https://download.elastic.co/elasticsearch/release/org/elasticsearch/distribution/deb/elasticsearch/$ELASTICSEARCH_VERSION/elasticsearch-$ELASTICSEARCH_VERSION.deb
