@@ -47,7 +47,7 @@ var specHelper = {
     var self = this;
     if(self.api.config.sequelize.dialect === 'postgres'){
       self.api.utils.doShell(['dropdb --if-exists ' + self.api.config.sequelize.database], function(error){
-        if(error && !error.match(/NOTICE/)){ return callback(error); }
+        if(error && !String(error).match(/NOTICE/)){ return callback(error); }
         return callback();
       }, silent);
     }else{
