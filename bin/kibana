@@ -13,7 +13,7 @@ mkdir -p ./tmp/kibana
 cd ./tmp/kibana
 
 if [ "$NODE_ENV" = "test" ]; then
-    echo "Skipping Kibana in test env"
+    echo "Skipping Kibana in test environment."
     exit 0
 fi
 
