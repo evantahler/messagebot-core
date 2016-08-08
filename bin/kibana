@@ -12,6 +12,11 @@ cd ..
 mkdir -p ./tmp/kibana
 cd ./tmp/kibana
 
+if [ "$NODE_ENV" = "test" ]; then
+    echo "Skipping Kibana in test env"
+    exit 0
+fi
+
 condition=$(which wget 2>/dev/null | grep -v "not found" | wc -l)
 if [ $condition -eq 0 ] ; then
     echo "wget is not installed"
