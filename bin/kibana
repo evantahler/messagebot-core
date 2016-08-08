@@ -22,7 +22,7 @@ if [ -f "$VERSION/package.json" ]; then
   echo "kibana downloaded"
 else
   wget "https://download.elastic.co/kibana/kibana/$VERSION.tar.gz"
-  tar -xvf $VERSION.tar.gz
+  tar -xf $VERSION.tar.gz
 fi
 
 if [ "$1" == "-run" ]; then
