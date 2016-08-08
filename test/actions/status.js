@@ -15,6 +15,14 @@ describe('system:status', function(){
     });
   });
 
+  it('debugs ES', function(done){
+    api.utils.doShell('curl localhost:9200/_stats', function(error, results){
+      console.log(error);
+      console.log(results);
+      done();
+    });
+  });
+
   it('returns node status', function(done){
     specHelper.requestWithLogin(email, password, 'system:status', {}, function(response){
       response.database.healthy.should.equal(true);

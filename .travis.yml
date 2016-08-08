@@ -6,6 +6,9 @@ node_js:
   - "4"
   - "6"
 
+addons:
+  postgresql: "9.4.1"
+
 env:
   global:
     - CXX=g++-4.8
@@ -43,4 +46,3 @@ script: npm run test
 services:
   - redis-server
   - mysql
-  - postgres

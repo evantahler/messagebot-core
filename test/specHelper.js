@@ -45,13 +45,17 @@ var specHelper = {
 
   dropDatabase: function(callback, silent){
     var self = this;
+
     if(self.api.config.sequelize.dialect === 'postgres'){
       self.api.utils.doShell(['dropdb --if-exists ' + self.api.config.sequelize.database], function(error){
         if(error && !String(error).match(/NOTICE/)){ return callback(error); }
         return callback();
       }, silent);
-    }else{
+    }else if(self.api.config.sequelize.dialect === 'mysql'){
       self.doDatabaseBash('drop database if exists ' + self.api.config.sequelize.database, callback, silent);
+    }
+    else{
+      return callback(new Error('I do not know how to drop this type of database: ' + self.api.config.sequelize.dialect));
     }
   },
 
