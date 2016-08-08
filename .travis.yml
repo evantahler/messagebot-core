@@ -39,6 +39,9 @@ before_install:
   - sudo service elasticsearch restart
   # - sleep 10 # (not needed as NPM install takes long enough)
 
+before_script:
+  - "curl -X DELETE http://localhost:9200/*"
+
 os:
   - linux
 
