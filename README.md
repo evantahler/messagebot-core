@@ -1,3 +1,4 @@
+
 # MessageBot.io
 *A modern customer relationship and analytics platform*
 
@@ -12,10 +13,30 @@
 | Redis             | >=2.0.0   |
 | MySQL or Postgres | "modern"  |
 
+## Screenshots
 
-| thing 1 | thing 2 |
-|---------|---------|
-| thing 3 | thing 4 |
+<table>
+  <tr valign="top">
+    <td>
+      <strong>Dashboard</strong>
+      <img src="https://raw.githubusercontent.com/messagebot/messagebot-core/master/screenshots/dashboard.png" />
+    </td>
+    <td>
+      <strong>Search Results</strong>
+      <img src="https://raw.githubusercontent.com/messagebot/messagebot-core/master/screenshots/people.png" />
+    </td>
+  </tr>
+  <tr tr valign="top">
+    <td>
+      <strong>Template Creation</strong>
+      <img src="https://raw.githubusercontent.com/messagebot/messagebot-core/master/screenshots/templates.png" />
+    </td>
+    <td>
+      <strong>System Status</strong>
+      <img src="https://raw.githubusercontent.com/messagebot/messagebot-core/master/screenshots/status.png" />
+    </td>
+  </tr>
+</table>
 
 ## Install
 
