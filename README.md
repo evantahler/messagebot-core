@@ -12,6 +12,11 @@
 | Redis             | >=2.0.0   |
 | MySQL or Postgres | "modern"  |
 
+
+| thing 1 | thing 2 |
+|---------|---------|
+| thing 3 | thing 4 |
+
 ## Install
 
 - `npm install`
