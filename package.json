@@ -12,7 +12,7 @@
     "node": "^4.2.0"
   },
   "dependencies": {
-    "actionhero": "^15.0.0",
+    "actionhero": "^15.0.1",
     "ah-elasticsearch-orm": "^0.1.2",
     "ah-resque-ui": "^0.0.6",
     "ah-swagger-plugin": "^1.0.0",
