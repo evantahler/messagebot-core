@@ -1,6 +1,6 @@
-app.controller('analytics:search', ['$scope', '$rootScope', '$location', 'ngNotify', '$routeParams', 'ActionHero', function($scope, $rootScope, $location, ngNotify, $routeParams, ActionHero){
-  var section = $rootScope.section;
-
+app.controller('analytics:search', ['$scope', '$location', 'ngNotify', '$routeParams', 'ActionHero', 'Utils', function($scope, $location, ngNotify, $routeParams, ActionHero, Utils){
+  $scope.section = Utils.determineSection($location); // people
+  $scope.recordType = Utils.singular($scope.section); // person
   $scope.searchResults = [];
   $scope.query = $routeParams.query || '';
   $scope.pagination = {};
@@ -9,15 +9,15 @@ app.controller('analytics:search', ['$scope', '$rootScope', '$location', 'ngNoti
   var perPage = 50;
 
   $scope.doSearch = function(){
-    $location.path( '/' + section + '/search/' + $scope.query + '/' + currentPage );
+    $location.path( '/' + $scope.section + '/search/' + $scope.query + '/' + currentPage );
 
-    var r = $rootScope.routeQueryToParams($scope.query);
+    var r = Utils.routeQueryToParams($scope.query);
     var searchKeys = r[0]; var searchValues = r[1];
 
     if(searchKeys.length === searchValues.length && searchValues.length > 0){
       $scope.loadSearchResults(searchKeys, searchValues);
     }else{
-      $location.path( '/' + section + '/search/' );
+      $location.path( '/' + $scope.section + '/search/' );
       ngNotify.set('search query error, try again', 'error');
     }
   };
@@ -30,17 +30,17 @@ app.controller('analytics:search', ['$scope', '$rootScope', '$location', 'ngNoti
       searchValues: searchValues,
       from: (currentPage * perPage),
       size: perPage,
-    }, '/api/' + section + '/search', 'GET', function(data){
+    }, '/api/' + $scope.section + '/search', 'GET', function(data){
       if(data.total === 0){
         ngNotify.set('no matching records found', 'error');
       }
       else{
         $scope.total = data.total;
-        $scope.searchResults = data[section];
-        $scope.pagination = $rootScope.genratePagination(currentPage, perPage, $scope.total);
+        $scope.searchResults = data[$scope.section];
+        $scope.pagination = Utils.genratePagination(currentPage, perPage, $scope.total);
 
         if($scope.total > 0 && $scope.searchResults.length === 0){
-          $location.path( '/' + section + '/search/' + $scope.query );
+          $location.path( '/' + $scope.section + '/search/' + $scope.query );
         }
       }
     });
@@ -53,8 +53,9 @@ app.controller('analytics:search', ['$scope', '$rootScope', '$location', 'ngNoti
 }]);
 
 
-app.controller('analytics:recent', ['$scope', '$rootScope', '$location', 'ngNotify', '$routeParams', 'ActionHero', function($scope, $rootScope, $location, ngNotify, $routeParams, ActionHero){
-  var section = $rootScope.section;
+app.controller('analytics:recent', ['$scope', '$location', '$routeParams', 'ActionHero', 'Utils', function($scope, $location, $routeParams, ActionHero, Utils){
+  $scope.section = Utils.determineSection($location); // people
+  $scope.recordType = Utils.singular($scope.section); // person
   $scope.records = [];
   $scope.pagination = {};
 
@@ -67,18 +68,19 @@ app.controller('analytics:recent', ['$scope', '$rootScope', '$location', 'ngNoti
       searchValues: '_exists',
       from: (currentPage * perPage),
       size: perPage,
-    }, '/api/' + section + '/search', 'GET', function(data){
+    }, '/api/' + $scope.section + '/search', 'GET', function(data){
       $scope.total = data.total;
-      $scope.records = data[section];
-      $scope.pagination = $rootScope.genratePagination(currentPage, perPage, $scope.total);
+      $scope.records = data[$scope.section];
+      $scope.pagination = Utils.genratePagination(currentPage, perPage, $scope.total);
     });
   };
 
   $scope.loadRecent();
 }]);
 
-app.controller('analytics:heatmap', ['$scope', '$rootScope', '$location', 'ngNotify', '$routeParams', 'ActionHero', function($scope, $rootScope, $location, ngNotify, $routeParams, ActionHero){
-  var section = $rootScope.section;
+app.controller('analytics:heatmap', ['$scope', '$location', '$routeParams', 'ActionHero', 'Utils', function($scope, $location, $routeParams, ActionHero, Utils){
+  $scope.section = Utils.determineSection($location); // people
+  $scope.recordType = Utils.singular($scope.section); // person
   $scope.heatmapOptions = {size: 10000};
   $scope.map = {
     center: {
@@ -105,7 +107,7 @@ app.controller('analytics:heatmap', ['$scope', '$rootScope', '$location', 'ngNot
   var searchKeys = ['location'];
   var searchValues = ['_exists'];
   if($scope.query){
-    var r = $rootScope.routeQueryToParams($scope.query);
+    var r = Utils.routeQueryToParams($scope.query);
     searchKeys = searchKeys.concat(r[0]);
     searchValues = searchValues.concat(r[1]);
   }
@@ -117,18 +119,18 @@ app.controller('analytics:heatmap', ['$scope', '$rootScope', '$location', 'ngNot
       searchValues: searchValues,
       from: 0,
       size: $scope.heatmapOptions.size,
-    }, '/api/' + section + '/search', 'GET', function(data){
+    }, '/api/' + $scope.section + '/search', 'GET', function(data){
       var points = [];
       var avgLat = 0;
       var avgLon = 0;
-      data[section].forEach(function(e){
+      data[$scope.section].forEach(function(e){
         avgLat += e.location.lat;
         avgLon += e.location.lon;
         points.push([e.location.lat, e.location.lon])
       });
 
-      avgLat = avgLat / data[section].length;
-      avgLon = avgLon / data[section].length;
+      avgLat = avgLat / data[$scope.section].length;
+      avgLon = avgLon / data[$scope.section].length;
 
       $scope.map.center.lat = avgLat;
       $scope.map.center.lon = avgLon;
@@ -147,8 +149,9 @@ app.controller('analytics:heatmap', ['$scope', '$rootScope', '$location', 'ngNot
   $scope.loadHeatmap();
 }]);
 
-app.controller('analytics:histogram', ['$scope', '$rootScope', '$location', 'ngNotify', 'ActionHero', function($scope, $rootScope, $location, ngNotify, ActionHero){
-  var section = $rootScope.section;
+app.controller('analytics:histogram', ['$scope', '$location', 'ActionHero', 'Utils', function($scope, $location, ActionHero, Utils){
+  $scope.section = Utils.determineSection($location); // people
+  $scope.recordType = Utils.singular($scope.section); // person
 
   $scope.histogramOptions = {
     interval: 'day',
@@ -162,7 +165,7 @@ app.controller('analytics:histogram', ['$scope', '$rootScope', '$location', 'ngN
   var searchKeys = ['guid'];
   var searchValues = ['_exists'];
   if($scope.query){
-    var r = $rootScope.routeQueryToParams($scope.query);
+    var r = Utils.routeQueryToParams($scope.query);
     searchKeys = searchKeys.concat(r[0]);
     searchValues = searchValues.concat(r[1]);
   }
@@ -181,7 +184,7 @@ app.controller('analytics:histogram', ['$scope', '$rootScope', '$location', 'ngN
       interval: $scope.histogramOptions.interval,
       start: $scope.histogramOptions.start.getTime(),
       end: $scope.histogramOptions.end.getTime(),
-    }, '/api/' + section + '/aggregation', 'GET', function(data){
+    }, '/api/' + $scope.section + '/aggregation', 'GET', function(data){
       $scope.histogramOptions.selectionsName = data.selectionsName;
       data.selections.forEach(function(aggName){
         $scope.histogramOptions.selections[aggName] = false;
@@ -225,7 +228,7 @@ app.controller('analytics:histogram', ['$scope', '$rootScope', '$location', 'ngN
           }
         },
         title: {
-          text: section,
+          text: $scope.section,
           align: 'left',
         },
         xAxis: {
@@ -233,7 +236,7 @@ app.controller('analytics:histogram', ['$scope', '$rootScope', '$location', 'ngN
           tickPixelInterval: 150
         },
         yAxis: {
-          title: { text: (section + ' created') },
+          title: { text: ($scope.section + ' created') },
           stackLabels: {
             enabled: true,
             style: {

@@ -1,26 +1,27 @@
-app.controller('session:create', ['$scope', '$rootScope', '$location', 'ActionHero', function($scope, $rootScope, $location, ActionHero){
-  $scope.formData    = {};
+app.controller('session:create', ['$scope', 'User', '$location', 'ActionHero', function($scope, User, $location, ActionHero){
+  $scope.formData = {};
+  $scope.user = User.getUser();
 
-  if($rootScope.user){
+  if($scope.user){
     $location.path('/dashboard');
   }
 
   $scope.processForm = function(){
     ActionHero.action($scope.formData, '/api/session', 'POST', function(data){
-      if(data.user){ $rootScope.user = data.user; }
+      if(data.user){ User.setUser(data.user); }
       location.reload();
     });
   };
 }]);
 
-app.controller('session:destroy', ['$scope', '$rootScope', '$location', function($scope, $rootScope, $location){
+app.controller('session:destroy', ['$scope', 'User', '$location', 'ActionHero', function($scope, User, $location, ActionHero){
   $scope.submitForm = function(){
     $scope.processForm.call(this);
   };
 
   $scope.processForm = function(){
     ActionHero.action({}, '/api/session', 'DELETE', function(data){
-      delete $rootScope.user;
+      User.clear();
       $location.path('/');
     });
   };

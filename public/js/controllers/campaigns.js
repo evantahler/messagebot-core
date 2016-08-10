@@ -1,9 +1,9 @@
-app.controller('campaign:stats', ['$scope', '$rootScope', '$location', 'ngNotify', '$routeParams', 'ActionHero', function($scope, $rootScope, $location, ngNotify, $routeParams, ActionHero){
+app.controller('campaign:stats', ['$scope', '$routeParams', 'ActionHero', 'User', function($scope, $routeParams, ActionHero, User){
   $scope.campaign = {};
   $scope.list = {};
   $scope.template = {};
   $scope.funnel = {};
-  $scope.renderOptions = { personGuid: $rootScope.user.personGuid };
+  $scope.renderOptions = { personGuid: User.getUser().personGuid };
 
   $scope.histogramOptions = {
     interval: 'day',
@@ -111,7 +111,7 @@ app.controller('campaign:stats', ['$scope', '$rootScope', '$location', 'ngNotify
   $scope.loadCampaignStats();
 }]);
 
-app.controller('campaign:edit', ['$scope', '$rootScope', '$location', 'ngNotify', '$routeParams', 'ActionHero', function($scope, $rootScope, $location, ngNotify, $routeParams, ActionHero){
+app.controller('campaign:edit', ['$scope', '$location', 'ngNotify', '$routeParams', 'ActionHero', 'User', function($scope, $location, ngNotify, $routeParams, ActionHero, User){
   $scope.campaign = {};
   $scope.types = [];
   $scope.lists = [];
@@ -120,7 +120,7 @@ app.controller('campaign:edit', ['$scope', '$rootScope', '$location', 'ngNotify'
   $scope.transport = {};
   $scope.list = {};
   $scope.template = {};
-  $scope.renderOptions = { personGuid: $rootScope.user.personGuid };
+  $scope.renderOptions = { personGuid: User.getUser().personGuid };
 
   $scope.prepareRender = function(){
     $scope.template.url = '/api/template/render.html?' +
@@ -210,7 +210,7 @@ app.controller('campaign:edit', ['$scope', '$rootScope', '$location', 'ngNotify'
   $scope.loadLists();
 }]);
 
-app.controller('campaigns:list', ['$scope', '$rootScope', '$location', 'ngNotify', '$routeParams', 'ActionHero', function($scope, $rootScope, $location, ngNotify, $routeParams, ActionHero){
+app.controller('campaigns:list', ['$scope', '$location', 'ngNotify', '$routeParams', 'ActionHero', 'Utils', function($scope, $location, ngNotify, $routeParams, ActionHero, Utils){
   $scope.campaigns = [];
   $scope.lists = [];
   $scope.templates = [];
@@ -234,7 +234,7 @@ app.controller('campaigns:list', ['$scope', '$rootScope', '$location', 'ngNotify
     ActionHero.action(params, '/api/campaigns', 'GET', function(data){
       $scope.campaigns = data.campaigns;
       $scope.total = data.total;
-      $scope.pagination = $rootScope.genratePagination(currentPage, perPage, $scope.total);
+      $scope.pagination = Utils.genratePagination(currentPage, perPage, $scope.total);
 
       if($scope.campaigns.length === 0 && currentPage !== 0){ $location.path('/campaigns/list/' + $scope.folder.name + '/0'); }
     });
@@ -280,7 +280,7 @@ app.controller('campaigns:list', ['$scope', '$rootScope', '$location', 'ngNotify
 
   $scope.processCreateCampaignForm = function(){
     ActionHero.action($scope.forms.createCampaign, '/api/campaign', 'POST', function(data){
-      $rootScope.clearModals('#createCampaignModal');
+      Utils.clearModals('#createCampaignModal');
       ngNotify.set('Campaign Created', 'success');
       $location.path('/campaign/' + data.campaign.id);
     });
@@ -297,7 +297,7 @@ app.controller('campaigns:list', ['$scope', '$rootScope', '$location', 'ngNotify
   $scope.processEditCampaignForm = function(){
     $scope.forms.editCampaign.campaignId = $scope.forms.editCampaign.id;
     ActionHero.action($scope.forms.editCampaign, '/api/campaign', 'PUT', function(data){
-      $rootScope.clearModals('#editCampaignModal');
+      Utils.clearModals('#editCampaignModal');
       $scope.loadCampaigns();
       $scope.loadFolders();
       ngNotify.set('Campaign Updated', 'success');

@@ -1,4 +1,4 @@
-app.controller('dashboard:view', ['$scope', '$rootScope', '$location', 'ngNotify', 'ActionHero', function($scope, $rootScope, $location, ngNotify, ActionHero){
+app.controller('dashboard:view', ['$scope', 'ngNotify', 'ActionHero', function($scope, ngNotify, ActionHero){
   $scope.sections  = [
     'people',
     'events',

@@ -1,6 +1,6 @@
 <div ng-controller="analytics:recent">
 
-  <h2>All {{ $root.section }} ({{ total }} total):</h2>
+  <h2>All {{ section }} ({{ total }} total):</h2>
 
   <table class="table table-striped table-hover">
 
@@ -18,7 +18,7 @@
 
     <tbody ng-repeat="record in records">
       <tr>
-        <td><a href="/#/{{ $root.singular($root.section) }}/{{ record.guid  }}"><span class="glyphicon glyphicon-pencil">&nbsp;</span></a></td>
+        <td><a href="/#/{{ recordType }}/{{ record.guid  }}"><span class="glyphicon glyphicon-pencil">&nbsp;</span></a></td>
         <td>{{ record.createdAt }}</td>
         <td>{{ record.updatedAt }}</td>
         <td ng-if="record.source !== undefined">{{ record.source }}</td>
@@ -31,13 +31,13 @@
   </table>
 
   <ul class="pagination pagination-sm">
-    <li ng-class="pagination.showBack ? '' : 'disabled'" ><a href="/#/{{ $root.section }}/recent/{{ pagination.firstPage }}">&laquo;</a></li>
+    <li ng-class="pagination.showBack ? '' : 'disabled'" ><a href="/#/{{ section }}/recent/{{ pagination.firstPage }}">&laquo;</a></li>
 
     <li ng-repeat="p in pagination.pages" ng-class="p.active ? 'active' : ''">
-      <a href="/#/{{ $root.section }}/recent/{{ p.page }}">{{ p.page }}</a>
+      <a href="/#/{{ section }}/recent/{{ p.page }}">{{ p.page }}</a>
     </li>
 
-    <li ng-class="pagination.showForward ? '' : 'disabled'"><a href="/#/{{ $root.section }}/recent/{{ pagination.lastPage }}">&raquo;</a></li>
+    <li ng-class="pagination.showForward ? '' : 'disabled'"><a href="/#/{{ section }}/recent/{{ pagination.lastPage }}">&raquo;</a></li>
   </ul>
 
 </div>

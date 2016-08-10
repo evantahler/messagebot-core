@@ -1,11 +1,8 @@
-app.controller('people:init', ['$scope', '$rootScope', '$location', 'ngNotify', function($scope, $rootScope, $location, ngNotify){
-  $rootScope.section = 'people';
-}]);
-
-app.controller('people:recentBehavior', ['$scope', '$rootScope', '$location', 'ngNotify', '$routeParams', function($scope, $rootScope, $location, ngNotify, $routeParams){
+app.controller('people:recentBehavior', ['$scope', '$routeParams', 'ActionHero', 'User', function($scope, $routeParams, ActionHero, User){
   $scope.guid = $routeParams.guid;
   $scope.recentOptions = { from: 0, size: 1000, };
   $scope.records = [];
+  $scope.user = User.getUser();
 
   $scope.loadRecent = function(){
     $scope.events = [];
@@ -79,8 +76,8 @@ app.controller('people:recentBehavior', ['$scope', '$rootScope', '$location', 'n
       }, 10);
     };
 
-    $rootScope.action({
-      userId: $rootScope.user.id,
+    ActionHero.action({
+      userId: $scope.user.id,
       searchKeys: 'personGuid',
       searchValues: $scope.guid,
       from: $scope.recentOptions.from,
@@ -90,8 +87,8 @@ app.controller('people:recentBehavior', ['$scope', '$rootScope', '$location', 'n
       prepareData();
     });
 
-    $rootScope.action({
-      userId: $rootScope.user.id,
+    ActionHero.action({
+      userId: $scope.user.id,
       searchKeys: 'personGuid',
       searchValues: $scope.guid,
       from: $scope.recentOptions.from,

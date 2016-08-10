@@ -1,4 +1,4 @@
-app.controller('user:create', ['$scope', '$rootScope', '$location', 'ActionHero', function($scope, $rootScope, $location, ActionHero){
+app.controller('user:create', ['$scope', '$location', 'ActionHero', function($scope, $location, ActionHero){
   $scope.formData    = {};
   $scope.processForm = function(){
     ActionHero.action($scope.formData, '/api/user', 'POST', function(data){
@@ -7,7 +7,7 @@ app.controller('user:create', ['$scope', '$rootScope', '$location', 'ActionHero'
   };
 }]);
 
-app.controller('users:list', ['$scope', '$rootScope', '$location', 'ngNotify', 'ActionHero', function($scope, $rootScope, $location, ngNotify, ActionHero){
+app.controller('users:list', ['$scope', 'ngNotify', 'ActionHero', 'Utils', function($scope, ngNotify, ActionHero, Utils){
   $scope.forms = {};
   $scope.forms.createUser = {};
   $scope.forms.editUser   = {};
@@ -29,7 +29,7 @@ app.controller('users:list', ['$scope', '$rootScope', '$location', 'ngNotify', '
 
   $scope.processCreateUserForm = function(){
     ActionHero.action($scope.forms.createUser, '/api/user', 'POST', function(data){
-      $rootScope.clearModals('#createUserModal');
+      Utils.clearModals('#createUserModal');
       $scope.forms.createUser = {};
       $scope.loadUsers();
       ngNotify.set('User Created', 'success');
@@ -47,7 +47,7 @@ app.controller('users:list', ['$scope', '$rootScope', '$location', 'ngNotify', '
   $scope.processEditUserForm = function(){
     $scope.forms.editUser.userId = $scope.forms.editUser.id;
     ActionHero.action($scope.forms.editUser, '/api/user', 'PUT', function(data){
-      $rootScope.clearModals('#editUserModal');
+      Utils.clearModals('#editUserModal');
       $scope.forms.editUser = {};
       $scope.loadUsers();
       ngNotify.set('User Updated', 'success');
@@ -66,23 +66,24 @@ app.controller('users:list', ['$scope', '$rootScope', '$location', 'ngNotify', '
   $scope.loadUsers();
 }]);
 
-app.controller('user:edit', ['$scope', '$rootScope', '$location', 'ngNotify', 'ActionHero', function($scope, $rootScope, $location, ngNotify, ActionHero){
+app.controller('user:edit', ['$scope', 'ngNotify', 'ActionHero', 'User', function($scope, ngNotify, ActionHero, User){
+  $scope.user = User.getUser();
 
   ActionHero.action({}, '/api/users/roles', 'GET', function(data){
     $scope.roles = data.roles;
   });
 
-  ActionHero.action({userId: $rootScope.user.id}, '/api/user', 'GET', function(data){
+  ActionHero.action({userId: $scope.user.id}, '/api/user', 'GET', function(data){
     $scope.formData = data.user;
   });
 
   $scope.processForm = function(){
-    $scope.formData.userId = $rootScope.user.id;
+    $scope.formData.userId = $scope.user.id;
     ActionHero.action($scope.formData, '/api/user', 'PUT', function(data){
       if(data.user){
         ngNotify.set('Account Updated', 'success');
-        $rootScope.user = data.user;
-        $scope.formData = data.user;
+        User.setUser(data.user);
+        setTimeout(function(){ location.reload(); }, 500);
       }
     });
   };

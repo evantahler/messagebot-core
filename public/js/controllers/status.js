@@ -1,4 +1,4 @@
-app.controller('status:view', ['$scope', '$rootScope', '$location', 'ActionHero', function($scope, $rootScope, $location){
+app.controller('status:view', ['$scope', 'ActionHero', function($scope, ActionHero){
   $scope.loadStatus = function(){
     ActionHero.action({}, '/api/system/status', 'GET', function(data){
       $scope.status = data;

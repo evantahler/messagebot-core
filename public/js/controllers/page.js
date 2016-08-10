@@ -1,10 +1,12 @@
-app.controller('pageController', ['$scope', 'ActionHero', '$rootScope', '$location', function($scope, ActionHero, $rootScope, $location){
+app.controller('pageController', ['$scope', 'ActionHero', 'User', '$location', function($scope, ActionHero, User, $location){
 
   $scope.date = new Date();
+  $scope.user;
 
   ActionHero.action({}, '/api/session', 'PUT', function(data){
     if(data.user){
-      $rootScope.user = data.user;
+      User.setUser(data.user);
+      $scope.user = User.getUser();
 
       if($location.path() === '/'){      $location.path('/dashboard'); }
       if($location.path() === '/login'){ $location.path('/dashboard'); }

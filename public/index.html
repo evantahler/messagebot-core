@@ -55,9 +55,14 @@
     <!-- App -->
     <script src="/js/navigation.js"></script>
     <script src="/js/routes.js"></script>
+
     <script src="/js/modules/actionhero.js"></script>
-    <script src="/js/app.js"></script>
+    <script src="/js/modules/user.js"></script>
+    <script src="/js/modules/utils.js"></script>
     <script src="/js/utils.js"></script>
+
+    <script src="/js/app.js"></script>
+
     <script src="/js/controllers/page.js"></script>
     <script src="/js/controllers/session.js"></script>
     <script src="/js/controllers/user.js"></script>
@@ -79,7 +84,7 @@
     <p>&nbsp;</p>
 
     <header id="nav-container" class="container">
-      <div ng-if="$root.user"  ng-include="'pages/shared/nav.html'"></div>
+      <div ng-if="user"  ng-include="'pages/shared/nav.html'"></div>
     </header>
 
     <div id="main" class="container">

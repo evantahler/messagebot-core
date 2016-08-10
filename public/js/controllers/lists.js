@@ -1,4 +1,4 @@
-app.controller('lists:list', ['$scope', '$rootScope', '$location', 'ngNotify', '$routeParams', 'ActionHero', function($scope, $rootScope, $location, ngNotify, $routeParams, ActionHero){
+app.controller('lists:list', ['$scope', '$location', 'ngNotify', '$routeParams', 'ActionHero', 'Utils', function($scope, $location, ngNotify, $routeParams, ActionHero, Utils){
   $scope.lists = [];
   $scope.forms = {};
   $scope.pagination = {};
@@ -25,7 +25,7 @@ app.controller('lists:list', ['$scope', '$rootScope', '$location', 'ngNotify', '
     ActionHero.action(params, '/api/lists', 'GET', function(data){
       $scope.lists = data.lists;
       $scope.total = data.total;
-      $scope.pagination = $rootScope.genratePagination(currentPage, perPage, $scope.total);
+      $scope.pagination = Utils.genratePagination(currentPage, perPage, $scope.total);
 
       if($scope.lists.length === 0 && currentPage !== 0){ $location.path('/lists/list/' + $scope.folder.name + '/0'); }
     });
@@ -44,7 +44,7 @@ app.controller('lists:list', ['$scope', '$rootScope', '$location', 'ngNotify', '
 
   $scope.processCreateListForm = function(){
     ActionHero.action($scope.forms.createList, '/api/list', 'POST', function(data){
-      $rootScope.clearModals('#createListModal');
+      Utils.clearModals('#createListModal');
       ngNotify.set('List Created', 'success');
       $location.path('/list/' + data.list.id + '/people');
     });
@@ -64,7 +64,7 @@ app.controller('lists:list', ['$scope', '$rootScope', '$location', 'ngNotify', '
   $scope.processEditListForm = function(){
     $scope.forms.editList.listId = $scope.forms.editList.id;
     ActionHero.action($scope.forms.editList, '/api/list', 'PUT', function(data){
-      $rootScope.clearModals('#editListModal');
+      Utils.clearModals('#editListModal');
       $scope.loadLists();
       $scope.loadFolders();
       ngNotify.set('List Updated', 'success');
@@ -108,7 +108,7 @@ app.controller('lists:list', ['$scope', '$rootScope', '$location', 'ngNotify', '
   $scope.loadFolders();
 }]);
 
-app.controller('lists:people:view', ['$scope', '$rootScope', '$location', 'ngNotify', '$routeParams', 'FileUploader', 'ActionHero', function($scope, $rootScope, $location, ngNotify, $routeParams, FileUploader, ActionHero){
+app.controller('lists:people:view', ['$scope', '$location', 'ngNotify', '$routeParams', 'FileUploader', 'ActionHero', 'Utils', function($scope, $location, ngNotify, $routeParams, FileUploader, ActionHero, Utils){
   $scope.list;
   $scope.forms = {
     addListPeopleViapersonGuids: {},
@@ -145,7 +145,7 @@ app.controller('lists:people:view', ['$scope', '$rootScope', '$location', 'ngNot
     }, '/api/list/people', 'GET', function(data){
       $scope.people = data.people;
       $scope.total = data.total;
-      $scope.pagination = $rootScope.genratePagination(currentPage, perPage, $scope.total);
+      $scope.pagination = Utils.genratePagination(currentPage, perPage, $scope.total);
     });
   };
 
@@ -160,7 +160,7 @@ app.controller('lists:people:view', ['$scope', '$rootScope', '$location', 'ngNot
   $scope.processAddListPeopleViapersonGuid = function(){
     $scope.forms.addListPeopleViapersonGuids.listId = $scope.list.id;
     ActionHero.action($scope.forms.addListPeopleViapersonGuids, '/api/list/people', 'PUT', function(data){
-      $rootScope.clearModals('#addListPeopleViapersonGuidModal');
+      Utils.clearModals('#addListPeopleViapersonGuidModal');
       $scope.loadPeople();
       $scope.forms.addListPeopleViapersonGuids = {};
       ngNotify.set('People Updated', 'success');
@@ -173,7 +173,7 @@ app.controller('lists:people:view', ['$scope', '$rootScope', '$location', 'ngNot
 
     $scope.uploader.onCompleteAll = function(){
       if(errored !== true){
-        $rootScope.clearModals('#addListPeopleViaFileModal');
+        Utils.clearModals('#addListPeopleViaFileModal');
         $scope.loadPeople();
         ngNotify.set('People Updated', 'success');
       }

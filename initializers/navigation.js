@@ -86,11 +86,12 @@ module.exports = {
 
     ['routes', 'navigation'].forEach(function(type){
       jobs.push(function(done){
-        var file = path.normalize(api.config.general.paths.public[0] + path.sep + 'js' + path.sep + type);
-        fs.writeFile(file + '.js', generateStringContent(type, api.navigation[type]), done);
+        var file = path.normalize(api.config.general.paths.public[0] + path.sep + 'js' + path.sep + type + '.js');
+        api.log(['writing navigation file: %s', file], 'info');
+        fs.writeFile(file, generateStringContent(type, api.navigation[type]), done);
       });
     });
 
-    async.series(jobs, next);
+    async.parallel(jobs, next);
   }
 };

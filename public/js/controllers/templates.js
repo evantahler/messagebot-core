@@ -1,7 +1,8 @@
-app.controller('template:edit', ['$scope', '$rootScope', '$location', 'ngNotify', '$routeParams', 'ActionHero', function($scope, $rootScope, $location, ngNotify, $routeParams, ActionHero){
+app.controller('template:edit', ['$scope', '$location', 'ngNotify', '$routeParams', 'ActionHero', 'User', function($scope, $location, ngNotify, $routeParams, ActionHero, User){
   $scope.template = {};
+  $scope.user = User.getUser();
   $scope.renderOptions = {
-    personGuid: $rootScope.user.personGuid,
+    personGuid: $scope.user.personGuid,
   };
 
   var lastSave = new Date().getTime() - 1000;
@@ -76,7 +77,7 @@ app.controller('template:edit', ['$scope', '$rootScope', '$location', 'ngNotify'
 }]);
 
 
-app.controller('templates:list', ['$scope', '$rootScope', '$location', 'ngNotify', '$routeParams', 'ActionHero', function($scope, $rootScope, $location, ngNotify, $routeParams, ActionHero){
+app.controller('templates:list', ['$scope', '$location', 'ngNotify', '$routeParams', 'ActionHero', 'Utils', function($scope, $location, ngNotify, $routeParams, ActionHero, Utils){
   $scope.lists = [];
   $scope.forms = {};
   $scope.folder = {name: ($routeParams.folder || '_all')};
@@ -102,7 +103,7 @@ app.controller('templates:list', ['$scope', '$rootScope', '$location', 'ngNotify
     ActionHero.action(params, '/api/templates', 'GET', function(data){
       $scope.templates = data.templates;
       $scope.total = data.total;
-      $scope.pagination = $rootScope.genratePagination(currentPage, perPage, $scope.total);
+      $scope.pagination = Utils.genratePagination(currentPage, perPage, $scope.total);
 
       if($scope.templates.length === 0 && currentPage !== 0){ $location.path('/templates/list/' + $scope.folder.name + '/0'); }
     });
@@ -120,7 +121,7 @@ app.controller('templates:list', ['$scope', '$rootScope', '$location', 'ngNotify
 
   $scope.processCreateTemplateForm = function(){
     ActionHero.action($scope.forms.createTemplate, '/api/template', 'POST', function(data){
-      $rootScope.clearModals('#createTemplateModal');
+      Utils.clearModals('#createTemplateModal');
       ngNotify.set('Template Created', 'success');
       $location.path('/template/' + data.template.id);
     });
@@ -137,7 +138,7 @@ app.controller('templates:list', ['$scope', '$rootScope', '$location', 'ngNotify
   $scope.processEditTemplateForm = function(){
     $scope.forms.editTemplate.templateId = $scope.forms.editTemplate.id;
     ActionHero.action($scope.forms.editTemplate, '/api/template', 'PUT', function(data){
-      $rootScope.clearModals('#editTemplateModal');
+      Utils.clearModals('#editTemplateModal');
       $scope.loadTemplates();
       $scope.loadFolders();
       ngNotify.set('Template Updated', 'success');

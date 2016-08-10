@@ -1,4 +1,6 @@
-app.utils = {
+'use strict';
+MESSAGEBOT = MESSAGEBOT || {};
+MESSAGEBOT.utils = {
 
   iframeResizeToFit: function(id){
     var elem = $('#' + id);

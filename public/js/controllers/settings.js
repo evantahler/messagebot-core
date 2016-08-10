@@ -1,4 +1,4 @@
-app.controller('settings', ['$scope', '$rootScope', '$location', 'ActionHero', function($scope, $rootScope, $location, ActionHero){
+app.controller('settings', ['$scope', 'ActionHero', function($scope, ActionHero){
   $scope.transports = {};
 
   $scope.loadTransports = function(){
