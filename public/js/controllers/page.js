@@ -1,10 +1,10 @@
-app.controller('pageController', ['$scope', '$rootScope', '$location', function($scope, $rootScope, $location){
+app.controller('pageController', ['$scope', 'ActionHero', '$rootScope', '$location', function($scope, ActionHero, $rootScope, $location){
 
   $scope.date = new Date();
 
-  $rootScope.action($scope, {}, '/api/session', 'PUT', function(data){
+  ActionHero.action({}, '/api/session', 'PUT', function(data){
     if(data.user){
-      $rootScope.user      = data.user;
+      $rootScope.user = data.user;
 
       if($location.path() === '/'){      $location.path('/dashboard'); }
       if($location.path() === '/login'){ $location.path('/dashboard'); }
@@ -13,8 +13,8 @@ app.controller('pageController', ['$scope', '$rootScope', '$location', function(
     var matchedAndOK = false;
     var path = $location.path();
 
-    $rootScope.routes.forEach(function(r){
-      if( !matchedAndOK && path === r[0] && r[3] === false ){
+    MESSAGEBOT.routes.forEach(function(c){
+      if( !matchedAndOK && path === c.route && c.auth === false ){
         matchedAndOK = true;
       }
     });

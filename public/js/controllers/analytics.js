@@ -1,4 +1,4 @@
-app.controller('analytics:search', ['$scope', '$rootScope', '$location', 'ngNotify', '$routeParams', function($scope, $rootScope, $location, ngNotify, $routeParams){
+app.controller('analytics:search', ['$scope', '$rootScope', '$location', 'ngNotify', '$routeParams', 'ActionHero', function($scope, $rootScope, $location, ngNotify, $routeParams, ActionHero){
   var section = $rootScope.section;
 
   $scope.searchResults = [];
@@ -25,7 +25,7 @@ app.controller('analytics:search', ['$scope', '$rootScope', '$location', 'ngNoti
   $scope.loadSearchResults = function(searchKeys, searchValues){
     $scope.searchResults = [];
 
-    $rootScope.action($scope, {
+    ActionHero.action({
       searchKeys: searchKeys,
       searchValues: searchValues,
       from: (currentPage * perPage),
@@ -53,7 +53,7 @@ app.controller('analytics:search', ['$scope', '$rootScope', '$location', 'ngNoti
 }]);
 
 
-app.controller('analytics:recent', ['$scope', '$rootScope', '$location', 'ngNotify', '$routeParams', function($scope, $rootScope, $location, ngNotify, $routeParams){
+app.controller('analytics:recent', ['$scope', '$rootScope', '$location', 'ngNotify', '$routeParams', 'ActionHero', function($scope, $rootScope, $location, ngNotify, $routeParams, ActionHero){
   var section = $rootScope.section;
   $scope.records = [];
   $scope.pagination = {};
@@ -62,7 +62,7 @@ app.controller('analytics:recent', ['$scope', '$rootScope', '$location', 'ngNoti
   var perPage = 50;
 
   $scope.loadRecent = function(){
-    $rootScope.action($scope, {
+    ActionHero.action({
       searchKeys: 'guid',
       searchValues: '_exists',
       from: (currentPage * perPage),
@@ -77,7 +77,7 @@ app.controller('analytics:recent', ['$scope', '$rootScope', '$location', 'ngNoti
   $scope.loadRecent();
 }]);
 
-app.controller('analytics:heatmap', ['$scope', '$rootScope', '$location', 'ngNotify', '$routeParams', function($scope, $rootScope, $location, ngNotify, $routeParams){
+app.controller('analytics:heatmap', ['$scope', '$rootScope', '$location', 'ngNotify', '$routeParams', 'ActionHero', function($scope, $rootScope, $location, ngNotify, $routeParams, ActionHero){
   var section = $rootScope.section;
   $scope.heatmapOptions = {size: 10000};
   $scope.map = {
@@ -112,7 +112,7 @@ app.controller('analytics:heatmap', ['$scope', '$rootScope', '$location', 'ngNot
 
   $scope.loadHeatmap = function(){
     $scope.map.layers.overlays = {};
-    $rootScope.action($scope, {
+    ActionHero.action({
       searchKeys: searchKeys,
       searchValues: searchValues,
       from: 0,
@@ -147,7 +147,7 @@ app.controller('analytics:heatmap', ['$scope', '$rootScope', '$location', 'ngNot
   $scope.loadHeatmap();
 }]);
 
-app.controller('analytics:histogram', ['$scope', '$rootScope', '$location', 'ngNotify', function($scope, $rootScope, $location, ngNotify){
+app.controller('analytics:histogram', ['$scope', '$rootScope', '$location', 'ngNotify', 'ActionHero', function($scope, $rootScope, $location, ngNotify, ActionHero){
   var section = $rootScope.section;
 
   $scope.histogramOptions = {
@@ -173,7 +173,7 @@ app.controller('analytics:histogram', ['$scope', '$rootScope', '$location', 'ngN
       if($scope.histogramOptions.selections[k] === true){ selections.push(k); }
     });
 
-    $rootScope.action($scope, {
+    ActionHero.action({
       maximumSelections: 10,
       selections: selections,
       searchKeys: searchKeys,

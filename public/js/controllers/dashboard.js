@@ -1,4 +1,4 @@
-app.controller('dashboard:view', ['$scope', '$rootScope', '$location', 'ngNotify', function($scope, $rootScope, $location, ngNotify){
+app.controller('dashboard:view', ['$scope', '$rootScope', '$location', 'ngNotify', 'ActionHero', function($scope, $rootScope, $location, ngNotify, ActionHero){
   $scope.sections  = [
     'people',
     'events',
@@ -13,7 +13,7 @@ app.controller('dashboard:view', ['$scope', '$rootScope', '$location', 'ngNotify
   $scope.campaignFunnels = {};
 
   $scope.loadStatus = function(){
-    $rootScope.action($scope, {}, '/api/system/status', 'GET', function(data){
+    ActionHero.action({}, '/api/system/status', 'GET', function(data){
       $scope.status = data;
     });
   };
@@ -29,7 +29,7 @@ app.controller('dashboard:view', ['$scope', '$rootScope', '$location', 'ngNotify
 
     $scope.sections.forEach(function(section){
       Object.keys($scope.ranges).forEach(function(range){
-        $rootScope.action($scope, {
+        ActionHero.action({
           maximumSelections: 0,
           selections: [],
           searchKeys: ['guid'],
@@ -56,7 +56,7 @@ app.controller('dashboard:view', ['$scope', '$rootScope', '$location', 'ngNotify
     var end   = ( new Date().getTime() );
     var maxPoints = 60 * 60;
 
-    $rootScope.action($scope, {
+    ActionHero.action({
       maximumSelections: 0,
       selections: [],
       searchKeys: ['guid'],
@@ -124,7 +124,7 @@ app.controller('dashboard:view', ['$scope', '$rootScope', '$location', 'ngNotify
   };
 
   $scope.loadCampaigns = function(){
-    $rootScope.action($scope, {
+    ActionHero.action({
       from: 0,
       size: 20,
       sent: true,
@@ -137,7 +137,7 @@ app.controller('dashboard:view', ['$scope', '$rootScope', '$location', 'ngNotify
   };
 
   $scope.loadCampaignStats = function(campaign){
-    $rootScope.action($scope, {
+    ActionHero.action({
       campaignId: campaign.id,
       interval: 'year',
       start: new Date(0).getTime(),

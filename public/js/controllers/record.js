@@ -1,4 +1,4 @@
-app.controller('record:new', ['$scope', '$rootScope', '$location', 'ngNotify', '$routeParams', function($scope, $rootScope, $location, ngNotify, $routeParams){
+app.controller('record:new', ['$scope', '$rootScope', '$location', 'ngNotify', '$routeParams', 'ActionHero', function($scope, $rootScope, $location, ngNotify, $routeParams, ActionHero){
   $scope.section = $rootScope.section;                     // people
   $scope.recordType = $rootScope.singular($scope.section); // person
   $scope.formData = {
@@ -25,7 +25,7 @@ app.controller('record:new', ['$scope', '$rootScope', '$location', 'ngNotify', '
   });
 
   $scope.loadDocumenation = function(){
-    $rootScope.action($scope, {
+    ActionHero.action({
       userId: $rootScope.user.id,
       guid: $scope.guid
     }, '/api/system/documentation', 'GET', function(data){
@@ -55,7 +55,7 @@ app.controller('record:new', ['$scope', '$rootScope', '$location', 'ngNotify', '
     payload.createdAt = payload.createdAt.getTime();
     payload.teamId    = $rootScope.user.teamId;
 
-    $rootScope.action($scope, payload, '/api/' + $scope.recordType, 'POST', function(data){
+    ActionHero.action(payload, '/api/' + $scope.recordType, 'POST', function(data){
       $location.path('/' + $scope.recordType + '/' + data.guid);
     });
   };
@@ -63,7 +63,7 @@ app.controller('record:new', ['$scope', '$rootScope', '$location', 'ngNotify', '
   $scope.loadDocumenation();
 }]);
 
-app.controller('record:view', ['$scope', '$rootScope', '$location', 'ngNotify', '$routeParams', function($scope, $rootScope, $location, ngNotify, $routeParams){
+app.controller('record:view', ['$scope', '$rootScope', '$location', 'ngNotify', '$routeParams', 'ActionHero', function($scope, $rootScope, $location, ngNotify, $routeParams, ActionHero){
   $scope.section = $rootScope.section;                     // people
   $scope.recordType = $rootScope.singular($scope.section); // person
 
@@ -82,7 +82,7 @@ app.controller('record:view', ['$scope', '$rootScope', '$location', 'ngNotify', 
 
   $scope.load = function(){
     $scope.formData = {};
-    $rootScope.action($scope, {
+    ActionHero.action({
       userId: $rootScope.user.id,
       guid: $scope.guid
     }, '/api/' + $scope.recordType, 'GET', function(data){
@@ -122,7 +122,7 @@ app.controller('record:view', ['$scope', '$rootScope', '$location', 'ngNotify', 
 
     var data = {};
     data[key] = value;
-    $rootScope.action($scope, {
+    ActionHero.action({
       userId: $rootScope.user.id,
       guid: $scope.guid,
       data: JSON.stringify(data),
@@ -135,7 +135,7 @@ app.controller('record:view', ['$scope', '$rootScope', '$location', 'ngNotify', 
   $scope.deleteAttribute = function(key){
     var data = {};
     data[key] = '_delete';
-    $rootScope.action($scope, {
+    ActionHero.action({
       userId: $rootScope.user.id,
       guid: $scope.guid,
       data: JSON.stringify(data),
@@ -151,7 +151,7 @@ app.controller('record:view', ['$scope', '$rootScope', '$location', 'ngNotify', 
 
   $scope.deleteRecord = function(){
     if(confirm('are you sure?')){
-      $rootScope.action($scope, {
+      ActionHero.action({
         userId: $rootScope.user.id,
         guid: $scope.guid,
       }, '/api/' + $scope.recordType, 'DELETE', function(data){

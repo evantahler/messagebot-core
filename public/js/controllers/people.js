@@ -79,7 +79,7 @@ app.controller('people:recentBehavior', ['$scope', '$rootScope', '$location', 'n
       }, 10);
     };
 
-    $rootScope.action($scope, {
+    $rootScope.action({
       userId: $rootScope.user.id,
       searchKeys: 'personGuid',
       searchValues: $scope.guid,
@@ -90,7 +90,7 @@ app.controller('people:recentBehavior', ['$scope', '$rootScope', '$location', 'n
       prepareData();
     });
 
-    $rootScope.action($scope, {
+    $rootScope.action({
       userId: $rootScope.user.id,
       searchKeys: 'personGuid',
       searchValues: $scope.guid,

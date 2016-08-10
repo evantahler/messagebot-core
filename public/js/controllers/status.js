@@ -1,6 +1,6 @@
-app.controller('status:view', ['$scope', '$rootScope', '$location', 'ngNotify', function($scope, $rootScope, $location, ngNotify){
+app.controller('status:view', ['$scope', '$rootScope', '$location', 'ActionHero', function($scope, $rootScope, $location){
   $scope.loadStatus = function(){
-    $rootScope.action($scope, {}, '/api/system/status', 'GET', function(data){
+    ActionHero.action({}, '/api/system/status', 'GET', function(data){
       $scope.status = data;
 
       $scope.status.node.bootedAgo = moment(new Date().getTime() - $scope.status.node.uptime).fromNow();
@@ -11,5 +11,4 @@ app.controller('status:view', ['$scope', '$rootScope', '$location', 'ngNotify', 
   };
 
   $scope.loadStatus();
-
 }]);
