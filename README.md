@@ -134,7 +134,7 @@ Transports let you send messages by other mediums.  Transports have a `name`, `d
 
 The `deliver()` method accepts a payload (which contains `body` and the `campaignVariables`), a person, and a callback.
 
-The simplest transport, logger (which just logs the message to MessageBot's logs) would be:
+The simplest transport, `logger` (which just logs the message to MessageBot's logs) would be:
 
 ```js
 // in an initializer
@@ -156,7 +156,7 @@ var transport = {
     message += '[' + payload.logPrefix + ' | to ' + person.data.data.firstName + ' ' + person.data.data.firstName + '] ';
     message += payload.body;
 
-    api.log(message, logLevel);
+    api.log(message, payload.logLevel);
     return callback();
   }
 }

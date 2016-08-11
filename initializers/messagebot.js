@@ -4,8 +4,10 @@ var exec   = require('child_process').exec;
 
 module.exports = {
   startPriority: 9999,
+  loadPriority: 900,
 
   initialize: function(api, next){
+
     /* --- Teams --- */
     api.teams = {
       teams: [],

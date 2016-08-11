@@ -83,20 +83,26 @@ exports.task = {
     });
 
     jobs.push(function(done){
+      var missingType;
+      var missingKey;
+
       api.transports.forEach(function(t){
         if(t.name === campaign.transport){ transport = t; }
         if(!transport){ return done(new Error('transport not found')); }
 
-        var missingKey;
         transport.requiredDataKeys.person.forEach(function(k){
-          if(!person.data.data[k]){ missingKey = k; }
+          if(!person.data.data[k]){
+            missingType = 'person';
+            missingKey = k;
+          }
         });
 
         // TODO: Event validation
-
-        if(missingKey){ return done(new Error('person missing data.' + missingKey)); }
-        done();
       });
+
+      if(missingKey){ return done(new Error(missingType + ' missing data.' + missingKey)); }
+
+      done();
     });
 
     jobs.push(function(done){
