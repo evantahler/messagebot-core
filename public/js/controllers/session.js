@@ -23,7 +23,7 @@ app.controller('session:destroy', ['$scope', 'User', '$location', 'ActionHero', 
     ActionHero.action({}, '/api/session', 'DELETE', function(data){
       User.clear();
       $location.path('/');
-      location.reload();
+      setTimeout(function(){ window.location.reload(); }, 100);
     });
   };
 }]);
