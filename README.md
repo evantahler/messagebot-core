@@ -62,7 +62,7 @@
 - Create the First Team from the CLI:
   - `./bin/messagebot team create --name MessageBot --trackingDomainRegexp "^.*$" --trackingDomain "tracking.myapp.com"`
   - This will also create the first admin user for this team.  Take note of this user's email and password.
-- Start the App: `npm run migrate && npm start`
+- Start the App: `npm start`
 
 ## Migration Options
 

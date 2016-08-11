@@ -8,7 +8,7 @@ module.exports = {
   initialize: function(api, next){
 
     api.navigation = {
-      navigation: {},
+      navigation: [],
       routes: [],
     };
 
@@ -66,6 +66,56 @@ module.exports = {
     api.navigation.routes.push({route: '/settings',                     page: 'pages/settings.html',         title: 'MessageBot: Settings',    auth: true});
 
     api.navigation.routes.push({route: '/logout',                       page: 'pages/session/destroy.html',  title: 'MessageBot: Log Out',     auth: false});
+
+    /* Base Navigation */
+
+    api.navigation.navigation.push({
+      title: 'Data',
+      align: 'left',
+      glyphicon: 'glyphicon-equalizer',
+      elements: [
+        {route: '/#/people/recent', title: 'People: Recent', glyphicon: 'glyphicon-user', highlights: ['^\/people\/recent.*$']},
+        {route: '/#/people/search', title: 'People: Search', glyphicon: 'glyphicon-user', highlights: ['^\/people\/search.*$']},
+        {route: '/#/person/new', title: 'Person: New', glyphicon: 'glyphicon-user', highlights: ['^\/person\/new$']},
+        {divider: true},
+        {route: '/#/events/recent', title: 'Events: Recent', glyphicon: 'glyphicon-equalizer', highlights: ['^\/events\/recent.*$']},
+        {route: '/#/events/search', title: 'Events: Search', glyphicon: 'glyphicon-equalizer', highlights: ['^\/events\/search.*$']},
+        {route: '/#/event/new', title: 'Event: New', glyphicon: 'glyphicon-equalizer', highlights: ['^\/event\/new$']},
+        {divider: true},
+        {route: '/#/messages/recent', title: 'Messages: Recent', glyphicon: 'glyphicon-envelope', highlights: ['^\/messages\/recent.*$']},
+        {route: '/#/messages/search', title: 'Messages: Search', glyphicon: 'glyphicon-envelope', highlights: ['^\/messages\/search.*$']},
+        // {route: '/#/message/new', title: 'Message: New', glyphicon: 'glyphicon-envelope', highlights: ['^\/message\/new$']},
+      ]
+    });
+
+    api.navigation.navigation.push({
+      title: 'Communication',
+      align: 'left',
+      glyphicon: 'glyphicon-send',
+      elements: [
+        {route: '/#/lists/list', title: 'Lists', glyphicon: 'glyphicon-folder-open', highlights: ['^\/lists\/list.*$', '^\/list\/.*$']},
+        {route: '/#/templates/list', title: 'Templates', glyphicon: 'glyphicon-file', highlights: ['^\/templates\/list.*$', '^\/template\/.*$']},
+        {route: '/#/campaigns/list', title: 'Campaigns', glyphicon: 'glyphicon-send', highlights: ['^\/campaigns\/list.*$', '^\/campaign\/.*$']},
+      ]
+    });
+
+    api.navigation.navigation.push({
+      title: 'System',
+      align: 'right',
+      glyphicon: 'glyphicon-flash',
+      elements: [
+        {route: '/#/status', title: 'Status', glyphicon: 'glyphicon-flash', highlights: ['^\/status$']},
+        {divider: true},
+        {route: '/#/settings', title: 'Settings', glyphicon: 'glyphicon-cog', highlights: ['^\/settings$']},
+        {route: '/swagger', title: 'API', glyphicon: 'glyphicon-cloud', highlights: null},
+        {route: '/resque', title: 'Resque', glyphicon: 'glyphicon-road', highlights: null},
+        {divider: true},
+        {route: '/#/account', title: 'Account', glyphicon: 'glyphicon-user', highlights: ['^\/account$']},
+        {route: '/#/users', title: 'Users', glyphicon: 'glyphicon-th', highlights: ['^\/users$']},
+        {route: '/#/logout', title: 'Log Out', glyphicon: 'glyphicon-off', highlights: ['^\/logout$']},
+      ]
+    });
+
 
     next();
   },

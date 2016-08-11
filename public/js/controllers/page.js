@@ -1,6 +1,7 @@
 app.controller('pageController', ['$scope', 'ActionHero', 'User', '$location', function($scope, ActionHero, User, $location){
 
   $scope.date = new Date();
+  $scope.navigation = MESSAGEBOT.navigation;
   $scope.user;
 
   ActionHero.action({}, '/api/session', 'PUT', function(data){
@@ -28,23 +29,23 @@ app.controller('pageController', ['$scope', 'ActionHero', 'User', '$location', f
     }
   });
 
-  $scope.getNavigationHighlight = function(path){
-    var parts = $location.path().split('/');
-    var pathParts = path.split('/');
+  $scope.getNavigationHighlight = function(item){
+    var active = false;
+    var path = $location.$$path;
 
-    parts.shift(); /// throw away the first one
-
-    var simplePathParts = [];
-    while(pathParts.length > 0 && parts.length > 0){
-      pathParts.pop();
-      simplePathParts.push( parts.shift() );
+    if(item.elements){
+      item.elements.forEach(function(element){
+        var childResponse = $scope.getNavigationHighlight(element);
+        if(childResponse === 'active'){ active = true; }
+      });
+    }else if(item.highlights){
+      item.highlights.forEach(function(highlight){
+        var regexp = new RegExp(highlight);
+        if(path.match(regexp)){ active = true; }
+      });
     }
 
-    if(simplePathParts.join('/') === path){
-      return "active";
-    }else{
-      return "";
-    }
+    return (active ? 'active' : '');
   };
 
 }]);
