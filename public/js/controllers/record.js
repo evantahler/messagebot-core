@@ -1,6 +1,7 @@
-app.controller('record:new', ['$scope', '$rootScope', '$location', 'ngNotify', '$routeParams', function($scope, $rootScope, $location, ngNotify, $routeParams){
-  $scope.section = $rootScope.section;                     // people
-  $scope.recordType = $rootScope.singular($scope.section); // person
+app.controller('record:new', ['$scope', '$location', 'ActionHero', 'Utils', 'User', function($scope, $location, ActionHero, Utils, User){
+  $scope.section = Utils.determineSection($location); // people
+  $scope.recordType = Utils.singular($scope.section); // person
+  $scope.user = User.getUser();
   $scope.formData = {
     createdAt: new Date(),
     sync: true,
@@ -25,8 +26,8 @@ app.controller('record:new', ['$scope', '$rootScope', '$location', 'ngNotify', '
   });
 
   $scope.loadDocumenation = function(){
-    $rootScope.action($scope, {
-      userId: $rootScope.user.id,
+    ActionHero.action({
+      userId: $scope.user.id,
       guid: $scope.guid
     }, '/api/system/documentation', 'GET', function(data){
       $scope.action = data.documentation[$scope.recordType + ':create'][1];
@@ -53,9 +54,9 @@ app.controller('record:new', ['$scope', '$rootScope', '$location', 'ngNotify', '
     };
 
     payload.createdAt = payload.createdAt.getTime();
-    payload.teamId    = $rootScope.user.teamId;
+    payload.teamId    = $scope.user.teamId;
 
-    $rootScope.action($scope, payload, '/api/' + $scope.recordType, 'POST', function(data){
+    ActionHero.action(payload, '/api/' + $scope.recordType, 'POST', function(data){
       $location.path('/' + $scope.recordType + '/' + data.guid);
     });
   };
@@ -63,9 +64,10 @@ app.controller('record:new', ['$scope', '$rootScope', '$location', 'ngNotify', '
   $scope.loadDocumenation();
 }]);
 
-app.controller('record:view', ['$scope', '$rootScope', '$location', 'ngNotify', '$routeParams', function($scope, $rootScope, $location, ngNotify, $routeParams){
-  $scope.section = $rootScope.section;                     // people
-  $scope.recordType = $rootScope.singular($scope.section); // person
+app.controller('record:view', ['$scope', '$location', '$routeParams', 'ActionHero', 'Utils', 'User', function($scope, $location, $routeParams, ActionHero, Utils, User){
+  $scope.section = Utils.determineSection($location); // people
+  $scope.recordType = Utils.singular($scope.section); // person
+  $scope.user = User.getUser();
 
   $scope.guid = $routeParams.guid;
   $scope.newAttribute = {};
@@ -82,8 +84,8 @@ app.controller('record:view', ['$scope', '$rootScope', '$location', 'ngNotify', 
 
   $scope.load = function(){
     $scope.formData = {};
-    $rootScope.action($scope, {
-      userId: $rootScope.user.id,
+    ActionHero.action({
+      userId: $scope.user.id,
       guid: $scope.guid
     }, '/api/' + $scope.recordType, 'GET', function(data){
       $scope.record = data[$scope.recordType];
@@ -122,8 +124,8 @@ app.controller('record:view', ['$scope', '$rootScope', '$location', 'ngNotify', 
 
     var data = {};
     data[key] = value;
-    $rootScope.action($scope, {
-      userId: $rootScope.user.id,
+    ActionHero.action({
+      userId: $scope.user.id,
       guid: $scope.guid,
       data: JSON.stringify(data),
     }, '/api/' + $scope.recordType, 'PUT', function(data){
@@ -135,8 +137,8 @@ app.controller('record:view', ['$scope', '$rootScope', '$location', 'ngNotify', 
   $scope.deleteAttribute = function(key){
     var data = {};
     data[key] = '_delete';
-    $rootScope.action($scope, {
-      userId: $rootScope.user.id,
+    ActionHero.action({
+      userId: $scope.user.id,
       guid: $scope.guid,
       data: JSON.stringify(data),
     }, '/api/' + $scope.recordType, 'PUT', function(data){
@@ -151,8 +153,8 @@ app.controller('record:view', ['$scope', '$rootScope', '$location', 'ngNotify', 
 
   $scope.deleteRecord = function(){
     if(confirm('are you sure?')){
-      $rootScope.action($scope, {
-        userId: $rootScope.user.id,
+      ActionHero.action({
+        userId: $scope.user.id,
         guid: $scope.guid,
       }, '/api/' + $scope.recordType, 'DELETE', function(data){
         $location.path('/' + $scope.section + '/recent');

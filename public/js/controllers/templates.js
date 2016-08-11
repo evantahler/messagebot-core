@@ -1,7 +1,8 @@
-app.controller('template:edit', ['$scope', '$rootScope', '$location', 'ngNotify', '$routeParams', function($scope, $rootScope, $location, ngNotify, $routeParams){
+app.controller('template:edit', ['$scope', '$location', 'ngNotify', '$routeParams', 'ActionHero', 'User', function($scope, $location, ngNotify, $routeParams, ActionHero, User){
   $scope.template = {};
+  $scope.user = User.getUser();
   $scope.renderOptions = {
-    personGuid: $rootScope.user.personGuid,
+    personGuid: $scope.user.personGuid,
   };
 
   var lastSave = new Date().getTime() - 1000;
@@ -21,7 +22,7 @@ app.controller('template:edit', ['$scope', '$rootScope', '$location', 'ngNotify'
   };
 
   $scope.loadTemplate = function(){
-    $rootScope.action($scope, {templateId: $routeParams.templateId}, '/api/template', 'GET', function(data){
+    ActionHero.action({templateId: $routeParams.templateId}, '/api/template', 'GET', function(data){
       $scope.template = data.template;
       $scope.template.templateId = $scope.template.id;
       $scope.prepareRender();
@@ -29,7 +30,7 @@ app.controller('template:edit', ['$scope', '$rootScope', '$location', 'ngNotify'
   };
 
   $scope.loadView = function(){
-    $rootScope.action($scope, {
+    ActionHero.action({
       templateId: $routeParams.templateId,
       personGuid: $scope.renderOptions.personGuid,
     }, '/api/template/render', 'GET', function(data){
@@ -38,7 +39,7 @@ app.controller('template:edit', ['$scope', '$rootScope', '$location', 'ngNotify'
   };
 
   $scope.editTemplate = function(){
-    $rootScope.action($scope, $scope.template, '/api/template', 'PUT', function(data){
+    ActionHero.action($scope.template, '/api/template', 'PUT', function(data){
       $scope.template = data.template;
       $scope.template.templateId = $scope.template.id;
       $scope.prepareRender();
@@ -48,7 +49,7 @@ app.controller('template:edit', ['$scope', '$rootScope', '$location', 'ngNotify'
 
   $scope.deleteTemplate = function(){
     if(confirm('Are you sure?')){
-      $rootScope.action($scope, $scope.template, '/api/template', 'DELETE', function(data){
+      ActionHero.action($scope.template, '/api/template', 'DELETE', function(data){
         ngNotify.set('Template Deleted', 'success');
         $location.path('/templates/list');
       });
@@ -76,7 +77,7 @@ app.controller('template:edit', ['$scope', '$rootScope', '$location', 'ngNotify'
 }]);
 
 
-app.controller('templates:list', ['$scope', '$rootScope', '$location', 'ngNotify', '$routeParams', function($scope, $rootScope, $location, ngNotify, $routeParams){
+app.controller('templates:list', ['$scope', '$location', 'ngNotify', '$routeParams', 'ActionHero', 'Utils', function($scope, $location, ngNotify, $routeParams, ActionHero, Utils){
   $scope.lists = [];
   $scope.forms = {};
   $scope.folder = {name: ($routeParams.folder || '_all')};
@@ -99,17 +100,17 @@ app.controller('templates:list', ['$scope', '$rootScope', '$location', 'ngNotify
       size: perPage
     };
     if($scope.folder.name != '_all'){ params.folder = $scope.folder.name; }
-    $rootScope.action($scope, params, '/api/templates', 'GET', function(data){
+    ActionHero.action(params, '/api/templates', 'GET', function(data){
       $scope.templates = data.templates;
       $scope.total = data.total;
-      $scope.pagination = $rootScope.genratePagination(currentPage, perPage, $scope.total);
+      $scope.pagination = Utils.genratePagination(currentPage, perPage, $scope.total);
 
       if($scope.templates.length === 0 && currentPage !== 0){ $location.path('/templates/list/' + $scope.folder.name + '/0'); }
     });
   };
 
   $scope.loadFolders = function(){
-    $rootScope.action($scope, {}, '/api/templates/folders', 'GET', function(data){
+    ActionHero.action({}, '/api/templates/folders', 'GET', function(data){
       $scope.folders = data.folders;
     });
   };
@@ -119,8 +120,8 @@ app.controller('templates:list', ['$scope', '$rootScope', '$location', 'ngNotify
   };
 
   $scope.processCreateTemplateForm = function(){
-    $rootScope.action($scope, $scope.forms.createTemplate, '/api/template', 'POST', function(data){
-      $rootScope.clearModals('#createTemplateModal');
+    ActionHero.action($scope.forms.createTemplate, '/api/template', 'POST', function(data){
+      Utils.clearModals('#createTemplateModal');
       ngNotify.set('Template Created', 'success');
       $location.path('/template/' + data.template.id);
     });
@@ -129,15 +130,15 @@ app.controller('templates:list', ['$scope', '$rootScope', '$location', 'ngNotify
   $scope.editTemplate = function(templateId){
     $scope.forms.editTemplate = {};
     $('#editTemplateModal').modal('show');
-    $rootScope.action($scope, {templateId: templateId}, '/api/template', 'GET', function(data){
+    ActionHero.action({templateId: templateId}, '/api/template', 'GET', function(data){
       $scope.forms.editTemplate = data.template;
     });
   };
 
   $scope.processEditTemplateForm = function(){
     $scope.forms.editTemplate.templateId = $scope.forms.editTemplate.id;
-    $rootScope.action($scope, $scope.forms.editTemplate, '/api/template', 'PUT', function(data){
-      $rootScope.clearModals('#editTemplateModal');
+    ActionHero.action($scope.forms.editTemplate, '/api/template', 'PUT', function(data){
+      Utils.clearModals('#editTemplateModal');
       $scope.loadTemplates();
       $scope.loadFolders();
       ngNotify.set('Template Updated', 'success');
@@ -147,7 +148,7 @@ app.controller('templates:list', ['$scope', '$rootScope', '$location', 'ngNotify
   $scope.copyTemplate = function(templateId){
     var input = prompt("Please enter a name for the new template");
     if(input){
-      $rootScope.action($scope, {
+      ActionHero.action({
         templateId: templateId,
         name: input
       }, '/api/template/copy', 'POST', function(data){
@@ -159,7 +160,7 @@ app.controller('templates:list', ['$scope', '$rootScope', '$location', 'ngNotify
 
   $scope.deleteTemplate = function(templateId){
     if(confirm('Are you sure?')){
-      $rootScope.action($scope, {templateId: templateId}, '/api/template', 'DELETE', function(data){
+      ActionHero.action({templateId: templateId}, '/api/template', 'DELETE', function(data){
         ngNotify.set('Tepmplate Deleted', 'success');
         $scope.loadTemplates();
         $scope.loadFolders();

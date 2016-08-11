@@ -1,9 +1,9 @@
-app.controller('campaign:stats', ['$scope', '$rootScope', '$location', 'ngNotify', '$routeParams', function($scope, $rootScope, $location, ngNotify, $routeParams){
+app.controller('campaign:stats', ['$scope', '$routeParams', 'ActionHero', 'User', function($scope, $routeParams, ActionHero, User){
   $scope.campaign = {};
   $scope.list = {};
   $scope.template = {};
   $scope.funnel = {};
-  $scope.renderOptions = { personGuid: $rootScope.user.personGuid };
+  $scope.renderOptions = { personGuid: User.getUser().personGuid };
 
   $scope.histogramOptions = {
     interval: 'day',
@@ -21,17 +21,18 @@ app.controller('campaign:stats', ['$scope', '$rootScope', '$location', 'ngNotify
   };
 
   $scope.loadCampaign = function(){
-    $rootScope.action($scope, {campaignId: $routeParams.campaignId}, '/api/campaign', 'GET', function(data){
+    ActionHero.action({campaignId: $routeParams.campaignId}, '/api/campaign', 'GET', function(data){
       $scope.campaign = data.campaign;
       $scope.campaign.campaignId = data.campaign.id;
 
       if($scope.campaign.sendAt){ $scope.campaign.sendAt = new Date($scope.campaign.sendAt); }
       if($scope.campaign.sentAt){ $scope.campaign.sentAt = new Date($scope.campaign.sentAt); }
 
-      $rootScope.action($scope, {listId: $scope.campaign.listId}, '/api/list', 'GET', function(data){
+      ActionHero.action({listId: $scope.campaign.listId}, '/api/list', 'GET', function(data){
         $scope.list = data.list;
       });
-      $rootScope.action($scope, {templateId: $scope.campaign.templateId}, '/api/template', 'GET', function(data){
+
+      ActionHero.action({templateId: $scope.campaign.templateId}, '/api/template', 'GET', function(data){
         $scope.template = data.template;
         $scope.prepareRender();
       });
@@ -39,7 +40,7 @@ app.controller('campaign:stats', ['$scope', '$rootScope', '$location', 'ngNotify
   };
 
   $scope.loadCampaignStats = function(){
-    $rootScope.action($scope, {
+    ActionHero.action({
       campaignId: $routeParams.campaignId,
       interval: $scope.histogramOptions.interval,
       start: $scope.histogramOptions.start.getTime(),
@@ -110,7 +111,7 @@ app.controller('campaign:stats', ['$scope', '$rootScope', '$location', 'ngNotify
   $scope.loadCampaignStats();
 }]);
 
-app.controller('campaign:edit', ['$scope', '$rootScope', '$location', 'ngNotify', '$routeParams', function($scope, $rootScope, $location, ngNotify, $routeParams){
+app.controller('campaign:edit', ['$scope', '$location', 'ngNotify', '$routeParams', 'ActionHero', 'User', function($scope, $location, ngNotify, $routeParams, ActionHero, User){
   $scope.campaign = {};
   $scope.types = [];
   $scope.lists = [];
@@ -119,7 +120,7 @@ app.controller('campaign:edit', ['$scope', '$rootScope', '$location', 'ngNotify'
   $scope.transport = {};
   $scope.list = {};
   $scope.template = {};
-  $scope.renderOptions = { personGuid: $rootScope.user.personGuid };
+  $scope.renderOptions = { personGuid: User.getUser().personGuid };
 
   $scope.prepareRender = function(){
     $scope.template.url = '/api/template/render.html?' +
@@ -129,7 +130,7 @@ app.controller('campaign:edit', ['$scope', '$rootScope', '$location', 'ngNotify'
   };
 
   $scope.loadTransports = function(){
-    $rootScope.action($scope, {}, '/api/transports', 'GET', function(data){
+    ActionHero.action({}, '/api/transports', 'GET', function(data){
       $scope.transports = data.transports;
 
       Object.keys(data.transports).forEach(function(t){
@@ -141,36 +142,37 @@ app.controller('campaign:edit', ['$scope', '$rootScope', '$location', 'ngNotify'
 
   $scope.loadLists = function(){
     //TODO: Pagination
-    $rootScope.action($scope, {}, '/api/lists', 'GET', function(data){
+    ActionHero.action({}, '/api/lists', 'GET', function(data){
       $scope.lists = data.lists;
     });
   };
 
   $scope.loadTypes = function(){
-    $rootScope.action($scope, {}, '/api/campaigns/types', 'GET', function(data){
+    ActionHero.action({}, '/api/campaigns/types', 'GET', function(data){
       $scope.types = data.validTypes;
     });
   };
 
   $scope.loadTemplates = function(){
     //TODO: Pagination
-    $rootScope.action($scope, {}, '/api/templates', 'GET', function(data){
+    ActionHero.action({}, '/api/templates', 'GET', function(data){
       $scope.templates = data.templates;
     });
   };
 
   $scope.loadCampaign = function(){
-    $rootScope.action($scope, {campaignId: $routeParams.campaignId}, '/api/campaign', 'GET', function(data){
+    ActionHero.action({campaignId: $routeParams.campaignId}, '/api/campaign', 'GET', function(data){
       $scope.campaign = data.campaign;
       $scope.campaign.campaignId = data.campaign.id;
 
       if($scope.campaign.sendAt){ $scope.campaign.sendAt = new Date($scope.campaign.sendAt); }
       if($scope.campaign.sentAt){ $scope.campaign.sentAt = new Date($scope.campaign.sentAt); }
 
-      $rootScope.action($scope, {listId: $scope.campaign.listId}, '/api/list', 'GET', function(data){
+      ActionHero.action({listId: $scope.campaign.listId}, '/api/list', 'GET', function(data){
         $scope.list = data.list;
       });
-      $rootScope.action($scope, {templateId: $scope.campaign.templateId}, '/api/template', 'GET', function(data){
+
+      ActionHero.action({templateId: $scope.campaign.templateId}, '/api/template', 'GET', function(data){
         $scope.template = data.template;
         $scope.prepareRender();
       });
@@ -183,7 +185,7 @@ app.controller('campaign:edit', ['$scope', '$rootScope', '$location', 'ngNotify'
     if($scope.campaign.sendAt){ $scope.campaign.sendAt = $scope.campaign.sendAt.getTime(); }
     if($scope.campaign.campaignVariables){ $scope.campaign.campaignVariables = JSON.stringify($scope.campaign.campaignVariables); }
 
-    $rootScope.action($scope, $scope.campaign, '/api/campaign', 'PUT', function(data){
+    ActionHero.action($scope.campaign, '/api/campaign', 'PUT', function(data){
       $scope.loadCampaign();
       ngNotify.set('Campaign Updated', 'success');
     });
@@ -191,10 +193,10 @@ app.controller('campaign:edit', ['$scope', '$rootScope', '$location', 'ngNotify'
 
   $scope.deleteCampaign = function(){
     if(confirm('Are you sure?')){
-      // $rootScope.action($scope, $scope.campaign, '/api/campaign', 'DELETE', function(data){
-      //   ngNotify.set('Campaign Deleted', 'success');
-      //   $location.path('/campaigns/list');
-      // });
+      ActionHero.action($scope.campaign, '/api/campaign', 'DELETE', function(data){
+        ngNotify.set('Campaign Deleted', 'success');
+        $location.path('/campaigns/list');
+      });
     }
   };
 
@@ -208,7 +210,7 @@ app.controller('campaign:edit', ['$scope', '$rootScope', '$location', 'ngNotify'
   $scope.loadLists();
 }]);
 
-app.controller('campaigns:list', ['$scope', '$rootScope', '$location', 'ngNotify', '$routeParams', function($scope, $rootScope, $location, ngNotify, $routeParams){
+app.controller('campaigns:list', ['$scope', '$location', 'ngNotify', '$routeParams', 'ActionHero', 'Utils', function($scope, $location, ngNotify, $routeParams, ActionHero, Utils){
   $scope.campaigns = [];
   $scope.lists = [];
   $scope.templates = [];
@@ -229,37 +231,37 @@ app.controller('campaigns:list', ['$scope', '$rootScope', '$location', 'ngNotify
       size: perPage,
     };
     if($scope.folder.name != '_all'){ params.folder = $scope.folder.name; }
-    $rootScope.action($scope, params, '/api/campaigns', 'GET', function(data){
+    ActionHero.action(params, '/api/campaigns', 'GET', function(data){
       $scope.campaigns = data.campaigns;
       $scope.total = data.total;
-      $scope.pagination = $rootScope.genratePagination(currentPage, perPage, $scope.total);
+      $scope.pagination = Utils.genratePagination(currentPage, perPage, $scope.total);
 
       if($scope.campaigns.length === 0 && currentPage !== 0){ $location.path('/campaigns/list/' + $scope.folder.name + '/0'); }
     });
   };
 
   $scope.loadTypes = function(){
-    $rootScope.action($scope, {}, '/api/campaigns/types', 'GET', function(data){
+    ActionHero.action({}, '/api/campaigns/types', 'GET', function(data){
       $scope.types = data.validTypes;
     });
   };
 
   $scope.loadTransports = function(){
     //TODO: Pagination
-    $rootScope.action($scope, {}, '/api/transports', 'GET', function(data){
+    ActionHero.action({}, '/api/transports', 'GET', function(data){
       $scope.transports = data.transports;
     });
   };
 
   $scope.loadLists = function(){
     //TODO: Pagination
-    $rootScope.action($scope, {}, '/api/lists', 'GET', function(data){
+    ActionHero.action({}, '/api/lists', 'GET', function(data){
       $scope.lists = data.lists;
     });
   };
 
   $scope.loadFolders = function(){
-    $rootScope.action($scope, {}, '/api/campaigns/folders', 'GET', function(data){
+    ActionHero.action({}, '/api/campaigns/folders', 'GET', function(data){
       $scope.folders = data.folders;
     });
   };
@@ -267,7 +269,7 @@ app.controller('campaigns:list', ['$scope', '$rootScope', '$location', 'ngNotify
 
   $scope.loadTemplates = function(){
     //TODO: Pagination
-    $rootScope.action($scope, {}, '/api/templates', 'GET', function(data){
+    ActionHero.action({}, '/api/templates', 'GET', function(data){
       $scope.templates = data.templates;
     });
   };
@@ -277,8 +279,8 @@ app.controller('campaigns:list', ['$scope', '$rootScope', '$location', 'ngNotify
   };
 
   $scope.processCreateCampaignForm = function(){
-    $rootScope.action($scope, $scope.forms.createCampaign, '/api/campaign', 'POST', function(data){
-      $rootScope.clearModals('#createCampaignModal');
+    ActionHero.action($scope.forms.createCampaign, '/api/campaign', 'POST', function(data){
+      Utils.clearModals('#createCampaignModal');
       ngNotify.set('Campaign Created', 'success');
       $location.path('/campaign/' + data.campaign.id);
     });
@@ -287,15 +289,15 @@ app.controller('campaigns:list', ['$scope', '$rootScope', '$location', 'ngNotify
   $scope.editCampaign = function(campaignId){
     $scope.forms.editCampaign = {};
     $('#editCampaignModal').modal('show');
-    $rootScope.action($scope, {campaignId: campaignId}, '/api/campaign', 'GET', function(data){
+    ActionHero.action({campaignId: campaignId}, '/api/campaign', 'GET', function(data){
       $scope.forms.editCampaign = data.campaign;
     });
   };
 
   $scope.processEditCampaignForm = function(){
     $scope.forms.editCampaign.campaignId = $scope.forms.editCampaign.id;
-    $rootScope.action($scope, $scope.forms.editCampaign, '/api/campaign', 'PUT', function(data){
-      $rootScope.clearModals('#editCampaignModal');
+    ActionHero.action($scope.forms.editCampaign, '/api/campaign', 'PUT', function(data){
+      Utils.clearModals('#editCampaignModal');
       $scope.loadCampaigns();
       $scope.loadFolders();
       ngNotify.set('Campaign Updated', 'success');
@@ -305,7 +307,7 @@ app.controller('campaigns:list', ['$scope', '$rootScope', '$location', 'ngNotify
   $scope.copyCampaign = function(campaignId){
     var input = prompt("Please enter a name for the new campaign");
     if(input){
-      $rootScope.action($scope, {
+      ActionHero.action({
         campaignId: campaignId,
         name: input
       }, '/api/campaign/copy', 'POST', function(data){
@@ -317,7 +319,7 @@ app.controller('campaigns:list', ['$scope', '$rootScope', '$location', 'ngNotify
 
   $scope.deleteCampaign = function(campaignId){
     if(confirm('Are you sure?')){
-      $rootScope.action($scope, {campaignId: campaignId}, '/api/campaign', 'DELETE', function(data){
+      ActionHero.action({campaignId: campaignId}, '/api/campaign', 'DELETE', function(data){
         ngNotify.set('Campaign Deleted', 'success');
         $scope.loadCampaigns();
         $scope.loadFolders();

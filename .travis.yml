@@ -40,6 +40,7 @@ before_install:
   # - sleep 10 # (not needed as NPM install takes long enough)
 
 before_script:
+  # For some reason, Travis ES comes with a 'tweets' index?!
   - "curl -X DELETE http://localhost:9200/*"
 
 os:

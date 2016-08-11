@@ -57,7 +57,7 @@
       <hr />
 
       <div ng-if="template.url.indexOf('undefined') < 0">
-        <iframe id="templateRenderFrameSmall" ng-src="{{ template.url }}" scrolling="no" frameborder="0" onLoad="app.utils.iframeResizeToFit('templateRenderFrameSmall')"></iframe>
+        <iframe id="templateRenderFrameSmall" ng-src="{{ template.url }}" scrolling="no" frameborder="0" onLoad="MESSAGEBOT.utils.iframeResizeToFit('templateRenderFrameSmall')"></iframe>
       </div>
 
       <div id="fullScreenPreview" class="modal modal-fullscreen fade" tabindex='-1' aria-hidden="true">
@@ -65,7 +65,7 @@
           <div class="modal-content">
             <div class="modal-body">
               <div ng-if="template.url.indexOf('undefined') < 0">
-                <iframe id="templateRenderFrameBig" ng-src="{{ template.url }}" scrolling="no" frameborder="0" onLoad="app.utils.iframeResizeToFit('templateRenderFrameBig')"></iframe>
+                <iframe id="templateRenderFrameBig" ng-src="{{ template.url }}" scrolling="no" frameborder="0" onLoad="MESSAGEBOT.utils.iframeResizeToFit('templateRenderFrameBig')"></iframe>
               </div>
             </div>
             <div class="modal-footer">

@@ -1,8 +1,8 @@
-app.controller('settings', ['$scope', '$rootScope', '$location', function($scope, $rootScope, $location){
+app.controller('settings', ['$scope', 'ActionHero', function($scope, ActionHero){
   $scope.transports = {};
 
   $scope.loadTransports = function(){
-    $rootScope.action($scope, {}, '/api/transports', 'GET', function(data){
+    ActionHero.action({}, '/api/transports', 'GET', function(data){
       $scope.transports = data.transports;
     });
   };

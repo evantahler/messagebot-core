@@ -1,10 +1,13 @@
-app.controller('pageController', ['$scope', '$rootScope', '$location', function($scope, $rootScope, $location){
+app.controller('pageController', ['$scope', 'ActionHero', 'User', '$location', function($scope, ActionHero, User, $location){
 
   $scope.date = new Date();
+  $scope.navigation = MESSAGEBOT.navigation;
+  $scope.user;
 
-  $rootScope.action($scope, {}, '/api/session', 'PUT', function(data){
+  ActionHero.action({}, '/api/session', 'PUT', function(data){
     if(data.user){
-      $rootScope.user      = data.user;
+      User.setUser(data.user);
+      $scope.user = User.getUser();
 
       if($location.path() === '/'){      $location.path('/dashboard'); }
       if($location.path() === '/login'){ $location.path('/dashboard'); }
@@ -13,8 +16,8 @@ app.controller('pageController', ['$scope', '$rootScope', '$location', function(
     var matchedAndOK = false;
     var path = $location.path();
 
-    $rootScope.routes.forEach(function(r){
-      if( !matchedAndOK && path === r[0] && r[3] === false ){
+    MESSAGEBOT.routes.forEach(function(c){
+      if( !matchedAndOK && path === c.route && c.auth === false ){
         matchedAndOK = true;
       }
     });
@@ -26,23 +29,23 @@ app.controller('pageController', ['$scope', '$rootScope', '$location', function(
     }
   });
 
-  $scope.getNavigationHighlight = function(path){
-    var parts = $location.path().split('/');
-    var pathParts = path.split('/');
+  $scope.getNavigationHighlight = function(item){
+    var active = false;
+    var path = $location.$$path;
 
-    parts.shift(); /// throw away the first one
-
-    var simplePathParts = [];
-    while(pathParts.length > 0 && parts.length > 0){
-      pathParts.pop();
-      simplePathParts.push( parts.shift() );
+    if(item.elements){
+      item.elements.forEach(function(element){
+        var childResponse = $scope.getNavigationHighlight(element);
+        if(childResponse === 'active'){ active = true; }
+      });
+    }else if(item.highlights){
+      item.highlights.forEach(function(highlight){
+        var regexp = new RegExp(highlight);
+        if(path.match(regexp)){ active = true; }
+      });
     }
 
-    if(simplePathParts.join('/') === path){
-      return "active";
-    }else{
-      return "";
-    }
+    return (active ? 'active' : '');
   };
 
 }]);

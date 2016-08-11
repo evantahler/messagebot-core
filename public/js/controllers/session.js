@@ -1,27 +1,29 @@
-app.controller('session:create', ['$scope', '$rootScope', '$location', function($scope, $rootScope, $location){
-  $scope.formData    = {};
+app.controller('session:create', ['$scope', 'User', '$location', 'ActionHero', function($scope, User, $location, ActionHero){
+  $scope.formData = {};
+  $scope.user = User.getUser();
 
-  if($rootScope.user){
+  if($scope.user){
     $location.path('/dashboard');
   }
 
   $scope.processForm = function(){
-    $rootScope.action($scope, $scope.formData, '/api/session', 'POST', function(data){
-      if(data.user){ $rootScope.user = data.user; }
-      location.reload(); 
+    ActionHero.action($scope.formData, '/api/session', 'POST', function(data){
+      if(data.user){ User.setUser(data.user); }
+      location.reload();
     });
   };
 }]);
 
-app.controller('session:destroy', ['$scope', '$rootScope', '$location', function($scope, $rootScope, $location){
+app.controller('session:destroy', ['$scope', 'User', '$location', 'ActionHero', function($scope, User, $location, ActionHero){
   $scope.submitForm = function(){
     $scope.processForm.call(this);
   };
 
   $scope.processForm = function(){
-    $rootScope.action($scope, {}, '/api/session', 'DELETE', function(data){
-      delete $rootScope.user;
+    ActionHero.action({}, '/api/session', 'DELETE', function(data){
+      User.clear();
       $location.path('/');
+      setTimeout(function(){ window.location.reload(); }, 100);
     });
   };
 }]);
