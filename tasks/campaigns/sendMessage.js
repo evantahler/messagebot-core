@@ -88,17 +88,18 @@ exports.task = {
 
       api.transports.forEach(function(t){
         if(t.name === campaign.transport){ transport = t; }
-        if(!transport){ return done(new Error('transport not found')); }
-
-        transport.requiredDataKeys.person.forEach(function(k){
-          if(!person.data.data[k]){
-            missingType = 'person';
-            missingKey = k;
-          }
-        });
-
-        // TODO: Event validation
       });
+
+      if(!transport){ return done(new Error('transport not found')); }
+
+      transport.requiredDataKeys.person.forEach(function(k){
+        if(!person.data.data[k]){
+          missingType = 'person';
+          missingKey = k;
+        }
+      });
+
+      // TODO: Event validation
 
       if(missingKey){ return done(new Error(missingType + ' missing data.' + missingKey)); }
 

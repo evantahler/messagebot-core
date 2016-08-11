@@ -17,7 +17,7 @@ describe('system:transports', function(){
 
   it('returns node status', function(done){
     specHelper.requestWithLogin(email, password, 'transports:list', {}, function(response){
-      Object.keys(response.transports).length.should.equal(1);
+      Object.keys(response.transports).length.should.be.above(0);
       response.transports.smtp.name.should.equal('smtp');
       response.transports.smtp.requiredDataKeys.should.deepEqual({ person: ['email'] });
       response.transports.smtp.campaignVariables.should.deepEqual(['from', 'subject']);
