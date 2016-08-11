@@ -26,6 +26,6 @@ exports.task = {
           });
         }).catch(next);
       });
-    });
+    }).catch(next);
   }
 };

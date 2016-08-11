@@ -202,5 +202,3 @@ api.navigation.navigation.push({
 });
 
 ```
-
-## Transports

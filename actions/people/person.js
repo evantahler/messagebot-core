@@ -34,7 +34,7 @@ exports.personCreate = {
     if(data.params.sync === false){
       person.create(function(error){
         if(error){ return api.log('person creation error: ' + error, 'error', data.params); }
-        api.tasks.enqueueIn(api.config.elasticsearch.cacheTime * 2, 'people:buildCreateEvent', {guid: person.data.guid, teamId: data.team.id}, 'messagebot:people', function(error){
+        api.tasks.enqueueIn(api.config.elasticsearch.cacheTime * 1, 'people:buildCreateEvent', {guid: person.data.guid, teamId: data.team.id}, 'messagebot:people', function(error){
           if(error){ return api.log('person creation error: ' + error, 'error', data.params); }
         });
       });
@@ -44,7 +44,7 @@ exports.personCreate = {
       person.create(function(error){
         if(error){ return next(error); }
         data.response.guid = person.data.guid;
-        api.tasks.enqueueIn(api.config.elasticsearch.cacheTime * 2, 'people:buildCreateEvent', {guid: person.data.guid, teamId: data.team.id}, 'messagebot:people', next);
+        api.tasks.enqueueIn(api.config.elasticsearch.cacheTime * 1, 'people:buildCreateEvent', {guid: person.data.guid, teamId: data.team.id}, 'messagebot:people', next);
       });
     }
   }

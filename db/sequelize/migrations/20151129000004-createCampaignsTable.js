@@ -53,6 +53,10 @@ module.exports = {
           type: Sequelize.TEXT,
           allowNull: true,
         },
+        'triggerEventMatch': {
+          type: Sequelize.TEXT,
+          allowNull: true,
+        },
 
         'sendAt': {
           type: Sequelize.DATE,

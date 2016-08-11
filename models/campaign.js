@@ -92,6 +92,24 @@ var loader = function(api){
             this.setDataValue('campaignVariables', q);
           }
         },
+        'triggerEventMatch': {
+          type: Sequelize.TEXT,
+          allowNull: true,
+          get: function(){
+            var q = this.getDataValue('triggerEventMatch');
+            if(q && q.length > 0){
+              return JSON.parse(q);
+            }else{
+              return {};
+            }
+          },
+          set: function(q){
+            if(q && typeof q !== 'string'){
+              q = JSON.stringify(q);
+            }
+            this.setDataValue('triggerEventMatch', q);
+          }
+        },
         'sendAt': {
           type: Sequelize.DATE,
           allowNull: true,
@@ -220,6 +238,7 @@ var loader = function(api){
               listId:            this.listId,
               templateId:        this.templateId,
               campaignVariables: this.campaignVariables,
+              triggerEventMatch: this.triggerEventMatch,
 
               sendAt:            this.sendAt,
               sendingAt:         this.sendingAt,

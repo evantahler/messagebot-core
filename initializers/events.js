@@ -5,8 +5,40 @@ module.exports = {
 
     api.events = {
       triggerCampaign: function(team, event, callback){
-        // TODO
-        callback();
+        var jobs = [];
+
+        // TODO: Cache Campaigns like we cache teams
+        api.models.campaign.findAll({where: {
+          teamId: team.id,
+          type: 'trigger',
+        }}).then(function(campaigns){
+          campaigns.forEach(function(campaign){
+            var matched = true;
+            Object.keys(campaign.triggerEventMatch).forEach(function(k){
+              if(!event.data[k]){ matched = false; }
+              else{
+                var regexp = new RegExp(campaign.triggerEventMatch[k]);
+                if(!event.data[k].match(regexp)){ matched = false; }
+              }
+
+              if(matched === true){
+                jobs.push(function(done){
+                  var delay = 1;
+                  if(campaign.triggerDelay){ delay = campaign.triggerDelay * 1000; }
+                  api.tasks.enqueueIn(delay, 'campaigns:triggerEventCheck', {
+                    teamId: team.id,
+                    eventGuid: event.data.guid,
+                    personGuid: event.data.personGuid,
+                    campaignId: campaign.id,
+                    listId: campaign.listId,
+                  }, 'messagebot:campaigns', done);
+                });
+              }
+            });
+          });
+
+          async.series(jobs, callback);
+        }).catch(callback);
       },
 
       propigateLocationToPerson: function(team, event, callback){

@@ -43,6 +43,10 @@ exports.campaignCreate = {
       required: false,
       formatter: function(p){ return JSON.parse(p); }
     },
+    triggerEventMatch: {
+      required: false,
+      formatter: function(p){ return JSON.parse(p); }
+    },
     sendAt: {
       required: false,
       formatter: function(p){ return new Date(parseInt(p)); }
@@ -128,6 +132,7 @@ exports.campaignCopy = {
         templateId:        campaign.templateId,
         transport:         campaign.transport,
         campaignVariables: campaign.campaignVariables,
+        triggerEventMatch: campaign.triggerEventMatch,
         // sendAt:            campaign.sendAt,
         // sendOnce:          campaign.sendOnce,
         // triggerDelay:      campaign.triggerDelay,
@@ -171,6 +176,10 @@ exports.campaignEdit = {
       validator: transportValidator
     },
     campaignVariables: {
+      required: false,
+      formatter: function(p){ return JSON.parse(p); }
+    },
+    triggerEventMatch: {
       required: false,
       formatter: function(p){ return JSON.parse(p); }
     },

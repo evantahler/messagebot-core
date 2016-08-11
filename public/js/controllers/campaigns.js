@@ -120,6 +120,7 @@ app.controller('campaign:edit', ['$scope', '$location', 'ngNotify', '$routeParam
   $scope.transport = {};
   $scope.list = {};
   $scope.template = {};
+  $scope.newTriggerEventMatch = {};
   $scope.renderOptions = { personGuid: User.getUser().personGuid };
 
   $scope.prepareRender = function(){
@@ -184,6 +185,7 @@ app.controller('campaign:edit', ['$scope', '$location', 'ngNotify', '$routeParam
   $scope.editCampaign = function(){
     if($scope.campaign.sendAt){ $scope.campaign.sendAt = $scope.campaign.sendAt.getTime(); }
     if($scope.campaign.campaignVariables){ $scope.campaign.campaignVariables = JSON.stringify($scope.campaign.campaignVariables); }
+    if($scope.campaign.triggerEventMatch){ $scope.campaign.triggerEventMatch = JSON.stringify($scope.campaign.triggerEventMatch); }
 
     ActionHero.action($scope.campaign, '/api/campaign', 'PUT', function(data){
       $scope.loadCampaign();
@@ -199,6 +201,18 @@ app.controller('campaign:edit', ['$scope', '$location', 'ngNotify', '$routeParam
       });
     }
   };
+
+  /* For Trigger Campaigns */
+  $scope.AddTriggerEventMatch = function(){
+    $scope.campaign.triggerEventMatch[$scope.newTriggerEventMatch.key] = $scope.newTriggerEventMatch.match;
+    $scope.newTriggerEventMatch = {};
+  };
+
+  $scope.deleteTriggerEventMatch = function(k){
+    delete $scope.campaign.triggerEventMatch[k];
+  };
+
+  /* Page Events */
 
   $scope.$watch('renderOptions.personGuid', function(){
     $scope.prepareRender();
