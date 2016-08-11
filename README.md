@@ -121,3 +121,86 @@ The MessageBot CLI is used to manage system-level data, IE: the creation and rem
 ## Notes
 
 This product includes GeoLite2 data created by MaxMind, available from [www.maxmind.com](http://www.maxmind.com).
+
+---
+
+# Plugin Guide
+
+`MessageBot Plugins` are normal [`ActionHero Plugins`](http://www.actionherojs.com/docs/#plugins). They can be installed from NPM, Git, or locally checked into your project.  In additional to the normal creation of Actions and Initializers, you can also modify the core of MessageBot:
+
+## Transports
+
+Transports let you send messages by other mediums.  Transports have a `name`, `description`, `requiredDataKeys` (properties of events and people which must exists and are used to send the message), `campaignVariables` (properties which must be sent when creating a campaign using this transport), and finally a `deliver()` method.
+
+The `deliver()` method accepts a payload (which contains `body` and the `campaignVariables`), a person, and a callback.
+
+The simplest transport, logger (which just logs the message to MessageBot's logs) would be:
+
+```js
+// in an initializer
+var transport = {
+  name: 'logger',
+  description: 'for testing messages by sending them to a log file',
+
+  requiredDataKeys: {
+    person: ['firstName', 'lasName']
+  },
+
+  campaignVariables: [
+    'logPrefix',
+    'logLevel',
+  ],
+
+  deliver: function(payload, person, callback){
+    var message = '';
+    message += '[' + payload.logPrefix + ' | to ' + person.data.data.firstName + ' ' + person.data.data.firstName + '] ';
+    message += payload.body;
+
+    api.log(message, logLevel);
+    return callback();
+  }
+}
+
+api.transports.push(transport);
+```
+
+## Front-End Navigation and Routes
+
+In your plugin, you can include new parts of the front-end application. Be sure to namespace your plugin!
+To Link in newly created pages to the Angular front-end application, use `api.navigation.routes`:
+
+```js
+api.navigation.routes.push({route: '/events/recent',                page: 'pages/events/recent.html',    title: 'MessageBot: Events',      auth: true});
+api.navigation.routes.push({route: '/events/recent/:page',          page: 'pages/events/recent.html',    title: 'MessageBot: Events',      auth: true});
+api.navigation.routes.push({route: '/events/search',                page: 'pages/events/search.html',    title: 'MessageBot: Events',      auth: true});
+api.navigation.routes.push({route: '/events/search/:query',         page: 'pages/events/search.html',    title: 'MessageBot: Events',      auth: true});
+api.navigation.routes.push({route: '/events/search/:query/:page',   page: 'pages/events/search.html',    title: 'MessageBot: Events',      auth: true});
+api.navigation.routes.push({route: '/event/new',                    page: 'pages/event/new.html',        title: 'MessageBot: Event',       auth: true});
+api.navigation.routes.push({route: '/event/:guid',                  page: 'pages/event/view.html',       title: 'MessageBot: Event',       auth: true});
+```
+
+To Modify the navigation elements of the application (the top-nav of the website), use `api.navigation.navigation`:
+
+```js
+api.navigation.navigation.push({
+  title: 'Data',
+  align: 'left',
+  glyphicon: 'glyphicon-equalizer',
+  elements: [
+    {route: '/#/people/recent', title: 'People: Recent', glyphicon: 'glyphicon-user', highlights: ['^\/people\/recent.*$']},
+    {route: '/#/people/search', title: 'People: Search', glyphicon: 'glyphicon-user', highlights: ['^\/people\/search.*$']},
+    {route: '/#/person/new', title: 'Person: New', glyphicon: 'glyphicon-user', highlights: ['^\/person\/new$']},
+    {divider: true},
+    {route: '/#/events/recent', title: 'Events: Recent', glyphicon: 'glyphicon-equalizer', highlights: ['^\/events\/recent.*$']},
+    {route: '/#/events/search', title: 'Events: Search', glyphicon: 'glyphicon-equalizer', highlights: ['^\/events\/search.*$']},
+    {route: '/#/event/new', title: 'Event: New', glyphicon: 'glyphicon-equalizer', highlights: ['^\/event\/new$']},
+    {divider: true},
+    {route: '/#/messages/recent', title: 'Messages: Recent', glyphicon: 'glyphicon-envelope', highlights: ['^\/messages\/recent.*$']},
+    {route: '/#/messages/search', title: 'Messages: Search', glyphicon: 'glyphicon-envelope', highlights: ['^\/messages\/search.*$']},
+    // {route: '/#/message/new', title: 'Message: New', glyphicon: 'glyphicon-envelope', highlights: ['^\/message\/new$']},
+  ]
+});
+
+```
+
+## Transports
