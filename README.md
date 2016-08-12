@@ -202,3 +202,10 @@ api.navigation.navigation.push({
 });
 
 ```
+
+---
+
+# Client-Side Tracking
+
+- You'll get a link to the client-side JS from the settings page.
+- Include it in your app (`<script src="//tracking.yoursite.com/tracking/<teamID>/web.js"></script>`)
