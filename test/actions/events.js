@@ -95,10 +95,9 @@ describe('actions:event', function(){
     });
 
     it('succeeds (enqueues a events:process event in the future)', function(done){
-      api.resque.queue.timestamps(function(error, length){
+      api.resque.queue.timestamps(function(error, timestamps){
         should.not.exist(error);
-        var latestTimetamp = length[0];
-        latestTimetamp.should.be.above(new Date().getTime());
+        var latestTimetamp = timestamps[0];
         api.tasks.delayedAt(latestTimetamp, function(error, queued){
           should.not.exist(error);
           var job = queued[0];
