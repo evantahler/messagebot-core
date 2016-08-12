@@ -51,14 +51,11 @@ exports.campaignCreate = {
       required: false,
       formatter: function(p){ return new Date(parseInt(p)); }
     },
-    sendOnce: {
-      required: false,
-    },
     triggerDelay: {
       required: false,
       formatter: function(p){ return parseInt(p); }
     },
-    reTriggerDelay: {
+    reSendDelay: {
       required: false,
       formatter: function(p){ return parseInt(p); }
     },
@@ -134,9 +131,8 @@ exports.campaignCopy = {
         campaignVariables: campaign.campaignVariables,
         triggerEventMatch: campaign.triggerEventMatch,
         // sendAt:            campaign.sendAt,
-        // sendOnce:          campaign.sendOnce,
         // triggerDelay:      campaign.triggerDelay,
-        // reTriggerDelay:    campaign.reTriggerDelay,
+        // reSendDelay:       campaign.reSendDelay,
 
       });
       newCampaign.save().then(function(){
@@ -187,14 +183,11 @@ exports.campaignEdit = {
       required: false,
       formatter: function(p){ return new Date(parseInt(p)); }
     },
-    sendOnce: {
-      required: false,
-    },
     triggerDelay: {
       required: false,
       formatter: function(p){ return parseInt(p); }
     },
-    reTriggerDelay: {
+    reSendDelay: {
       required: false,
       formatter: function(p){ return parseInt(p); }
     },

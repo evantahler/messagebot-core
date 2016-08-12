@@ -247,6 +247,7 @@ app.controller('campaigns:list', ['$scope', '$location', 'ngNotify', '$routePara
     if($scope.folder.name != '_all'){ params.folder = $scope.folder.name; }
     ActionHero.action(params, '/api/campaigns', 'GET', function(data){
       $scope.campaigns = data.campaigns;
+      $scope.attachListNamesToCampaigns();
       $scope.total = data.total;
       $scope.pagination = Utils.genratePagination(currentPage, perPage, $scope.total);
 
@@ -271,6 +272,17 @@ app.controller('campaigns:list', ['$scope', '$location', 'ngNotify', '$routePara
     //TODO: Pagination
     ActionHero.action({}, '/api/lists', 'GET', function(data){
       $scope.lists = data.lists;
+      $scope.attachListNamesToCampaigns();
+    });
+  };
+
+  $scope.attachListNamesToCampaigns = function(){
+    $scope.campaigns.forEach(function(campaign){
+      $scope.lists.forEach(function(list){
+        if(campaign.listId === list.id){
+          campaign.list = list;
+        }
+      });
     });
   };
 

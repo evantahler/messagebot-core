@@ -21,11 +21,21 @@ var loader = function(api){
   };
 
   var sendRecurring = function(campaign, list, callback){
-    throw new Error('not yet implemented');
+    if((campaign.sendAt + (1000 * campaign.reSendDelay)) - new Date().getTime() >= 0){
+      return callback(new Error('campaign should not be sent yet'));
+    }
+
+    api.utils.findInBatches(api.models.listPerson, {where: {listId: list.id}}, function(listPerson, done){
+      api.tasks.enqueue('campaigns:sendMessage', {
+        listId: list.id,
+        campaignId: campaign.id,
+        personGuid: listPerson.personGuid,
+      }, 'messagebot:campaigns', done);
+    }, callback);
   };
 
   var sendTrigger = function(campaign, list, callback){
-    throw new Error('not yet implemented');
+    callback(new Error('Triggered Campaigns are not sent via this method'));
   };
 
   /*--- Public Model ---*/
@@ -122,15 +132,11 @@ var loader = function(api){
           type: Sequelize.DATE,
           allowNull: true,
         },
-        'sendOnce': {
-          type: Sequelize.BOOLEAN,
-          allowNull: true,
-        },
         'triggerDelay': {
           type: Sequelize.INTEGER,
           allowNull: true,
         },
-        'reTriggerDelay': {
+        'reSendDelay': {
           type: Sequelize.INTEGER,
           allowNull: true,
         },
@@ -243,9 +249,8 @@ var loader = function(api){
               sendAt:            this.sendAt,
               sendingAt:         this.sendingAt,
               sentAt:            this.sentAt,
-              sendOnce:          this.sendOnce,
               triggerDelay:      this.triggerDelay,
-              reTriggerDelay:    this.reTriggerDelay,
+              reSendDelay:       this.reSendDelay,
 
               createdAt:         this.createdAt,
               updatedAt:         this.updatedAt,
