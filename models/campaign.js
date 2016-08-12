@@ -21,7 +21,8 @@ var loader = function(api){
   };
 
   var sendRecurring = function(campaign, list, callback){
-    if((campaign.sendAt + (1000 * campaign.reSendDelay)) - new Date().getTime() >= 0){
+    var lastSendAt = (campaign.sentAt ? campaign.sentAt.getTime() : 0);
+    if((lastSendAt + (1000 * campaign.reSendDelay)) - new Date().getTime() >= 0){
       return callback(new Error('campaign should not be sent yet'));
     }
 

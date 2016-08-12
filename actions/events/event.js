@@ -60,7 +60,6 @@ exports.eventCreate = {
           data.connection.rawConnection.responseHttpCode = 200;
           data.connection.sendFile('tracking.gif');
         }
-
         api.tasks.enqueueIn(api.config.elasticsearch.cacheTime * 1, 'events:process', {teamId: data.team.id, events: [event.data.guid]}, 'messagebot:events', next);
       });
     }

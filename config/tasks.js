@@ -63,6 +63,7 @@ exports.test = {
   tasks: function(api){
     return {
       scheduler: false,
+      timeout: 100,
       minTaskProcessors: 0,
       maxTaskProcessors: 0,
     };
