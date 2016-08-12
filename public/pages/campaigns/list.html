@@ -178,6 +178,7 @@
             <th>name</th>
             <th>description</th>
             <th>folder</th>
+            <th>list</th>
             <th>transport</th>
             <th>type</th>
             <th>stats</th>
@@ -198,6 +199,7 @@
             <td><strong>{{ campaign.name }}</strong></td>
             <td>{{ campaign.description }}</td>
             <td>{{ campaign.folder }}</td>
+            <td>{{ campaign.list.name }}</td>
             <td>{{ campaign.transport }}</td>
             <td>{{ campaign.type }}</td>
             <td><span ng-click="copyCampaign(campaign.id);" class="glyphicon glyphicon-duplicate">&nbsp;</span></td>

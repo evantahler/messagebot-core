@@ -21,11 +21,22 @@ var loader = function(api){
   };
 
   var sendRecurring = function(campaign, list, callback){
-    throw new Error('not yet implemented');
+    var lastSendAt = (campaign.sentAt ? campaign.sentAt.getTime() : 0);
+    if((lastSendAt + (1000 * campaign.reSendDelay)) - new Date().getTime() >= 0){
+      return callback(new Error('campaign should not be sent yet'));
+    }
+
+    api.utils.findInBatches(api.models.listPerson, {where: {listId: list.id}}, function(listPerson, done){
+      api.tasks.enqueue('campaigns:sendMessage', {
+        listId: list.id,
+        campaignId: campaign.id,
+        personGuid: listPerson.personGuid,
+      }, 'messagebot:campaigns', done);
+    }, callback);
   };
 
   var sendTrigger = function(campaign, list, callback){
-    throw new Error('not yet implemented');
+    callback(new Error('Triggered Campaigns are not sent via this method'));
   };
 
   /*--- Public Model ---*/
@@ -92,6 +103,24 @@ var loader = function(api){
             this.setDataValue('campaignVariables', q);
           }
         },
+        'triggerEventMatch': {
+          type: Sequelize.TEXT,
+          allowNull: true,
+          get: function(){
+            var q = this.getDataValue('triggerEventMatch');
+            if(q && q.length > 0){
+              return JSON.parse(q);
+            }else{
+              return {};
+            }
+          },
+          set: function(q){
+            if(q && typeof q !== 'string'){
+              q = JSON.stringify(q);
+            }
+            this.setDataValue('triggerEventMatch', q);
+          }
+        },
         'sendAt': {
           type: Sequelize.DATE,
           allowNull: true,
@@ -104,15 +133,11 @@ var loader = function(api){
           type: Sequelize.DATE,
           allowNull: true,
         },
-        'sendOnce': {
-          type: Sequelize.BOOLEAN,
-          allowNull: true,
-        },
         'triggerDelay': {
           type: Sequelize.INTEGER,
           allowNull: true,
         },
-        'reTriggerDelay': {
+        'reSendDelay': {
           type: Sequelize.INTEGER,
           allowNull: true,
         },
@@ -220,13 +245,13 @@ var loader = function(api){
               listId:            this.listId,
               templateId:        this.templateId,
               campaignVariables: this.campaignVariables,
+              triggerEventMatch: this.triggerEventMatch,
 
               sendAt:            this.sendAt,
               sendingAt:         this.sendingAt,
               sentAt:            this.sentAt,
-              sendOnce:          this.sendOnce,
               triggerDelay:      this.triggerDelay,
-              reTriggerDelay:    this.reTriggerDelay,
+              reSendDelay:       this.reSendDelay,
 
               createdAt:         this.createdAt,
               updatedAt:         this.updatedAt,

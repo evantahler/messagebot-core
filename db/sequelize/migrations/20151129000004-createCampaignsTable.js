@@ -53,6 +53,10 @@ module.exports = {
           type: Sequelize.TEXT,
           allowNull: true,
         },
+        'triggerEventMatch': {
+          type: Sequelize.TEXT,
+          allowNull: true,
+        },
 
         'sendAt': {
           type: Sequelize.DATE,
@@ -66,15 +70,11 @@ module.exports = {
           type: Sequelize.DATE,
           allowNull: true,
         },
-        'sendOnce': {
-          type: Sequelize.BOOLEAN,
-          allowNull: true,
-        },
         'triggerDelay': {
           type: Sequelize.INTEGER,
           allowNull: true,
         },
-        'reTriggerDelay': {
+        'reSendDelay': {
           type: Sequelize.INTEGER,
           allowNull: true,
         },

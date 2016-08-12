@@ -130,7 +130,7 @@ exports.task = {
 
         transport.deliver(sendParams, person, done);
       }else{
-        api.log('not sending messages in env=test');
+        api.log('not sending messages when NODE_ENV=test');
         done();
       }
     });

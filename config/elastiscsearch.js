@@ -61,6 +61,7 @@ exports.default = {
 exports.test = {
   elasticsearch: function(api){
     return {
+      cacheTime: 1,
       refreshOnWrite: true,
     };
   }

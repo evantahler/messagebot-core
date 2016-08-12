@@ -23,13 +23,30 @@ exports.task = {
           sendingAt: {$eq: null},
           sentAt:    {$eq: null},
         }
-      }).then(function(camps){
-        camps.forEach(function(campaign){ campaigns.push(campaign); });
+      }).then(function(_campaigns){
+        _campaigns.forEach(function(campaign){ campaigns.push(campaign); });
         done();
       }).catch(done);
     });
 
-    //TODO: Other types of campaigns
+    searchJobs.push(function(done){
+      api.models.campaign.findAll({
+        where:{
+          type:        'recurring',
+          sendAt:      { $lte: new Date() },
+          reSendDelay: { $ne: null },
+        }
+      }).then(function(_campaigns){
+        _campaigns.forEach(function(campaign){
+          var now = new Date().getTime();
+          if(!campaign.sentAt || (campaign.sentAt.getTime() + (1000 * campaign.reSendDelay)) < now){
+            campaigns.push(campaign);
+          }
+        });
+
+        done();
+      }).catch(done);
+    });
 
     searchJobs.push(function(done){
       campaigns.forEach(function(campaign){

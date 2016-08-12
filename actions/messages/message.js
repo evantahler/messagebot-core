@@ -229,7 +229,7 @@ exports.messageTrack = {
         data.connection.sendFile('tracking.gif');
       }
 
-      api.tasks.enqueueIn(api.config.elasticsearch.cacheTime * 2, 'events:process', {teamId: data.team.id, events: [event.data.guid]}, 'messagebot:events', next);
+      api.tasks.enqueueIn(api.config.elasticsearch.cacheTime * 1, 'events:process', {teamId: data.team.id, events: [event.data.guid]}, 'messagebot:events', next);
     });
   }
 };
