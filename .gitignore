@@ -10,7 +10,7 @@ public/js/actionhero/actionheroClient.*
 public/bower_components/*
 public/js/navigation.js
 public/js/routes.js
-public/tracking/*
+public/tracking/*/*
 
 npm-debug.log
 .DS_Store

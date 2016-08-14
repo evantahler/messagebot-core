@@ -167,8 +167,6 @@ module.exports = {
   },
 
   start: function(api, next){
-    var jobs = [];
-
     var loadTeams = function(){
       clearTimeout(api.teams.timer);
       api.log('Clearing local cache and rebuilding local files');
@@ -232,11 +230,7 @@ module.exports = {
     };
 
     // load in the teams list periodically to have the latest list of regexp URL matches
-    jobs.push(function(done){
-      loadTeams();
-      done();
-    });
-
-    async.series(jobs, next);
+    loadTeams();
+    next();
   }
 };
