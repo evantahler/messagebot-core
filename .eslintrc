@@ -15,7 +15,15 @@
         "beforeEach": true,
         "after": true,
         "afterEach": true,
-        "ActionheroClient": true
+        "ActionheroClient": true,
+        "angular": true,
+        "XMLHttpRequest": true,
+        "window": true,
+        "app": true,
+        "$": true,
+        "Highcharts": true,
+        "confirm": true,
+        "prompt": true,
     },
     "rules": {
         "no-bitwise": 2,

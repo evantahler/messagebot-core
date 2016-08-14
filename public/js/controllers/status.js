@@ -1,3 +1,5 @@
+var moment = moment || {};
+
 app.controller('status:view', ['$scope', 'ActionHero', function($scope, ActionHero){
   $scope.loadStatus = function(){
     ActionHero.action({}, '/api/system/status', 'GET', function(data){

@@ -1,5 +1,5 @@
 (function(){
-  
+
   var module = angular.module('ActionHero', []);
   module.provider('ActionHero', ActionHeroService);
 
@@ -45,7 +45,7 @@
             url     : baseRoute + path,
             data    : $.param(data),  // pass in data as strings
             headers : { 'Content-Type': 'application/x-www-form-urlencoded' }
-           }).success(function(data){
+          }).success(function(data){
             $('button').prop('disabled', false);
             successCallback(data);
           }).catch(function(data){
@@ -66,4 +66,4 @@
     }];
   };
 
-})();
+}());

@@ -7,11 +7,11 @@ app.controller('campaign:stats', ['$scope', '$routeParams', 'ActionHero', 'User'
 
   $scope.histogramOptions = {
     interval: 'day',
-    start: new Date(new Date().setYear( new Date().getFullYear() - 1 )),
+    start: new Date(new Date().setYear(new Date().getFullYear() - 1)),
     end: new Date(),
   };
 
-  $scope.possibleIntervals = [ 'year', 'month', 'week', 'day', 'hour', 'minute' ];
+  $scope.possibleIntervals = ['year', 'month', 'week', 'day', 'hour', 'minute'];
 
   $scope.prepareRender = function(){
     $scope.template.url = '/api/template/render.html?' +
@@ -51,7 +51,7 @@ app.controller('campaign:stats', ['$scope', '$routeParams', 'ActionHero', 'User'
         sentAt: Math.round($scope.funnel.totals.sentAt / $scope.funnel.totals.sentAt * 10000) / 100,
         readAt: Math.round($scope.funnel.totals.readAt / $scope.funnel.totals.sentAt * 10000) / 100,
         actedAt: Math.round($scope.funnel.totals.actedAt / $scope.funnel.totals.sentAt * 10000) / 100,
-      }
+      };
 
       var sentAtSeries  = [];
       var readAtSeries  = [];
@@ -244,7 +244,7 @@ app.controller('campaigns:list', ['$scope', '$location', 'ngNotify', '$routePara
       from: (currentPage * perPage),
       size: perPage,
     };
-    if($scope.folder.name != '_all'){ params.folder = $scope.folder.name; }
+    if($scope.folder.name !== '_all'){ params.folder = $scope.folder.name; }
     ActionHero.action(params, '/api/campaigns', 'GET', function(data){
       $scope.campaigns = data.campaigns;
       $scope.attachListNamesToCampaigns();
@@ -300,7 +300,7 @@ app.controller('campaigns:list', ['$scope', '$location', 'ngNotify', '$routePara
     });
   };
 
-  $scope.createCampaign= function(){
+  $scope.createCampaign = function(){
     $('#createCampaignModal').modal('show');
   };
 
@@ -331,7 +331,7 @@ app.controller('campaigns:list', ['$scope', '$location', 'ngNotify', '$routePara
   };
 
   $scope.copyCampaign = function(campaignId){
-    var input = prompt("Please enter a name for the new campaign");
+    var input = prompt('Please enter a name for the new campaign');
     if(input){
       ActionHero.action({
         campaignId: campaignId,

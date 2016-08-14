@@ -1,3 +1,5 @@
+var moment = moment || {};
+
 app.controller('dashboard:view', ['$scope', 'ngNotify', 'ActionHero', function($scope, ngNotify, ActionHero){
   $scope.sections  = [
     'people',
@@ -52,8 +54,8 @@ app.controller('dashboard:view', ['$scope', 'ngNotify', 'ActionHero', function($
   };
 
   $scope.loadHistorgramSection = function(section){
-    var start = ( new Date(new Date().getTime() - (1000 * 60 * 60)).getTime() );
-    var end   = ( new Date().getTime() );
+    var start = (new Date(new Date().getTime() - (1000 * 60 * 60)).getTime());
+    var end   = (new Date().getTime());
     var maxPoints = 60 * 60;
 
     ActionHero.action({
@@ -109,10 +111,10 @@ app.controller('dashboard:view', ['$scope', 'ngNotify', 'ActionHero', function($
     yAxis: {
       title: { text: 'Created At' },
       plotLines: [{
-          value: 0,
-          width: 1,
-          color: '#808080'
-        }]
+        value: 0,
+        width: 1,
+        color: '#808080'
+      }]
     },
     legend: {
       layout: 'vertical',
@@ -148,7 +150,7 @@ app.controller('dashboard:view', ['$scope', 'ngNotify', 'ActionHero', function($
         sentAt: Math.round(data.totals.sentAt / data.totals.sentAt * 10000) / 100,
         readAt: Math.round(data.totals.readAt / data.totals.sentAt * 10000) / 100,
         actedAt: Math.round(data.totals.actedAt / data.totals.sentAt * 10000) / 100,
-      }
+      };
     });
   };
 

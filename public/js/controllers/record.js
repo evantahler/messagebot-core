@@ -101,7 +101,7 @@ app.controller('record:view', ['$scope', '$location', '$routeParams', 'ActionHer
       }
 
       if($scope.record.location){
-        $scope.map ={
+        $scope.map = {
           center: {
             lat: $scope.record.location.lat,
             lng: $scope.record.location.lon,

@@ -9,7 +9,7 @@ app.controller('session:create', ['$scope', 'User', '$location', 'ActionHero', f
   $scope.processForm = function(){
     ActionHero.action($scope.formData, '/api/session', 'POST', function(data){
       if(data.user){ User.setUser(data.user); }
-      location.reload();
+      window.location.reload();
     });
   };
 }]);

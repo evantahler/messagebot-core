@@ -11,7 +11,7 @@
       return {
 
         /* Bootstrap Modals */
-        clearModals: clearModals = function(name){
+        clearModals: function(name){
           $(name).modal('hide');
           $('body').removeClass('modal-open');
           $('.modal-backdrop').remove();
@@ -83,8 +83,8 @@
           var i;
 
           var pagination = {
-            showBack    : (currentId - (Math.ceil(pageCount/2) * perPage) <= 0) ? false : true,
-            showForward : (currentId + (Math.ceil(pageCount/2) * perPage) >= totalRecords) ? false : true,
+            showBack    : (currentId - (Math.ceil(pageCount / 2) * perPage) <= 0) ? false : true,
+            showForward : (currentId + (Math.ceil(pageCount / 2) * perPage) >= totalRecords) ? false : true,
             firstPage   : 0,
             lastPage    : Math.ceil(totalRecords / perPage) - 1,
             pages: []
@@ -95,7 +95,7 @@
           });
 
           // forward
-          for (i = 1; i < Math.ceil(pageCount/2); i++) {
+          for(i = 1; i < Math.ceil(pageCount / 2); i++){
             if((currentPage + i) * perPage < totalRecords){
               pagination.pages.push({
                 page: (currentPage + i), active: false,
@@ -104,7 +104,7 @@
           }
 
           // backwards
-          for (i = 1; i < Math.ceil(pageCount/2); i++) {
+          for(i = 1; i < Math.ceil(pageCount / 2); i++){
             if((currentPage - i) >= 0){
               pagination.pages.unshift({
                 page: (currentPage - i), active: false,
@@ -119,4 +119,4 @@
     }];
   };
 
-})();
+}());

@@ -209,3 +209,42 @@ api.navigation.navigation.push({
 
 - You'll get a link to the client-side JS from the settings page.
 - Include it in your app (`<script src="//tracking.yoursite.com/tracking/<teamID>/web.js"></script>`)
+
+## The Person
+```js
+// Init the person we are tracking
+// This will automatically capture relevant browser data
+// If you don't have a PersonID, we will generate one at random.
+// We will set a cookie with this personID, so on subsequent pages you don't need to set it
+//   nor will you need to call init again manually
+MESSAGEBOT.init('<your PersonID>');
+
+// You can modify/add extra properties to the person
+MESSAGEBOT.person.edit({firstName: 'tester'});
+
+// You can also display what MessageBot knows about the person
+// We'll also update `MESSAGEBOT.data.person` to inspect later
+MESSAGEBOT.person.hydrate(function(error, data){ console.log(data); });
+
+// And you can delete the person
+MESSAGEBOT.person.delete();
+```
+
+## Events
+Tracking events is as simple as:
+```js
+// simple
+MESSAGEBOT.track({type: 'pageView'});
+
+// complex
+MESSAGEBOT.track({
+  type: 'purchase',
+  data: {
+    value: 12.50, tax: 0.50, products: [
+      {name: 'car', make: 'Toyota', model: 'Prius', price: 12.00}
+    ]
+  }
+});
+```
+
+Tracking an event will automatically append many relevant variables about the page, like referrer, href, browser type, etc.  You can track events at any time, even before the person is initialized.  We'll wait until the person is loaded up until actually sending events to the server.

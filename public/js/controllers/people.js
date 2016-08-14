@@ -9,7 +9,7 @@ app.controller('people:recentBehavior', ['$scope', '$routeParams', 'ActionHero',
     $scope.messages = [];
 
     var prepareData = function(){
-      var sort = function(a,b){ return(a.createdAt > b.createdAt); };
+      var sort = function(a, b){ return (a.createdAt > b.createdAt); };
 
       $scope.messages.sort(sort);
       $scope.events.sort(sort);
@@ -34,11 +34,13 @@ app.controller('people:recentBehavior', ['$scope', '$routeParams', 'ActionHero',
       });
 
       Object.keys(messageData).forEach(function(k){
-        messageSeries.push( [k, messageData[k]] );
+        var d = new Date(Date.parse(k));
+        messageSeries.push({x: d, y: messageData[k]});
       });
 
       Object.keys(eventData).forEach(function(k){
-        eventSeries.push( [k, eventData[k]] );
+        var d = new Date(Date.parse(k));
+        eventSeries.push({x: d, y: eventData[k]});
       });
 
       var chartData = {

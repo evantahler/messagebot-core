@@ -99,7 +99,7 @@ app.controller('templates:list', ['$scope', '$location', 'ngNotify', '$routePara
       from: (currentPage * perPage),
       size: perPage
     };
-    if($scope.folder.name != '_all'){ params.folder = $scope.folder.name; }
+    if($scope.folder.name !== '_all'){ params.folder = $scope.folder.name; }
     ActionHero.action(params, '/api/templates', 'GET', function(data){
       $scope.templates = data.templates;
       $scope.total = data.total;
@@ -146,7 +146,7 @@ app.controller('templates:list', ['$scope', '$location', 'ngNotify', '$routePara
   };
 
   $scope.copyTemplate = function(templateId){
-    var input = prompt("Please enter a name for the new template");
+    var input = prompt('Please enter a name for the new template');
     if(input){
       ActionHero.action({
         templateId: templateId,
