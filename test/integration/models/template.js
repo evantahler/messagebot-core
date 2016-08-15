@@ -69,6 +69,7 @@ describe('integartion:template', function(){
         html.should.equal('Hello there, fname');
         view.person.data.firstName.should.equal('fname');
         view.template.id.should.equal(template.id);
+        view.beaconLink.should.equal('http://tracking.site.com/api/message/track.gif?verb=read&guid=%%MESSAGEGUID%%');
         view.beacon.should.equal('<img src="http://tracking.site.com/api/message/track.gif?verb=read&guid=%%MESSAGEGUID%%" >');
         done();
       });
@@ -80,6 +81,7 @@ describe('integartion:template', function(){
         html.should.equal('Hello there, fname');
         view.person.data.firstName.should.equal('fname');
         view.template.id.should.equal(template.id);
+        view.beaconLink.should.equal('http://tracking.site.com/api/message/track.gif?verb=read&guid=' + message.data.guid);
         view.beacon.should.equal('<img src="http://tracking.site.com/api/message/track.gif?verb=read&guid=' + message.data.guid + '" >');
         done();
       });
@@ -90,6 +92,7 @@ describe('integartion:template', function(){
       template.render(person, message, function(error, html, view){
         should.not.exist(error);
         html.should.equal('Hello there, fname <img src="http://tracking.site.com/api/message/track.gif?verb=read&guid=' + message.data.guid + '" >');
+        view.beaconLink.should.equal('http://tracking.site.com/api/message/track.gif?verb=read&guid=' + message.data.guid);
         view.beacon.should.equal('<img src="http://tracking.site.com/api/message/track.gif?verb=read&guid=' + message.data.guid + '" >');
         done();
       });

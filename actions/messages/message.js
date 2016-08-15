@@ -208,23 +208,11 @@ exports.messageTrack = {
       if(data.params.sync === false){
         event.create(function(error){
           if(error){ api.log('event creation error: ' + error, 'error', event.data); }
-          api.tasks.enqueueIn(api.config.elasticsearch.cacheTime * 1, 'events:process', {
-            teamId: data.team.id,
-            events: [event.data.guid]
-          }, 'messagebot:events', function(error){
-            if(error){ api.log('event creation/process error: ' + error, 'error', event.data); }
-          });
         });
 
         done();
       }else{
-        event.create(function(error){
-          if(error){ return done(error); }
-          api.tasks.enqueueIn(api.config.elasticsearch.cacheTime * 1, 'events:process', {
-            teamId: data.team.id,
-            events: [event.data.guid]
-          }, 'messagebot:events', done);
-        });
+        event.create(done);
       }
     });
 
@@ -242,7 +230,10 @@ exports.messageTrack = {
         data.connection.sendFile('tracking/tracking.gif');
       }
 
-      api.tasks.enqueueIn(api.config.elasticsearch.cacheTime * 1, 'events:process', {teamId: data.team.id, events: [event.data.guid]}, 'messagebot:events', next);
+      api.tasks.enqueueIn(api.config.elasticsearch.cacheTime * 1, 'events:process', {
+        teamId: data.team.id,
+        events: [event.data.guid]
+      }, 'messagebot:events', next);
     });
   }
 };

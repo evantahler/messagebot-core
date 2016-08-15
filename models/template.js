@@ -54,7 +54,7 @@ var loader = function(api){
     view.beaconLink += 'guid=%%MESSAGEGUID%%';
 
     view.beacon = '<img src="';
-    view.beacon += team.beaconLink;
+    view.beacon += view.beaconLink;
     view.beacon += '" >';
 
     view.track = function(){
@@ -157,8 +157,9 @@ var loader = function(api){
               try{
                 html = mustache.render(template.template, view);
                 if(message){
-                  html = html.replace(/%%MESSAGEGUID%%/g, message.data.guid);
-                  view.beacon = view.beacon.replace(/%%MESSAGEGUID%%/g, message.data.guid);
+                  html            = html.replace(/%%MESSAGEGUID%%/g, message.data.guid);
+                  view.beaconLink = view.beaconLink.replace(/%%MESSAGEGUID%%/g, message.data.guid);
+                  view.beacon     = view.beacon.replace(/%%MESSAGEGUID%%/g, message.data.guid);
                 }
                 done();
               }catch(e){
