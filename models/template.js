@@ -135,6 +135,7 @@ var loader = function(api){
 
       {
         instanceMethods: {
+
           render: function(person, message, callback){
             var template = this;
             var jobs     = [];
@@ -150,7 +151,7 @@ var loader = function(api){
               api.models.team.findOne({where: {id: template.teamId}}).then(function(t){
                 team = t;
                 if(!team){ return done(new Error('team not found')); }
-                done();
+                return done();
               }).catch(done);
             });
 
@@ -212,7 +213,7 @@ var loader = function(api){
               var logData = {};
               if(message){ logData = {messageGuid: message.data.guid}; }
               api.log('rendered template #' + template.id + ' for person #' + person.data.guid, 'info', logData);
-              callback(null, html, view);
+              return callback(null, html, view);
             });
           },
 

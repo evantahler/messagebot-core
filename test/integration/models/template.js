@@ -210,7 +210,6 @@ describe('integartion:template', function(){
 
         async.series(jobs, done);
       });
-
     });
 
   });
