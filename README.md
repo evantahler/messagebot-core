@@ -234,7 +234,7 @@ MESSAGEBOT.person.delete();
 Tracking events is as simple as:
 ```js
 // simple
-MESSAGEBOT.track({type: 'pageView'});
+MESSAGEBOT.track({type: 'pageview'});
 
 // complex
 MESSAGEBOT.track({
