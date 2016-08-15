@@ -127,15 +127,19 @@ var loader = function(api){
 
           associateListPeople: function(callback){
             var list = this;
+            var jobs = [];
+            var count;
 
             if(list.type === 'static'){
 
-              api.models.listPerson.count({where: {listId: list.id}}).then(function(count){
-                callback(null, count);
-              }).catch(callback);
+              jobs.push(function(done){
+                api.models.listPerson.count({where: {listId: list.id}}).then(function(_count){
+                  count = _count;
+                  done();
+                }).catch(done);
+              });
 
             }else{
-              var jobs = [];
 
               var queryResults = {
                 people: false,
@@ -153,7 +157,7 @@ var loader = function(api){
               ].forEach(function(collection){
                 if(collection.q){
                   jobs.push(function(done){
-                    api.elasticsearch.scroll(collection.alias, collection.q, ['guid', 'personGuid'], function(error, data, count){
+                    api.elasticsearch.scroll(collection.alias, collection.q, ['guid', 'personGuid'], function(error, data, _count){
                       if(error){ return done(error); }
                       queryResults[collection.set] = extractor(data);
                       done();
@@ -181,6 +185,8 @@ var loader = function(api){
                   if(o[guid] === needed){ queryResults.final.push(guid); }
                 });
 
+                count = queryResults.final.length;
+
                 done();
               });
 
@@ -207,12 +213,21 @@ var loader = function(api){
                   done();
                 }).catch(done);
               });
-
-
-              async.series(jobs, function(error){
-                callback(error, queryResults.final.length);
-              });
             }
+
+            jobs.push(function(done){
+              list.updateAttributes({
+                peopleCount: count,
+                peopleCountedAt: (new Date()),
+              }).then(function(){
+                done();
+              }).catch(done);
+            });
+
+            async.series(jobs, function(error){
+              if(!error){ api.log(['counted %s people in list #%s, %s (team #%s)', count, list.id, list.name, list.teamId]); }
+              callback(error, count);
+            });
           },
 
           apiData: function(){

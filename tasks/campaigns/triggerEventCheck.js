@@ -13,16 +13,24 @@ exports.task = {
   run: function(api, params, next){
     var jobs = [];
     var toSend = false;
+    var list;
 
-    // TODO: Only recount so often...
-    // This could get really slow..
     jobs.push(function(done){
       api.models.list.findOne({
         where: {id: params.listId}
-      }).then(function(list){
-        if(!list){ return done(new Error('list not found')); }
-        list.associateListPeople(done);
+      }).then(function(_list){
+        if(!_list){ return done(new Error('list not found')); }
+        list = _list;
+        done();
       }).catch(done);
+    });
+
+    jobs.push(function(done){
+      if(!list.peopleCountedAt || list.peopleCountedAt.getTime() < params.enqueuedAt){
+        list.associateListPeople(done);
+      }else{
+        done();
+      }
     });
 
     jobs.push(function(done){

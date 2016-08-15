@@ -43,6 +43,7 @@ module.exports = {
                 personGuid: event.data.personGuid,
                 campaignId: campaign.id,
                 listId: campaign.listId,
+                enqueuedAt: new Date().getTime(),
               }, 'messagebot:campaigns', done);
             });
           }
