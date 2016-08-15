@@ -49,10 +49,12 @@ var loader = function(api){
     var view = {};
 
     // beacon
+    view.beaconLink = team.trackingDomain + '/api/message/track.gif?';
+    view.beaconLink += 'verb=read&';
+    view.beaconLink += 'guid=%%MESSAGEGUID%%';
+
     view.beacon = '<img src="';
-    view.beacon += team.trackingDomain + '/api/message/track.gif?';
-    view.beacon += 'verb=read&';
-    view.beacon += 'guid=%%MESSAGEGUID%%';
+    view.beacon += team.beaconLink;
     view.beacon += '" >';
 
     view.track = function(){

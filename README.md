@@ -207,10 +207,20 @@ api.navigation.navigation.push({
 
 # Client-Side Tracking
 
+## Image Link Tracking
+
+When rendering templates to your users, including `{{{ beacon }}}` will insert a tracking image into the body of your message (for HTML messages/emails).  You can also refrence `{{{ view.beconLink }}}` to obtain just the URL for the tracking image. URLs will take the form of `http://{{ team.trackingDomain }}/api/message/track.gif?verb=read&guid={{ messageGuid }}`.
+
+Loading this image denotes the message was "viewed", updating the message and creating an event for having viewed the message.
+
+Any HTML links in your template can be configured to track the click, and therefore mark the message as 'acted'.  Use the `track` function, ie: `{{#track}}http://messagebot.io{{/track}}`.  This will transform your links to something of the form: `http://{{ team.trackingDomain }}/api/message/track.gif?verb=act&guid={{ messageGuid }}&link=http://messagebot.io`
+
+## JavaScript / Browser
+
 - You'll get a link to the client-side JS from the settings page.
 - Include it in your app (`<script src="//tracking.yoursite.com/tracking/<teamID>/web.js"></script>`)
 
-## The Person
+### The Person
 ```js
 // Init the person we are tracking
 // This will automatically capture relevant browser data
@@ -230,7 +240,7 @@ MESSAGEBOT.person.hydrate(function(error, data){ console.log(data); });
 MESSAGEBOT.person.delete();
 ```
 
-## Events
+### Events
 Tracking events is as simple as:
 ```js
 // simple
@@ -248,3 +258,9 @@ MESSAGEBOT.track({
 ```
 
 Tracking an event will automatically append many relevant variables about the page, like referrer, href, browser type, etc.  You can track events at any time, even before the person is initialized.  We'll wait until the person is loaded up until actually sending events to the server.
+
+## iOS
+TODO
+
+## Android
+TODO

@@ -130,6 +130,9 @@ var loader = function(api){
             var jobs = [];
             var count;
 
+            //TODO: This is going to crash the node with large listPerson
+            //TODO: This is slow.
+
             if(list.type === 'static'){
 
               jobs.push(function(done){
