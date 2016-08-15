@@ -5,6 +5,12 @@ var loader = function(api){
 
   /*--- Private Methods ---*/
 
+  var reloadCampaigns = function(){
+    api.redis.doCluster('api.campaigns.loadTriggered', null, null, function(error){
+      if(error){ throw(error); }
+    });
+  };
+
   var validTypes = ['simple', 'recurring', 'trigger'];
 
   var sendSimple = function(campaign, list, callback){
@@ -145,6 +151,14 @@ var loader = function(api){
       },
 
       {
+        hooks: {
+          afterCreate:  function(){ reloadCampaigns(); },
+          afterDestroy: function(){ reloadCampaigns(); },
+          afterUpdate:  function(){ reloadCampaigns(); },
+          afterSave:    function(){ reloadCampaigns(); },
+          afterUpsert:  function(){ reloadCampaigns(); },
+        },
+
         instanceMethods: {
           validTypes: function(){
             return validTypes;

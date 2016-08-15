@@ -17,10 +17,8 @@ exports.task = {
     var event;
 
     jobs.push(function(done){
-      api.models.team.findOne({where: {id: params.teamId}}).then(function(_team){
-        team = _team;
-        done();
-      }).catch(done);
+      team = api.utils.determineActionsTeam({params: params});
+      done();
     });
 
     jobs.push(function(done){
@@ -35,6 +33,13 @@ exports.task = {
       event.data.ip = 'internal';
       event.data.device = person.data.device;
       event.create(done);
+    });
+
+    jobs.push(function(done){
+      api.tasks.enqueueIn(api.config.elasticsearch.cacheTime * 1, 'events:process', {
+        teamId: team.id,
+        events: [event.data.guid]
+      }, 'messagebot:events', done);
     });
 
     async.series(jobs, next);
