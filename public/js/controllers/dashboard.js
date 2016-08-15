@@ -9,7 +9,7 @@ app.controller('dashboard:view', ['$scope', 'ngNotify', 'ActionHero', function($
 
   $scope.ranges = {};
   $scope.stats = {};
-  $scope.sleep = (1000 * 15);
+  $scope.refreshInterval = '0';
   $scope.timer;
   $scope.campaigns = {};
   $scope.campaignFunnels = {};
@@ -157,13 +157,19 @@ app.controller('dashboard:view', ['$scope', 'ngNotify', 'ActionHero', function($
   /*---- loader ----*/
 
   var loader = function(){
+    console.log('.');
     clearTimeout($scope.timer);
 
     $scope.loadHistogram();
     $scope.loadStats();
 
-    $scope.timer = setTimeout(loader, $scope.sleep);
+    var sleepSeconds = (parseInt($scope.refreshInterval) * 1000);
+    if(sleepSeconds > 0){
+      $scope.timer = setTimeout(loader, sleepSeconds);
+    }
   };
+
+  $scope.$watch('refreshInterval', function(){ loader(); });
 
   // hadck to defer loading to next cycle
   setTimeout(function(){
