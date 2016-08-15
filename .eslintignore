@@ -1,6 +1,5 @@
 bin/templates/
-client/
-public/
 site/
+public/bower*
 node_modules/
 coverage/

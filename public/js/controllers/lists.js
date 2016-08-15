@@ -21,7 +21,7 @@ app.controller('lists:list', ['$scope', '$location', 'ngNotify', '$routeParams',
       from: (currentPage * perPage),
       size: perPage
     };
-    if($scope.folder.name != '_all'){ params.folder = $scope.folder.name; }
+    if($scope.folder.name !== '_all'){ params.folder = $scope.folder.name; }
     ActionHero.action(params, '/api/lists', 'GET', function(data){
       $scope.lists = data.lists;
       $scope.total = data.total;
@@ -72,7 +72,7 @@ app.controller('lists:list', ['$scope', '$location', 'ngNotify', '$routeParams',
   };
 
   $scope.copyList = function(listId){
-    var input = prompt("Please enter a name for the new list");
+    var input = prompt('Please enter a name for the new list');
     if(input){
       ActionHero.action({
         listId: listId,
@@ -126,7 +126,7 @@ app.controller('lists:people:view', ['$scope', '$location', 'ngNotify', '$routeP
     ]
   });
 
-  window.uploader = $scope.uploader
+  window.uploader = $scope.uploader;
 
   $scope.uploader.onAfterAddingFile = function(item){
     item.removeAfterUpload = true;

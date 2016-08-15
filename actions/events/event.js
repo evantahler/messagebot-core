@@ -58,7 +58,7 @@ exports.eventCreate = {
         if(data.connection.extension === 'gif'){
           data.toRender = false;
           data.connection.rawConnection.responseHttpCode = 200;
-          data.connection.sendFile('tracking.gif');
+          data.connection.sendFile('tracking/tracking.gif');
         }
         api.tasks.enqueueIn(api.config.elasticsearch.cacheTime * 1, 'events:process', {teamId: data.team.id, events: [event.data.guid]}, 'messagebot:events', next);
       });

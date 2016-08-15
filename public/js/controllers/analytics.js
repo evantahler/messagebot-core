@@ -9,7 +9,7 @@ app.controller('analytics:search', ['$scope', '$location', 'ngNotify', '$routePa
   var perPage = 50;
 
   $scope.doSearch = function(){
-    $location.path( '/' + $scope.section + '/search/' + $scope.query + '/' + currentPage );
+    $location.path('/' + $scope.section + '/search/' + $scope.query + '/' + currentPage);
 
     var r = Utils.routeQueryToParams($scope.query);
     var searchKeys = r[0]; var searchValues = r[1];
@@ -17,7 +17,7 @@ app.controller('analytics:search', ['$scope', '$location', 'ngNotify', '$routePa
     if(searchKeys.length === searchValues.length && searchValues.length > 0){
       $scope.loadSearchResults(searchKeys, searchValues);
     }else{
-      $location.path( '/' + $scope.section + '/search/' );
+      $location.path('/' + $scope.section + '/search/');
       ngNotify.set('search query error, try again', 'error');
     }
   };
@@ -40,13 +40,13 @@ app.controller('analytics:search', ['$scope', '$location', 'ngNotify', '$routePa
         $scope.pagination = Utils.genratePagination(currentPage, perPage, $scope.total);
 
         if($scope.total > 0 && $scope.searchResults.length === 0){
-          $location.path( '/' + $scope.section + '/search/' + $scope.query );
+          $location.path('/' + $scope.section + '/search/' + $scope.query);
         }
       }
     });
   };
 
-  if($scope.query && $scope.query != ''){
+  if($scope.query && $scope.query !== ''){
     $scope.doSearch();
   }
 
@@ -126,7 +126,7 @@ app.controller('analytics:heatmap', ['$scope', '$location', '$routeParams', 'Act
       data[$scope.section].forEach(function(e){
         avgLat += e.location.lat;
         avgLon += e.location.lon;
-        points.push([e.location.lat, e.location.lon])
+        points.push([e.location.lat, e.location.lon]);
       });
 
       avgLat = avgLat / data[$scope.section].length;
@@ -144,7 +144,7 @@ app.controller('analytics:heatmap', ['$scope', '$location', '$routeParams', 'Act
         }
       };
     });
-  }
+  };
 
   $scope.loadHeatmap();
 }]);
@@ -155,12 +155,12 @@ app.controller('analytics:histogram', ['$scope', '$location', 'ActionHero', 'Uti
 
   $scope.histogramOptions = {
     interval: 'day',
-    start: new Date(new Date().setMonth( new Date().getMonth() - 1 )),
+    start: new Date(new Date().setMonth(new Date().getMonth() - 1)),
     end: new Date(),
     selections: {},
   };
 
-  $scope.possibleIntervals = [ 'year', 'month', 'week', 'day', 'hour', 'minute' ];
+  $scope.possibleIntervals = ['year', 'month', 'week', 'day', 'hour', 'minute'];
 
   var searchKeys = ['guid'];
   var searchValues = ['_exists'];

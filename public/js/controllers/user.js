@@ -2,7 +2,7 @@ app.controller('user:create', ['$scope', '$location', 'ActionHero', function($sc
   $scope.formData    = {};
   $scope.processForm = function(){
     ActionHero.action($scope.formData, '/api/user', 'POST', function(data){
-      location.reload();
+      window.location.reload();
     });
   };
 }]);
@@ -83,7 +83,7 @@ app.controller('user:edit', ['$scope', 'ngNotify', 'ActionHero', 'User', functio
       if(data.user){
         ngNotify.set('Account Updated', 'success');
         User.setUser(data.user);
-        setTimeout(function(){ location.reload(); }, 500);
+        setTimeout(function(){ window.location.reload(); }, 500);
       }
     });
   };

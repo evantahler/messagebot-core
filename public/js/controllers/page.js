@@ -1,3 +1,5 @@
+var MESSAGEBOT = MESSAGEBOT || {};
+
 app.controller('pageController', ['$scope', 'ActionHero', 'User', '$location', function($scope, ActionHero, User, $location){
 
   $scope.date = new Date();
@@ -17,7 +19,7 @@ app.controller('pageController', ['$scope', 'ActionHero', 'User', '$location', f
     var path = $location.path();
 
     MESSAGEBOT.routes.forEach(function(c){
-      if( !matchedAndOK && path === c.route && c.auth === false ){
+      if(!matchedAndOK && path === c.route && c.auth === false){
         matchedAndOK = true;
       }
     });
