@@ -14,7 +14,7 @@ var teamCreate = function(api, callback){
     .demand('name')
     .demand('trackingDomainRegexp')
     .demand('trackingDomain')
-    .default('email', 'admin@localhost.com')
+    .demand('email')
     .default('password', faker.internet.password())
     .argv;
 

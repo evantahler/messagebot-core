@@ -1,13 +1,13 @@
 var Sequelize = require('sequelize');
 
 var loader = function(api){
+  /*--- Priave Methods ---*/
+
+  /*--- Public Model ---*/
+
   return {
-
-    /*--- Priave Methods ---*/
-
-    /*--- Public Model ---*/
-
     name: 'listPerson',
+
     model: api.sequelize.sequelize.define('listPerson',
       {
         'teamId': {
