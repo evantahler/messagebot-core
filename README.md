@@ -215,6 +215,8 @@ Loading this image denotes the message was "viewed", updating the message and cr
 
 Any HTML links in your template can be configured to track the click, and therefore mark the message as 'acted'.  Use the `track` function, ie: `{{#track}}http://messagebot.io{{/track}}`.  This will transform your links to something of the form: `http://{{ team.trackingDomain }}/api/message/track.gif?verb=act&guid={{ messageGuid }}&link=http://messagebot.io`
 
+You can include template within other templates as well.  Use the mustache function `include`, and pass the name or ID of the template you want to include, ie: `{{#include}}footer{{/include}}`.
+
 ## JavaScript / Browser
 
 - You'll get a link to the client-side JS from the settings page.

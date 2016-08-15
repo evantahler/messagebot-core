@@ -68,6 +68,12 @@ var loader = function(api){
       };
     };
 
+    view.include = function(){
+      return function(val, render){
+        return '%%TEMPLATEINCLUDE:' + val + '%%';
+      };
+    };
+
     // person
     view.person = Object.assign({}, person.data);
     view.person.createdAt = expandDate(view.person.createdAt);
@@ -165,6 +171,40 @@ var loader = function(api){
               }catch(e){
                 return done(e);
               }
+            });
+
+            jobs.push(function(done){
+              var includeJobs = [];
+              var matches = html.match(/%%TEMPLATEINCLUDE:.*%%/g);
+              if(!matches || matches.length === 0){ return done(); }
+              matches.forEach(function(match){
+                var matcher = match.replace(/%%/g, '').split(':')[1];
+                var includedTemplate;
+
+                includeJobs.push(function(includeDone){
+                  api.models.template.findOne({where: {
+                    teamId: team.id,
+                    $or: {
+                      id: matcher,
+                      name: matcher,
+                    }
+                  }}).then(function(_includedTemplate){
+                    if(!_includedTemplate){ return includeDone(new Error('Cannot find template to include (' + matcher + ')')); }
+                    includedTemplate = _includedTemplate;
+                    includeDone();
+                  }).catch(includeDone);
+                });
+
+                includeJobs.push(function(includeDone){
+                  includedTemplate.render(person, message, function(error, includedHtml){
+                    if(error){ return includeDone(error); }
+                    html = html.replace(match, includedHtml);
+                    includeDone();
+                  });
+                });
+              });
+
+              async.series(includeJobs, done);
             });
 
             async.series(jobs, function(error){
