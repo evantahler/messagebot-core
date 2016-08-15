@@ -11,20 +11,24 @@ module.exports = {
 
       load: function(callback){
         var jobs = [];
-        api.models.team.findAll().then(function(teams){
-          api.teams.teams = teams;
-          teams.forEach(function(team){
-            jobs.push(function(done){
-              api.teams.renderClientTracking(team, done);
+        if(api.running){
+          api.models.team.findAll().then(function(teams){
+            api.teams.teams = teams;
+            teams.forEach(function(team){
+              jobs.push(function(done){
+                api.teams.renderClientTracking(team, done);
+              });
+            });
+
+            async.series(jobs, function(error){
+              if(error){ return callback(error); }
+              api.log('loaded ' + teams.length + ' teams into memory');
+              return callback();
             });
           });
-
-          async.series(jobs, function(error){
-            if(error){ return callback(error); }
-            api.log('loaded ' + teams.length + ' teams into memory');
-            return callback();
-          });
-        });
+        }else{
+          return callback();
+        }
       },
 
       renderClientTracking: function(team, callback){

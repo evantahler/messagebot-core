@@ -4,7 +4,12 @@ module.exports = {
   loadPriority:  1000,
 
   initialize: function(api, next){
-    api.maxmind = MaxMind.open(process.env.MAXMIND_DB);
+    api.maxmind = MaxMind.open(process.env.MAXMIND_DB, {
+      cache: {
+        max: 1000, // max items in cache
+        maxAge: 1000 * 60 * 60 // life time in milliseconds
+      }
+    });
 
     api.geolocation = {
       build: function(params, ip){
