@@ -57,7 +57,7 @@ services:
 
   ### MESSAGEBOT ###
   messagebot_web:
-    build: .
+    image: messagebot/messagebot-core
     ports:
      - 8080
      - 5000
@@ -94,7 +94,7 @@ services:
       ELASTICSEARCH_URLS: "http://elasticsearch_gateway:9200"
 
   messagebot_worker:
-    build: .
+    image: messagebot/messagebot-core
     depends_on:
       - redis_leader
       - mysql_leader
