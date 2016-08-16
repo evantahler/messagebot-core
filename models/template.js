@@ -136,7 +136,7 @@ var loader = function(api){
       {
         instanceMethods: {
 
-          render: function(person, message, callback){
+          render: function(person, message, callback, includedIds){
             var template = this;
             var jobs     = [];
             var events   = []; //TODO: Do we load in the events?  How many?
@@ -146,6 +146,9 @@ var loader = function(api){
             var html;
 
             if(!template.template || template.template.length === 0){ return callback(new Error('template empty')); }
+            if(!includedIds){ includedIds = []; }
+            if(includedIds.indexOf(template.id) >= 0){ return callback(new Error('Cannot include template into itself')); }
+            includedIds.push(template.id);
 
             jobs.push(function(done){
               api.models.team.findOne({where: {id: template.teamId}}).then(function(t){
@@ -191,7 +194,6 @@ var loader = function(api){
                     }
                   }}).then(function(_includedTemplate){
                     if(!_includedTemplate){ return includeDone(new Error('Cannot find template to include (' + matcher + ')')); }
-                    if(_includedTemplate.id === template.id){ return includeDone(new Error('Cannot include template into itself')); }
                     includedTemplate = _includedTemplate;
                     includeDone();
                   }).catch(includeDone);
@@ -202,7 +204,7 @@ var loader = function(api){
                     if(error){ return includeDone(error); }
                     html = html.replace(match, includedHtml);
                     includeDone();
-                  });
+                  }, includedIds);
                 });
               });
 
