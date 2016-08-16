@@ -271,18 +271,18 @@ TODO
 
 # Docker Compose
 
-This project comes complete with everything you need to create a high-availability Docker service for Messagebot.  The `Dockerfile` contained in this project is built automatically from the master branch of this project, and is available via `messagebot/messagebot-core` from Docker.
+This project comes complete with everything you need to create a high-availability Docker service for Messagebot.  The `Dockerfile` contained in this project is built automatically from the master branch of this project, and is available via `messagebot/messagebot-core` from Docker Hub.
 
 - `docker-compose build`
 - `docker-compose start` (this will start all containers)
 
 At this point, the MessageBot container will crash, as none of the required migrations have been run.  To run those migrations:
 
-- `docker-compose run messagebot npm run migrate`
+- `docker-compose run messagebot_worker npm run migrate`
 
 Now, you'll need to create your first team:
 
-- `docker-compose run messagebot ./bin/messagebot team create --name MessageBot --trackingDomainRegexp "^.*$" --trackingDomain "tracking.myapp.com" --email="me@myapp.com"`
+- `docker-compose run messagebot_worker ./bin/messagebot team create --name MessageBot --trackingDomainRegexp "^.*$" --trackingDomain "tracking.myapp.com" --email="me@myapp.com"`
 
 From here, you should be good to go! The load balancer will proxy all of your MessageBot web servers through one port
 
