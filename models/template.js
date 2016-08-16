@@ -191,6 +191,7 @@ var loader = function(api){
                     }
                   }}).then(function(_includedTemplate){
                     if(!_includedTemplate){ return includeDone(new Error('Cannot find template to include (' + matcher + ')')); }
+                    if(_includedTemplate.id === template.id){ return includeDone(new Error('Cannot include template into itself')); }
                     includedTemplate = _includedTemplate;
                     includeDone();
                   }).catch(includeDone);

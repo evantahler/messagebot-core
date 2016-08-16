@@ -190,7 +190,7 @@ describe('integartion:template', function(){
         async.series(jobs, done);
       });
 
-      it('(error; missing)', function(done){
+      it('(failure; missing)', function(done){
         var jobs = [];
 
         jobs.push(function(next){
@@ -204,6 +204,27 @@ describe('integartion:template', function(){
         jobs.push(function(next){
           template.render(person, null, function(error, html, view){
             error.toString().should.equal('Error: Cannot find template to include (MISSING THING)');
+            next();
+          });
+        });
+
+        async.series(jobs, done);
+      });
+
+      it('(failure; self-include)', function(done){
+        var jobs = [];
+
+        jobs.push(function(next){
+          template.updateAttributes({
+            template: 'Hello there, {{ person.data.firstName }} {{#include}}' + template.id + '{{/include}}'
+          }).then(function(){
+            next();
+          }).catch(next);
+        });
+
+        jobs.push(function(next){
+          template.render(person, null, function(error, html, view){
+            error.toString().should.equal('Error: Cannot include template into itself');
             next();
           });
         });
