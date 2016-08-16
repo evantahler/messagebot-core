@@ -41,6 +41,7 @@ before_install:
 
 before_script:
   # For some reason, Travis ES comes with a 'tweets' index?!
+  - "npm run prepare"
   - "curl -X DELETE http://localhost:9200/*"
 
 os:
