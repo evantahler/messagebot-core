@@ -146,6 +146,8 @@ var loader = function(api){
             var html;
 
             if(!template.template || template.template.length === 0){ return callback(new Error('template empty')); }
+
+            // Recusion saftey!
             if(!includedIds){ includedIds = []; }
             if(includedIds.indexOf(template.id) >= 0){ return callback(new Error('Cannot include template into itself')); }
             includedIds.push(template.id);
