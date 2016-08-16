@@ -1,8 +1,10 @@
+var enabled = (process.env.ENABLE_WEB_SERVER === 'true' || process.env.ENABLE_WEB_SERVER === true);
+
 exports.default = {
   servers: {
     web: function(api){
       return {
-        enabled: true,
+        enabled: enabled,
         // HTTP or HTTPS?
         secure: false,
         // Passed to https.createServer if secure=true. Should contain SSL certificates
@@ -96,6 +98,7 @@ exports.test = {
   servers: {
     web: function(api){
       return {
+        enabled: true,
         secure: false,
         port: 18080,
         matchExtensionMime: true,

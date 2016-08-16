@@ -41,8 +41,8 @@
 ## Install
 
 - `npm install`
-  - this will also run `npm run prepare`, installing needed geolocation databases, kibana, etc
 - `cp .env.example .env`, and adjust according to your system/needs
+- `npm run prepare` (this will install bower components, download GeoLocation databases, etc)
 
 ## Configuration and Running
 
@@ -60,7 +60,7 @@
   - ensure that the databases you listed exist and that the user(s) you have configured can reach & access them
 - Source your environment, ie: `source .env`
 - Create the First Team from the CLI:
-  - `./bin/messagebot team create --name MessageBot --trackingDomainRegexp "^.*$" --trackingDomain "tracking.myapp.com"`
+  - `./bin/messagebot team create --name MessageBot --trackingDomainRegexp "^.*$" --trackingDomain "tracking.myapp.com" --email="me@myapp.com"`
   - This will also create the first admin user for this team.  Take note of this user's email and password.
 - Start the App: `npm start`
 
@@ -266,3 +266,25 @@ TODO
 
 ## Android
 TODO
+
+---
+
+# Docker Compose
+
+This project comes complete with everything you need to create a high-availability Docker service for Messagebot.  The `Dockerfile` contained in this project is built automatically from the master branch of this project, and is available via `messagebot/messagebot-core` from Docker Hub.
+
+- `docker-compose build`
+- `docker-compose start` (this will start all containers)
+
+At this point, the MessageBot container will crash, as none of the required migrations have been run.  To run those migrations:
+
+- `docker-compose run messagebot_worker npm run migrate`
+
+Now, you'll need to create your first team:
+
+- `docker-compose run messagebot_worker ./bin/messagebot team create --name MessageBot --trackingDomainRegexp "^.*$" --trackingDomain "tracking.myapp.com" --email="me@myapp.com"`
+
+From here, you should be good to go! The load balancer will proxy all of your MessageBot web servers through one port
+
+## Misc Docker:
+- Full Cleanup: `docker rm $(docker ps -a -q) && docker rmi $(docker images -q)`
