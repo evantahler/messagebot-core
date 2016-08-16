@@ -73,6 +73,7 @@ services:
       - mysql_leader
     environment:
       NODE_ENV: production
+      TCP_PORTS: 8080,5000
 
       MIN_TASK_PROCESSORS: 0
       MAX_TASK_PROCESSORS: 0
