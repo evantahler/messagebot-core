@@ -68,6 +68,12 @@ var loader = function(api){
       };
     };
 
+    view.include = function(){
+      return function(val, render){
+        return '%%TEMPLATEINCLUDE:' + val + '%%';
+      };
+    };
+
     // person
     view.person = Object.assign({}, person.data);
     view.person.createdAt = expandDate(view.person.createdAt);
@@ -129,7 +135,8 @@ var loader = function(api){
 
       {
         instanceMethods: {
-          render: function(person, message, callback){
+
+          render: function(person, message, callback, includedIds){
             var template = this;
             var jobs     = [];
             var events   = []; //TODO: Do we load in the events?  How many?
@@ -140,11 +147,16 @@ var loader = function(api){
 
             if(!template.template || template.template.length === 0){ return callback(new Error('template empty')); }
 
+            // Recusion saftey!
+            if(!includedIds){ includedIds = []; }
+            if(includedIds.indexOf(template.id) >= 0){ return callback(new Error('Cannot include template into itself')); }
+            includedIds.push(template.id);
+
             jobs.push(function(done){
               api.models.team.findOne({where: {id: template.teamId}}).then(function(t){
                 team = t;
                 if(!team){ return done(new Error('team not found')); }
-                done();
+                return done();
               }).catch(done);
             });
 
@@ -167,12 +179,49 @@ var loader = function(api){
               }
             });
 
+            jobs.push(function(done){
+              var includeJobs = [];
+              var matches = html.match(/%%TEMPLATEINCLUDE:.*%%/g);
+              if(!matches || matches.length === 0){ return done(); }
+              matches.forEach(function(match){
+                var matcher = match.replace(/%%/g, '').split(':')[1];
+                var includedTemplate;
+
+                includeJobs.push(function(includeDone){
+                  var or = {name: matcher};
+                  if(parseInt(matcher, 10)){ or.id =  parseInt(matcher, 10); }
+                  api.models.template.findOne({where: {
+                    teamId: team.id,
+                    $or: or
+                  }}).then(function(_includedTemplate){
+                    if(!_includedTemplate){ return includeDone(new Error('Cannot find template to include (' + matcher + ')')); }
+                    includedTemplate = _includedTemplate;
+                    includeDone();
+                  }).catch(includeDone);
+                });
+
+                includeJobs.push(function(includeDone){
+                  includedTemplate.render(person, message, function(error, includedHtml){
+                    if(error){ return includeDone(error); }
+                    html = html.replace(match, includedHtml);
+                    includeDone();
+                  }, includedIds);
+                });
+              });
+
+              async.series(includeJobs, function(error){
+                process.nextTick(function(){ return done(error); });
+              });
+            });
+
             async.series(jobs, function(error){
-              if(error){ return callback(error); }
-              var logData = {};
-              if(message){ logData = {messageGuid: message.data.guid}; }
-              api.log('rendered template #' + template.id + ' for person #' + person.data.guid, 'info', logData);
-              callback(null, html, view);
+              process.nextTick(function(){
+                if(error){ return callback(error); }
+                var logData = {};
+                if(message){ logData = {messageGuid: message.data.guid}; }
+                api.log('rendered template #' + template.id + ' for person #' + person.data.guid, 'info', logData);
+                return callback(null, html, view);
+              });
             });
           },
 

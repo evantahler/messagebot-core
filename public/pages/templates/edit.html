@@ -18,6 +18,7 @@
       <p><a onclick="$('#fullScreenCode').modal('show');" class="btn btn-primary btn-xs">View FullScreen</a> (click + esc to close)</p>
       <p>You can use mustache templates to render person or event attributes</p>
       <p>To track links, use mustache function `track` to transform URLs into tracked URLs. To include a beacon image, include `beacon` in your body (tripple mustache).</p>
+      <p>To include a partial template in this one, use hte `render` mustache function with the name of ID of the template you wisth to include</p>
 
       <!-- <pre><span ng-model="template.template"></span></pre> -->
       <div ng-model="template.template" ui-ace="{

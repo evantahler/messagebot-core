@@ -228,8 +228,10 @@ var loader = function(api){
             });
 
             async.series(jobs, function(error){
-              if(!error){ api.log(['counted %s people in list #%s, %s (team #%s)', count, list.id, list.name, list.teamId]); }
-              callback(error, count);
+              process.nextTick(function(){
+                if(!error){ api.log(['counted %s people in list #%s, %s (team #%s)', count, list.id, list.name, list.teamId]); }
+                callback(error, count);
+              });
             });
           },
 

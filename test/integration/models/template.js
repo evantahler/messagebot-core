@@ -8,6 +8,7 @@ describe('integartion:template', function(){
     var person;
     var message;
     var template;
+    var footerTemplate;
     var team;
 
     before(function(){ api = specHelper.api; });
@@ -29,6 +30,18 @@ describe('integartion:template', function(){
       });
 
       template.save().then(function(){ done(); }).catch(done);
+    });
+
+    before(function(done){
+      footerTemplate = api.models.template.build({
+        teamId:      1,
+        name:        'my footer',
+        description: 'my footer',
+        folder:      'default',
+        template:    '| ©{{ now.fullYear }}'
+      });
+
+      footerTemplate.save().then(function(){ done(); }).catch(done);
     });
 
     before(function(done){
@@ -61,6 +74,7 @@ describe('integartion:template', function(){
 
     after(function(done){ person.del(done); });
     after(function(done){ message.del(done); });
+    after(function(done){ footerTemplate.destroy().then(function(){ done(); }); });
     after(function(done){ template.destroy().then(function(){ done(); }); });
 
     it('renders a template (happy, no message)', function(done){
@@ -126,6 +140,96 @@ describe('integartion:template', function(){
         should.not.exist(error);
         html.should.equal('Hello there, <a href="http://tracking.site.com/api/message/track.gif?verb=act&guid=' + message.data.guid + '&link=http://messagebot.io">click me</a>');
         done();
+      });
+    });
+
+    describe('includes sub-templates', function(done){
+      var year = new Date().getFullYear();
+
+      it('(happy, by id)', function(done){
+        var jobs = [];
+
+        jobs.push(function(next){
+          template.updateAttributes({
+            template: 'Hello there, {{ person.data.firstName }} {{#include}}my footer{{/include}}'
+          }).then(function(){
+            next();
+          }).catch(next);
+        });
+
+        jobs.push(function(next){
+          template.render(person, null, function(error, html, view){
+            should.not.exist(error);
+            html.should.equal('Hello there, fname | ©' + year);
+            next();
+          });
+        });
+
+        async.series(jobs, done);
+      });
+
+      it('(happy, by name)', function(done){
+        var jobs = [];
+
+        jobs.push(function(next){
+          template.updateAttributes({
+            template: 'Hello there, {{ person.data.firstName }} {{#include}}' + footerTemplate.id + '{{/include}}'
+          }).then(function(){
+            next();
+          }).catch(next);
+        });
+
+        jobs.push(function(next){
+          template.render(person, null, function(error, html, view){
+            should.not.exist(error);
+            html.should.equal('Hello there, fname | ©' + year);
+            next();
+          });
+        });
+
+        async.series(jobs, done);
+      });
+
+      it('(failure; missing)', function(done){
+        var jobs = [];
+
+        jobs.push(function(next){
+          template.updateAttributes({
+            template: 'Hello there, {{ person.data.firstName }} {{#include}}MISSING THING{{/include}}'
+          }).then(function(){
+            next();
+          }).catch(next);
+        });
+
+        jobs.push(function(next){
+          template.render(person, null, function(error, html, view){
+            error.toString().should.equal('Error: Cannot find template to include (MISSING THING)');
+            next();
+          });
+        });
+
+        async.series(jobs, done);
+      });
+
+      it('(failure; self-include)', function(done){
+        var jobs = [];
+
+        jobs.push(function(next){
+          template.updateAttributes({
+            template: 'Hello there, {{ person.data.firstName }} {{#include}}' + template.id + '{{/include}}'
+          }).then(function(){
+            next();
+          }).catch(next);
+        });
+
+        jobs.push(function(next){
+          template.render(person, null, function(error, html, view){
+            error.toString().should.equal('Error: Cannot include template into itself');
+            next();
+          });
+        });
+
+        async.series(jobs, done);
       });
     });
 

@@ -61,9 +61,11 @@ exports.task = {
     });
 
     async.series(searchJobs, function(error){
-      var campaignIds = [];
-      campaigns.forEach(function(campaign){ campaignIds.push(campaign.id); });
-      next(error, campaignIds);
+      process.nextTick(function(){
+        var campaignIds = [];
+        campaigns.forEach(function(campaign){ campaignIds.push(campaign.id); });
+        return next(error, campaignIds);
+      });
     });
   }
 };

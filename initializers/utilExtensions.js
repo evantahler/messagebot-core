@@ -20,8 +20,10 @@ module.exports = {
         });
 
         async.series(jobs, function(error){
-          if(error){ return callback(error); }
-          api.utils.findInBatches(model, query, recordResponder, callback, limit, (offset + limit));
+          process.nextTick(function(){
+            if(error){ return callback(error); }
+            api.utils.findInBatches(model, query, recordResponder, callback, limit, (offset + limit));
+          });
         });
       }).catch(callback);
     };

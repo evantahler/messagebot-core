@@ -21,9 +21,11 @@ module.exports = {
             });
 
             async.series(jobs, function(error){
-              if(error){ return callback(error); }
-              api.log('loaded ' + teams.length + ' teams into memory');
-              return callback();
+              process.nextTick(function(){
+                if(error){ return callback(error); }
+                api.log('loaded ' + teams.length + ' teams into memory');
+                return callback();
+              });
             });
           });
         }else{

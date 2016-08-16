@@ -19,7 +19,9 @@ exports.task = {
         });
       });
 
-      async.series(jobs, next);
+      async.series(jobs, function(error){
+        process.nextTick(function(){ return next(error); });
+      });
     }).catch(next);
   }
 };
