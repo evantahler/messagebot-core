@@ -188,12 +188,11 @@ var loader = function(api){
                 var includedTemplate;
 
                 includeJobs.push(function(includeDone){
+                  var or = {name: matcher};
+                  if(parseInt(matcher, 10)){ or.id =  parseInt(matcher, 10); }
                   api.models.template.findOne({where: {
                     teamId: team.id,
-                    $or: {
-                      id: matcher,
-                      name: matcher,
-                    }
+                    $or: or
                   }}).then(function(_includedTemplate){
                     if(!_includedTemplate){ return includeDone(new Error('Cannot find template to include (' + matcher + ')')); }
                     includedTemplate = _includedTemplate;
