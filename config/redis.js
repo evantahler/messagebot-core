@@ -1,7 +1,7 @@
 var host     = process.env.REDIS_HOST || '127.0.0.1';
 var port     = process.env.REDIS_PORT || 6379;
 var db       = parseInt(process.env.REDIS_DB || 0);
-var password = process.env.REDIS_PASS || null;
+var password = process.env.REDIS_PASSWORD || null;
 
 exports.default = {
   redis: function(api){

@@ -20,7 +20,7 @@ env:
     - REDIS_HOST="127.0.0.1"
     - REDIS_PORT="6379"
     - REDIS_DB="1"
-    - REDIS_PASS=""
+    - REDIS_PASSWORD=""
     - ELASTICSEARCH_VERSION="2.3.4"
     - ELASTICSEARCH_URLS="http://localhost:9200"
   matrix:

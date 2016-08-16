@@ -1,10 +1,12 @@
 // Note that to use the websocket server, you also need the web server enabled
 
+var enabled = (process.env.ENABLE_WEB_SOCKET_SERVER === 'true' || process.env.ENABLE_WEB_SOCKET_SERVER === true);
+
 exports.default = {
   servers: {
     websocket: function(api){
       return {
-        enabled:          true,
+        enabled:          enabled,
         // you can pass a FQDN (string) here or 'window.location.origin'
         clientUrl:        'window.location.origin',
         // Directory to render client-side JS.
@@ -46,6 +48,16 @@ exports.default = {
           // transport:        {},
           // queueSize:        Infinity,
         },
+      };
+    }
+  }
+};
+
+exports.test = {
+  servers: {
+    websocket: function(api){
+      return {
+        enabled: true,
       };
     }
   }

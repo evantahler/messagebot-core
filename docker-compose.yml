@@ -1,33 +1,131 @@
 version: '2'
 services:
-  redis:
+  ### REDIS ###
+  redis_leader:
     image: redis
-  elasticsearch:
-    image: elasticsearch
-  mysql:
+    ports:
+      - 6379
+
+  ### ELASTICSEARCH ###
+  elasticsearch_gateway:
+    image: itzg/elasticsearch
+    environment:
+      UNICAST_HOSTS: elasticsearch_leader
+      TYPE: GATEWAY
+    ports:
+      - 9200
+
+  elasticsearch_leader:
+    image: itzg/elasticsearch
+    environment:
+      UNICAST_HOSTS: elasticsearch_gateway
+      TYPE: MASTER
+      MIN_MASTERS: 1
+
+  elasticsearch_data:
+    image: itzg/elasticsearch
+    environment:
+      UNICAST_HOSTS: elasticsearch_leader,elasticsearch_gateway
+      TYPE: DATA
+
+  ### MYSQL ###
+  mysql_leader:
     image: percona
     environment:
-      MYSQL_DATABASE: messagebot_development
+      MYSQL_ROOT_PASSWORD: messagebot
+      MYSQL_DATABASE: messagebot
       MYSQL_USER: messagebot
       MYSQL_PASSWORD: messagebot
-  messagebot:
+    ports:
+      - 3600
+
+  ### LOAD BALANCER ###
+  haproxy:
+    image: dockercloud/haproxy
+    links:
+      - messagebot_web
+    ports:
+      - 80:8080
+      - 5000:5000
+      - 1936:1936
+    environment:
+      STATS_AUTH: messagebot:messagebot
+      STATS_PORT: 1936
+      MONITOR_URI: /api/status
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+
+  ### MESSAGEBOT ###
+  messagebot_web:
     build: .
     ports:
-     - "8080"
-     - "5000"
+     - 8080
+     - 5000
     depends_on:
-      - redis
-      - elasticsearch
-      - mysql
+      - redis_leader
+      - mysql_leader
+      - elasticsearch_gateway
+      - elasticsearch_leader
+      - elasticsearch_data
     links:
-      - redis
-      - elasticsearch
-      - mysql
+      - redis_leader
+      - elasticsearch_gateway
+      - mysql_leader
     environment:
-      REDIS_HOST: redis
+      NODE_ENV: production
+
+      MIN_TASK_PROCESSORS: 0
+      MAX_TASK_PROCESSORS: 0
+      ENABLE_WEB_SERVER: 'true'
+      ENABLE_SOCKET_SERVER: 'true'
+      ENABLE_WEBSOCKET_SERVER: 'true'
+
+      MAXMIND_DB: ./tmp/maxmind/GeoLite2-City.mmdb
+      SEQUELIZE_DIALECT: mysql
+      SEQUELIZE_HOST: mysql_leader
+      SEQUELIZE_PORT: 3306
+      SEQUELIZE_DATABASE: messagebot
+      SEQUELIZE_USER: messagebot
+      SEQUELIZE_PASSWORD: messagebot
+      REDIS_HOST: redis_leader
       REDIS_PORT: 6379
       REDIS_DB: 0
-      MYSQL_DATABASE: messagebot_development
-      MYSQL_USER: messagebot
-      MYSQL_PASSWORD: messagebot
-      ELASTICSEARCH_URLS: elasticsearch
+      REDIS_PASSWORD: ''
+      ELASTICSEARCH_URLS: "http://elasticsearch_gateway:9200"
+
+  messagebot_worker:
+    build: .
+    ports:
+     - 8080
+     - 5000
+    depends_on:
+      - redis_leader
+      - mysql_leader
+      - elasticsearch_gateway
+      - elasticsearch_leader
+      - elasticsearch_data
+    links:
+      - redis_leader
+      - elasticsearch_gateway
+      - mysql_leader
+    environment:
+      NODE_ENV: production
+
+      MIN_TASK_PROCESSORS: 2
+      MAX_TASK_PROCESSORS: 2
+      ENABLE_WEB_SERVER: 'false'
+      ENABLE_SOCKET_SERVER: 'false'
+      ENABLE_WEBSOCKET_SERVER: 'false'
+
+      MAXMIND_DB: ./tmp/maxmind/GeoLite2-City.mmdb
+      SEQUELIZE_DIALECT: mysql
+      SEQUELIZE_HOST: mysql_leader
+      SEQUELIZE_PORT: 3306
+      SEQUELIZE_DATABASE: messagebot
+      SEQUELIZE_USER: messagebot
+      SEQUELIZE_PASSWORD: messagebot
+      REDIS_HOST: redis_leader
+      REDIS_PORT: 6379
+      REDIS_DB: 0
+      REDIS_PASSWORD: ''
+      ELASTICSEARCH_URLS: "http://elasticsearch_gateway:9200"

@@ -57,7 +57,6 @@
     "console": "actionhero console",
     "test": "NODE_ENV=test mocha --reporter dot",
     "migrate": "npm run migrate:sequelize && npm run migrate:elasticsearch",
-    "postinstall": "npm run prepare",
     "prepare": "npm update && npm run prepare:bower && npm run prepare:maxmind && npm run prepare:kibana",
     "bower": "bower",
     "migrate:elasticsearch": "node ./db/elasticsearch/teamSeeder.js",

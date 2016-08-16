@@ -1,3 +1,6 @@
+var minTaskProcessors = parseInt(process.env.MIN_TASK_PROCESSORS || 1);
+var maxTaskProcessors = parseInt(process.env.MAX_TASK_PROCESSORS || 1);
+
 exports.default = {
   tasks: function(api){
     return {
@@ -40,9 +43,9 @@ exports.default = {
       timeout: 5000,
       // at minimum, how many parallel taskProcessors should this node spawn?
       // (have number > 0 to enable, and < 1 to disable)
-      minTaskProcessors: 1,
+      minTaskProcessors: minTaskProcessors,
       // at maximum, how many parallel taskProcessors should this node spawn?
-      maxTaskProcessors: 1,
+      maxTaskProcessors: maxTaskProcessors,
       // how often should we check the event loop to spawn more taskProcessors?
       checkTimeout: 1000,
       // how many ms would constitue an event loop delay to halt taskProcessors spawning?
