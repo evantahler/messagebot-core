@@ -48,8 +48,10 @@ exports.listPeopleAdd = {
         if(jobs.length === 0){ return next(new Error('nothing to edit')); }
 
         async.series(jobs, function(error){
-          if(!error){ api.tasks.enqueue('lists:peopleCount', {listId: list.id}, 'messagebot:lists', next); }
-          else{ return next(error); }
+          process.nextTick(function(){
+            if(!error){ api.tasks.enqueue('lists:peopleCount', {listId: list.id}, 'messagebot:lists', next); }
+            else{ return next(error); }
+          });
         });
       };
 
@@ -165,8 +167,10 @@ exports.listPeopleDelete = {
       });
 
       async.series(jobs, function(error){
-        if(!error){ api.tasks.enqueue('lists:peopleCount', {listId: list.id}, 'messagebot:lists', next); }
-        else{ return next(error); }
+        process.nextTick(function(){
+          if(!error){ api.tasks.enqueue('lists:peopleCount', {listId: list.id}, 'messagebot:lists', next); }
+          else{ return next(error); }
+        });
       });
     }).catch(next);
   }

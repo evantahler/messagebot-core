@@ -244,7 +244,11 @@ var loader = function(api){
               }).catch(done);
             });
 
-            async.series(jobs, callback);
+            async.series(jobs, function(error){
+              process.nextTick(function(){
+                return callback(error);
+              });
+            });
           },
 
           apiData: function(){

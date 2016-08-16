@@ -205,15 +205,19 @@ var loader = function(api){
                 });
               });
 
-              async.series(includeJobs, done);
+              async.series(includeJobs, function(error){
+                process.nextTick(function(){ return done(error); });
+              });
             });
 
             async.series(jobs, function(error){
-              if(error){ return callback(error); }
-              var logData = {};
-              if(message){ logData = {messageGuid: message.data.guid}; }
-              api.log('rendered template #' + template.id + ' for person #' + person.data.guid, 'info', logData);
-              return callback(null, html, view);
+              process.nextTick(function(){
+                if(error){ return callback(error); }
+                var logData = {};
+                if(message){ logData = {messageGuid: message.data.guid}; }
+                api.log('rendered template #' + template.id + ' for person #' + person.data.guid, 'info', logData);
+                return callback(null, html, view);
+              });
             });
           },
 
