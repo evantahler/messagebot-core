@@ -72,7 +72,7 @@ exports.task = {
 
     jobs.push(function(done){
       api.models.template.find({where: {id: campaign.templateId}}).then(function(template){
-        template.render(person, message, function(error, _body, _view){
+        template.render(person, message, campaign, list, function(error, _body, _view){
           if(error){ return done(error); }
           body = _body;
           done();

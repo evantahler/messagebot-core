@@ -1,0 +1,93 @@
+<html>
+  <head>
+    <title>MessageBot: Opt-Out</title>
+
+    <link rel="stylesheet" href="/bower_components/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/bower_components/bootswatch-dist/css/bootstrap.min.css">
+
+    <script src="%%TRACKINGDOMAIN%%/tracking/%%TEAMID%%/web.js"></script>
+    <script src="/bower_components/jquery/dist/jquery.min.js"></script>
+    <script src="/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+  </head>
+
+  <body>
+    <div id="main" class="container">
+      <br />
+      <div class="jumbotron">
+        <h1>Opt-Out</h1>
+
+        <div id='loading'><p><em>loading...</em></p></div>
+
+        <div id='thanks'><p>Thank You</p></div>
+
+        <div id='controlls'>
+          <p>We are sorry that you don't want to hear from us any more.</p>
+          <p>
+            <a id='listOutButton' class="btn btn-primary btn-lg">Opt-Out of this list</a>
+            <a id='listInButton' class="btn btn-info btn-lg">Opt-In to this list</a>
+            <a id='globalOutButton' class="btn btn-danger btn-lg">Opt-Out of all communications from us</a>
+            <a id='globalInButton' class="btn btn-success btn-lg">Opt-In of all communications from us</a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </body>
+
+  <script>
+    $('#controlls').hide();
+    $('#thanks').hide();
+    $('#listOutButton').hide();
+    $('#listInButton').hide();
+    $('#globalOutButton').hide();
+    $('#globalInButton').hide();
+
+    MESSAGEBOT.data.personGuid  = MESSAGEBOT.getURLParameter('personGuid');
+    MESSAGEBOT.data.messageGuid = MESSAGEBOT.getURLParameter('messageGuid');
+    MESSAGEBOT.data.listId      = MESSAGEBOT.getURLParameter('listId');
+    MESSAGEBOT.data.campaignId  = MESSAGEBOT.getURLParameter('campaignId');
+
+    MESSAGEBOT.init(MESSAGEBOT.data.personGuid, function(error){
+      if(error){ alert(error); }
+      $('#loading').hide();
+      $('#controlls').show();
+
+      var handleButtonResponse = function(error){
+        if(error){ alert(error); }
+        $('#controlls').hide();
+        $('#thanks').show();
+      };
+
+      $('#listOutButton').click(function(){
+        MESSAGEBOT.person.opt({direction: 'out', listId: MESSAGEBOT.data.listId}, handleButtonResponse);
+      });
+
+      $('#listInButton').click(function(){
+        MESSAGEBOT.person.opt({direction: 'in', listId: MESSAGEBOT.data.listId}, handleButtonResponse);
+      });
+
+      $('#globalOutButton').click(function(){
+        MESSAGEBOT.person.opt({direction: 'out', global: true}, handleButtonResponse);
+      });
+
+      $('#globalInButton').click(function(){
+        MESSAGEBOT.person.opt({direction: 'in', global: true}, handleButtonResponse);
+      });
+
+      if(MESSAGEBOT.data.listId){
+        MESSAGEBOT.data.listId = parseInt(MESSAGEBOT.data.listId);
+        if(MESSAGEBOT.data.person.listOptOuts.indexOf(MESSAGEBOT.data.listId) >= 0){
+          $('#listInButton').show();
+        }else{
+          $('#listOutButton').show();
+        }
+      }
+
+      if(MESSAGEBOT.data.person.globalOptOut === true){
+        $('#globalInButton').show();
+      }else{
+        $('#globalOutButton').show();
+      }
+    });
+  </script>
+
+</html>

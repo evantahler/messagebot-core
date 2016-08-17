@@ -94,6 +94,15 @@ var MESSAGEBOT = MESSAGEBOT || {};
     xmlhttp.send(JSON.stringify(params));
   };
 
+  MESSAGEBOT.getURLParameter = function(name){
+    try{
+      return decodeURIComponent((new RegExp('[?|&]' + name + '=' + '([^&;]+?)(&|#|;|$)').exec(window.location.search) || [null, ''])[1].replace(/\+/g, '%20')) || null;
+    }catch(e){
+      console.log(e);
+      return null;
+    }
+  };
+
   MESSAGEBOT.cookies = {
     create: function(name, value){
       var expires = '';
@@ -125,6 +134,7 @@ var MESSAGEBOT = MESSAGEBOT || {};
 
   MESSAGEBOT.trackingDomain     = '%%TRACKINGDOMAIN%%';
   MESSAGEBOT.apiRoute           = '%%APIROUTE%%';
+  MESSAGEBOT.teamId             = '%%TEAMID%%';
   MESSAGEBOT.cookieName         = 'MessageBotPersonGuid';
   MESSAGEBOT.initialized        = false;
   MESSAGEBOT.cookieExpiry       = (1000 * 60 * 60 * 24 * 365); // 1 year
@@ -166,7 +176,7 @@ var MESSAGEBOT = MESSAGEBOT || {};
     create: function(callback){
       if(!callback){ callback = MESSAGEBOT.loggerCallback; }
 
-      var params = MESSAGEBOT.getTrackingParams();
+      var params = {};
       Object.keys(MESSAGEBOT.data.person).forEach(function(k){
         params[k] = MESSAGEBOT.data.person[k];
       });
@@ -202,6 +212,19 @@ var MESSAGEBOT = MESSAGEBOT || {};
         data: data,
       }, function(response){
         return callback(response.error, response.person);
+      });
+    },
+
+    opt: function(data, callback){
+      if(!callback){ callback = MESSAGEBOT.loggerCallback; }
+      if(!MESSAGEBOT.data.person){ return callback(new Error('Not Initialized')); }
+      var params = {guid: MESSAGEBOT.data.person.guid};
+      params.listId = data.listId,
+      params.global = data.global,
+      params.direction = data.direction,
+
+      MESSAGEBOT.action('/person/opt', 'PUT', params, function(response){
+        return callback(response.error);
       });
     },
 
@@ -250,8 +273,6 @@ var MESSAGEBOT = MESSAGEBOT || {};
       for(var i in e.data){ event.data[i] = e.data[i]; }
 
       event.personGuid = MESSAGEBOT.data.person.guid;
-
-      console.log(event);
 
       MESSAGEBOT.action('/event', 'POST', event, function(response){
         MESSAGEBOT.loggerCallback(response.error);

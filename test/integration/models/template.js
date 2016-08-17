@@ -80,7 +80,7 @@ describe('integartion:template', function(){
     after(function(done){ template.destroy().then(function(){ done(); }); });
 
     it('renders a template (happy, no message)', function(done){
-      template.render(person, null, function(error, html, view){
+      template.render(person, null, null, null, function(error, html, view){
         should.not.exist(error);
         html.should.equal('Hello there, fname');
         view.person.data.firstName.should.equal('fname');
@@ -92,7 +92,7 @@ describe('integartion:template', function(){
     });
 
     it('renders a template (happy, with message)', function(done){
-      template.render(person, message, function(error, html, view){
+      template.render(person, message, null, null, function(error, html, view){
         should.not.exist(error);
         html.should.equal('Hello there, fname');
         view.person.data.firstName.should.equal('fname');
@@ -105,7 +105,7 @@ describe('integartion:template', function(){
 
     it('expands beacons properly', function(done){
       template.template = 'Hello there, {{ person.data.firstName }} {{{ beacon }}}';
-      template.render(person, message, function(error, html, view){
+      template.render(person, message, null, null, function(error, html, view){
         should.not.exist(error);
         html.should.equal('Hello there, fname <img src="http://tracking.site.com/api/message/track.gif?verb=read&guid=' + message.data.guid + '" >');
         view.beaconLink.should.equal('http://tracking.site.com/api/message/track.gif?verb=read&guid=' + message.data.guid);
@@ -120,7 +120,7 @@ describe('integartion:template', function(){
       var month = monthNames[now.getMonth()];
 
       template.template = 'Hello there, {{ person.data.firstName }} @ {{person.updatedAt.monthName}}';
-      template.render(person, message, function(error, html, view){
+      template.render(person, message, null, null, function(error, html, view){
         should.not.exist(error);
         html.should.equal('Hello there, fname @ ' + month);
         done();
@@ -129,7 +129,7 @@ describe('integartion:template', function(){
 
     it('removes bad HTML entities', function(done){
       template.template = 'ABC<script>alert("boom");</script>XYZ';
-      template.render(person, message, function(error, html, view){
+      template.render(person, message, null, null, function(error, html, view){
         should.not.exist(error);
         html.should.equal('ABCXYZ');
         done();
@@ -138,7 +138,7 @@ describe('integartion:template', function(){
 
     it('tracks links properly', function(done){
       template.template = 'Hello there, <a href="{{#track}}http://messagebot.io{{/track}}">click me</a>';
-      template.render(person, message, function(error, html, view){
+      template.render(person, message, null, null, function(error, html, view){
         should.not.exist(error);
         html.should.equal('Hello there, <a href="http://tracking.site.com/api/message/track.gif?verb=act&guid=' + message.data.guid + '&link=http://messagebot.io">click me</a>');
         done();
@@ -160,7 +160,7 @@ describe('integartion:template', function(){
         });
 
         jobs.push(function(next){
-          template.render(person, null, function(error, html, view){
+          template.render(person, null, null, null, function(error, html, view){
             should.not.exist(error);
             html.should.equal('Hello there, fname | ©' + year);
             next();
@@ -182,7 +182,7 @@ describe('integartion:template', function(){
         });
 
         jobs.push(function(next){
-          template.render(person, null, function(error, html, view){
+          template.render(person, null, null, null, function(error, html, view){
             should.not.exist(error);
             html.should.equal('Hello there, fname | ©' + year);
             next();
@@ -204,7 +204,7 @@ describe('integartion:template', function(){
         });
 
         jobs.push(function(next){
-          template.render(person, null, function(error, html, view){
+          template.render(person, null, null, null, function(error, html, view){
             error.toString().should.equal('Error: Cannot find template to include (MISSING THING)');
             next();
           });
@@ -225,7 +225,7 @@ describe('integartion:template', function(){
         });
 
         jobs.push(function(next){
-          template.render(person, null, function(error, html, view){
+          template.render(person, null, null, null, function(error, html, view){
             error.toString().should.equal('Error: Cannot include template into itself');
             next();
           });
