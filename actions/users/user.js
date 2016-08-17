@@ -28,6 +28,8 @@ exports.userCreate = {
       person.data.source = 'admin';
       person.data.device = 'unknown';
       person.data.teamId = user.teamId;
+      person.data.listOptOuts = [];
+      person.data.globalOptOut = false;
 
       person.create(function(error){
         if(error){ api.log('person creation error: ' + error, 'error', data.params); }

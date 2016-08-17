@@ -192,6 +192,8 @@ describe('actions:lists', function(){
       person = new api.models.person(team);
       person.data.source = 'tester';
       person.data.device = 'phone';
+      person.data.listOptOuts = [];
+      person.data.globalOptOut = false;
       person.data.data = {
         firstName: 'fname',
         lastName: 'lame',

@@ -96,6 +96,11 @@ exports.listPeopleAdd = {
               }
             }
 
+            person.data.device = 'unknown';
+            
+            person.data.listOptOuts = [];
+            person.data.globalOptOut = false;
+
             person.create(function(error){
               if(error){ return done(new Error('Error adding person ' + JSON.stringify(d) + ' | ' + error)); }
               api.models.listPerson.create({
