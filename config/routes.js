@@ -61,6 +61,7 @@ exports.default = {
         { path: '/campaign',             action: 'campaign:edit' },
         { path: '/list/people',          action: 'list:people:add' },
         { path: '/person',               action: 'person:edit' },
+        { path: '/person/opt',           action: 'person:opt' },
         { path: '/event',                action: 'event:edit' },
         { path: '/message',              action: 'message:edit' },
         { path: '/template',             action: 'template:edit' },

@@ -17,7 +17,6 @@ exports.task = {
     var listPerson;
     var person;
     var body;
-    var view;
     var transport;
     var message;
     var team;
@@ -73,10 +72,9 @@ exports.task = {
 
     jobs.push(function(done){
       api.models.template.find({where: {id: campaign.templateId}}).then(function(template){
-        template.render(person, message, function(error, _body, _view){
+        template.render(person, message, campaign, list, function(error, _body, _view){
           if(error){ return done(error); }
           body = _body;
-          view = _view;
           done();
         });
       });
@@ -115,14 +113,29 @@ exports.task = {
       message.data.transport  = transport.name;
       message.data.campaignId = campaign.id;
       message.data.body       = body;
-      // message.data.view       = view;
       message.data.sentAt     = new Date();
 
       message.create(done);
     });
 
     jobs.push(function(done){
-      if(api.env !== 'test'){
+      var toSend = true;
+      if(api.env === 'test'){
+        api.log('not sending messages when NODE_ENV=test');
+        toSend = false;
+      }
+
+      if(toSend && person.data.globalOptOut === true){
+        api.log(['person #%s is globally opted-out', person.data.guid]);
+        toSend = false;
+      }
+
+      if(toSend && person.data.listOptOuts.indexOf(list.id) >= 0){
+        api.log(['person #%s is opted-out of this list (#%s)', person.data.guid, list.id]);
+        toSend = false;
+      }
+
+      if(toSend === true){
         var sendParams = {body: body};
         transport.campaignVariables.forEach(function(v){
           sendParams[v] = campaign.campaignVariables[v];
@@ -130,7 +143,6 @@ exports.task = {
 
         transport.deliver(sendParams, person, done);
       }else{
-        api.log('not sending messages when NODE_ENV=test');
         done();
       }
     });

@@ -230,6 +230,8 @@ You can include template within other templates as well.  Use the mustache funct
 // We will set a cookie with this personID, so on subsequent pages you don't need to set it
 //   nor will you need to call init again manually
 MESSAGEBOT.init('<your PersonID>');
+// If you pass your PersonID via the URL, you can get it
+MESSAGEBOT.init( MESSAGEBOT.getURLParameter('personID') );
 
 // You can modify/add extra properties to the person
 MESSAGEBOT.person.edit({firstName: 'tester'});
@@ -240,6 +242,14 @@ MESSAGEBOT.person.hydrate(function(error, data){ console.log(data); });
 
 // And you can delete the person
 MESSAGEBOT.person.delete();
+
+// People can opt in/out of your communications as well
+// Opt Out of one list:
+MESSAGEBOT.person.opt({direction: 'out', listId: 123});
+// Opt back in:
+MESSAGEBOT.person.opt({direction: 'in', listId: 123});
+// Opt out of all communications all together:
+MESSAGEBOT.person.opt({direction: 'out', global: true});
 ```
 
 ### Events

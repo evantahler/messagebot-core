@@ -75,7 +75,7 @@ exports.templateRender = {
       var person = new api.models.person(data.team, data.params.personGuid);
       person.hydrate(function(error){
         if(error){ return next(error); }
-        template.render(person, null, function(error, html, view){
+        template.render(person, null, null, null, function(error, html, view){
           if(error){ return next(error); }
           if(data.connection.extension === 'html'){
             data.toRender = false;

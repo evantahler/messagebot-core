@@ -24,6 +24,8 @@ describe('action:person', function(){
     otherPerson = new api.models.person(team);
     otherPerson.data.source = 'tester';
     otherPerson.data.device = 'phone';
+    otherPerson.data.listOptOuts = [];
+    otherPerson.data.globalOptOut = false;
     otherPerson.data.data = {
       firstName: 'fname',
       lastName: 'lame',
@@ -203,6 +205,97 @@ describe('action:person', function(){
       }, function(response){
         response.error.should.equal('Error: person (xxx) not found');
         done();
+      });
+    });
+  });
+
+  describe('person:opt', function(){
+    it('can opt-out of a list (and check it)', function(done){
+      api.specHelper.runAction('person:opt', {
+        teamId: team.id,
+        guid: personGuid,
+        direction: 'out',
+        listId: list.id,
+      }, function(response){
+        should.not.exist(response.error);
+        api.specHelper.runAction('person:view', {
+          teamId: team.id,
+          guid: personGuid,
+        }, function(response){
+          should.not.exist(response.error);
+          response.person.listOptOuts.length.should.equal(1);
+          response.person.listOptOuts[0].should.equal(list.id);
+          done();
+        });
+      });
+    });
+
+    it('can opt back into a list (and check it)', function(done){
+      api.specHelper.runAction('person:opt', {
+        teamId: team.id,
+        guid: personGuid,
+        direction: 'in',
+        listId: list.id,
+      }, function(response){
+        should.not.exist(response.error);
+        api.specHelper.runAction('person:view', {
+          teamId: team.id,
+          guid: personGuid,
+        }, function(response){
+          should.not.exist(response.error);
+          response.person.listOptOuts.length.should.equal(0);
+          done();
+        });
+      });
+    });
+
+    it('can opt-out of a list (fails, list not found)', function(done){
+      api.specHelper.runAction('person:opt', {
+        teamId: team.id,
+        guid: personGuid,
+        direction: 'in',
+        listId: 999999,
+      }, function(response){
+        response.error.should.equal('Error: List not found');
+        done();
+      });
+    });
+
+    it('can opt-out globally (and check it)', function(done){
+      api.specHelper.runAction('person:opt', {
+        teamId: team.id,
+        guid: personGuid,
+        direction: 'out',
+        global: true
+      }, function(response){
+        should.not.exist(response.error);
+        api.specHelper.runAction('person:view', {
+          teamId: team.id,
+          guid: personGuid,
+        }, function(response){
+          should.not.exist(response.error);
+          response.person.globalOptOut.should.equal(true);
+          done();
+        });
+      });
+    });
+
+    it('can opt-in globally (and check it)', function(done){
+      api.specHelper.runAction('person:opt', {
+        teamId: team.id,
+        guid: personGuid,
+        direction: 'in',
+        global: true
+      }, function(response){
+        should.not.exist(response.error);
+        api.specHelper.runAction('person:view', {
+          teamId: team.id,
+          guid: personGuid,
+        }, function(response){
+          should.not.exist(response.error);
+          response.person.globalOptOut.should.equal(false);
+          done();
+        });
       });
     });
   });

@@ -53,7 +53,7 @@ module.exports = {
           fs.mkdir(teamDir, '0766', done);
         });
 
-        ['web.js'].forEach(function(type){
+        ['web.js', 'optOut.html'].forEach(function(type){
           var source;
 
           jobs.push(function(done){
@@ -66,6 +66,7 @@ module.exports = {
 
           jobs.push(function(done){
             source = source.replace(/%%TRACKINGDOMAIN%%/g, team.trackingDomain);
+            source = source.replace(/%%TEAMID%%/g, team.id);
             source = source.replace(/%%APIROUTE%%/g, api.config.servers.web.urlPathForActions);
 
             fs.writeFile(teamDir + path.sep + type, source, done);

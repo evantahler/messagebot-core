@@ -64,6 +64,8 @@ var teamCreate = function(api, callback){
     person.data.source = 'admin';
     person.data.device = 'unknown';
     person.data.teamId = team.id;
+    person.data.listOptOuts = [];
+    person.data.globalOptOut = false;
 
     person.create(done);
   });

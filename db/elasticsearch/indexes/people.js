@@ -35,6 +35,9 @@ module.exports = {
         'updatedAt':  { 'type':  'date', 'required': true  },
         'data':       { 'type': 'object', 'required': true },
 
+        'listOptOuts':  { 'type': 'integer', 'required': true },
+        'globalOptOut': { 'type': 'boolean', 'required': true },
+
         'source': { 'type': 'string', 'required': true },
         'device': { 'type': 'string', 'required': true },
         'location': {

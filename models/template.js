@@ -45,8 +45,13 @@ var loader = function(api){
     };
   };
 
-  var buildView = function(team, person, events, template){
+  var buildView = function(team, person, events, campaign, list, template){
     var view = {};
+
+    view.campaign = {};
+    view.list = {};
+    if(campaign){ view.campaign = campaign.apiData(); }
+    if(list){ view.list = list.apiData(); }
 
     // beacon
     view.beaconLink = team.trackingDomain + '/api/message/track.gif?';
@@ -59,12 +64,27 @@ var loader = function(api){
 
     view.track = function(){
       return function(val, render){
-        var trackingURL = '';
-        trackingURL += team.trackingDomain + '/api/message/track.gif?';
-        trackingURL += 'verb=act&';
-        trackingURL += 'guid=%%MESSAGEGUID%%&';
-        trackingURL += 'link=' + render(val);
-        return trackingURL;
+        var url = '';
+        url += team.trackingDomain + '/api/message/track.gif?';
+        url += 'verb=act&';
+        url += 'guid=%%MESSAGEGUID%%&';
+        url += 'link=' + render(val);
+        return url;
+      };
+    };
+
+    view.optOutLink = function(){
+      return function(val){
+        var page = team.trackingDomain + '/tracking/' + team.id + '/optOut.html';
+        if(val){ page = val; }
+
+        var url = '';
+        url += page + '?';
+        url += 'personGuid=' + person.data.guid + '&';
+        url += 'messageGuid=%%MESSAGEGUID%%&' + '&';
+        if(view.campaign.id){ url += 'campaignId=' + view.campaign.id + '&'; }
+        if(view.list.id){ url += 'listId=' + view.list.id + '&'; }
+        return url;
       };
     };
 
@@ -136,7 +156,7 @@ var loader = function(api){
       {
         instanceMethods: {
 
-          render: function(person, message, callback, includedIds){
+          render: function(person, message, campaign, list, callback, includedIds){
             var template = this;
             var jobs     = [];
             var events   = []; //TODO: Do we load in the events?  How many?
@@ -161,7 +181,7 @@ var loader = function(api){
             });
 
             jobs.push(function(done){
-              view = buildView(team, person, events, template);
+              view = buildView(team, person, events, campaign, list, template);
               done();
             });
 
@@ -201,7 +221,7 @@ var loader = function(api){
                 });
 
                 includeJobs.push(function(includeDone){
-                  includedTemplate.render(person, message, function(error, includedHtml){
+                  includedTemplate.render(person, message, campaign, list, function(error, includedHtml){
                     if(error){ return includeDone(error); }
                     html = html.replace(match, includedHtml);
                     includeDone();

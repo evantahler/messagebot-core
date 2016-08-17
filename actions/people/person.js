@@ -28,6 +28,9 @@ exports.personCreate = {
 
     person.data.device = 'unknown';
 
+    person.data.listOptOuts = [];
+    person.data.globalOptOut = false;
+
     // return without waiting for the crete callback; log errors
     // this effectivley allows the tracking request to 'buffer' in RAM & returning to the client quickly
     // guid will be hydrated syncrhonusly before the save operation
@@ -87,6 +90,9 @@ exports.personView = {
   },
 
   run: function(api, data, next){
+    // TODO: How to prevent people from accessing other folks' data?
+    // Do we require-admin for person:view?
+
     var person = new api.models.person(data.team, data.params.guid);
     person.data = data.params;
 
@@ -107,6 +113,94 @@ exports.personView = {
         next();
       }).catch(next);
     });
+  }
+};
+
+exports.personOpt = {
+  name:                   'person:opt',
+  description:            'person:opt',
+  outputExample:          {},
+  middleware:             ['require-team'],
+
+  inputs: {
+    direction: {
+      required: true,
+      formatter: function(p){
+        return p.toLowerCase();
+      },
+      validator: function(p){
+        if(['in', 'out'].indexOf(p) < 0){ return new Error('you can opt "in" our or "out"'); }
+        return true;
+      }
+    },
+    global: {
+      required: false,
+      default: false,
+      formatter: function(p){
+        if(p === 'true' || p === true){ return true; }
+        if(p === 'false' || p === false){ return false; }
+        return null;
+      },
+    },
+    listId:    { required: false, formatter: function(p){ return parseInt(p); } },
+    guid:      { required: true }
+  },
+
+  run: function(api, data, next){
+    var jobs = [];
+    var person = new api.models.person(data.team, data.params.guid);
+
+    jobs.push(function(done){
+      person.hydrate(done);
+    });
+
+    if(data.params.global === false){
+      jobs.push(function(done){
+        api.models.list.findOne({
+          where: {
+            id: data.params.listId,
+            teamId: data.team.id,
+          }
+        }).then(function(list){
+          if(!list){ return done(new Error('List not found')); }
+          done();
+        }).catch(done);
+      });
+    }
+
+    if(data.params.global === true){
+      jobs.push(function(done){
+        var val = false;
+        if(data.params.direction === 'out'){ val = true; }
+        person.data.globalOptOut = val;
+        process.nextTick(done);
+      });
+    }
+
+    if(data.params.global === false){
+      jobs.push(function(done){
+        if(data.params.direction === 'out'){
+          if(person.data.listOptOuts.indexOf(data.params.listId) < 0){
+            person.data.listOptOuts.push(data.params.listId);
+          }
+        }
+
+        if(data.params.direction === 'in'){
+          if(person.data.listOptOuts.indexOf(data.params.listId) >= 0){
+            var idx = person.data.listOptOuts.indexOf(data.params.listId);
+            person.data.listOptOuts.splice(idx, 1);
+          }
+        }
+
+        process.nextTick(done);
+      });
+    }
+
+    jobs.push(function(done){
+      person.edit(done);
+    });
+
+    async.series(jobs, next);
   }
 };
 
