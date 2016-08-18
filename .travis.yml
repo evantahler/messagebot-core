@@ -54,7 +54,7 @@ before_script:
   - "curl -X DELETE http://localhost:9200/*"
 
 after_script:
-  - ./bin/travis-build
+  - ./bin/travis-build-docker
 
 os:
   - linux
