@@ -78,6 +78,7 @@ after_script:
 
       if [ $exitCode -eq 1 ]; then
         # BUILD FAILURE
+        echo "BUSTED"
       fi
 
 os:
@@ -86,6 +87,7 @@ os:
 script: npm run test
 
 services:
+  - docker
   - redis-server
   - mysql
   - postgresql
