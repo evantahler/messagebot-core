@@ -50,7 +50,7 @@ module.exports = {
         api.models.team.hasMany(api.models.listPerson);
         api.models.team.hasMany(api.models.template);
         api.models.team.hasMany(api.models.user);
-        api.models.team.hasMany(api.models.teamSetting);
+        api.models.team.hasMany(api.models.setting);
 
         // Template
         api.models.template.belongsTo(api.models.team);

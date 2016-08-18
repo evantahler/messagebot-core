@@ -128,6 +128,20 @@ This product includes GeoLite2 data created by MaxMind, available from [www.maxm
 
 `MessageBot Plugins` are normal [`ActionHero Plugins`](http://www.actionherojs.com/docs/#plugins). They can be installed from NPM, Git, or locally checked into your project.  In additional to the normal creation of Actions and Initializers, you can also modify the core of MessageBot:
 
+## Settings
+
+If your plugin requires that a team configure a setting, you can use the `setting` API:
+
+```js
+api.teams.settings.push({
+  key: 'client:tracking:web:cookieExpiry',
+  value: (1000 * 60 * 60 * 24 * 365), // 1 year
+  description: 'How long to store the personId cookie in the browser for (ms)'
+});
+```
+
+Please use verbose key names like the above to avoid collisions.  You can add your key in any initializer.
+
 ## Transports
 
 Transports let you send messages by other mediums.  Transports have a `name`, `description`, `requiredDataKeys` (properties of events and people which must exists and are used to send the message), `campaignVariables` (properties which must be sent when creating a campaign using this transport), and finally a `deliver()` method.
