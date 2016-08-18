@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+
+declare exitCode;
+
+# -- [1] -------------------------------------------------------
+
+$(npm bin)/travis-after-all
+exitCode=$?
+
+# -- [2] -------------------------------------------------------
+
+if [ $exitCode -eq 0 ]; then
+  # BUILD SCCCESS
+
+  # Build the Docker Image
+  docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
+  export REPO=messagebot/messagebot-core
+  export TAG=`if [ "$TRAVIS_BRANCH" == "master" ]; then echo "latest"; else echo $TRAVIS_BRANCH ; fi`
+  docker build -f Dockerfile -t $REPO:$COMMIT .
+  docker tag $REPO:$COMMIT $REPO:$TAG
+  docker push $REPO
+fi
+
+if [ $exitCode -eq 1 ]; then
+  # BUILD FAILURE
+  echo "BUSTED"
+fi
