@@ -9,10 +9,7 @@ WORKDIR /app
 RUN echo '{ "allow_root": true }' > /root/.bowerrc
 
 COPY . /app
-RUN rm -rf /app/.env
-RUN rm -rf /app/tmp
-RUN rm -rf /app/node_modules
-RUN rm -rf /app/public/bower_components
+
 RUN npm install
 RUN npm run prepare
 
