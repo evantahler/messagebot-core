@@ -21,7 +21,7 @@ fi
 if [ -f "$VERSION/package.json" ]; then
   echo "kibana downloaded"
 else
-  wget "https://download.elastic.co/kibana/kibana/$VERSION.tar.gz"
+  wget -q "https://download.elastic.co/kibana/kibana/$VERSION.tar.gz"
   tar -xzf $VERSION.tar.gz
 fi
 

@@ -14,6 +14,6 @@ fi
 if [ -f GeoLite2-City.mmdb ]; then
   echo "GeoLite2-City.mmdb present"
 else
-  wget http://geolite.maxmind.com/download/geoip/database/GeoLite2-City.mmdb.gz
+  wget -q http://geolite.maxmind.com/download/geoip/database/GeoLite2-City.mmdb.gz
   gunzip GeoLite2-City.mmdb.gz -f
 fi
