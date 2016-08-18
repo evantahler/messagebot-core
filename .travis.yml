@@ -11,8 +11,11 @@ addons:
 
 env:
   global:
+    # Build Settings
     - NODE_ENV=test
     - CXX=g++-4.8
+
+    # App Setttnigs
     - MAXMIND_DB="./tmp/maxmind/GeoLite2-City.mmdb"
     - SEQUELIZE_HOST="localhost"
     - SEQUELIZE_DATABASE="messagebot_test"
@@ -23,6 +26,12 @@ env:
     - REDIS_PASSWORD=""
     - ELASTICSEARCH_VERSION="2.3.4"
     - ELASTICSEARCH_URLS="http://localhost:9200"
+
+    # Docker Build Settings
+    - secure: "BISkx6QvPMh1jC+oG9c5OtqzGhQilcY6sWeELU9WY5C78w9PQ+ICKN3VpqoQyU/bZUjvtvI03D43aQy8UszYSGtzleeuHr2BNrZICoUGTvTbTCXk27FVUVyC8+nJ8+4G89c90TdKE24e4oKcshaHhliwFmcXPzcGzHpjbGT4YhuuN34iIpBvPk03VQ5RPJWrDQh71m/PhQTyiHO+nUUKiidbN+L+yhWY7Ht6HYD/LF10QmWtA3XuRHv2Gq/7BufO9Tldc/KHEZloqGqKdr4Gnut8jTnnysuUC+zlX1vbDvsyFUkjW8DYZ9gU7Y6QG1nUUCD0ykFNyEx0dJh/oBexaWRKznlYIoYrOv/hnPTP7H7wcfWdkx7wfY6l3heqTe5DcQtIEO7145Ij+kBctTGBQ1c2cOUwaN6EQ5JRgkAT72DePc1we5sg5xo4J3WrSVMFNlVS2FsfsL3u0HoiLfJoV2C+EzK9oi46ekifuDmduCGeomLFtJ13sO+z+ixhkmMnTO0y5P/+qTNYLWMCklHqvIoiljaf1bcsuQ8g1sYVoQEtYby+cB+hXipvT6FWByHx++3xK1VyPisSAeSip3NCRnzbXGWwwS9LQmc5KzjtX+y81O20R0wkoJdk8VvmrgFmLpciZ7x2OPi/xhVeLoBJX66eL6ZxfTbHy+fKRc27fZM=" # DOCKER_EMAIL
+    - secure: "mHBkmJQFTgebRGQEYv+wWqd/wDDzywPNijY9Jeu3/dlVmlz5Y20zwEF+EgY/0GGh90Jde99D7iTDstP6w+hMLdQ2zVD8I8NaOQAhq+BgRvAGGmFDmUQzvmf6sqXViX4jixvD+EobQVaTrpBlMy6vz1woeGjYsjUBnCPQMGvsEzbT0hIBohSDGVc28DMwSq3PVVhop4CGDfbAuZbQtpPS7wfbmpprbmcq3G0LoUtHOLcXXZQjPCj7kcwOdc2wF96wBG3mhsU57ObpjjEhB8YPyg1q0WwHkzC0YEnFsuJM6GfauBkKWFKekuQIx9XycqFSKpyE8Q/IuCGodO51fD0+awJ7xKnWmThCr1SI2uprzIw8gIRFzpT3qgAh5xBaKzeyOhVFpaDiKaMVg03rt9Mz3w0UV3471xhgPj9ZWU7Zz8KVtu0BOWfw0qIbLxdVL3F8XCaAFASNSIeACsHHe7p/fQ7RdrU5QGuxXqiQ8Jai7hR5Es0gzTcM3B74ZY/SDbTl4+DeG6E4ZSQVCGZO5xgve/Alqxr2Ad1oT/87Dhw6G4H8ozkpM4C4gsmgwlzPLlq/gyqqYm8IS7YKutxBoK2/hT2rglR27IBGcWb415h84pJ15U1vquiQEjwt3+91udN/oPKEUuuJYcrJOENFb4y0IWTS5WH/hlnkqeXSPzvO2J0=" # DOCKER_USER
+    - secure: "ElCW9uU/1JAsoEuY3+RiCiwqN3056G2HIivVCd5X8qJyFfep2bm4wnIXm8MQj6cBKVzht3lL4dqPHziv2jHbHwN3FNREcQ0gruP6jDjNc7mvesSMEOgA+D22iuksY5vHbbQjO9MBpCuG9+oyeJ2o9Njdg/bRFsEEg4WwNjz9jCn0q91oebhbv11j0Z4Qc187r9qJsZzSZS85YLDW4/6ThVHcl6seqwf9KNR8BCLGQBWSgjkQwQulinqEViXLRbRvyEqio6c2mDfpsfgnr6MqUJqjq5GmtDeFrNW+9Yqy9pxS66ohYJwF/1NBfOOjijgGaWdVZ5Q83jdzSa93fDzT8BWz9egmtFupg9lDVGTl4fZj0WrGmiGdKXf5Hb2Kk+XAgjPd/3eOYGcdCGemOnnMMTCNO2xnsONjjpLCovG+YKCn2VLLGQZaKdUS3+uKoXWOR0tbb8UUItE5j+9fPFfLhpiK+/ttq/z2SP8akwChVMyDZkmUG6qsI//xY8pW5G75nD0PWMocYUQOejUl3ov4ESZqvWq3rK95Wa+1Z3WTJ1jggdzGLeNr6cJIavkCDalNFcsOFU5MmHJUnZGTPpwhe+PiE1tqnuT6PPIqq7sWLxT27sWXqPg1mGULBSy1skgYTrziDo8UEQcaW4rq6DQgnyFS+VzF8KD2dN27aykS65A=" # DOCKER_PASS
+
   matrix:
     - SEQUELIZE_DIALECT=mysql    SEQUELIZE_USER=root     SEQUELIZE_PORT=3306
     - SEQUELIZE_DIALECT=postgres SEQUELIZE_USER=postgres SEQUELIZE_PORT=5432
@@ -43,6 +52,33 @@ before_script:
   # For some reason, Travis ES comes with a 'tweets' index?!
   - "npm run prepare"
   - "curl -X DELETE http://localhost:9200/*"
+
+after_script:
+  - |
+      declare exitCode;
+
+      # -- [1] -------------------------------------------------------
+
+      $(npm bin)/travis-after-all
+      exitCode=$?
+
+      # -- [2] -------------------------------------------------------
+
+      if [ $exitCode -eq 0 ]; then
+        # BUILD SCCCESS
+
+        # Build the Docker Image
+        docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
+        export REPO=messagebot/messagebot-core
+        export TAG=`if [ "$TRAVIS_BRANCH" == "master" ]; then echo "latest"; else echo $TRAVIS_BRANCH ; fi`
+        docker build -f Dockerfile -t $REPO:$COMMIT .
+        docker tag $REPO:$COMMIT $REPO:$TAG
+        docker push $REPO
+      fi
+
+      if [ $exitCode -eq 1 ]; then
+        # BUILD FAILURE
+      fi
 
 os:
   - linux
