@@ -62,7 +62,7 @@ os:
 script: npm run test
 
 services:
-  - docker
   - redis-server
   - mysql
   - postgresql
+  - docker
