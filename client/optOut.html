@@ -1,19 +1,39 @@
 <html>
   <head>
     <title>MessageBot: Opt-Out</title>
-
-    <link rel="stylesheet" href="/bower_components/bootstrap/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="/bower_components/bootswatch-dist/css/bootstrap.min.css">
-
     <script src="%%TRACKINGDOMAIN%%/tracking/%%TEAMID%%/web.js"></script>
-    <script src="/bower_components/jquery/dist/jquery.min.js"></script>
-    <script src="/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha256-cCueBR6CsyA4/9szpPfrX3s49M9vUU5BgtiJj06wt/s=" crossorigin="anonymous"></script>
+
+    <style>
+      body {
+        font-family: "Arial Black", Gadget, sans-serif;
+        font-size: 14px;
+      }
+
+      .container {
+        padding: 10px;
+        margin: 10px;
+        border: 4px solid #cccccc;
+        border-radius: 52px;
+        width: 800px;
+      }
+
+      .button {
+        border: none;
+        color: white;
+        padding: 15px 32px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+      }
+    </style>
   </head>
 
   <body>
-    <div id="main" class="container">
-      <br />
-      <div class="jumbotron">
+    <p>&nbsp;</p>
+    <div align="center">
+      <div class="container" align="center">
         <h1>Opt-Out</h1>
 
         <div id='loading'><p><em>loading...</em></p></div>
@@ -23,10 +43,10 @@
         <div id='controlls'>
           <p>We are sorry that you don't want to hear from us any more.</p>
           <p>
-            <a id='listOutButton' class="btn btn-primary btn-lg">Opt-Out of this list</a>
-            <a id='listInButton' class="btn btn-info btn-lg">Opt-In to this list</a>
-            <a id='globalOutButton' class="btn btn-danger btn-lg">Opt-Out of all communications from us</a>
-            <a id='globalInButton' class="btn btn-success btn-lg">Opt-In of all communications from us</a>
+            <button id='listOutButton' class="button" style="background-color:orange;">Opt-Out of this list</button>
+            <button id='listInButton' class="button" style="background-color:blue;">Opt-In to this list</button>
+            <button id='globalOutButton' class="button" style="background-color:red;">Opt-Out of all communications from us</button>
+            <button id='globalInButton' class="button" style="background-color:green;">Opt-In of all communications from us</button>
           </p>
         </div>
       </div>
