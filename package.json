@@ -58,7 +58,7 @@
     "console": "actionhero console",
     "test": "NODE_ENV=test mocha --reporter dot",
     "migrate": "npm run migrate:sequelize && npm run migrate:elasticsearch",
-    "prepare": "npm update && npm run prepare:maxmind && npm run prepare:kibana",
+    "prepare": "npm run prepare:maxmind && npm run prepare:kibana",
     "migrate:elasticsearch": "node ./db/elasticsearch/teamSeeder.js",
     "migrate:sequelize": "sequelize db:migrate",
     "prepare:maxmind": "./bin/maxmind",
