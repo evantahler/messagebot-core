@@ -135,9 +135,9 @@ var MESSAGEBOT = MESSAGEBOT || {};
   MESSAGEBOT.trackingDomain     = '%%TRACKINGDOMAIN%%';
   MESSAGEBOT.apiRoute           = '%%APIROUTE%%';
   MESSAGEBOT.teamId             = '%%TEAMID%%';
-  MESSAGEBOT.cookieName         = 'MessageBotPersonGuid';
+  MESSAGEBOT.cookieName         = '%%CLIENT:TRACKING:WEB:COOKIENAME%%';
   MESSAGEBOT.initialized        = false;
-  MESSAGEBOT.cookieExpiry       = (1000 * 60 * 60 * 24 * 365); // 1 year
+  MESSAGEBOT.cookieExpiry       = %%CLIENT:TRACKING:WEB:COOKIEEXPIRY%%;
   MESSAGEBOT.pollDelay          = 500;
 
   MESSAGEBOT.data = {

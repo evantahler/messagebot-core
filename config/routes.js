@@ -37,6 +37,7 @@ exports.default = {
         { path: '/campaigns/folders',    action: 'campaigns:folders' },
         { path: '/campaigns/types',      action: 'campaigns:types' },
         { path: '/transports',           action: 'transports:list' },
+        { path: '/settings',             action: 'settings:list' },
       ],
 
       post: [
@@ -65,6 +66,7 @@ exports.default = {
         { path: '/event',                action: 'event:edit' },
         { path: '/message',              action: 'message:edit' },
         { path: '/template',             action: 'template:edit' },
+        { path: '/setting',              action: 'setting:edit' },
       ],
 
       delete: [

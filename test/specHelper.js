@@ -4,6 +4,8 @@ var request = require('request');
 var should  = require('should');
 var exec    = require('child_process').exec;
 
+process.env.NODE_ENV = 'test'; // just to be safe
+
 var specHelper = {
   actionhero: new actionheroPrototype(),
   api: null,
