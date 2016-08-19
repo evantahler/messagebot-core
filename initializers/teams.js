@@ -96,6 +96,7 @@ module.exports = {
         jobs.push(function(done){
           fs.lstat(teamDir, function(error, stats){
             if(error && !error.toString().match(/ENOENT/)){ return done(error); }
+            if(error && error.toString().match(/EEXIST/)){ dirExists = true; }
             if(stats && (stats.isDirectory() || stats.isSymbolicLink())){ dirExists = true; }
             done();
           });
