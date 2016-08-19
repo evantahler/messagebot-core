@@ -14,7 +14,7 @@ module.exports = {
 
       load: function(callback){
         var jobs = [];
-        if(api.running){
+        if(api.running && api.env !== 'test'){
           api.models.team.findAll().then(function(teams){
             api.teams.teams = teams;
 

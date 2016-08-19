@@ -12,6 +12,12 @@ var loader = function(api){
     });
   };
 
+  var destorySettings = function(team){
+    api.models.setting.destroy({
+      where: { teamId: team.id }
+    });
+  };
+
   /*--- Public Model ---*/
 
   return {
@@ -43,10 +49,15 @@ var loader = function(api){
       {
         hooks: {
           afterCreate:  function(){ reloadTeams(); },
-          afterDestroy: function(){ reloadTeams(); },
           afterUpdate:  function(){ reloadTeams(); },
           afterSave:    function(){ reloadTeams(); },
           afterUpsert:  function(){ reloadTeams(); },
+          afterDestroy: function(){
+            var team = this;
+            reloadTeams();
+            destorySettings(team);
+          },
+
         },
 
         instanceMethods: {
