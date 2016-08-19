@@ -62,7 +62,14 @@ module.exports = {
                 }).then(function(){
                   api.log(['[Team #%s] set default setting for `%s` to `%s`', team.id, settingParent.key, settingParent.value]);
                   done();
-                }).catch(done);
+                }).catch(function(error){
+                  // another instance created the setting for us; it's OK.
+                  if(error.toString().match(/SequelizeUniqueConstraintError/)){
+                    return done();
+                  }else{
+                    return done(error);
+                  }
+                });
               });
             }
           });
