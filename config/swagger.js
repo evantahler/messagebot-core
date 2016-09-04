@@ -18,6 +18,7 @@ exports.default = {
         'list'     : ['list', 'lists'],
         'template' : ['template'],
         'campaign' : ['campaign'],
+        'team'     : ['settings', 'setting'],
       },
       // Generate documentation for simple actions specified by action-name
       documentSimpleRoutes: false,
