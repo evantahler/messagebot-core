@@ -71,9 +71,9 @@ exports.listPeopleAdd = {
               }).catch(done);
             });
           });
-
-          complete();
         });
+
+        complete();
       }
 
       else if(data.params.file){
@@ -97,7 +97,7 @@ exports.listPeopleAdd = {
             }
 
             person.data.device = 'unknown';
-            
+
             person.data.listOptOuts = [];
             person.data.globalOptOut = false;
 
