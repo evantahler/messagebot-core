@@ -61,11 +61,11 @@ exports.listPeopleAdd = {
             var person = new api.models.person(data.team, personGuid);
             person.hydrate(function(error){
               if(error){ return done(new Error('Error adding guid #' + personGuid + ': ' + String(error))); }
-              api.models.listPerson.create({
+              api.models.listPerson.findOrCreate({where: {
                 personGuid: person.data.guid,
                 listId: list.id,
                 teamId: list.teamId,
-              }).then(function(){
+              }}).then(function(listPerson){
                 data.response.personGuids.push(person.data.guid);
                 done();
               }).catch(done);
@@ -76,7 +76,7 @@ exports.listPeopleAdd = {
         complete();
       }
 
-      else if(data.params.file){
+      else if(data.params.file && data.params.file.path){
         var file = data.params.file.path;
         var fileStream = fs.createReadStream(file).on('error', next);
         var csvStream = csv({
@@ -102,14 +102,27 @@ exports.listPeopleAdd = {
             person.data.globalOptOut = false;
 
             person.create(function(error){
-              if(error){ return done(new Error('Error adding person ' + JSON.stringify(d) + ' | ' + error)); }
-              api.models.listPerson.create({
-                personGuid: person.data.guid,
+              if(error){
+                // if this person is already in our system, we can use the existing person
+                // TODO: This is brittle as is relies on string parsing...
+                if(error.toString().match(/uniqueness violated via/)){
+                  var existingPersonGuid = error.toString().split('violated via #')[1];
+                }else{
+                  return done(new Error('Error adding person ' + JSON.stringify(d) + ' | ' + error));
+                }
+              }
+
+              api.models.listPerson.findOrCreate({where: {
+                personGuid: (existingPersonGuid || person.data.guid),
                 listId: list.id,
                 teamId: list.teamId,
-              }).then(function(){
-                data.response.personGuids.push(person.data.guid);
-                api.tasks.enqueueIn(api.config.elasticsearch.cacheTime * 1, 'people:buildCreateEvent', {guid: person.data.guid, teamId: data.team.id}, 'messagebot:people', done);
+              }}).then(function(){
+                data.response.personGuids.push((existingPersonGuid || person.data.guid));
+                if(!existingPersonGuid){
+                  api.tasks.enqueueIn(api.config.elasticsearch.cacheTime * 1, 'people:buildCreateEvent', {guid: person.data.guid, teamId: data.team.id}, 'messagebot:people', done);
+                }else{
+                  return done();
+                }
               }).catch(done);
             });
           });
