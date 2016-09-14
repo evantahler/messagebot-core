@@ -61,6 +61,7 @@ exports.templateRender = {
 
   inputs: {
     personGuid: { required: true },
+    temporaryTemplate: { required: false },
     templateId: {
       required: true,
       formatter: function(p){ return parseInt(p); }
@@ -75,6 +76,7 @@ exports.templateRender = {
       var person = new api.models.person(data.team, data.params.personGuid);
       person.hydrate(function(error){
         if(error){ return next(error); }
+        if(data.params.temporaryTemplate){ template.template = data.params.temporaryTemplate; }
         template.render(person, null, null, null, function(error, html, view){
           if(error){ return next(error); }
           if(data.connection.extension === 'html'){

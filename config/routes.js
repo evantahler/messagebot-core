@@ -52,6 +52,8 @@ exports.default = {
         { path: '/event',                action: 'event:create' },
         { path: '/message',              action: 'message:create' },
         { path: '/template',             action: 'template:create' },
+        { path: '/template/render.html', action: 'template:render' },
+        { path: '/template/render',      action: 'template:render' },
         { path: '/template/copy',        action: 'template:copy' },
       ],
 
