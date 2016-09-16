@@ -65,6 +65,14 @@ exports.templateRender = {
     templateId: {
       required: true,
       formatter: function(p){ return parseInt(p); }
+    },
+    trackBeacon: {
+      required: false,
+      default: false,
+      formatter: function(p){
+        if(p === 'true' || p === true){ return true; }
+        return false;
+      }
     }
   },
 
@@ -77,7 +85,7 @@ exports.templateRender = {
       person.hydrate(function(error){
         if(error){ return next(error); }
         if(data.params.temporaryTemplate){ template.template = data.params.temporaryTemplate; }
-        template.render(person, null, null, null, function(error, html, view){
+        template.render(person, null, null, null, data.params.trackBeacon, function(error, html, view){
           if(error){ return next(error); }
           if(data.connection.extension === 'html'){
             data.toRender = false;

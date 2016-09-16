@@ -45,7 +45,7 @@ var loader = function(api){
     };
   };
 
-  var buildView = function(team, person, events, campaign, list, template){
+  var buildView = function(team, person, events, campaign, list, template, trackBeacon){
     var view = {};
 
     view.campaign = {};
@@ -58,9 +58,13 @@ var loader = function(api){
     view.beaconLink += 'verb=read&';
     view.beaconLink += 'guid=%%MESSAGEGUID%%';
 
-    view.beacon = '<img src="';
-    view.beacon += view.beaconLink;
-    view.beacon += '" >';
+    if(trackBeacon === true){
+      view.beacon = '<img src="';
+      view.beacon += view.beaconLink;
+      view.beacon += '" >';
+    }else{
+      view.beacon = '';
+    }
 
     view.track = function(){
       return function(val, render){
@@ -156,7 +160,7 @@ var loader = function(api){
       {
         instanceMethods: {
 
-          render: function(person, message, campaign, list, callback, includedIds){
+          render: function(person, message, campaign, list, trackBeacon, callback, includedIds){
             var template = this;
             var jobs     = [];
             var events   = []; //TODO: Do we load in the events?  How many?
@@ -181,7 +185,7 @@ var loader = function(api){
             });
 
             jobs.push(function(done){
-              view = buildView(team, person, events, campaign, list, template);
+              view = buildView(team, person, events, campaign, list, template, trackBeacon);
               done();
             });
 
@@ -221,7 +225,7 @@ var loader = function(api){
                 });
 
                 includeJobs.push(function(includeDone){
-                  includedTemplate.render(person, message, campaign, list, function(error, includedHtml){
+                  includedTemplate.render(person, message, campaign, list, trackBeacon, function(error, includedHtml){
                     if(error){ return includeDone(error); }
                     html = html.replace(match, includedHtml);
                     includeDone();
