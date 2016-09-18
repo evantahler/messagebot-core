@@ -137,7 +137,7 @@ exports.messageTrack = {
     verb: {
       required: true,
       validator: function(p){
-        if(['read', 'act'].indexOf(p) < 0){
+        if(['read', 'act', 'test'].indexOf(p) < 0){
           return 'verb not allowed';
         }
         return true;
@@ -161,11 +161,16 @@ exports.messageTrack = {
 
     var message = new api.models.message(data.team, data.params.guid);
 
-    // testing GUID
-    if(data.params.guid === '%%MESSAGEGUID%%'){
-      data.toRender = false;
-      data.connection.rawConnection.responseHttpCode = 200;
-      data.connection.sendFile('tracking/tracking.gif');
+    // testing GUID or verb
+    if(data.params.guid === '%%MESSAGEGUID%%' || data.params.verb === 'test'){
+      if(data.params.link){
+        data.connection.rawConnection.responseHeaders.push(['Location', data.params.link]);
+        data.connection.rawConnection.responseHttpCode = 302;
+      }else if(data.connection.extension === 'gif'){
+        data.toRender = false;
+        data.connection.rawConnection.responseHttpCode = 200;
+        data.connection.sendFile('tracking/tracking.gif');
+      }
       return next();
     }
 
