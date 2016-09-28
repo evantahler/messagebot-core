@@ -6,6 +6,7 @@ exports.default = {
         { path: '/swagger',              action: 'swagger' },
         { path: '/system/status',        action: 'system:status' },
         { path: '/system/documentation', action: 'system:documentation' },
+        { path: '/system/navigation',    action: 'system:navigation' },
         { path: '/user',                 action: 'user:view' },
         { path: '/users',                action: 'users:list' },
         { path: '/users/roles',          action: 'users:roles' },

@@ -178,20 +178,7 @@ var transport = {
 api.transports.push(transport);
 ```
 
-## Front-End Navigation and Routes
-
-In your plugin, you can include new parts of the front-end application. Be sure to namespace your plugin!
-To Link in newly created pages to the Angular front-end application, use `api.navigation.routes`:
-
-```js
-api.navigation.routes.push({route: '/events/recent',                page: 'pages/events/recent.html',    title: 'MessageBot: Events',      auth: true});
-api.navigation.routes.push({route: '/events/recent/:page',          page: 'pages/events/recent.html',    title: 'MessageBot: Events',      auth: true});
-api.navigation.routes.push({route: '/events/search',                page: 'pages/events/search.html',    title: 'MessageBot: Events',      auth: true});
-api.navigation.routes.push({route: '/events/search/:query',         page: 'pages/events/search.html',    title: 'MessageBot: Events',      auth: true});
-api.navigation.routes.push({route: '/events/search/:query/:page',   page: 'pages/events/search.html',    title: 'MessageBot: Events',      auth: true});
-api.navigation.routes.push({route: '/event/new',                    page: 'pages/event/new.html',        title: 'MessageBot: Event',       auth: true});
-api.navigation.routes.push({route: '/event/:guid',                  page: 'pages/event/view.html',       title: 'MessageBot: Event',       auth: true});
-```
+## Front-End Routes
 
 To Modify the navigation elements of the application (the top-nav of the website), use `api.navigation.navigation`:
 
@@ -200,6 +187,7 @@ api.navigation.navigation.push({
   title: 'Data',
   align: 'left',
   glyphicon: 'glyphicon-equalizer',
+  loggedIn: true,
   elements: [
     {route: '/#/people/recent', title: 'People: Recent', glyphicon: 'glyphicon-user', highlights: ['^\/people\/recent.*$']},
     {route: '/#/people/search', title: 'People: Search', glyphicon: 'glyphicon-user', highlights: ['^\/people\/search.*$']},
