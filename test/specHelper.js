@@ -76,7 +76,7 @@ var specHelper = {
     var self = this;
     var jobs = [];
 
-    console.log('\r\n*** MIGRATIING TEST DATABASES ***\r\n');
+    console.log('\r\n----- MIGRATIING TEST DATABASES -----\r\n');
 
     jobs.push(function(done){
       if(self.api){ return done(); }
@@ -102,7 +102,7 @@ var specHelper = {
     });
 
     jobs.push(function(done){
-      console.log('\r\n*** TEST DATABASES MIGRATED***\r\n');
+      console.log('\r\n----- TEST DATABASES MIGRATED -----\r\n');
       done();
     });
 
@@ -113,7 +113,7 @@ var specHelper = {
     var self = this;
     var jobs = [];
 
-    console.log('\r\n*** CLEARING TEST DATABASES ***\r\n');
+    console.log('\r\n----- CLEARING TEST DATABASES -----\r\n');
 
     jobs.push(function(done){
       if(self.api){ return done(); }
@@ -129,7 +129,7 @@ var specHelper = {
     });
 
     jobs.push(function(done){
-      console.log('\r\n*** TEST DATABASES CLEARED***\r\n');
+      console.log('\r\n----- TEST DATABASES CLEARED-----\r\n');
       done();
     });
 
@@ -157,10 +157,10 @@ var specHelper = {
     command += ' --email "admin@localhost.com"';
     command += ' --password "password"';
 
-    console.log('\r\n*** Creating Test Team ***\r\n');
+    console.log('\r\n----- Creating Test Team -----\r\n');
     self.api.utils.doShell(command, function(error){
       if(error){ console.log('error', error); return callback(error); }
-      console.log('\r\n*** Test Team Created ***\r\n');
+      console.log('\r\n----- Test Team Created -----\r\n');
       return callback();
     }, false);
   },

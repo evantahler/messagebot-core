@@ -80,7 +80,7 @@ describe('integartion:template', function(){
     after(function(done){ template.destroy().then(function(){ done(); }); });
 
     it('renders a template (happy, no message)', function(done){
-      template.render(person, null, null, null, null, function(error, html, view){
+      template.render(person, null, null, null, true, function(error, html, view){
         should.not.exist(error);
         html.should.equal('Hello there, fname');
         view.person.data.firstName.should.equal('fname');
@@ -92,7 +92,7 @@ describe('integartion:template', function(){
     });
 
     it('renders a template (happy, with message)', function(done){
-      template.render(person, message, null, null, null, function(error, html, view){
+      template.render(person, message, null, null, true, function(error, html, view){
         should.not.exist(error);
         html.should.equal('Hello there, fname');
         view.person.data.firstName.should.equal('fname');
@@ -105,7 +105,7 @@ describe('integartion:template', function(){
 
     it('expands beacons properly', function(done){
       template.template = 'Hello there, {{ person.data.firstName }} {{{ beacon }}}';
-      template.render(person, message, null, null, null, function(error, html, view){
+      template.render(person, message, null, null, true, function(error, html, view){
         should.not.exist(error);
         html.should.equal('Hello there, fname <img src="http://tracking.site.com/api/message/track.gif?verb=read&guid=' + message.data.guid + '" >');
         view.beaconLink.should.equal('http://tracking.site.com/api/message/track.gif?verb=read&guid=' + message.data.guid);
