@@ -234,8 +234,8 @@ describe('actions:lists', function(){
           listId: listId,
           personGuids: person.data.guid
         }, function(response){
-          response.error.should.equal('Error: Validation error');
-          response.personGuids.length.should.equal(0);
+          should.not.exist(response.error);
+          response.personGuids.length.should.equal(1);
           done();
         });
       });
@@ -246,7 +246,7 @@ describe('actions:lists', function(){
           file: {path: __dirname + '/../../samples/email-upload.csv' }
         }, function(response){
           should.not.exist(response.error);
-          response.personGuids.length.should.equal(3);
+          response.personGuids.length.should.equal(4);
           csvPeople = response.personGuids;
           done();
         });
@@ -353,11 +353,12 @@ describe('actions:lists', function(){
           listId: listId,
         }, function(response){
           should.not.exist(response.error);
-          response.total.should.equal(3);
-          response.people.length.should.equal(3);
+          response.total.should.equal(4);
+          response.people.length.should.equal(4);
           csvPeople.should.containEql(response.people[0].guid);
           csvPeople.should.containEql(response.people[1].guid);
           csvPeople.should.containEql(response.people[2].guid);
+          csvPeople.should.containEql(response.people[3].guid);
           done();
         });
       });
@@ -369,7 +370,7 @@ describe('actions:lists', function(){
           size: 1
         }, function(response){
           should.not.exist(response.error);
-          response.total.should.equal(3);
+          response.total.should.equal(4);
           response.people.length.should.equal(1);
           csvPeople.should.containEql(response.people[0].guid);
           done();
