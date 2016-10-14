@@ -88,7 +88,7 @@
     "kibana": "./bin/kibana -run",
     "faker:run": "node db/faker/run.js",
     "faker:seed": "node db/faker/seed.js",
-    "ui": "webpack --progress --colors --watch",
-    "prepublish": "webpack --progress --colors --optimize-minimize"
+    "ui:serve": "webpack --progress --colors --watch",
+    "ui:build": "webpack --progress --colors --optimize-minimize"
   }
 }
