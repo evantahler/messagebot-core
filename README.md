@@ -1,4 +1,3 @@
-
 # MessageBot.io
 *A modern customer relationship and analytics platform*
 
