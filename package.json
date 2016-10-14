@@ -9,7 +9,7 @@
     "url": "https://github.com/messagebot/messagebot-core.git"
   },
   "engines": {
-    "node": "^4.2.0"
+    "node": ">=6.0.0"
   },
   "dependencies": {
     "actionhero": "^15.1.0",
