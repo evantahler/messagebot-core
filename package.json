@@ -89,6 +89,6 @@
     "faker:run": "node db/faker/run.js",
     "faker:seed": "node db/faker/seed.js",
     "ui:serve": "webpack --progress --colors --watch",
-    "ui:build": "webpack --progress --colors --optimize-minimize"
+    "ui:build": "webpack --optimize-minimize"
   }
 }
