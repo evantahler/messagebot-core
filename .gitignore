@@ -15,3 +15,5 @@ npm-debug.log
 .DS_Store
 .env
 dump.rdb
+
+public/js/app.bundle.js

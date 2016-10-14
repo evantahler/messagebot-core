@@ -206,6 +206,16 @@ api.navigation.navigation.push({
 
 ---
 
+# Front-End UI
+
+## Developing
+
+- Run `npm run ui` to have webpack compile and build this project as the source files change
+
+- When you `npm publish`, we'll build and minify webpack
+
+---
+
 # Client-Side Tracking
 
 ## Image Link Tracking

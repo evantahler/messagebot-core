@@ -1,5 +1,3 @@
 bin/templates/
-site/
-public/bower*
 node_modules/
 coverage/
