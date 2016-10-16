@@ -6,8 +6,6 @@ RUN apk add --update bash wget curl nodejs git python make gzip g++
 RUN mkdir -p /app
 WORKDIR /app
 
-RUN echo '{ "allow_root": true }' > /root/.bowerrc
-
 COPY . /app
 
 RUN npm install

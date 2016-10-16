@@ -7,8 +7,6 @@ locales/*
 tmp/*
 
 public/js/actionhero/actionheroClient.*
-public/js/navigation.js
-public/js/routes.js
 public/tracking/*/*
 
 npm-debug.log
