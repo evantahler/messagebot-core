@@ -9,7 +9,7 @@ exports.default = {
     if(cluster.isMaster){
       logger.transports.push(function(api, winston){
         return new (winston.transports.Console)({
-          colorize: true,
+          colorize: process.env.NODE_ENV === 'development' ? true : false,
           level: 'info',
           timestamp: function(){ return api.id + ' @ ' + new Date().toISOString(); },
         });

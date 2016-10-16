@@ -22,19 +22,3 @@ exports.default = {
     };
   }
 };
-
-exports.staging = {
-  i18n: function(){
-    return {
-      updateFiles: false
-    };
-  }
-};
-
-exports.procution = {
-  i18n: function(){
-    return {
-      updateFiles: false
-    };
-  }
-};
