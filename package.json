@@ -16,7 +16,7 @@
     "ah-elasticsearch-orm": "^0.1.5",
     "ah-resque-ui": "^0.0.6",
     "ah-swagger-plugin": "^1.0.0",
-    "async": "^2.0.0",
+    "async": "^2.1.0",
     "bcrypt": "^0.8.5",
     "dateformat": "^1.0.12",
     "easy-table": "^1.0.0",
