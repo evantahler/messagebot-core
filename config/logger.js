@@ -1,5 +1,6 @@
 var fs = require('fs');
 var cluster = require('cluster');
+var env = process.env.NODE_ENV || 'development';
 
 exports.default = {
   logger: function(api){
@@ -9,7 +10,7 @@ exports.default = {
     if(cluster.isMaster){
       logger.transports.push(function(api, winston){
         return new (winston.transports.Console)({
-          colorize: process.env.NODE_ENV === 'development' ? true : false,
+          colorize: env === 'development' ? true : false,
           level: 'info',
           timestamp: function(){ return api.id + ' @ ' + new Date().toISOString(); },
         });
