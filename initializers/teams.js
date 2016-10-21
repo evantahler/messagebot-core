@@ -104,7 +104,10 @@ module.exports = {
 
         jobs.push(function(done){
           if(dirExists){ return done(); }
-          fs.mkdir(teamDir, '0766', done);
+          fs.mkdir(teamDir, '0766', (error) => {
+            if(process.env.NODE_ENV !== 'test'){ done(error); }
+            else{ done(); }
+          });
         });
 
         ['web.js', 'optOut.html'].forEach(function(type){
