@@ -65,7 +65,7 @@
     "react-bootstrap": "^0.30.2",
     "react-datetime": "^2.5.0",
     "react-dom": "^15.3.2",
-    "react-highcharts": "^10.0.0",
+    "react-highcharts": "^11.0.0",
     "react-leaflet": "^0.12.3",
     "react-leaflet-heatmap-layer": "messagebot/react-leaflet-heatmap-layer",
     "react-notification-system": "^0.2.7",
