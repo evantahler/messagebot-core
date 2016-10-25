@@ -41,7 +41,6 @@
 
 - `npm install`
 - `cp .env.example .env`, and adjust according to your system/needs
-- `npm run prepare` (this will install bower components, download GeoLocation databases, etc)
 
 ## Configuration and Running
 
@@ -111,7 +110,7 @@ The MessageBot CLI is used to manage system-level data, IE: the creation and rem
 
 ## Testing
 
-`npm test` should prepare and run everything you need, including the creation and seeding of both your ElasticsSearch and Relational database.  Ensure that the environment and various config files are prepared correctly.
+`npm test` should postinstall and run everything you need, including the creation and seeding of both your ElasticsSearch and Relational database.  Ensure that the environment and various config files are prepared correctly.
 
 **Notes**
 - At this time, the test suite will only run on MySQL or Postgres, and assumes the test databases are local (on the same host) as where you are running the test suite code.

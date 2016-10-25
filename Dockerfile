@@ -9,7 +9,6 @@ WORKDIR /app
 COPY . /app
 
 RUN npm install
-RUN npm run prepare
 RUN npm run ui:build
 RUN npm prune --production
 
