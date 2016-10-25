@@ -12,6 +12,7 @@ services:
     environment:
       UNICAST_HOSTS: elasticsearch-leader
       TYPE: GATEWAY
+      PLUGINS: mobz/elasticsearch-head,lmenezes/elasticsearch-kopf/2.0
     ports:
       - '9200'
 
@@ -21,12 +22,14 @@ services:
       UNICAST_HOSTS: elasticsearch-gateway
       TYPE: MASTER
       MIN_MASTERS: 1
+      PLUGINS: mobz/elasticsearch-head,lmenezes/elasticsearch-kopf/2.0
 
   elasticsearch-data:
     image: itzg/elasticsearch
     environment:
       UNICAST_HOSTS: elasticsearch-leader,elasticsearch-gateway
       TYPE: DATA
+      PLUGINS: mobz/elasticsearch-head,lmenezes/elasticsearch-kopf/2.0
 
   ### MYSQL ###
   mysql-leader:
