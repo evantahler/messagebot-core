@@ -1,5 +1,5 @@
 import React from 'react';
-import LazyEditPanel from '../utils/LazyEditPanel.jsx';
+import LazyEditPanel from '../utils/lazyEditPanel.jsx';
 
 const UserEdit = React.createClass({
   getInitialState: function(){

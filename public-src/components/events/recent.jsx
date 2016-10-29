@@ -1,5 +1,5 @@
 import React from 'react';
-import RecordsList from './../utils/RecordsList.jsx';
+import RecordsList from './../utils/recordsList.jsx';
 import HeatMap from './../utils/maps/heatMap.jsx';
 import StackedHistogram from './../utils/stackedHistogram.jsx';
 

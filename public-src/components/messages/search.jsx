@@ -1,6 +1,6 @@
 import React from 'react';
 import { Row, Col, Form, Button, FormGroup, ControlLabel, FormControl } from 'react-bootstrap';
-import RecordsList from './../utils/RecordsList.jsx';
+import RecordsList from './../utils/recordsList.jsx';
 import HeatMap from './../utils/maps/heatMap.jsx';
 import StackedHistogram from './../utils/stackedHistogram.jsx';
 
