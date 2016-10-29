@@ -71,7 +71,7 @@ after_success:
         if [ "$FLYNN_APP" = "" ]; then echo "skipping branch $TRAVIS_BRANCH" && exit 0; fi
 
         git pull
-        git remote add flynn https://user:$FLYNN_KEY@git.site.com/$FLYNN_APP.git
+        git remote add flynn https://user:$FLYNN_KEY@git.messagebot.io/$FLYNN_APP.git
         git push flynn master
       fi
 
