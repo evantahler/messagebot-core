@@ -80,7 +80,7 @@
     "console": "actionhero console",
     "test": "NODE_ENV=test mocha --reporter dot",
     "migrate": "npm run migrate:sequelize && npm run migrate:elasticsearch",
-    "postinstall": "npm run postinstall:maxmind && npm run ui:build",
+    "postinstall": "npm run postinstall:maxmind",
     "migrate:elasticsearch": "node ./db/elasticsearch/teamSeeder.js",
     "migrate:sequelize": "sequelize db:migrate",
     "postinstall:maxmind": "./bin/maxmind",
