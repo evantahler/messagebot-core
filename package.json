@@ -70,7 +70,7 @@
     "mocha": "latest",
     "should": "latest",
     "travis-after-all": "^1.4.4",
-    "eslint-plugin-react": "^6.3.0",
+    "eslint-plugin-react": "^6.3.0"
   },
   "scripts": {
     "help": "actionhero help",
