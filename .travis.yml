@@ -57,6 +57,7 @@ before_script:
 
 after_success:
   - |
+      echo "*** DEPLOYING ***"
       declare exitCode;
 
       $(npm bin)/travis-after-all
