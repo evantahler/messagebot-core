@@ -86,7 +86,7 @@
     "postinstall:maxmind": "./bin/maxmind",
     "faker:run": "node db/faker/run.js",
     "faker:seed": "node db/faker/seed.js",
-    "ui:serve": "webpack --progress --colors --watch",
+    "ui:watch": "webpack --progress --colors --watch",
     "ui:build": "webpack --optimize-dedupe --progress"
   }
 }

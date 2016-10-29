@@ -12,11 +12,11 @@ const Home = React.createClass({
            <Jumbotron>
              <Row>
                <Col md={2}>
-                 <img src="/public/images/logo/logo.png" width="100%" />
+                 <img className="hover_robot" src="/public/images/logo/logo.png" width="100%" />
                </Col>
                <Col md={10}>
                  <h1>MessageBot</h1>
-                 <p>A modern customer relationship and analytics platform</p>
+                 <p>A future-proof customer relationship and analytics platform that gows with you!</p>
                </Col>
              </Row>
            </Jumbotron>

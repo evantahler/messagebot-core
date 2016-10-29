@@ -1,3 +1,24 @@
+/* logo hovering */
+
+.hover_robot {
+  animation: hover_anmiation 2s ease-in-out infinite;
+  position: relative;
+  left: 0;
+  bottom: 0;
+}
+
+@keyframes hover_anmiation {
+  0 {
+    bottom: 0;
+  }
+  50% {
+    bottom: 10px;
+  }
+  100% {
+    bottom: 0;
+  }
+}
+
 /* big modal */
 
 .wide-iframe{

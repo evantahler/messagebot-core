@@ -209,7 +209,7 @@ api.navigation.navigation.push({
 
 ## Developing
 
-- Run `npm run ui:serve` to have webpack compile and build this project as the source files change
+- Run `npm run ui:watch` to have webpack compile and build this project as the source files change
 - Run `npm run ui:build` to have webpack compile, build, and minify the ui appropriately for deployment
 
 

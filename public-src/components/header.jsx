@@ -67,7 +67,7 @@ const Header = React.createClass({
       <div>
         <br />
 
-        <Navbar>
+        <Navbar inverse>
           <_NavHeaderAndIcon loggedIn={loggedIn} />
           <Navbar.Collapse>
             <Nav pullRight> </Nav>
