@@ -31,10 +31,8 @@ env:
     - ELASTICSEARCH_VERSION="2.3.4"
     - ELASTICSEARCH_URLS="http://localhost:9200"
 
-    # Docker Build Settings
-    - secure: "BISkx6QvPMh1jC+oG9c5OtqzGhQilcY6sWeELU9WY5C78w9PQ+ICKN3VpqoQyU/bZUjvtvI03D43aQy8UszYSGtzleeuHr2BNrZICoUGTvTbTCXk27FVUVyC8+nJ8+4G89c90TdKE24e4oKcshaHhliwFmcXPzcGzHpjbGT4YhuuN34iIpBvPk03VQ5RPJWrDQh71m/PhQTyiHO+nUUKiidbN+L+yhWY7Ht6HYD/LF10QmWtA3XuRHv2Gq/7BufO9Tldc/KHEZloqGqKdr4Gnut8jTnnysuUC+zlX1vbDvsyFUkjW8DYZ9gU7Y6QG1nUUCD0ykFNyEx0dJh/oBexaWRKznlYIoYrOv/hnPTP7H7wcfWdkx7wfY6l3heqTe5DcQtIEO7145Ij+kBctTGBQ1c2cOUwaN6EQ5JRgkAT72DePc1we5sg5xo4J3WrSVMFNlVS2FsfsL3u0HoiLfJoV2C+EzK9oi46ekifuDmduCGeomLFtJ13sO+z+ixhkmMnTO0y5P/+qTNYLWMCklHqvIoiljaf1bcsuQ8g1sYVoQEtYby+cB+hXipvT6FWByHx++3xK1VyPisSAeSip3NCRnzbXGWwwS9LQmc5KzjtX+y81O20R0wkoJdk8VvmrgFmLpciZ7x2OPi/xhVeLoBJX66eL6ZxfTbHy+fKRc27fZM=" # DOCKER_EMAIL
-    - secure: "mHBkmJQFTgebRGQEYv+wWqd/wDDzywPNijY9Jeu3/dlVmlz5Y20zwEF+EgY/0GGh90Jde99D7iTDstP6w+hMLdQ2zVD8I8NaOQAhq+BgRvAGGmFDmUQzvmf6sqXViX4jixvD+EobQVaTrpBlMy6vz1woeGjYsjUBnCPQMGvsEzbT0hIBohSDGVc28DMwSq3PVVhop4CGDfbAuZbQtpPS7wfbmpprbmcq3G0LoUtHOLcXXZQjPCj7kcwOdc2wF96wBG3mhsU57ObpjjEhB8YPyg1q0WwHkzC0YEnFsuJM6GfauBkKWFKekuQIx9XycqFSKpyE8Q/IuCGodO51fD0+awJ7xKnWmThCr1SI2uprzIw8gIRFzpT3qgAh5xBaKzeyOhVFpaDiKaMVg03rt9Mz3w0UV3471xhgPj9ZWU7Zz8KVtu0BOWfw0qIbLxdVL3F8XCaAFASNSIeACsHHe7p/fQ7RdrU5QGuxXqiQ8Jai7hR5Es0gzTcM3B74ZY/SDbTl4+DeG6E4ZSQVCGZO5xgve/Alqxr2Ad1oT/87Dhw6G4H8ozkpM4C4gsmgwlzPLlq/gyqqYm8IS7YKutxBoK2/hT2rglR27IBGcWb415h84pJ15U1vquiQEjwt3+91udN/oPKEUuuJYcrJOENFb4y0IWTS5WH/hlnkqeXSPzvO2J0=" # DOCKER_USER
-    - secure: "JnTkaTl7ipuSffU/bdJSQB2+kzolggGjxH0AjU07s7Q5xA7VlENUP+YasgUSxD4IjEJRBghOhYagqsbMoBk+anwtvPaaSHx5E69likUSZTvFoWPIuVfh4m27A0w8FtPbu+sXD7I4IDW8dIxOW3D76boOnBMemMRADeXrNiNLbnvCNwzHlzo4rHLG1v7RLkqj6BGoAhUqaHGZE2OVAl30Y4kUp0FKrscZ6dGp/aPsHGFOHx20riL1E2GU+f+mPd1xENZiBnxYjYLaU3TL+0jMhU/Oq00C9OQPoqN20X5PF/wPJRavesyZfpOLDqE7iC7MgL/2g7eGgF5aJMh2fHNbrK6GOrdYzfQ0oN+C7uJiKG6wuf6mTOCUFl/tO2Q0SwS6++W24h9AYyLFHJmHVo/yyhSNbTRd8fqN81BC2Z9uRmLjkgJwLN4EzvgP6bBbW3e2S3m6NiMjm1Ks8hSrscnLqvLlknmxyOb9g7doDvGkWM82JAFdxHu3rVauIZI5dgqXdbAWUFuhFIWWBWKJa7gNRA1X2/wySqtn7XRph6wvWuV1hI639odBniunaCd4feESWtX8/7SAN0aQO/azwLubw8fKv+PDOYY0hJ9jpxcqxQ5Nn+57nZrMETOgU5eFZljpHtHMjWtOZzUz+7rlmRr059ZEq6ing6qqJpNjCWmVmJg=" # DOCKER_PASS
+    # Flynn Deployment
+    - secure: "vGSAR4oqA1uFTAq8oyGBKGCRLMBXkFnZs3wqy/1KB/4YNlBe0BFIxVTKRVNwjNdxG2UrtMqo7xp/XcI0O3YOg+LybtRQ/hnbXxDZeC9I0AEFXvbnBSEhN8cOsifzmQbgXoNXnH4It/69zw3HnJCSuKKNrHYBRiqQIc+VLDfdV/TcBkKzm4P7quePOAmJrqwAjabmvMjh2mLueVN4D6ZQ7/0sj0P9chalxd2iaCJOrquRd+4VU4psE7WzBvb0ExU80uTtEMnpbcFF4JUziDNDCYVB5/xcCFL+f275JcTWRNPuxEyGr+moilrg3VH/jFA30HgcvV8DquMkc7ItgLSK/OeZkBnPJmZB6vCVYfAjMqE+m59olvM3R7BliR3cY0RE+WT5fJJrmoxAqIYRNwUNvPbfCtCp6jmusTBz6RTBeIeL57zjbfDLQWUi4jdr9L3M0drcl03lSQD6WYCWQFhXh02ujWiO3NBheehCDnKDx0BfXei8dSvb6hbP77SR8CCUnYLqiicpQRN2aAKFx/PVKNV+k4NbbGFaY9A0AmeOAJMH96F0z8yr2vhi+8XO4VVkC2t2kr9VkvyhDRGJyXr2JnNkgDUIyLV1QQqvYhLx4N8l+B2pXU2XvxX59kiz5UdCJmFuK3Kv64l4zL/6XWUJHbMkFM5VcdT90wj5+ARpwOQ="
 
   matrix:
     - SEQUELIZE_DIALECT=mysql    SEQUELIZE_USER=root     SEQUELIZE_PORT=3306
@@ -57,8 +55,30 @@ before_script:
   - "npm run ui:build"
   - "curl -X DELETE http://localhost:9200/*"
 
-after_script:
-  - ./bin/travis-build-docker
+after_success:
+  - |
+      declare exitCode;
+
+      $(npm bin)/travis-after-all
+      exitCode=$?
+
+      if [ $exitCode -eq 0 ]; then
+        FLYNN_APP=""
+
+        if [ "$TRAVIS_BRANCH" = "master" ]; then FLYNN_APP="staging"; fi
+        if [ "$TRAVIS_BRANCH" = "production" ]; then FLYNN_APP="api"; fi
+
+        if [ "$FLYNN_APP" = "" ]; then echo "skipping branch $TRAVIS_BRANCH" && exit 0; fi
+
+        git pull
+        git remote add flynn https://user:$FLYNN_KEY@git.site.com/$FLYNN_APP.git
+        git push flynn master
+      fi
+
+      if [ $exitCode -eq 1 ]; then
+        # BUILD FAILURE
+        echo "BUSTED"
+      fi
 
 os:
   - linux
