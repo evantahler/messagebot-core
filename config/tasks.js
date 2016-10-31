@@ -1,11 +1,12 @@
 var minTaskProcessors = parseInt(process.env.MIN_TASK_PROCESSORS || 1);
 var maxTaskProcessors = parseInt(process.env.MAX_TASK_PROCESSORS || 1);
+var toScheduler       = process.env.SCHEDULER === 'true';
 
 exports.default = {
   tasks: function(api){
     return {
       // Should this node run a scheduler to promote delayed tasks?
-      scheduler: true,
+      scheduler: toScheduler,
       // what queues should the taskProcessors work?
       queues: [
         'messagebot:lists',
