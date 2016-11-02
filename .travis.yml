@@ -56,7 +56,6 @@ before_script:
 
 after_success:
   - |
-      echo "*** DEPLOYING ***"
       declare exitCode;
 
       $(npm bin)/travis-after-all
@@ -68,11 +67,14 @@ after_success:
         if [ "$TRAVIS_BRANCH" = "master" ]; then FLYNN_APP="staging"; fi
         if [ "$TRAVIS_BRANCH" = "production" ]; then FLYNN_APP="api"; fi
 
-        if [ "$FLYNN_APP" = "" ]; then echo "skipping branch $TRAVIS_BRANCH" && exit 0; fi
-
-        git pull
-        git remote add flynn https://user:$FLYNN_KEY@git.messagebot.io/$FLYNN_APP.git
-        git push flynn master
+        if [ "$FLYNN_APP" = "" ]; then
+          echo "skipping deployment of branch $TRAVIS_BRANCH" && exit 0;
+        else
+          echo "*** DEPLOYING ***"
+          git pull
+          git remote add flynn https://user:$FLYNN_KEY@git.messagebot.io/$FLYNN_APP.git
+          git push flynn master
+        fi
       fi
 
       if [ $exitCode -eq 1 ]; then
