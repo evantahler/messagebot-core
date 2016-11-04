@@ -58,7 +58,7 @@
   - ensure that the databases you listed exist and that the user(s) you have configured can reach & access them
 - Source your environment, ie: `source .env`
 - Create the First Team from the CLI:
-  - `./bin/messagebot team create --name MessageBot --trackingDomainRegexp "^.*$" --trackingDomain "tracking.myapp.com" --email="me@myapp.com"`
+  - `./bin/messagebot team create --name MessageBot --trackingDomainRegexp "^.*$" --trackingDomain "http://tracking.myapp.com" --email="me@myapp.com"`
   - This will also create the first admin user for this team.  Take note of this user's email and password.
 - Start the App: `npm start`
 
@@ -219,11 +219,11 @@ api.navigation.navigation.push({
 
 ## Image Link Tracking
 
-When rendering templates to your users, including `{{{ beacon }}}` will insert a tracking image into the body of your message (for HTML messages/emails).  You can also refrence `{{{ view.beconLink }}}` to obtain just the URL for the tracking image. URLs will take the form of `http://{{ team.trackingDomain }}/api/message/track.gif?verb=read&guid={{ messageGuid }}`.
+When rendering templates to your users, including `{{{ beacon }}}` will insert a tracking image into the body of your message (for HTML messages/emails).  You can also refrence `{{{ view.beconLink }}}` to obtain just the URL for the tracking image. URLs will take the form of `{{ team.trackingDomain }}/api/message/track.gif?verb=read&guid={{ messageGuid }}`.
 
 Loading this image denotes the message was "viewed", updating the message and creating an event for having viewed the message.
 
-Any HTML links in your template can be configured to track the click, and therefore mark the message as 'acted'.  Use the `track` function, ie: `{{#track}}http://messagebot.io{{/track}}`.  This will transform your links to something of the form: `http://{{ team.trackingDomain }}/api/message/track.gif?verb=act&guid={{ messageGuid }}&link=http://messagebot.io`
+Any HTML links in your template can be configured to track the click, and therefore mark the message as 'acted'.  Use the `track` function, ie: `{{#track}}http://messagebot.io{{/track}}`.  This will transform your links to something of the form: `{{ team.trackingDomain }}/api/message/track.gif?verb=act&guid={{ messageGuid }}&link=http://messagebot.io`
 
 You can include template within other templates as well.  Use the mustache function `include`, and pass the name or ID of the template you want to include, ie: `{{#include}}footer{{/include}}`.
 
@@ -302,7 +302,7 @@ At this point, the MessageBot container will crash, as none of the required migr
 
 Now, you'll need to create your first team:
 
-- `docker-compose run messagebot-worker ./bin/messagebot team create --name MessageBot --trackingDomainRegexp "^.*$" --trackingDomain "tracking.myapp.com" --email="me@myapp.com"`
+- `docker-compose run messagebot-worker ./bin/messagebot team create --name MessageBot --trackingDomainRegexp "^.*$" --trackingDomain "http://tracking.myapp.com" --email="me@myapp.com"`
 
 From here, you should be good to go! Restart the containers:
 
