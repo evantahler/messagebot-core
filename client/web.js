@@ -181,6 +181,8 @@ var MESSAGEBOT = MESSAGEBOT || {};
         Object.keys(MESSAGEBOT.data.person).forEach(function(k){
           params[k] = MESSAGEBOT.data.person[k];
         });
+      }else{
+        params.source = 'web';
       }
 
       MESSAGEBOT.action('/person', 'POST', params, function(response){
