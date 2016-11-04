@@ -2,7 +2,7 @@ exports.default = {
   general: function(api){
     return {
       apiVersion: '0.0.1',
-      serverName: 'MessageBot API',
+      serverName: 'MessageBot',
       // id can be set here, or it will be generated dynamically.
       //  Be sure that every server you run has a unique ID (which will happen when generated dynamically)
       //  id: 'myActionHeroServer',
@@ -31,7 +31,7 @@ exports.default = {
       // The default filetype to server when a user requests a directory
       directoryFileType : 'index.html',
       // What log-level should we use for file requests?
-      // fileRequestLogLevel: 'info',
+      fileRequestLogLevel: 'info',
       // The default priority level given to middleware of all types (action, connection, and say)
       defaultMiddlewarePriority : 100,
       // Which channel to use on redis pub/sub for RPC communication
