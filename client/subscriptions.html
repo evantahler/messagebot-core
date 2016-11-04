@@ -61,7 +61,7 @@
     $('#globalOutButton').hide();
     $('#globalInButton').hide();
 
-    MESSAGEBOT.data.personGuid  = MESSAGEBOT.getURLParameter('personGuid');
+    MESSAGEBOT.data.personGuid  = MESSAGEBOT.getURLParameter('personGuid') || MESSAGEBOT.cookies.read(MESSAGEBOT.cookieName);
     MESSAGEBOT.data.messageGuid = MESSAGEBOT.getURLParameter('messageGuid');
     MESSAGEBOT.data.listId      = MESSAGEBOT.getURLParameter('listId');
     MESSAGEBOT.data.campaignId  = MESSAGEBOT.getURLParameter('campaignId');
