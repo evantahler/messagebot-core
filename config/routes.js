@@ -4,6 +4,8 @@ exports.default = {
 
       get: [
         { path: '/swagger',              action: 'swagger' },
+        { path: '/client',               action: 'tracking:client' },
+        { path: '/subscriptions',        action: 'tracking:subscriptions' },
         { path: '/system/status',        action: 'system:status' },
         { path: '/system/documentation', action: 'system:documentation' },
         { path: '/system/navigation',    action: 'system:navigation' },

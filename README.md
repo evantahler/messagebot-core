@@ -230,7 +230,7 @@ You can include template within other templates as well.  Use the mustache funct
 ## JavaScript / Browser
 
 - You'll get a link to the client-side JS from the settings page.
-- Include it in your app (`<script src="//tracking.yoursite.com/tracking/<teamID>/web.js"></script>`)
+- Include it in your app (`<script src="https://tracking.yoursite.com/api/client"></script>`)
 
 ### The Person
 ```js
