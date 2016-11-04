@@ -71,6 +71,8 @@
       $('#loading').hide();
       $('#controlls').show();
 
+      MESSAGEBOT.track({type: 'pageview'});
+
       var handleButtonResponse = function(error){
         if(error){ alert(error); }
         $('#controlls').hide();
@@ -79,18 +81,48 @@
 
       $('#listOutButton').click(function(){
         MESSAGEBOT.person.opt({direction: 'out', listId: MESSAGEBOT.data.listId}, handleButtonResponse);
+        MESSAGEBOT.track({
+          type: 'opt',
+          data: {
+            direction: 'out',
+            mode: 'list',
+            listId: MESSAGEBOT.data.listId
+          }
+        });
       });
 
       $('#listInButton').click(function(){
         MESSAGEBOT.person.opt({direction: 'in', listId: MESSAGEBOT.data.listId}, handleButtonResponse);
+        MESSAGEBOT.track({
+          type: 'opt',
+          data: {
+            direction: 'in',
+            mode: 'list',
+            listId: MESSAGEBOT.data.listId
+          }
+        });
       });
 
       $('#globalOutButton').click(function(){
         MESSAGEBOT.person.opt({direction: 'out', global: true}, handleButtonResponse);
+        MESSAGEBOT.track({
+          type: 'opt',
+          data: {
+            direction: 'out',
+            mode: 'global',
+          }
+        });
       });
 
       $('#globalInButton').click(function(){
         MESSAGEBOT.person.opt({direction: 'in', global: true}, handleButtonResponse);
+        MESSAGEBOT.track({
+          type: 'opt',
+          data: {
+            direction: 'in',
+            mode: 'global',
+          }
+        });
       });
 
       if(MESSAGEBOT.data.listId){
