@@ -20,6 +20,12 @@
     "confirm": true,
     "FormData": true,
     "fetch": true,
+    "describe": true,
+    "it": true,
+    "before": true,
+    "beforeEach": true,
+    "after": true,
+    "afterEach": true
   },
    "rules": {
      "no-bitwise": 2,

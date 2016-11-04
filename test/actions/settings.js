@@ -18,6 +18,7 @@ describe('settings', function(){
     it('succedes', function(done){
       specHelper.requestWithLogin(email, password, 'settings:list', {}, function(response){
         should.not.exist(response.error);
+        Object.keys(response.team).length.should.be.above(0);
         Object.keys(response.settings).length.should.be.above(0);
         should.exist(response.settings['client:tracking:web:cookieName']);
         done();

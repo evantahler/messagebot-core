@@ -11,19 +11,25 @@ const SystemSettings = React.createClass({
     return {
       settings: [],
       transports: [],
+      team: [],
     };
   },
 
   loadSettings(){
     const client = this.props.client;
     let settings = [];
+    let team = [];
 
     client.action({}, '/api/settings', 'GET', (data) => {
       Object.keys(data.settings).forEach((k) => {
         settings.push(data.settings[k]);
       });
 
-      this.setState({settings: settings});
+      Object.keys(data.team).forEach((k) => {
+        team.push({key: k, value: data.team[k]});
+      });
+
+      this.setState({settings: settings, team: team});
     });
   },
 
@@ -53,6 +59,9 @@ const SystemSettings = React.createClass({
     return(
       <div>
         <h1>Settings</h1>
+
+        <h2>Team</h2>
+        <LazyTable objects={this.state.team} />
 
         <h2>Settings</h2>
         <LazyTable

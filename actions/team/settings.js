@@ -7,6 +7,8 @@ exports.settingsView = {
   inputs: {},
 
   run: function(api, data, next){
+    data.response.team  = data.team.apiData();
+
     api.models.setting.findAll({
       where:{ teamId: data.team.id },
       order: [['key', 'desc']],
