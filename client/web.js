@@ -177,9 +177,11 @@ var MESSAGEBOT = MESSAGEBOT || {};
       if(!callback){ callback = MESSAGEBOT.loggerCallback; }
 
       var params = {};
-      Object.keys(MESSAGEBOT.data.person).forEach(function(k){
-        params[k] = MESSAGEBOT.data.person[k];
-      });
+      if(MESSAGEBOT.data.person){
+        Object.keys(MESSAGEBOT.data.person).forEach(function(k){
+          params[k] = MESSAGEBOT.data.person[k];
+        });
+      }
 
       MESSAGEBOT.action('/person', 'POST', params, function(response){
         if(response.error){ return callback(response.error); };
