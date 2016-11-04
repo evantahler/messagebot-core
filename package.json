@@ -13,7 +13,7 @@
   },
   "dependencies": {
     "actionhero": "^15.2.0",
-    "ah-datadog-plugin": "0.0.1",
+    "ah-datadog-plugin": "0.0.2",
     "ah-elasticsearch-orm": "^0.2.0",
     "ah-resque-ui": "^0.0.6",
     "ah-swagger-plugin": "^1.0.0",
