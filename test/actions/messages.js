@@ -197,7 +197,7 @@ describe('actions:message', function(){
       }, function(response, res){
         response.toString().indexOf('GIF').should.equal(0);
         res.statusCode.should.equal(200);
-        res.headers['x-powered-by'].should.equal('MessageBot API');
+        res.headers['x-powered-by'].should.equal('MessageBot');
         res.headers['content-type'].should.equal('image/gif');
         done();
       });
@@ -212,7 +212,7 @@ describe('actions:message', function(){
       }, function(response, res){
         response.toString().indexOf('GIF').should.equal(0);
         res.statusCode.should.equal(200);
-        res.headers['x-powered-by'].should.equal('MessageBot API');
+        res.headers['x-powered-by'].should.equal('MessageBot');
         res.headers['content-type'].should.equal('image/gif');
         done();
       });

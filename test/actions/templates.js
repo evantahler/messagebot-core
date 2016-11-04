@@ -191,7 +191,7 @@ describe('actions:template', function(){
       }, function(response, res){
         response.should.equal('<h1>Hello, fname</h1>');
         res.statusCode.should.equal(200);
-        res.headers['x-powered-by'].should.equal('MessageBot API');
+        res.headers['x-powered-by'].should.equal('MessageBot');
         res.headers['content-type'].should.equal('text/html');
         done();
       });
