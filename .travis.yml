@@ -64,7 +64,7 @@ after_success:
       if [ $exitCode -eq 0 ]; then
         FLYNN_APP=""
 
-        if [ "$TRAVIS_BRANCH" = "master" ]; then FLYNN_APP="staging"; fi
+        if [ "$TRAVIS_BRANCH" = "master" ]; then FLYNN_APP="staging-api"; fi
         if [ "$TRAVIS_BRANCH" = "production" ]; then FLYNN_APP="api"; fi
 
         if [ "$FLYNN_APP" = "" ]; then
