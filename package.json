@@ -15,11 +15,7 @@
     "actionhero": "^15.3.0",
     "ah-datadog-plugin": "0.0.4",
     "ah-elasticsearch-orm": "^0.2.0",
-<<<<<<< 282086d4e535aac14acddc644d681693a27f0509
     "ah-resque-ui": "^0.1.1",
-=======
-    "ah-resque-ui": "^0.1.0",
->>>>>>> remove assets
     "ah-swagger-plugin": "^1.0.0",
     "async": "^2.1.1",
     "bcrypt": "^0.8.5",
