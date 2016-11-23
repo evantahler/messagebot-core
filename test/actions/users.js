@@ -342,7 +342,7 @@ describe('actions:user', function () {
           should.not.exist(response.error)
           var person = new api.models.Person(team, user.personGuid)
           person.hydrate(function (error) {
-            String(error).should.equal('Error: person (' + user.personGuid + ') not found')
+            String(error).should.equal('Error: Person (' + user.personGuid + ') not found')
             done()
           })
         })
