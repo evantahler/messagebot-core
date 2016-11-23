@@ -1,8 +1,5 @@
-var bcrypt = require('bcrypt');
-var bcryptComplexity = 10;
-
 module.exports = {
-  up: function(queryInterface, Sequelize){
+  up: function (queryInterface, Sequelize) {
     return queryInterface.createTable(
       'users',
       {
@@ -20,65 +17,61 @@ module.exports = {
 
         'teamId': {
           type: Sequelize.INTEGER,
-          allowNull: false,
+          allowNull: false
         },
 
         'email': {
           type: Sequelize.STRING,
-          allowNull: false,
+          allowNull: false
         },
         'passwordHash': {
           type: Sequelize.TEXT,
-          allowNull: false,
+          allowNull: false
         },
         'personGuid': {
           type: Sequelize.STRING,
-          allowNull: false,
+          allowNull: false
         },
         'role': {
           type: Sequelize.STRING,
           allowNull: false,
-          defaultValue: 'new',
+          defaultValue: 'new'
         },
         'firstName': {
           type: Sequelize.STRING,
-          allowNull: false,
+          allowNull: false
         },
         'lastName': {
           type: Sequelize.STRING,
-          allowNull: false,
+          allowNull: false
         },
         'lastLoginAt': {
           type: Sequelize.DATE,
-          allowNull: true,
-        },
+          allowNull: true
+        }
       }
-    ).then(function(){
-
+    ).then(function () {
       return queryInterface.addIndex(
         'users', ['teamId']
-      ).then(function(){
-
+      ).then(function () {
         return queryInterface.addIndex(
           'users', ['email'], {
             indexName: 'emailUniqueIndex',
             indicesType: 'UNIQUE'
           }
-        ).then(function(){
-
+        ).then(function () {
           return queryInterface.addIndex(
             'users', ['personGuid'], {
               indexName: 'personGuidUniqueIndex',
               indicesType: 'UNIQUE'
             }
-          );
-
-        });
-      });
-    });
+          )
+        })
+      })
+    })
   },
 
-  down: function(queryInterface, Sequelize){
-    queryInterface.deleteTable('users');
+  down: function (queryInterface, Sequelize) {
+    queryInterface.deleteTable('users')
   }
-};
+}

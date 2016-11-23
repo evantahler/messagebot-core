@@ -1,36 +1,35 @@
-var Sequelize = require('sequelize');
+var Sequelize = require('sequelize')
 
-var loader = function(api){
-
-  /*--- Priave Methods ---*/
+var loader = function (api) {
+  /* --- Priave Methods --- */
 
   // This will signal all nodes in the cluster to reload thier teams cache
   //  and rebuild the client JS files
-  var reloadTeams = function(){
-    api.redis.doCluster('api.teams.load', null, null, function(error){
-      if(error){ throw(error); }
-    });
-  };
+  var reloadTeams = function () {
+    api.redis.doCluster('api.teams.load', null, null, function (error) {
+      if (error) { throw (error) }
+    })
+  }
 
-  var destorySettings = function(team){
-    api.models.setting.destroy({
+  var destorySettings = function (team) {
+    api.models.Setting.destroy({
       where: { teamId: team.id }
-    });
-  };
+    })
+  }
 
-  /*--- Public Model ---*/
+  /* --- Public Model --- */
 
   return {
-    name: 'team',
+    name: 'Team',
     model: api.sequelize.sequelize.define('team',
       {
         'name': {
           type: Sequelize.STRING,
-          allowNull: false,
+          allowNull: false
         },
         'trackingDomainRegexp': {
           type: Sequelize.STRING,
-          allowNull: false,
+          allowNull: false
           // TODO: We can't actually unserailze this proeprly...
           // set: function(value){
           //   this.setDataValue('trackingDomainRegexp', value.toString());
@@ -42,40 +41,39 @@ var loader = function(api){
         },
         'trackingDomain': {
           type: Sequelize.STRING,
-          allowNull: false,
-        },
+          allowNull: false
+        }
       },
 
       {
         hooks: {
-          afterCreate:  function(){ reloadTeams(); },
-          afterUpdate:  function(){ reloadTeams(); },
-          afterSave:    function(){ reloadTeams(); },
-          afterUpsert:  function(){ reloadTeams(); },
-          afterDestroy: function(){
-            var team = this;
-            reloadTeams();
-            destorySettings(team);
-          },
+          afterCreate: function () { reloadTeams() },
+          afterUpdate: function () { reloadTeams() },
+          afterSave: function () { reloadTeams() },
+          afterUpsert: function () { reloadTeams() },
+          afterDestroy: function () {
+            var team = this
+            reloadTeams()
+            destorySettings(team)
+          }
 
         },
 
         instanceMethods: {
-          apiData: function(){
+          apiData: function () {
             return {
-              id:        this.id,
-              name:      this.name,
+              id: this.id,
+              name: this.name,
               trackingDomainRegexp: this.trackingDomainRegexp,
               trackingDomain: this.trackingDomain,
               createdAt: this.createdAt,
-              updatedAt: this.updatedAt,
-            };
+              updatedAt: this.updatedAt
+            }
           }
         }
       }
     )
-  };
+  }
+}
 
-};
-
-module.exports = loader;
+module.exports = loader

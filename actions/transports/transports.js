@@ -4,17 +4,17 @@ exports.status = {
   middleware: ['logged-in-session'],
   outputExample: {},
 
-  run: function(api, data, next){
-    data.response.transports = {};
-    api.transports.forEach(function(transport){
+  run: function (api, data, next) {
+    data.response.transports = {}
+    api.transports.forEach(function (transport) {
       data.response.transports[transport.name] = {
         name: transport.name,
         description: transport.description,
         requiredDataKeys: transport.requiredDataKeys,
-        campaignVariables: transport.campaignVariables,
-      };
-    });
+        campaignVariables: transport.campaignVariables
+      }
+    })
 
-    next();
+    next()
   }
-};
+}

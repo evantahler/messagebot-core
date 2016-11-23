@@ -1,38 +1,36 @@
-'use strict';
-var async  = require('async');
+'use strict'
 
 module.exports = {
-  initialize: function(api, next){
+  initialize: function (api, next) {
     api.campaigns = {
       triggerd: {},
 
-      loadTriggered: function(callback){
-        var jobs = [];
-        if(api.running){
-          api.models.campaign.findAll({
+      loadTriggered: function (callback) {
+        if (api.running) {
+          api.models.Campaign.findAll({
             where: {
-              type: 'trigger',
+              type: 'trigger'
             }
-          }).then(function(campaigns){
-            api.campaigns.triggerd = {};
-            campaigns.forEach(function(campaign){
-              if(!api.campaigns.triggerd[campaign.teamId]){ api.campaigns.triggerd[campaign.teamId] = []; }
-              api.campaigns.triggerd[campaign.teamId].push(campaign);
-            });
+          }).then(function (campaigns) {
+            api.campaigns.triggerd = {}
+            campaigns.forEach(function (campaign) {
+              if (!api.campaigns.triggerd[campaign.teamId]) { api.campaigns.triggerd[campaign.teamId] = [] }
+              api.campaigns.triggerd[campaign.teamId].push(campaign)
+            })
 
-            api.log('loaded ' + campaigns.length + ' triggered campaigns into memory');
-            return callback();
-          });
-        }else{
-          return callback();
+            api.log('loaded ' + campaigns.length + ' triggered campaigns into memory')
+            return callback()
+          })
+        } else {
+          return callback()
         }
       }
-    };
+    }
 
-    next();
+    next()
   },
 
-  start: function(api, next){
-    api.campaigns.loadTriggered(next);
-  },
-};
+  start: function (api, next) {
+    api.campaigns.loadTriggered(next)
+  }
+}

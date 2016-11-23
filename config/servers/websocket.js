@@ -1,21 +1,21 @@
 // Note that to use the websocket server, you also need the web server enabled
 
-var enabled = (process.env.ENABLE_WEB_SOCKET_SERVER === 'true' || process.env.ENABLE_WEB_SOCKET_SERVER === true);
+var enabled = (process.env.ENABLE_WEB_SOCKET_SERVER === 'true' || process.env.ENABLE_WEB_SOCKET_SERVER === true)
 
 exports.default = {
   servers: {
-    websocket: function(api){
+    websocket: function (api) {
       return {
-        enabled:          enabled,
+        enabled: enabled,
         // you can pass a FQDN (string) here or 'window.location.origin'
-        clientUrl:        'window.location.origin',
+        clientUrl: 'window.location.origin',
         // Directory to render client-side JS.
         // Path should start with "/" and will be built starting from api.config..general.paths.public
-        clientJsPath:     'js/actionhero',
+        clientJsPath: 'js/actionhero',
         // the name of the client-side JS file to render.  Both `.js` and `.min.js` versions will be created
         // do not include the file exension
         // set to `undefined` to not render the client-side JS on boot
-        clientJsName:     'actionheroClient',
+        clientJsName: 'actionheroClient',
         // should the server signal clients to not reconnect when the server is shutdown/reboot
         destroyClientsOnShutdown: false,
 
@@ -36,7 +36,7 @@ exports.default = {
 
         // websocket Client Options:
         client: {
-          apiPath:             '/api', // the api base endpoint on your actionhero server
+          apiPath: '/api' // the api base endpoint on your actionhero server
           // reconnect:        {},
           // timeout:          10000,
           // ping:             25000,
@@ -47,18 +47,18 @@ exports.default = {
           // network:          true,
           // transport:        {},
           // queueSize:        Infinity,
-        },
-      };
+        }
+      }
     }
   }
-};
+}
 
 exports.test = {
   servers: {
-    websocket: function(api){
+    websocket: function (api) {
       return {
-        enabled: true,
-      };
+        enabled: true
+      }
     }
   }
-};
+}

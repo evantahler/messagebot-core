@@ -1,138 +1,138 @@
-var should     = require('should');
-var specHelper = require(__dirname + '/../specHelper');
-var api;
-var user;
+var should = require('should') // eslint-disable-line
+var path = require('path')
+var specHelper = require(path.join(__dirname, '/../specHelper'))
+var api
+var user
 
-describe('models:users', function(){
-  beforeEach(function(){ api = specHelper.api; });
+describe('models:users', function () {
+  beforeEach(function () { api = specHelper.api })
 
-  afterEach(function(done){
-    if(user.isNewRecord === false){
-      user.destroy().then(function(){ done(); });
-    }else{
-      done();
+  afterEach(function (done) {
+    if (user.isNewRecord === false) {
+      user.destroy().then(function () { done() })
+    } else {
+      done()
     }
-  });
+  })
 
-  it('can create new users with valid params', function(done){
-    user = api.models.user.build({
-      teamId:       1,
-      email:        'a@b.com',
-      personGuid:   Math.random(),
-      passwordHash: 'xxx',
-      firstName:    'fname',
-      lastName:     'lname',
-      role:         'admin',
-    });
-
-    user.save().then(function(){
-      api.models.user.findOne({where: {email: 'a@b.com'}}).then(function(user){
-        user.email.should.equal('a@b.com');
-        done();
-      });
-    });
-  });
-
-  it('will not create new users with invalid params (missing requirement)', function(done){
-    user = api.models.user.build({
-      teamId:       1,
-      passwordHash: 'xxx',
-      lastName:     'lname',
-    });
-
-    user.save().then(function(){
-      throw new Error('should not get here');
-    }).catch(function(errors){
-      errors.errors.length.should.equal(3);
-      errors.errors[0].message.should.equal('email cannot be null');
-      errors.errors[1].message.should.equal('personGuid cannot be null');
-      errors.errors[2].message.should.equal('firstName cannot be null');
-      done();
-    });
-  });
-
-  it('will not create new users with invalid params (duplicate key)', function(done){
-    user = api.models.user.build({
-      teamId:       1,
-      email:        'admin@localhost.com',
-      personGuid:   Math.random(),
-      passwordHash: 'xxx',
-      firstName:    'fname',
-      lastName:     'lname',
-      role:         'admin',
-    });
-
-    user.save().then(function(){
-      throw new Error('should not get here');
-    }).catch(function(errors){
-      errors.errors.length.should.equal(1);
-      errors.errors[0].message.should.match(/must be unique/);
-      done();
-    });
-  });
-
-  it('will not create new users with invalid params (bad role)', function(done){
-    user = api.models.user.build({
-      teamId:       1,
-      email:        'admin5@localhost.com',
-      personGuid:   Math.random(),
-      passwordHash: 'xxx',
-      firstName:    'fname',
-      lastName:     'lname',
-      role:         'bacon',
-    });
-
-    user.save().then(function(){
-      throw new Error('should not get here');
-    }).catch(function(errors){
-      errors.errors.length.should.equal(1);
-      errors.errors[0].message.should.equal('role is invalid');
-      done();
-    });
-  });
-
-  it('passwords can be checked (success)', function(done){
-    user = api.models.user.build({
-      teamId:     1,
+  it('can create new users with valid params', function (done) {
+    user = api.models.User.build({
+      teamId: 1,
+      email: 'a@b.com',
       personGuid: Math.random(),
-      email:      'aaa@b.com',
-      firstName:  'fname',
-      lastName:   'lname',
-      role:       'admin',
-    });
+      passwordHash: 'xxx',
+      firstName: 'fname',
+      lastName: 'lname',
+      role: 'admin'
+    })
 
-    user.updatePassword('password', function(error){
-      should.not.exist(error);
-      user.save().then(function(){
-        user.checkPassword('password', function(error, match){
-          should.not.exist(error);
-          match.should.equal(true);
-          done();
-        });
-      });
-    });
-  });
+    user.save().then(function () {
+      api.models.User.findOne({where: {email: 'a@b.com'}}).then(function (user) {
+        user.email.should.equal('a@b.com')
+        done()
+      })
+    })
+  })
 
-  it('passwords can be checked (failure)', function(done){
-    user = api.models.user.build({
-      teamId:     1,
+  it('will not create new users with invalid params (missing requirement)', function (done) {
+    user = api.models.User.build({
+      teamId: 1,
+      passwordHash: 'xxx',
+      lastName: 'lname'
+    })
+
+    user.save().then(function () {
+      throw new Error('should not get here')
+    }).catch(function (errors) {
+      errors.errors.length.should.equal(3)
+      errors.errors[0].message.should.equal('email cannot be null')
+      errors.errors[1].message.should.equal('personGuid cannot be null')
+      errors.errors[2].message.should.equal('firstName cannot be null')
+      done()
+    })
+  })
+
+  it('will not create new users with invalid params (duplicate key)', function (done) {
+    user = api.models.User.build({
+      teamId: 1,
+      email: 'admin@localhost.com',
       personGuid: Math.random(),
-      email:      'bbb@b.com',
-      firstName:  'fname',
-      lastName:   'lname',
-      role:       'admin',
-    });
+      passwordHash: 'xxx',
+      firstName: 'fname',
+      lastName: 'lname',
+      role: 'admin'
+    })
 
-    user.updatePassword('password', function(error){
-      should.not.exist(error);
-      user.save().then(function(){
-        user.checkPassword('wrongPassword', function(error, match){
-          should.not.exist(error);
-          match.should.equal(false);
-          done();
-        });
-      });
-    });
-  });
+    user.save().then(function () {
+      throw new Error('should not get here')
+    }).catch(function (errors) {
+      errors.errors.length.should.equal(1)
+      errors.errors[0].message.should.match(/must be unique/)
+      done()
+    })
+  })
 
-});
+  it('will not create new users with invalid params (bad role)', function (done) {
+    user = api.models.User.build({
+      teamId: 1,
+      email: 'admin5@localhost.com',
+      personGuid: Math.random(),
+      passwordHash: 'xxx',
+      firstName: 'fname',
+      lastName: 'lname',
+      role: 'bacon'
+    })
+
+    user.save().then(function () {
+      throw new Error('should not get here')
+    }).catch(function (errors) {
+      errors.errors.length.should.equal(1)
+      errors.errors[0].message.should.equal('role is invalid')
+      done()
+    })
+  })
+
+  it('passwords can be checked (success)', function (done) {
+    user = api.models.User.build({
+      teamId: 1,
+      personGuid: Math.random(),
+      email: 'aaa@b.com',
+      firstName: 'fname',
+      lastName: 'lname',
+      role: 'admin'
+    })
+
+    user.updatePassword('password', function (error) {
+      should.not.exist(error)
+      user.save().then(function () {
+        user.checkPassword('password', function (error, match) {
+          should.not.exist(error)
+          match.should.equal(true)
+          done()
+        })
+      })
+    })
+  })
+
+  it('passwords can be checked (failure)', function (done) {
+    user = api.models.User.build({
+      teamId: 1,
+      personGuid: Math.random(),
+      email: 'bbb@b.com',
+      firstName: 'fname',
+      lastName: 'lname',
+      role: 'admin'
+    })
+
+    user.updatePassword('password', function (error) {
+      should.not.exist(error)
+      user.save().then(function () {
+        user.checkPassword('wrongPassword', function (error, match) {
+          should.not.exist(error)
+          match.should.equal(false)
+          done()
+        })
+      })
+    })
+  })
+})

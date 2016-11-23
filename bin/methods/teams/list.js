@@ -1,27 +1,26 @@
-var async = require('async');
-var Table = require('easy-table');
-var api;
+var async = require('async')
+var Table = require('easy-table')
 
-var teamsList = function(api, callback){
-  var jobs = [];
+var teamsList = function (api, callback) {
+  var jobs = []
 
-  jobs.push(function(done){
-    api.sequelize.connect(done);
-  });
+  jobs.push(function (done) {
+    api.sequelize.connect(done)
+  })
 
-  jobs.push(function(done){
-    api.models.team.findAll({oder: ['id', 'asc']}).then(function(teams){
-      var tableData = [];
-      teams.forEach(function(team){ tableData.push(team.apiData()); });
+  jobs.push(function (done) {
+    api.models.Team.findAll({oder: ['id', 'asc']}).then(function (teams) {
+      var tableData = []
+      teams.forEach(function (team) { tableData.push(team.apiData()) })
 
-      console.log(teams.length + ' Total Teams\r\n');
-      console.log(Table.print(tableData));
+      console.log(teams.length + ' Total Teams\r\n')
+      console.log(Table.print(tableData))
 
-      done();
-    }).catch(done);
-  });
+      done()
+    }).catch(done)
+  })
 
-  async.series(jobs, callback);
-};
+  async.series(jobs, callback)
+}
 
-module.exports = teamsList;
+module.exports = teamsList

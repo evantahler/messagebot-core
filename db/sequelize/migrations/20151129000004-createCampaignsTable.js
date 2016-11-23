@@ -1,5 +1,5 @@
 module.exports = {
-  up: function(queryInterface, Sequelize){
+  up: function (queryInterface, Sequelize) {
     return queryInterface.createTable(
       'campaigns',
       {
@@ -17,87 +17,83 @@ module.exports = {
 
         'teamId': {
           type: Sequelize.INTEGER,
-          allowNull: false,
+          allowNull: false
         },
 
         'name': {
           type: Sequelize.STRING,
-          allowNull: false,
+          allowNull: false
         },
         'description': {
           type: Sequelize.TEXT,
-          allowNull: false,
+          allowNull: false
         },
         'type': {
           type: Sequelize.STRING,
-          allowNull: false,
+          allowNull: false
         },
         'folder': {
           type: Sequelize.STRING,
           allowNull: false,
-          defaultValue: 'default',
+          defaultValue: 'default'
         },
         'transport': {
           type: Sequelize.STRING,
-          allowNull: false,
+          allowNull: false
         },
         'listId': {
           type: Sequelize.INTEGER,
-          allowNull: false,
+          allowNull: false
         },
         'templateId': {
           type: Sequelize.INTEGER,
-          allowNull: false,
+          allowNull: false
         },
         'campaignVariables': {
           type: Sequelize.TEXT,
-          allowNull: true,
+          allowNull: true
         },
         'triggerEventMatch': {
           type: Sequelize.TEXT,
-          allowNull: true,
+          allowNull: true
         },
 
         'sendAt': {
           type: Sequelize.DATE,
-          allowNull: true,
+          allowNull: true
         },
         'sendingAt': {
           type: Sequelize.DATE,
-          allowNull: true,
+          allowNull: true
         },
         'sentAt': {
           type: Sequelize.DATE,
-          allowNull: true,
+          allowNull: true
         },
         'triggerDelay': {
           type: Sequelize.INTEGER,
-          allowNull: true,
+          allowNull: true
         },
         'reSendDelay': {
           type: Sequelize.INTEGER,
-          allowNull: true,
-        },
+          allowNull: true
+        }
 
       }
-    ).then(function(){
-
+    ).then(function () {
       return queryInterface.addIndex(
         'campaigns', ['teamId']
-      ).then(function(){
-
+      ).then(function () {
         return queryInterface.addIndex(
           'campaigns', ['teamId', 'name'], {
             indicesType: 'UNIQUE'
           }
-        );
-
-      });
-    });
-
+        )
+      })
+    })
   },
 
-  down: function(queryInterface, Sequelize){
-    queryInterface.deleteTable('campaigns');
+  down: function (queryInterface, Sequelize) {
+    queryInterface.deleteTable('campaigns')
   }
-};
+}

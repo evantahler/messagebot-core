@@ -1,67 +1,66 @@
-var Sequelize = require('sequelize');
+var Sequelize = require('sequelize')
 
-var loader = function(api){
-  /*--- Priave Methods ---*/
+var loader = function (api) {
+  /* --- Priave Methods --- */
 
   // This will signal all nodes in the cluster to reload thier teams cache
   //  and rebuild the client JS files
-  var reloadTeams = function(){
-    api.redis.doCluster('api.teams.load', null, null, function(error){
-      if(error){ throw(error); }
-    });
-  };
+  var reloadTeams = function () {
+    api.redis.doCluster('api.teams.load', null, null, function (error) {
+      if (error) { throw (error) }
+    })
+  }
 
-  /*--- Public Model ---*/
+  /* --- Public Model --- */
 
   return {
-    name: 'setting',
+    name: 'Setting',
 
     model: api.sequelize.sequelize.define('setting',
       {
         'teamId': {
           type: Sequelize.INTEGER,
-          allowNull: false,
+          allowNull: false
         },
 
         'key': {
           type: Sequelize.STRING,
-          allowNull: false,
+          allowNull: false
         },
         'value': {
           type: Sequelize.TEXT,
-          allowNull: false,
+          allowNull: false
         },
         'description': {
           type: Sequelize.TEXT,
-          allowNull: false,
+          allowNull: false
         }
       },
       {
         hooks: {
-          afterCreate:  function(){ reloadTeams(); },
-          afterDestroy: function(){ reloadTeams(); },
-          afterUpdate:  function(){ reloadTeams(); },
-          afterSave:    function(){ reloadTeams(); },
-          afterUpsert:  function(){ reloadTeams(); },
+          afterCreate: function () { reloadTeams() },
+          afterDestroy: function () { reloadTeams() },
+          afterUpdate: function () { reloadTeams() },
+          afterSave: function () { reloadTeams() },
+          afterUpsert: function () { reloadTeams() }
         },
 
         instanceMethods: {
-          apiData: function(){
+          apiData: function () {
             return {
-              id:           this.id,
-              teamId:       this.teamId,
-              key:          this.key,
-              value:        this.value,
-              description:  this.description,
-              createdAt:    this.createdAt,
-              updatedAt:    this.updatedAt,
-            };
+              id: this.id,
+              teamId: this.teamId,
+              key: this.key,
+              value: this.value,
+              description: this.description,
+              createdAt: this.createdAt,
+              updatedAt: this.updatedAt
+            }
           }
         }
       }
     )
-  };
+  }
+}
 
-};
-
-module.exports = loader;
+module.exports = loader
