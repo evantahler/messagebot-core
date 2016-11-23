@@ -1,10 +1,10 @@
-'use strict';
+'use strict'
 
 module.exports = {
-  loadPriority:  900,
-  
-  initialize: function(api, next){
-    api.transports = [];
-    next();
-  },
-};
+  loadPriority: 900,
+
+  initialize: function (api, next) {
+    api.transports = []
+    next()
+  }
+}

@@ -1,5 +1,5 @@
 module.exports = {
-  up: function(queryInterface, Sequelize){
+  up: function (queryInterface, Sequelize) {
     return queryInterface.createTable(
       'listPeople',
       {
@@ -17,50 +17,44 @@ module.exports = {
 
         'teamId': {
           type: Sequelize.INTEGER,
-          allowNull: false,
+          allowNull: false
         },
 
         'listId': {
           type: Sequelize.INTEGER,
-          allowNull: false,
+          allowNull: false
         },
         'personGuid': {
           type: Sequelize.STRING,
-          allowNull: false,
-        },
+          allowNull: false
+        }
       }
-    ).then(function(){
-
+    ).then(function () {
       return queryInterface.addIndex(
         'listPeople', ['teamId']
-      ).then(function(){
-
+      ).then(function () {
         return queryInterface.addIndex(
           'listPeople', ['personGuid'], {
             indexName: 'personGuidIndex'
           }
-        ).then(function(){
-
+        ).then(function () {
           return queryInterface.addIndex(
             'listPeople', ['listId'], {
               indexName: 'listIdIndex'
             }
-          ).then(function(){
-
+          ).then(function () {
             return queryInterface.addIndex(
               'listPeople', ['listId', 'personGuid'], {
                 indicesType: 'UNIQUE'
               }
-            );
-
-          });
-        });
-      });
-    });
-
+            )
+          })
+        })
+      })
+    })
   },
 
-  down: function(queryInterface, Sequelize){
-    queryInterface.deleteTable('listPeople');
+  down: function (queryInterface, Sequelize) {
+    queryInterface.deleteTable('listPeople')
   }
-};
+}

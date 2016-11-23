@@ -1,24 +1,25 @@
-var should     = require('should');
-var async      = require('async');
-var specHelper = require(__dirname + '/../specHelper');
-var email      = 'admin@localhost.com';
-var password   = 'password';
-var api;
-var messageGuid;
-var team;
+var should = require('should')
+var async = require('async')
+var path = require('path')
+var specHelper = require(path.join(__dirname, '/../specHelper'))
+var email = 'admin@localhost.com'
+var password = 'password'
+var api
+var messageGuid
+var team
 
-describe('actions:message', function(){
-  before(function(){ api = specHelper.api; });
+describe('actions:message', function () {
+  before(function () { api = specHelper.api })
 
-  before(function(done){
-    api.models.team.findOne().then(function(_team){
-      team = _team;
-      done();
-    });
-  });
+  before(function (done) {
+    api.models.Team.findOne().then(function (_team) {
+      team = _team
+      done()
+    })
+  })
 
-  describe('message:create', function(){
-    it('succeeds', function(done){
+  describe('message:create', function () {
+    it('succeeds', function (done) {
       api.specHelper.runAction('message:create', {
         teamId: team.id,
         sync: true,
@@ -27,16 +28,16 @@ describe('actions:message', function(){
         campaignId: 1,
         body: 'hello',
         view: {},
-        sentAt: new Date(),
-      }, function(response){
-        should.not.exist(response.error);
-        should.exist(response.guid);
-        messageGuid = response.guid;
-        done();
-      });
-    });
+        sentAt: new Date()
+      }, function (response) {
+        should.not.exist(response.error)
+        should.exist(response.guid)
+        messageGuid = response.guid
+        done()
+      })
+    })
 
-    it('fails (uniqueness failure)', function(done){
+    it('fails (uniqueness failure)', function (done) {
       api.specHelper.runAction('message:create', {
         teamId: team.id,
         sync: true,
@@ -46,14 +47,14 @@ describe('actions:message', function(){
         campaignId: 1,
         body: 'hello',
         view: {},
-        sentAt: new Date(),
-      }, function(response){
-        response.error.should.equal('Error: uniqueFields:guid uniqueness violated via #' + messageGuid);
-        done();
-      });
-    });
+        sentAt: new Date()
+      }, function (response) {
+        response.error.should.equal('Error: uniqueFields:guid uniqueness violated via #' + messageGuid)
+        done()
+      })
+    })
 
-    it('fails (missing param)', function(done){
+    it('fails (missing param)', function (done) {
       api.specHelper.runAction('message:create', {
         teamId: team.id,
         sync: true,
@@ -61,277 +62,276 @@ describe('actions:message', function(){
         campaignId: 1,
         body: 'hello',
         view: {},
-        sentAt: new Date(),
-      }, function(response){
-        response.error.should.equal('Error: personGuid is a required parameter for this action');
-        done();
-      });
-    });
-  });
+        sentAt: new Date()
+      }, function (response) {
+        response.error.should.equal('Error: personGuid is a required parameter for this action')
+        done()
+      })
+    })
+  })
 
-  describe('message:view', function(){
-    it('succeeds', function(done){
+  describe('message:view', function () {
+    it('succeeds', function (done) {
       api.specHelper.runAction('message:view', {
         teamId: team.id,
         guid: messageGuid
-      }, function(response){
-        should.not.exist(response.error);
-        response.message.guid.should.equal(messageGuid);
-        done();
-      });
-    });
+      }, function (response) {
+        should.not.exist(response.error)
+        response.message.guid.should.equal(messageGuid)
+        done()
+      })
+    })
 
-    it('fails (not found)', function(done){
+    it('fails (not found)', function (done) {
       api.specHelper.runAction('message:view', {
         teamId: team.id,
         guid: 'xxx'
-      }, function(response){
-        response.error.should.equal('Error: message (xxx) not found');
-        done();
-      });
-    });
-  });
+      }, function (response) {
+        response.error.should.equal('Error: message (xxx) not found')
+        done()
+      })
+    })
+  })
 
-  describe('message:edit', function(){
-    it('succeeds', function(done){
+  describe('message:edit', function () {
+    it('succeeds', function (done) {
       api.specHelper.runAction('message:edit', {
         teamId: team.id,
         guid: messageGuid,
-        body: 'hello again',
-      }, function(response){
-        should.not.exist(response.error);
-        done();
-      });
-    });
+        body: 'hello again'
+      }, function (response) {
+        should.not.exist(response.error)
+        done()
+      })
+    })
 
-    it('fails (not found)', function(done){
+    it('fails (not found)', function (done) {
       api.specHelper.runAction('message:edit', {
         teamId: team.id,
         guid: 'xxx'
-      }, function(response){
-        response.error.should.equal('Error: message (xxx) not found');
-        done();
-      });
-    });
-  });
+      }, function (response) {
+        response.error.should.equal('Error: message (xxx) not found')
+        done()
+      })
+    })
+  })
 
-  describe('message:track', function(){
-    var eventGuids = [];
+  describe('message:track', function () {
+    var eventGuids = []
 
-    after(function(done){
-      var jobs = [];
-      eventGuids.forEach(function(e){
-        jobs.push(function(next){
-          var event = new api.models.event(team, e);
-          event.del(next);
-        });
-      });
+    after(function (done) {
+      var jobs = []
+      eventGuids.forEach(function (e) {
+        jobs.push(function (next) {
+          var event = new api.models.Event(team, e)
+          event.del(next)
+        })
+      })
 
-      async.series(jobs, done);
-    });
+      async.series(jobs, done)
+    })
 
-    it('succeeds (read, json)', function(done){
+    it('succeeds (read, json)', function (done) {
       api.specHelper.runAction('message:track', {
         teamId: team.id,
         guid: messageGuid,
         sync: true,
-        verb: 'read',
-      }, function(response){
-        should.not.exist(response.error);
-        should.exist(response.eventGuid);
-        eventGuids.push(response.eventGuid);
-        done();
-      });
-    });
+        verb: 'read'
+      }, function (response) {
+        should.not.exist(response.error)
+        should.exist(response.eventGuid)
+        eventGuids.push(response.eventGuid)
+        done()
+      })
+    })
 
-    it('succeeds (act, json)', function(done){
+    it('succeeds (act, json)', function (done) {
       api.specHelper.runAction('message:track', {
         teamId: team.id,
         guid: messageGuid,
         sync: true,
-        verb: 'act',
-      }, function(response){
-        should.not.exist(response.error);
-        should.exist(response.eventGuid);
-        eventGuids.push(response.eventGuid);
-        done();
-      });
-    });
+        verb: 'act'
+      }, function (response) {
+        should.not.exist(response.error)
+        should.exist(response.eventGuid)
+        eventGuids.push(response.eventGuid)
+        done()
+      })
+    })
 
-    it('succeeds (read, html)', function(done){
+    it('succeeds (read, html)', function (done) {
       specHelper.WebRequestWithLogin(email, password, 'get', '/api/message/track', {
         teamId: team.id,
         guid: messageGuid,
         sync: true,
-        verb: 'read',
-      }, function(response, res){
-        should.not.exist(response.error);
-        should.exist(response.eventGuid);
-        res.statusCode.should.equal(200);
-        eventGuids.push(response.eventGuid);
-        done();
-      });
-    });
+        verb: 'read'
+      }, function (response, res) {
+        should.not.exist(response.error)
+        should.exist(response.eventGuid)
+        res.statusCode.should.equal(200)
+        eventGuids.push(response.eventGuid)
+        done()
+      })
+    })
 
-    it('succeeds (act, html)', function(done){
+    it('succeeds (act, html)', function (done) {
       specHelper.WebRequestWithLogin(email, password, 'get', '/api/message/track', {
         teamId: team.id,
         guid: messageGuid,
         sync: true,
-        verb: 'act',
-      }, function(response, res){
-        should.not.exist(response.error);
-        should.exist(response.eventGuid);
-        res.statusCode.should.equal(200);
-        eventGuids.push(response.eventGuid);
-        done();
-      });
-    });
+        verb: 'act'
+      }, function (response, res) {
+        should.not.exist(response.error)
+        should.exist(response.eventGuid)
+        res.statusCode.should.equal(200)
+        eventGuids.push(response.eventGuid)
+        done()
+      })
+    })
 
-    it('succeeds (read, gif)', function(done){
+    it('succeeds (read, gif)', function (done) {
       specHelper.WebRequestWithLogin(email, password, 'get', '/api/message/track.gif', {
         teamId: team.id,
         guid: messageGuid,
         sync: true,
-        verb: 'read',
-      }, function(response, res){
-        response.toString().indexOf('GIF').should.equal(0);
-        res.statusCode.should.equal(200);
-        res.headers['x-powered-by'].should.equal('MessageBot');
-        res.headers['content-type'].should.equal('image/gif');
-        done();
-      });
-    });
+        verb: 'read'
+      }, function (response, res) {
+        response.toString().indexOf('GIF').should.equal(0)
+        res.statusCode.should.equal(200)
+        res.headers['x-powered-by'].should.equal('MessageBot')
+        res.headers['content-type'].should.equal('image/gif')
+        done()
+      })
+    })
 
-    it('succeeds (act, gif)', function(done){
+    it('succeeds (act, gif)', function (done) {
       specHelper.WebRequestWithLogin(email, password, 'get', '/api/message/track.gif', {
         teamId: team.id,
         guid: messageGuid,
         sync: true,
-        verb: 'act',
-      }, function(response, res){
-        response.toString().indexOf('GIF').should.equal(0);
-        res.statusCode.should.equal(200);
-        res.headers['x-powered-by'].should.equal('MessageBot');
-        res.headers['content-type'].should.equal('image/gif');
-        done();
-      });
-    });
+        verb: 'act'
+      }, function (response, res) {
+        response.toString().indexOf('GIF').should.equal(0)
+        res.statusCode.should.equal(200)
+        res.headers['x-powered-by'].should.equal('MessageBot')
+        res.headers['content-type'].should.equal('image/gif')
+        done()
+      })
+    })
 
-    it('succeeds (message timestamps updated)', function(done){
+    it('succeeds (message timestamps updated)', function (done) {
       api.specHelper.runAction('message:view', {
         teamId: team.id,
         guid: messageGuid
-      }, function(response){
-        should.not.exist(response.error);
-        response.message.guid.should.equal(messageGuid);
-        should.exist(response.message.readAt);
-        should.exist(response.message.actedAt);
-        done();
-      });
-    });
+      }, function (response) {
+        should.not.exist(response.error)
+        response.message.guid.should.equal(messageGuid)
+        should.exist(response.message.readAt)
+        should.exist(response.message.actedAt)
+        done()
+      })
+    })
 
-    it('fails (bad verb)', function(done){
+    it('fails (bad verb)', function (done) {
       api.specHelper.runAction('message:track', {
         teamId: team.id,
         guid: messageGuid,
         sync: true,
-        verb: 'did-it',
-      }, function(response){
-        response.error.should.equal('Error: verb not allowed');
-        done();
-      });
-    });
+        verb: 'did-it'
+      }, function (response) {
+        response.error.should.equal('Error: verb not allowed')
+        done()
+      })
+    })
 
-    it('fails (not found)', function(done){
+    it('fails (not found)', function (done) {
       api.specHelper.runAction('message:track', {
         teamId: team.id,
         guid: 'messagesTestPersonGuid',
         sync: true,
-        verb: 'act',
-      }, function(response){
-        response.error.should.equal('Error: message (messagesTestPersonGuid) not found');
-        done();
-      });
-    });
-  });
+        verb: 'act'
+      }, function (response) {
+        response.error.should.equal('Error: message (messagesTestPersonGuid) not found')
+        done()
+      })
+    })
+  })
 
-  describe('messages:search', function(){
-    it('succeeds', function(done){
+  describe('messages:search', function () {
+    it('succeeds', function (done) {
       specHelper.requestWithLogin(email, password, 'messages:search', {
         searchKeys: ['personGuid'],
         searchValues: ['messagesTestPersonGuid'],
         form: 0,
-        size: 1,
-      }, function(response){
-        should.not.exist(response.error);
-        response.total.should.equal(1);
-        response.messages.length.should.equal(1);
-        done();
-      });
-    });
+        size: 1
+      }, function (response) {
+        should.not.exist(response.error)
+        response.total.should.equal(1)
+        response.messages.length.should.equal(1)
+        done()
+      })
+    })
 
-    it('fails (not logged in)', function(done){
+    it('fails (not logged in)', function (done) {
       api.specHelper.runAction('people:search', {
         searchKeys: ['personGuid'],
-        searchValues: ['messagesTestPersonGuid'],
-      }, function(response){
-        response.error.should.equal('Error: Please log in to continue');
-        done();
-      });
-    });
-  });
+        searchValues: ['messagesTestPersonGuid']
+      }, function (response) {
+        response.error.should.equal('Error: Please log in to continue')
+        done()
+      })
+    })
+  })
 
-  describe('messages:aggregation', function(){
-    it('succeeds', function(done){
+  describe('messages:aggregation', function () {
+    it('succeeds', function (done) {
       specHelper.requestWithLogin(email, password, 'messages:aggregation', {
         searchKeys: ['personGuid'],
         searchValues: ['messagesTestPersonGuid'],
-        interval: 'day',
-      }, function(response){
-        should.not.exist(response.error);
-        Object.keys(response.aggregations).length.should.equal(2);
-        response.aggregations.smtp[0].doc_count.should.equal(1);
-        response.selections.should.deepEqual(['smtp']);
-        response.selectionsName.should.equal('transports');
-        done();
-      });
-    });
+        interval: 'day'
+      }, function (response) {
+        should.not.exist(response.error)
+        Object.keys(response.aggregations).length.should.equal(2)
+        response.aggregations.smtp[0].doc_count.should.equal(1)
+        response.selections.should.deepEqual(['smtp'])
+        response.selectionsName.should.equal('transports')
+        done()
+      })
+    })
 
-    it('fails (not logged in)', function(done){
+    it('fails (not logged in)', function (done) {
       api.specHelper.runAction('messages:aggregation', {
         searchKeys: ['personGuid'],
         searchValues: ['messagesTestPersonGuid'],
-        interval: 'day',
-      }, function(response){
-        response.error.should.equal('Error: Please log in to continue');
-        done();
-      });
-    });
-  });
+        interval: 'day'
+      }, function (response) {
+        response.error.should.equal('Error: Please log in to continue')
+        done()
+      })
+    })
+  })
 
-  describe('message:delete', function(){
-    it('succeeds', function(done){
+  describe('message:delete', function () {
+    it('succeeds', function (done) {
       api.specHelper.runAction('message:delete', {
         teamId: team.id,
         sync: true,
         guid: messageGuid
-      }, function(response){
-        should.not.exist(response.error);
-        done();
-      });
-    });
+      }, function (response) {
+        should.not.exist(response.error)
+        done()
+      })
+    })
 
-    it('fails (not found)', function(done){
+    it('fails (not found)', function (done) {
       api.specHelper.runAction('message:delete', {
         teamId: team.id,
         sync: true,
         guid: messageGuid
-      }, function(response){
-        response.error.should.equal('Error: message (' + messageGuid + ') not found');
-        done();
-      });
-    });
-  });
-
-});
+      }, function (response) {
+        response.error.should.equal('Error: message (' + messageGuid + ') not found')
+        done()
+      })
+    })
+  })
+})

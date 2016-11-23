@@ -1,45 +1,44 @@
-var Sequelize = require('sequelize');
+var Sequelize = require('sequelize')
 
-var loader = function(api){
-  /*--- Priave Methods ---*/
+var loader = function (api) {
+  /* --- Priave Methods --- */
 
-  /*--- Public Model ---*/
+  /* --- Public Model --- */
 
   return {
-    name: 'listPerson',
+    name: 'ListPerson',
 
-    model: api.sequelize.sequelize.define('listPerson',
+    model: api.sequelize.sequelize.define('ListPerson',
       {
         'teamId': {
           type: Sequelize.INTEGER,
-          allowNull: false,
+          allowNull: false
         },
         'listId': {
           type: Sequelize.INTEGER,
-          allowNull: false,
+          allowNull: false
         },
         'personGuid': {
           type: Sequelize.STRING,
-          allowNull: false,
-        },
+          allowNull: false
+        }
       },
       {
         instanceMethods: {
-          apiData: function(){
+          apiData: function () {
             return {
-              id:           this.id,
-              teamId:       this.teamId,
-              listId:       this.listId,
-              personGuid:   this.personGuid,
-              createdAt:    this.createdAt,
-              updatedAt:    this.updatedAt,
-            };
+              id: this.id,
+              teamId: this.teamId,
+              listId: this.listId,
+              personGuid: this.personGuid,
+              createdAt: this.createdAt,
+              updatedAt: this.updatedAt
+            }
           }
         }
       }
     )
-  };
+  }
+}
 
-};
-
-module.exports = loader;
+module.exports = loader

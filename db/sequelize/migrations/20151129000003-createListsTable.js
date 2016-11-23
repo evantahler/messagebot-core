@@ -1,5 +1,5 @@
 module.exports = {
-  up: function(queryInterface, Sequelize){
+  up: function (queryInterface, Sequelize) {
     return queryInterface.createTable(
       'lists',
       {
@@ -17,66 +17,63 @@ module.exports = {
 
         'teamId': {
           type: Sequelize.INTEGER,
-          allowNull: false,
+          allowNull: false
         },
 
         'name': {
           type: Sequelize.STRING,
-          allowNull: false,
+          allowNull: false
         },
         'description': {
           type: Sequelize.TEXT,
-          allowNull: false,
+          allowNull: false
         },
         'folder': {
           type: Sequelize.STRING,
           allowNull: false,
-          defaultValue: 'default',
+          defaultValue: 'default'
         },
         'type': {
           type: Sequelize.STRING,
-          allowNull: false,
+          allowNull: false
         },
 
         'personQuery': {
           type: Sequelize.TEXT,
-          allowNull: true,
+          allowNull: true
         },
         'eventQuery': {
           type: Sequelize.TEXT,
-          allowNull: true,
+          allowNull: true
         },
         'messageQuery': {
           type: Sequelize.TEXT,
-          allowNull: true,
+          allowNull: true
         },
 
         'peopleCount': {
           type: Sequelize.INTEGER,
           allowNull: false,
-          default: 0,
+          default: 0
         },
         'peopleCountedAt': {
           type: Sequelize.DATE
-        },
+        }
       }
-    ).then(function(){
-
+    ).then(function () {
       return queryInterface.addIndex(
         'lists', ['teamId']
-      ).then(function(){
-
+      ).then(function () {
         return queryInterface.addIndex(
           'lists', ['teamId', 'name'], {
             indicesType: 'UNIQUE'
           }
-        );
-      });
-    });
-
+        )
+      })
+    })
   },
 
-  down: function(queryInterface, Sequelize){
-    queryInterface.deleteTable('lists');
+  down: function (queryInterface, Sequelize) {
+    queryInterface.deleteTable('lists')
   }
-};
+}

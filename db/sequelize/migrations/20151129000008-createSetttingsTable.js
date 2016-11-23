@@ -1,5 +1,5 @@
 module.exports = {
-  up: function(queryInterface, Sequelize){
+  up: function (queryInterface, Sequelize) {
     return queryInterface.createTable(
       'settings',
       {
@@ -17,40 +17,36 @@ module.exports = {
 
         'teamId': {
           type: Sequelize.INTEGER,
-          allowNull: false,
+          allowNull: false
         },
 
         'key': {
           type: Sequelize.STRING,
-          allowNull: false,
+          allowNull: false
         },
         'value': {
           type: Sequelize.TEXT,
-          allowNull: false,
+          allowNull: false
         },
         'description': {
           type: Sequelize.TEXT,
-          allowNull: false,
+          allowNull: false
         }
       }
-    ).then(function(){
-
+    ).then(function () {
       return queryInterface.addIndex(
         'settings', ['teamId']
-      ).then(function(){
-
+      ).then(function () {
         return queryInterface.addIndex(
           'settings', ['teamId', 'key'], {
             indicesType: 'UNIQUE'
           }
-        );
-
-      });
-    });
-
+        )
+      })
+    })
   },
 
-  down: function(queryInterface, Sequelize){
-    queryInterface.deleteTable('settings');
+  down: function (queryInterface, Sequelize) {
+    queryInterface.deleteTable('settings')
   }
-};
+}

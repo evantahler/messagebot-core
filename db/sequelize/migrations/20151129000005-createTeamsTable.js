@@ -1,5 +1,5 @@
 module.exports = {
-  up: function(queryInterface, Sequelize){
+  up: function (queryInterface, Sequelize) {
     return queryInterface.createTable(
       'teams',
       {
@@ -17,45 +17,40 @@ module.exports = {
 
         'name': {
           type: Sequelize.STRING,
-          allowNull: false,
+          allowNull: false
         },
         'trackingDomainRegexp': {
           type: Sequelize.STRING,
-          allowNull: false,
+          allowNull: false
         },
         'trackingDomain': {
           type: Sequelize.STRING,
-          allowNull: false,
+          allowNull: false
         }
 
       }
-    ).then(function(){
-
+    ).then(function () {
       return queryInterface.addIndex(
         'teams', ['name'], {
           indicesType: 'UNIQUE'
         }
-      ).then(function(){
-
+      ).then(function () {
         return queryInterface.addIndex(
           'teams', ['trackingDomainRegexp'], {
             indicesType: 'UNIQUE'
           }
-        ).then(function(){
-
+        ).then(function () {
           return queryInterface.addIndex(
             'teams', ['trackingDomain'], {
               indicesType: 'UNIQUE'
             }
-          );
-
-        });
-      });
-    });
-
+          )
+        })
+      })
+    })
   },
 
-  down: function(queryInterface, Sequelize){
-    queryInterface.deleteTable('teams');
+  down: function (queryInterface, Sequelize) {
+    queryInterface.deleteTable('teams')
   }
-};
+}

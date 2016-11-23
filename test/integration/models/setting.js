@@ -1,23 +1,23 @@
-var should     = require('should');
-var async      = require('async');
-var specHelper = require(__dirname + '/../../specHelper');
-var api;
-var team;
+var should = require('should') // eslint-disable-line
+var path = require('path')
+var specHelper = require(path.join(__dirname, '/../specHelper'))
+var api
+var team
 
-describe('integartion:settings', function(){
-  before(function(){ api = specHelper.api; });
+describe('integartion:settings', function () {
+  before(function () { api = specHelper.api })
 
-  before(function(done){
-    api.models.team.findOne().then(function(_team){
-      team = _team;
-      done();
-    });
-  });
+  before(function (done) {
+    api.models.Team.findOne().then(function (_team) {
+      team = _team
+      done()
+    })
+  })
 
-  it('seeded the settings for the team at boot', function(done){
-    api.models.setting.findAll({where: {teamId: team.id}}).then(function(settings){
-      settings.length.should.be.above(0);
-      done();
-    });
-  });
-});
+  it('seeded the settings for the team at boot', function (done) {
+    api.models.setting.findAll({where: {teamId: team.id}}).then(function (settings) {
+      settings.length.should.be.above(0)
+      done()
+    })
+  })
+})

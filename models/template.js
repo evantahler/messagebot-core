@@ -1,12 +1,10 @@
-var Sequelize    = require('sequelize');
-var sanitizeHtml = require('sanitize-html');
-var uuid         = require('node-uuid');
-var mustache     = require('mustache');
-var async        = require('async');
+var Sequelize = require('sequelize')
+var sanitizeHtml = require('sanitize-html')
+var mustache = require('mustache')
+var async = require('async')
 
-var loader = function(api){
-
-  /*--- Priave Methods ---*/
+var loader = function (api) {
+  /* --- Priave Methods --- */
 
   var allowedTags = [
     'html', 'body',
@@ -14,11 +12,11 @@ var loader = function(api){
     'blockquote', 'pre',
     'p', 'a', 'ul', 'ol', 'nl', 'li', 'b', 'i', 'strong', 'em',
     'strike', 'code',
-    'hr', 'br', 'div', 'span', 'table', 'thead', 'caption', 'tbody', 'tr', 'th', 'td',
-  ];
+    'hr', 'br', 'div', 'span', 'table', 'thead', 'caption', 'tbody', 'tr', 'th', 'td'
+  ]
 
-  var expandDate = function(d){
-    var monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+  var expandDate = function (d) {
+    var monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
 
     return {
       string: d.toString(),
@@ -32,7 +30,7 @@ var loader = function(api){
       month: (d.getMonth() + 1),
       seconds: d.getSeconds(),
       time: d.getTime(),
-      timezoneOffset: d.getTimezoneOffset(),
+      timezoneOffset: d.getTimezoneOffset()
       // UTCDate: d.getUTCDate(),
       // UTCDay: d.getUTCDay(),
       // UTCFullYear: d.getUTCFullYear(),
@@ -42,117 +40,117 @@ var loader = function(api){
       // UTCMonth: d.getUTCMonth(),
       // UTCSeconds: d.getUTCSeconds(),
       // year: d.getYear(),
-    };
-  };
+    }
+  }
 
-  var buildView = function(team, person, events, campaign, list, template, trackBeacon){
-    var view = {};
+  var buildView = function (team, person, events, campaign, list, template, trackBeacon) {
+    var view = {}
 
-    view.campaign = {};
-    view.list = {};
-    if(campaign){ view.campaign = campaign.apiData(); }
-    if(list){ view.list = list.apiData(); }
+    view.campaign = {}
+    view.list = {}
+    if (campaign) { view.campaign = campaign.apiData() }
+    if (list) { view.list = list.apiData() }
 
     // beacon
-    view.beaconLink = team.trackingDomain + '/api/message/track.gif?';
-    view.beaconLink += 'verb=read&';
-    view.beaconLink += 'guid=%%MESSAGEGUID%%';
+    view.beaconLink = team.trackingDomain + '/api/message/track.gif?'
+    view.beaconLink += 'verb=read&'
+    view.beaconLink += 'guid=%%MESSAGEGUID%%'
 
-    if(trackBeacon === true){
-      view.beacon = '<img src="';
-      view.beacon += view.beaconLink;
-      view.beacon += '" >';
-    }else{
-      view.beacon = '';
+    if (trackBeacon === true) {
+      view.beacon = '<img src="'
+      view.beacon += view.beaconLink
+      view.beacon += '" >'
+    } else {
+      view.beacon = ''
     }
 
-    view.track = function(){
-      return function(val, render){
-        var url = '';
-        url += team.trackingDomain + '/api/message/track.gif?';
-        url += 'verb=act&';
-        url += 'guid=%%MESSAGEGUID%%&';
-        url += 'link=' + render(val);
-        return url;
-      };
-    };
+    view.track = function () {
+      return function (val, render) {
+        var url = ''
+        url += team.trackingDomain + '/api/message/track.gif?'
+        url += 'verb=act&'
+        url += 'guid=%%MESSAGEGUID%%&'
+        url += 'link=' + render(val)
+        return url
+      }
+    }
 
-    view.optOutLink = function(){
-      return function(val){
-        var page = team.trackingDomain + '/tracking/' + team.id + '/optOut.html';
-        if(val){ page = val; }
+    view.optOutLink = function () {
+      return function (val) {
+        var page = team.trackingDomain + '/tracking/' + team.id + '/optOut.html'
+        if (val) { page = val }
 
-        var url = '';
-        url += page + '?';
-        url += 'personGuid=' + person.data.guid + '&';
-        url += 'messageGuid=%%MESSAGEGUID%%&' + '&';
-        if(view.campaign.id){ url += 'campaignId=' + view.campaign.id + '&'; }
-        if(view.list.id){ url += 'listId=' + view.list.id + '&'; }
-        return url;
-      };
-    };
+        var url = ''
+        url += page + '?'
+        url += 'personGuid=' + person.data.guid + '&'
+        url += 'messageGuid=%%MESSAGEGUID%%&' + '&'
+        if (view.campaign.id) { url += 'campaignId=' + view.campaign.id + '&' }
+        if (view.list.id) { url += 'listId=' + view.list.id + '&' }
+        return url
+      }
+    }
 
-    view.include = function(){
-      return function(val, render){
-        return '%%TEMPLATEINCLUDE:' + val + '%%';
-      };
-    };
+    view.include = function () {
+      return function (val, render) {
+        return '%%TEMPLATEINCLUDE:' + val + '%%'
+      }
+    }
 
     // person
-    view.person = Object.assign({}, person.data);
-    view.person.createdAt = expandDate(view.person.createdAt);
-    view.person.updatedAt = expandDate(view.person.updatedAt);
-    Object.keys(view.person.data).forEach(function(k){
-      if(view.person.data[k] instanceof Date){
-        view.person.data[k] = expandDate(view.person.data[k]);
+    view.person = Object.assign({}, person.data)
+    view.person.createdAt = expandDate(view.person.createdAt)
+    view.person.updatedAt = expandDate(view.person.updatedAt)
+    Object.keys(view.person.data).forEach(function (k) {
+      if (view.person.data[k] instanceof Date) {
+        view.person.data[k] = expandDate(view.person.data[k])
       }
-    });
+    })
 
     // events
-    view.events = events;
+    view.events = events
 
     // template
-    view.template = template.apiData();
-    delete view.template.template;
-    view.template.createdAt = expandDate(view.template.createdAt);
-    view.template.updatedAt = expandDate(view.template.updatedAt);
+    view.template = template.apiData()
+    delete view.template.template
+    view.template.createdAt = expandDate(view.template.createdAt)
+    view.template.updatedAt = expandDate(view.template.updatedAt)
 
     // time
-    view.now = expandDate(new Date());
-    return view;
-  };
+    view.now = expandDate(new Date())
+    return view
+  }
 
-  /*--- Public Model ---*/
+  /* --- Public Model --- */
 
   return {
-    name: 'template',
-    model: api.sequelize.sequelize.define('template',
+    name: 'Template',
+    model: api.sequelize.sequelize.define('Template',
       {
         'teamId': {
           type: Sequelize.INTEGER,
-          allowNull: false,
+          allowNull: false
         },
         'name': {
           type: Sequelize.STRING,
-          allowNull: false,
+          allowNull: false
         },
         'description': {
           type: Sequelize.TEXT,
-          allowNull: false,
+          allowNull: false
         },
         'folder': {
           type: Sequelize.STRING,
           allowNull: false,
-          defaultValue: 'default',
+          defaultValue: 'default'
         },
         'template': {
           type: Sequelize.TEXT,
           allowNull: true,
-          set: function(q){
+          set: function (q) {
             this.setDataValue('template', sanitizeHtml(q, {
               allowedTags: allowedTags,
               allowedAttributes: false
-            }));
+            }))
           }
         }
       },
@@ -160,113 +158,111 @@ var loader = function(api){
       {
         instanceMethods: {
 
-          render: function(person, message, campaign, list, trackBeacon, callback, includedIds){
-            var template = this;
-            var jobs     = [];
-            var events   = []; //TODO: Do we load in the events?  How many?
-            var team;
-            var person;
-            var view;
-            var html;
+          render: function (person, message, campaign, list, trackBeacon, callback, includedIds) {
+            var template = this
+            var jobs = []
+            var events = [] // TODO: Do we load in the events?  How many?
+            var team
+            var view
+            var html
 
-            if(!template.template || template.template.length === 0){ return callback(new Error('template empty')); }
+            if (!template.template || template.template.length === 0) { return callback(new Error('template empty')) }
 
             // Recusion saftey!
-            if(!includedIds){ includedIds = []; }
-            if(includedIds.indexOf(template.id) >= 0){ return callback(new Error('Cannot include template into itself')); }
-            includedIds.push(template.id);
+            if (!includedIds) { includedIds = [] }
+            if (includedIds.indexOf(template.id) >= 0) { return callback(new Error('Cannot include template into itself')) }
+            includedIds.push(template.id)
 
-            jobs.push(function(done){
-              api.models.team.findOne({where: {id: template.teamId}}).then(function(t){
-                team = t;
-                if(!team){ return done(new Error('team not found')); }
-                return done();
-              }).catch(done);
-            });
+            jobs.push(function (done) {
+              api.models.Team.findOne({where: {id: template.teamId}}).then(function (t) {
+                team = t
+                if (!team) { return done(new Error('team not found')) }
+                return done()
+              }).catch(done)
+            })
 
-            jobs.push(function(done){
-              view = buildView(team, person, events, campaign, list, template, trackBeacon);
-              done();
-            });
+            jobs.push(function (done) {
+              view = buildView(team, person, events, campaign, list, template, trackBeacon)
+              done()
+            })
 
-            jobs.push(function(done){
-              try{
-                html = mustache.render(template.template, view);
-                if(message){
-                  html            = html.replace(/%%MESSAGEGUID%%/g, message.data.guid);
-                  view.beaconLink = view.beaconLink.replace(/%%MESSAGEGUID%%/g, message.data.guid);
-                  view.beacon     = view.beacon.replace(/%%MESSAGEGUID%%/g, message.data.guid);
+            jobs.push(function (done) {
+              try {
+                html = mustache.render(template.template, view)
+                if (message) {
+                  html = html.replace(/%%MESSAGEGUID%%/g, message.data.guid)
+                  view.beaconLink = view.beaconLink.replace(/%%MESSAGEGUID%%/g, message.data.guid)
+                  view.beacon = view.beacon.replace(/%%MESSAGEGUID%%/g, message.data.guid)
                 }
-                done();
-              }catch(e){
-                return done(e);
+                done()
+              } catch (e) {
+                return done(e)
               }
-            });
+            })
 
-            jobs.push(function(done){
-              var includeJobs = [];
-              var matches = html.match(/%%TEMPLATEINCLUDE:.*%%/g);
-              if(!matches || matches.length === 0){ return done(); }
-              matches.forEach(function(match){
-                var matcher = match.replace(/%%/g, '').split(':')[1];
-                var includedTemplate;
+            jobs.push(function (done) {
+              var includeJobs = []
+              var matches = html.match(/%%TEMPLATEINCLUDE:.*%%/g)
+              if (!matches || matches.length === 0) { return done() }
+              matches.forEach(function (match) {
+                var matcher = match.replace(/%%/g, '').split(':')[1]
+                var includedTemplate
 
-                includeJobs.push(function(includeDone){
-                  var or = {name: matcher};
-                  if(parseInt(matcher, 10)){ or.id =  parseInt(matcher, 10); }
-                  api.models.template.findOne({where: {
+                includeJobs.push(function (includeDone) {
+                  var or = {name: matcher}
+                  if (parseInt(matcher, 10)) { or.id = parseInt(matcher, 10) }
+                  api.models.Template.findOne({where: {
                     teamId: team.id,
                     $or: or
-                  }}).then(function(_includedTemplate){
-                    if(!_includedTemplate){ return includeDone(new Error('Cannot find template to include (' + matcher + ')')); }
-                    includedTemplate = _includedTemplate;
-                    includeDone();
-                  }).catch(includeDone);
-                });
+                  }}).then(function (_includedTemplate) {
+                    if (!_includedTemplate) { return includeDone(new Error('Cannot find template to include (' + matcher + ')')) }
+                    includedTemplate = _includedTemplate
+                    includeDone()
+                  }).catch(includeDone)
+                })
 
-                includeJobs.push(function(includeDone){
-                  includedTemplate.render(person, message, campaign, list, trackBeacon, function(error, includedHtml){
-                    if(error){ return includeDone(error); }
-                    html = html.replace(match, includedHtml);
-                    includeDone();
-                  }, includedIds);
-                });
-              });
+                includeJobs.push(function (includeDone) {
+                  includedTemplate.render(person, message, campaign, list, trackBeacon, function (error, includedHtml) {
+                    if (error) { return includeDone(error) }
+                    html = html.replace(match, includedHtml)
+                    includeDone()
+                  }, includedIds)
+                })
+              })
 
-              async.series(includeJobs, function(error){
-                process.nextTick(function(){ return done(error); });
-              });
-            });
+              async.series(includeJobs, function (error) {
+                process.nextTick(function () { return done(error) })
+              })
+            })
 
-            async.series(jobs, function(error){
-              process.nextTick(function(){
-                if(error){ return callback(error); }
-                var logData = {};
-                if(message){ logData = {messageGuid: message.data.guid}; }
-                api.log('rendered template #' + template.id + ' for person #' + person.data.guid, 'info', logData);
-                return callback(null, html, view);
-              });
-            });
+            async.series(jobs, function (error) {
+              process.nextTick(function () {
+                if (error) { return callback(error) }
+                var logData = {}
+                if (message) { logData = {messageGuid: message.data.guid} }
+                api.log('rendered template #' + template.id + ' for person #' + person.data.guid, 'info', logData)
+                return callback(null, html, view)
+              })
+            })
           },
 
-          apiData: function(){
+          apiData: function () {
             return {
-              id:           this.id,
+              id: this.id,
 
-              name:         this.name,
-              description:  this.description,
-              folder:       this.folder,
-              template:     this.template,
+              name: this.name,
+              description: this.description,
+              folder: this.folder,
+              template: this.template,
 
-              createdAt:    this.createdAt,
-              updatedAt:    this.updatedAt,
-            };
+              createdAt: this.createdAt,
+              updatedAt: this.updatedAt
+            }
           }
         }
       }
     )
-  };
+  }
+}
 
-};
-
-module.exports = loader;
+module.exports = loader

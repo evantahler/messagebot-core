@@ -1,8 +1,8 @@
-var enabled = (process.env.ENABLE_SOCKET_SERVER === 'true' || process.env.ENABLE_SOCKET_SERVER === true);
+var enabled = (process.env.ENABLE_SOCKET_SERVER === 'true' || process.env.ENABLE_SOCKET_SERVER === true)
 
 exports.default = {
   servers: {
-    socket: function(api){
+    socket: function (api) {
       return {
         enabled: enabled,
         // TCP or TLS?
@@ -21,19 +21,19 @@ exports.default = {
         maxDataLength: 0,
         // What message to send down to a client who requests a `quit`
         goodbyeMessage: 'Bye!'
-      };
+      }
     }
   }
-};
+}
 
 exports.test = {
   servers: {
-    socket: function(api){
+    socket: function (api) {
       return {
         enabled: true,
         port: 5001,
         secure: false
-      };
+      }
     }
   }
-};
+}

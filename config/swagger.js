@@ -1,5 +1,5 @@
 exports.default = {
-  swagger: function(api){
+  swagger: function (api) {
     return {
       // Should be changed to hit www.yourserver.com.  If this is null, defaults to ip:port from
       // internal values or from hostOverride and portOverride.
@@ -7,18 +7,18 @@ exports.default = {
       // Specify routes that don't need to be displayed
       ignoreRoutes: ['/swagger', '/ah-resque-ui'],
       // Specify how routes are grouped
-      routeTags : {
-        'basics'   : [],
-        'system'   : ['documentation', 'status', 'transports'],
-        'user'     : ['user'],
-        'session'  : ['session'],
-        'person'   : ['person', 'people'],
-        'message'  : ['message', 'messages'],
-        'event'    : ['event', 'events'],
-        'list'     : ['list', 'lists'],
-        'template' : ['template'],
-        'campaign' : ['campaign'],
-        'team'     : ['settings', 'setting'],
+      routeTags: {
+        'basics': [],
+        'system': ['documentation', 'status', 'transports'],
+        'user': ['user'],
+        'session': ['session'],
+        'person': ['person', 'people'],
+        'message': ['message', 'messages'],
+        'event': ['event', 'events'],
+        'list': ['list', 'lists'],
+        'template': ['template'],
+        'campaign': ['campaign'],
+        'team': ['settings', 'setting']
       },
       // Generate documentation for simple actions specified by action-name
       documentSimpleRoutes: false,
@@ -33,6 +33,6 @@ exports.default = {
       hostOverride: true,
       // Same as above, if null uses the internal value set in config/server/web.js
       portOverride: null
-    };
+    }
   }
-};
+}

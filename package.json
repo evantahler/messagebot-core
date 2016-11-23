@@ -45,10 +45,23 @@
     "ws": "latest"
   },
   "devDependencies": {
-    "eslint": "^3.8.1",
     "mocha": "latest",
     "should": "latest",
+    "standard": "^8.5.0",
     "travis-after-all": "^1.4.4"
+  },
+  "standard": {
+    "ignore": [
+      "client"
+    ],
+    "globals": [
+      "describe",
+      "before",
+      "beforeEach",
+      "after",
+      "afterEach",
+      "it"
+    ]
   },
   "scripts": {
     "help": "actionhero help",
@@ -56,7 +69,7 @@
     "actionhero": "actionhero",
     "cluster": "actionhero start cluster",
     "console": "actionhero console",
-    "test": "NODE_ENV=test mocha --reporter dot",
+    "test": "standard && NODE_ENV=test mocha --reporter dot",
     "migrate": "npm run migrate:sequelize && npm run migrate:elasticsearch",
     "postinstall": "npm run postinstall:maxmind",
     "migrate:elasticsearch": "node ./db/elasticsearch/teamSeeder.js",

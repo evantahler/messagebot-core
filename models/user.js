@@ -1,11 +1,10 @@
-var Sequelize = require('sequelize');
-var bcrypt    = require('bcrypt');
+var Sequelize = require('sequelize')
+var bcrypt = require('bcrypt')
 
-var loader = function(api){
+var loader = function (api) {
+  /* --- Priave Methods --- */
 
-  /*--- Priave Methods ---*/
-
-  var bcryptComplexity = 10;
+  var bcryptComplexity = 10
 
   var validRoles = [
     'new',
@@ -14,98 +13,98 @@ var loader = function(api){
     'marketer',
     'analyst',
     'developer',
-    'designer',
-  ];
+    'designer'
+  ]
 
-  /*--- Public Model ---*/
+  /* --- Public Model --- */
 
   return {
-    name: 'user',
-    model: api.sequelize.sequelize.define('user',
+    name: 'User',
+    model: api.sequelize.sequelize.define('User',
       {
         'teamId': {
           type: Sequelize.INTEGER,
-          allowNull: false,
+          allowNull: false
         },
         'email': {
           type: Sequelize.STRING,
           allowNull: false,
-          validate: { isEmail: true },
+          validate: { isEmail: true }
         },
         'passwordHash': {
           type: Sequelize.TEXT,
-          allowNull: false,
+          allowNull: false
         },
         'personGuid': {
           type: Sequelize.TEXT,
-          allowNull: false,
+          allowNull: false
         },
         'role': {
           type: Sequelize.STRING,
           allowNull: false,
           defaultValue: 'new',
           validate: {
-            validRole: function(value){
-              if(validRoles.indexOf(value) < 0){
-                throw new Error('role is invalid');
+            validRole: function (value) {
+              if (validRoles.indexOf(value) < 0) {
+                throw new Error('role is invalid')
               }
             }
           }
         },
         'firstName': {
           type: Sequelize.STRING,
-          allowNull: false,
+          allowNull: false
         },
         'lastName': {
           type: Sequelize.STRING,
-          allowNull: false,
+          allowNull: false
         },
         'lastLoginAt': {
           type: Sequelize.DATE,
-          allowNull: true,
-        },
+          allowNull: true
+        }
       },
 
       {
         instanceMethods: {
-          name: function(){
-            return [this.firstName, this.lastName].join(' ');
+          name: function () {
+            return [this.firstName, this.lastName].join(' ')
           },
 
-          validRoles: function(){
-            return validRoles;
+          validRoles: function () {
+            return validRoles
           },
 
-          updatePassword: function(pw, callback){
-            var self = this;
-            bcrypt.hash(pw, bcryptComplexity, function(error, hash){
-              if(error){ return callback(error); }
-              self.passwordHash = hash;
-              callback(null, self);
-            });
+          updatePassword: function (pw, callback) {
+            var self = this
+            bcrypt.hash(pw, bcryptComplexity, function (error, hash) {
+              if (error) { return callback(error) }
+              self.passwordHash = hash
+              callback(null, self)
+            })
           },
 
-          checkPassword: function(pw, callback){
-            var self = this;
-            bcrypt.compare(pw, self.passwordHash, callback);
+          checkPassword: function (pw, callback) {
+            var self = this
+            bcrypt.compare(pw, self.passwordHash, callback)
           },
 
-          apiData: function(){
+          apiData: function () {
             return {
-              id:         this.id,
+              id: this.id,
               personGuid: this.personGuid,
-              email:      this.email,
-              role:       this.role,
-              firstName:  this.firstName,
-              lastName:   this.lastName,
-              createdAt:  this.createdAt,
-              updatedAt:  this.updatedAt,
-            };
+              email: this.email,
+              role: this.role,
+              firstName: this.firstName,
+              lastName: this.lastName,
+              createdAt: this.createdAt,
+              updatedAt: this.updatedAt
+            }
           }
         }
       }
     )
-  };
-};
+  }
+}
 
-module.exports = loader;
+module.exports = loader
