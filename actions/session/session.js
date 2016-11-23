@@ -10,7 +10,7 @@ exports.sessionCreate = {
 
   run: function (api, data, next) {
     data.response.success = false
-    api.models.user.findOne({where: {email: data.params.email}}).then(function (user) {
+    api.models.User.findOne({where: {email: data.params.email}}).then(function (user) {
       if (!user) { return next(new Error('user not found')) }
       user.checkPassword(data.params.password, function (error, match) {
         if (error) {
@@ -56,7 +56,7 @@ exports.sessionCheck = {
       } else if (!sessionData) {
         return next(new Error('Please log in to continue'))
       } else {
-        api.models.user.findOne({where: {id: sessionData.userId}}).then(function (user) {
+        api.models.User.findOne({where: {id: sessionData.userId}}).then(function (user) {
           if (!user) { return next(new Error('user not found')) }
           data.response.user = user.apiData()
           data.response.success = true

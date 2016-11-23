@@ -16,7 +16,7 @@ describe('models:settings', function () {
   })
 
   it('can create a new setting with valid params', function (done) {
-    setting = api.models.setting.build({
+    setting = api.models.Setting.build({
       teamId: 1,
       key: 'some:key',
       value: 'abc123',
@@ -24,7 +24,7 @@ describe('models:settings', function () {
     })
 
     setting.save().then(function () {
-      api.models.setting.findOne({where: {teamId: 1, key: 'some:key'}}).then(function (setting) {
+      api.models.Setting.findOne({where: {teamId: 1, key: 'some:key'}}).then(function (setting) {
         setting.value.should.equal('abc123')
         done()
       })
@@ -32,7 +32,7 @@ describe('models:settings', function () {
   })
 
   it('will not create a new setting with invalid params (missing requirement)', function (done) {
-    setting = api.models.setting.build({
+    setting = api.models.Setting.build({
       teamId: 1
     })
 
@@ -48,7 +48,7 @@ describe('models:settings', function () {
   })
 
   it('will not create a new setting with invalid params (duplicate key)', function (done) {
-    setting = api.models.setting.build({
+    setting = api.models.Setting.build({
       teamId: 1,
       key: 'some:key',
       value: 'abc123',
@@ -56,7 +56,7 @@ describe('models:settings', function () {
     })
 
     setting.save().then(function () {
-      var otherSetting = api.models.setting.build({
+      var otherSetting = api.models.Setting.build({
         teamId: 1,
         key: 'some:key',
         value: 'abc123',

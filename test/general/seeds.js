@@ -18,7 +18,7 @@ describe('general:seeds', function () {
   })
 
   it('has the first admin user', function (done) {
-    api.models.user.findOne({where: {id: 1}}).then(function (user) {
+    api.models.User.findOne({where: {id: 1}}).then(function (user) {
       user.id.should.equal(1)
       user.teamId.should.equal(1)
       user.email.should.equal('admin@localhost.com')

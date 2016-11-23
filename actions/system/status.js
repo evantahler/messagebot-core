@@ -83,7 +83,7 @@ exports.status = {
     /* ------ Database ------ */
 
     data.response.database.healthy = true;
-    ['campaign', 'list', 'listPerson', 'template', 'user'].forEach(function (model) {
+    ['Campaign', 'List', 'ListPerson', 'Template', 'User', 'Setting'].forEach(function (model) {
       jobs.push(function (done) {
         api.models[model].count().then(function (count) {
           data.response.database[model] = count

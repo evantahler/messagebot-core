@@ -8,7 +8,7 @@ var prepareFile = function (api, data, file, mime, next) {
   var source = ''
 
   jobs.push(function (done) {
-    api.models.setting.findAll({where: {teamId: data.team.id}}).then(function (_settings) {
+    api.models.Setting.findAll({where: {teamId: data.team.id}}).then(function (_settings) {
       settings = _settings
       done()
     }).catch(done)

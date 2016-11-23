@@ -21,7 +21,7 @@ describe('actions:user', function () {
 
   var cleanUsersTable = function (callback) {
     var jobs = []
-    api.models.user.findAll().then(function (users) {
+    api.models.User.findAll().then(function (users) {
       users.forEach(function (user) {
         if (user.email !== 'admin@localhost.com') {
           jobs.push(function (next) {
@@ -64,7 +64,7 @@ describe('actions:user', function () {
     })
 
     it('creates a person with each uesr', function (done) {
-      api.models.user.find({where: {id: userId}}).then(function (user) {
+      api.models.User.find({where: {id: userId}}).then(function (user) {
         var person = new api.models.Person(team, user.personGuid)
         person.hydrate(function (error) {
           should.not.exist(error)
@@ -92,7 +92,7 @@ describe('actions:user', function () {
     })
 
     it('succeeds (creates the proper person)', function (done) {
-      api.models.user.find({where: {id: userId}}).then(function (user) {
+      api.models.User.find({where: {id: userId}}).then(function (user) {
         should.exist(user)
         var person = api.models.Person(team, user.personGuid)
         person.hydrate(function (error) {
@@ -202,7 +202,7 @@ describe('actions:user', function () {
     })
 
     it('edits the person as well', function (done) {
-      api.models.user.find({where: {id: userId}}).then(function (user) {
+      api.models.User.find({where: {id: userId}}).then(function (user) {
         var person = new api.models.Person(team, user.personGuid)
         person.hydrate(function (error) {
           should.not.exist(error)
@@ -335,7 +335,7 @@ describe('actions:user', function () {
 
   describe('user:delete', function () {
     it('succeeds (admin, other user)', function (done) {
-      api.models.user.find({where: {id: userId}}).then(function (user) {
+      api.models.User.find({where: {id: userId}}).then(function (user) {
         specHelper.requestWithLogin(email, password, 'user:delete', {
           userId: userId
         }, function (response) {

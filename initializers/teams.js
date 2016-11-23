@@ -37,7 +37,7 @@ module.exports = {
 
       ensureSettings: function (team, callback) {
         var jobs = []
-        api.models.setting.findAll({where: {teamId: team.id}}).then(function (settings) {
+        api.models.Setting.findAll({where: {teamId: team.id}}).then(function (settings) {
           api.teams.settings.forEach(function (settingParent) {
             var found = false
             settings.forEach(function (s) {
@@ -46,7 +46,7 @@ module.exports = {
 
             if (found === false) {
               jobs.push(function (done) {
-                api.models.setting.create({
+                api.models.Setting.create({
                   teamId: team.id,
                   key: settingParent.key,
                   value: settingParent.value,

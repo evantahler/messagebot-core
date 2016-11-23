@@ -13,7 +13,7 @@ exports.userCreate = {
   },
 
   run: function (api, data, next) {
-    var user = api.models.user.build(data.params)
+    var user = api.models.User.build(data.params)
     user.teamId = data.session.teamId
 
     user.updatePassword(data.params.password, function (error) {
@@ -65,7 +65,7 @@ exports.userView = {
       userId = data.params.userId
     }
 
-    api.models.user.findOne({where: {
+    api.models.User.findOne({where: {
       id: userId,
       teamId: data.session.teamId
     }}).then(function (user) {
@@ -100,7 +100,7 @@ exports.userEdit = {
       userId = data.params.userId
     }
 
-    api.models.user.findOne({where: {
+    api.models.User.findOne({where: {
       id: userId,
       teamId: data.session.teamId
     }}).then(function (user) {
@@ -156,7 +156,7 @@ exports.userDelete = {
   },
 
   run: function (api, data, next) {
-    api.models.user.findOne({where: {
+    api.models.User.findOne({where: {
       id: data.params.userId,
       teamId: data.session.teamId
     }}).then(function (user) {

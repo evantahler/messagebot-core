@@ -12,7 +12,7 @@ var loader = function (api) {
   }
 
   var destorySettings = function (team) {
-    api.models.setting.destroy({
+    api.models.Setting.destroy({
       where: { teamId: team.id }
     })
   }

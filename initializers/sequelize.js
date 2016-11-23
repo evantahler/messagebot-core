@@ -60,7 +60,7 @@ module.exports = {
       },
 
       test: function (callback) {
-        api.models.user.count().then(function (data) {
+        api.models.User.count().then(function (data) {
           api.log('connected to sequelize')
           callback()
         }).catch(function (error) {

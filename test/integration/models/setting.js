@@ -15,7 +15,7 @@ describe('integartion:settings', function () {
   })
 
   it('seeded the settings for the team at boot', function (done) {
-    api.models.setting.findAll({where: {teamId: team.id}}).then(function (settings) {
+    api.models.Setting.findAll({where: {teamId: team.id}}).then(function (settings) {
       settings.length.should.be.above(0)
       done()
     })

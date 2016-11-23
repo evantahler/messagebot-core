@@ -42,7 +42,7 @@ var teamCreate = function (api, callback) {
   })
 
   jobs.push(function (done) {
-    user = api.models.user.build({
+    user = api.models.User.build({
       email: argv.email,
       teamId: team.id,
       role: 'admin',

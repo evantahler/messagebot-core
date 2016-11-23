@@ -16,7 +16,7 @@ describe('models:users', function () {
   })
 
   it('can create new users with valid params', function (done) {
-    user = api.models.user.build({
+    user = api.models.User.build({
       teamId: 1,
       email: 'a@b.com',
       personGuid: Math.random(),
@@ -27,7 +27,7 @@ describe('models:users', function () {
     })
 
     user.save().then(function () {
-      api.models.user.findOne({where: {email: 'a@b.com'}}).then(function (user) {
+      api.models.User.findOne({where: {email: 'a@b.com'}}).then(function (user) {
         user.email.should.equal('a@b.com')
         done()
       })
@@ -35,7 +35,7 @@ describe('models:users', function () {
   })
 
   it('will not create new users with invalid params (missing requirement)', function (done) {
-    user = api.models.user.build({
+    user = api.models.User.build({
       teamId: 1,
       passwordHash: 'xxx',
       lastName: 'lname'
@@ -53,7 +53,7 @@ describe('models:users', function () {
   })
 
   it('will not create new users with invalid params (duplicate key)', function (done) {
-    user = api.models.user.build({
+    user = api.models.User.build({
       teamId: 1,
       email: 'admin@localhost.com',
       personGuid: Math.random(),
@@ -73,7 +73,7 @@ describe('models:users', function () {
   })
 
   it('will not create new users with invalid params (bad role)', function (done) {
-    user = api.models.user.build({
+    user = api.models.User.build({
       teamId: 1,
       email: 'admin5@localhost.com',
       personGuid: Math.random(),
@@ -93,7 +93,7 @@ describe('models:users', function () {
   })
 
   it('passwords can be checked (success)', function (done) {
-    user = api.models.user.build({
+    user = api.models.User.build({
       teamId: 1,
       personGuid: Math.random(),
       email: 'aaa@b.com',
@@ -115,7 +115,7 @@ describe('models:users', function () {
   })
 
   it('passwords can be checked (failure)', function (done) {
-    user = api.models.user.build({
+    user = api.models.User.build({
       teamId: 1,
       personGuid: Math.random(),
       email: 'bbb@b.com',

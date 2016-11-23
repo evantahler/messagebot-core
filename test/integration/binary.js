@@ -97,7 +97,7 @@ describe('integartion:binary', function () {
     })
 
     it('succeeds (creating the user)', function (done) {
-      api.models.user.findOne({where: {teamId: team.id}}).then(function (_user) {
+      api.models.User.findOne({where: {teamId: team.id}}).then(function (_user) {
         _user.email.should.equal('admin@app.com')
         user = _user
         done()
@@ -218,7 +218,7 @@ describe('integartion:binary', function () {
     })
 
     it('succeeds (deletes the user)', function (done) {
-      api.models.user.findOne({where: {teamId: team.id}}).then(function (_user) {
+      api.models.User.findOne({where: {teamId: team.id}}).then(function (_user) {
         should.not.exist(_user)
         done()
       }).catch(done)

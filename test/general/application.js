@@ -15,7 +15,7 @@ describe('general:applicaiton', function () {
   describe('utils', function () {
     it('api.utils.findInBatches', function (done) {
       var totalUsers = 0
-      api.utils.findInBatches(api.models.user, {}, function (user, next) {
+      api.utils.findInBatches(api.models.User, {}, function (user, next) {
         totalUsers++
         next()
       }, function (error) {
