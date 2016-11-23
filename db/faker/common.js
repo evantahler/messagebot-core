@@ -2,7 +2,7 @@ var faker = require('faker')
 var request = require('request')
 var async = require('async')
 var path = require('path')
-var ActionHeroPrototype = require(path.join(__dirname, '/../../node_modules/actionhero/actionhero.js')).actionheroPrototype
+var ActionHeroPrototype = require(path.join(__dirname, '/../../node_modules/actionhero/actionhero.js'))
 
 exports.connect = function (callback) {
   var actionhero = new ActionHeroPrototype()
