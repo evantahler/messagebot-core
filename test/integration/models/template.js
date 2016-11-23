@@ -1,7 +1,7 @@
 var should = require('should')
 var async = require('async')
 var path = require('path')
-var specHelper = require(path.join(__dirname, '/../specHelper'))
+var specHelper = require(path.join(__dirname, '/../../specHelper'))
 var api
 
 describe('integartion:template', function () {

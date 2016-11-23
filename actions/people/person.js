@@ -238,8 +238,8 @@ exports.personDelete = {
     });
 
     [
-      ['events', 'event'],
-      ['messages', 'message']
+      ['events', 'Event'],
+      ['messages', 'Message']
     ].forEach(function (typeGroup) {
       jobs.push(function (done) {
         // since the delete operation is async, we need to keep track of what we have already trigged to delete

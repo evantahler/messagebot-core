@@ -1,6 +1,6 @@
 var should = require('should') // eslint-disable-line
 var path = require('path')
-var specHelper = require(path.join(__dirname, '/../specHelper'))
+var specHelper = require(path.join(__dirname, '/../../specHelper'))
 var api
 var team
 

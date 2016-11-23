@@ -36,7 +36,7 @@ var teamDelete = function (api, callback) {
     }, true)
   });
 
-  ['user', 'listPerson', 'list', 'campaign', 'template'].forEach(function (model) {
+  ['User', 'ListPerson', 'List', 'Campaign', 'Template'].forEach(function (model) {
     jobs.push(function (done) {
       console.log('Delting all objects for team from table `' + model + '`')
       api.models[model].destroy({where: {teamId: team.id}}).then(function () {

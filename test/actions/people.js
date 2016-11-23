@@ -168,7 +168,7 @@ describe('action:person', function () {
         teamId: team.id,
         guid: 'xxx'
       }, function (response) {
-        response.error.should.equal('Error: person (xxx) not found')
+        response.error.should.equal('Error: Person (xxx) not found')
         done()
       })
     })
@@ -203,7 +203,7 @@ describe('action:person', function () {
         guid: 'xxx',
         data: {email: 'otherPerson@faker.fake'}
       }, function (response) {
-        response.error.should.equal('Error: person (xxx) not found')
+        response.error.should.equal('Error: Person (xxx) not found')
         done()
       })
     })
@@ -395,7 +395,7 @@ describe('action:person', function () {
       jobs.push(function (next) {
         var checkMessage = new api.models.Message(team, message.data.guid)
         checkMessage.hydrate(function (error) {
-          String(error).should.equal('Error: message (' + message.data.guid + ') not found')
+          String(error).should.equal('Error: Message (' + message.data.guid + ') not found')
           next()
         })
       })
@@ -403,7 +403,7 @@ describe('action:person', function () {
       jobs.push(function (next) {
         var checkEvent = new api.models.Event(team, event.data.guid)
         checkEvent.hydrate(function (error) {
-          String(error).should.equal('Error: event (' + event.data.guid + ') not found')
+          String(error).should.equal('Error: Event (' + event.data.guid + ') not found')
           next()
         })
       })
@@ -426,7 +426,7 @@ describe('action:person', function () {
         teamId: team.id,
         guid: personGuid
       }, function (response) {
-        response.error.should.equal('Error: person (' + personGuid + ') not found')
+        response.error.should.equal('Error: Person (' + personGuid + ') not found')
         done()
       })
     })

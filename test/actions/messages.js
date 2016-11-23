@@ -87,7 +87,7 @@ describe('actions:message', function () {
         teamId: team.id,
         guid: 'xxx'
       }, function (response) {
-        response.error.should.equal('Error: message (xxx) not found')
+        response.error.should.equal('Error: Message (xxx) not found')
         done()
       })
     })
@@ -110,7 +110,7 @@ describe('actions:message', function () {
         teamId: team.id,
         guid: 'xxx'
       }, function (response) {
-        response.error.should.equal('Error: message (xxx) not found')
+        response.error.should.equal('Error: Message (xxx) not found')
         done()
       })
     })
@@ -251,7 +251,7 @@ describe('actions:message', function () {
         sync: true,
         verb: 'act'
       }, function (response) {
-        response.error.should.equal('Error: message (messagesTestPersonGuid) not found')
+        response.error.should.equal('Error: Message (messagesTestPersonGuid) not found')
         done()
       })
     })
@@ -329,7 +329,7 @@ describe('actions:message', function () {
         sync: true,
         guid: messageGuid
       }, function (response) {
-        response.error.should.equal('Error: message (' + messageGuid + ') not found')
+        response.error.should.equal('Error: Message (' + messageGuid + ') not found')
         done()
       })
     })

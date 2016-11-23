@@ -21,7 +21,7 @@ var loader = function (api) {
 
   return {
     name: 'Team',
-    model: api.sequelize.sequelize.define('Team',
+    model: api.sequelize.sequelize.define('team',
       {
         'name': {
           type: Sequelize.STRING,

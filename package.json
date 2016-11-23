@@ -12,9 +12,9 @@
     "node": "6.x.x"
   },
   "dependencies": {
-    "actionhero": "^15.3.0",
+    "actionhero": "^16.0.0",
     "ah-datadog-plugin": "0.0.4",
-    "ah-elasticsearch-orm": "^0.2.0",
+    "ah-elasticsearch-orm": "^0.3.0",
     "ah-resque-ui": "^0.1.1",
     "ah-swagger-plugin": "^1.0.0",
     "async": "^2.1.1",

@@ -165,7 +165,7 @@ describe('actions:event', function () {
         teamId: team.id,
         guid: '123abc'
       }, function (response) {
-        response.error.should.equal('Error: event (123abc) not found')
+        response.error.should.equal('Error: Event (123abc) not found')
         done()
       })
     })
@@ -189,7 +189,7 @@ describe('actions:event', function () {
         guid: '123abc',
         device: 'new_device'
       }, function (response) {
-        response.error.should.equal('Error: event (123abc) not found')
+        response.error.should.equal('Error: Event (123abc) not found')
         done()
       })
     })
@@ -264,7 +264,7 @@ describe('actions:event', function () {
         teamId: team.id,
         guid: eventGuid
       }, function (response) {
-        response.error.should.equal('Error: event (' + eventGuid + ') not found')
+        response.error.should.equal('Error: Event (' + eventGuid + ') not found')
         done()
       })
     })

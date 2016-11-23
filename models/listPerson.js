@@ -8,7 +8,7 @@ var loader = function (api) {
   return {
     name: 'ListPerson',
 
-    model: api.sequelize.sequelize.define('ListPerson',
+    model: api.sequelize.sequelize.define('listPerson',
       {
         'teamId': {
           type: Sequelize.INTEGER,

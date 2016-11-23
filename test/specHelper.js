@@ -1,4 +1,4 @@
-var ActionheroPrototype = require('actionhero').actionheroPrototype
+var ActionheroPrototype = require('actionhero')
 var async = require('async')
 var request = require('request')
 var should = require('should') // eslint-disable-line

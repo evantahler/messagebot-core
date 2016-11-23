@@ -20,7 +20,7 @@ var loader = function (api) {
 
   return {
     name: 'User',
-    model: api.sequelize.sequelize.define('User',
+    model: api.sequelize.sequelize.define('user',
       {
         'teamId': {
           type: Sequelize.INTEGER,

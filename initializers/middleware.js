@@ -67,7 +67,7 @@ module.exports = {
 
     /* --- Inject team into Elasticsaerch models --- */
     api.models.orignalElasticSearch = {};
-    ['event', 'person', 'message'].forEach(function (key) {
+    ['Event', 'Person', 'Message'].forEach(function (key) {
       api.models.orignalElasticSearch[key] = api.models[key]
 
       api.models[key] = function (team, guid, index, alias) {
