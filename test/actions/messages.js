@@ -247,11 +247,11 @@ describe('actions:message', function () {
     it('fails (not found)', function (done) {
       api.specHelper.runAction('message:track', {
         teamId: team.id,
-        guid: 'messagesTestPersonGuid',
+        guid: 'a-fake-guid',
         sync: true,
         verb: 'act'
       }, function (response) {
-        response.error.should.equal('Error: Message (messagesTestPersonGuid) not found')
+        response.error.should.equal('Error: Message (afakeguid) not found')
         done()
       })
     })
@@ -262,7 +262,7 @@ describe('actions:message', function () {
       specHelper.requestWithLogin(email, password, 'messages:search', {
         searchKeys: ['personGuid'],
         searchValues: ['messagesTestPersonGuid'],
-        form: 0,
+        from: 0,
         size: 1
       }, function (response) {
         should.not.exist(response.error)

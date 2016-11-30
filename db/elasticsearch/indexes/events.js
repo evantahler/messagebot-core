@@ -30,20 +30,20 @@ module.exports = {
       ],
 
       'properties': {
-        'guid': { 'type': 'string', 'required': true },
+        'guid': { 'type': 'keyword', 'required': true },
         'createdAt': { 'type': 'date', 'required': true },
         'updatedAt': { 'type': 'date', 'required': true },
         'data': { 'type': 'object', 'required': true },
 
-        'ip': { 'type': 'string', 'required': true },
-        'device': { 'type': 'string', 'required': true },
-        'personGuid': { 'type': 'string', 'required': true },
-        'messageGuid': { 'type': 'string', 'required': false },
-        'type': { 'type': 'string', 'required': true },
+        'ip': { 'type': 'keyword', 'required': true },
+        'device': { 'type': 'keyword', 'required': true },
+        'personGuid': { 'type': 'keyword', 'required': true },
+        'messageGuid': { 'type': 'keyword', 'required': false },
+        'type': { 'type': 'keyword', 'required': true },
 
         'location': {
           'type': 'geo_point',
-          'geohash_precision': (process.env.GEOHASH_PRECISION || '1km'),
+          // 'geohash_precision': (process.env.GEOHASH_PRECISION || '1km'),
           'required': false
         }
       }

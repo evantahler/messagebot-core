@@ -92,7 +92,7 @@ describe('action:person', function () {
         specHelper.requestWithLogin(email, password, 'events:search', {
           searchKeys: ['personGuid'],
           searchValues: [personGuid],
-          form: 0,
+          from: 0,
           size: 999
         }, function (response) {
           should.not.exist(response.error)
@@ -305,7 +305,7 @@ describe('action:person', function () {
       specHelper.requestWithLogin(email, password, 'people:search', {
         searchKeys: ['data.email'],
         searchValues: ['*@faker.fake'],
-        form: 1,
+        from: 1,
         size: 1
       }, function (response) {
         should.not.exist(response.error)

@@ -102,7 +102,7 @@ describe('integartion:lists', function () {
     it('#associateListPeople (dyanamic, with exlusion)', function (done) {
       list.type = 'dynamic'
       list.personQuery = {wildcard: {'data.firstName': '*'}}
-      list.eventQuery = {term: {'type': 'boughtthething'}}
+      list.eventQuery = {term: {'type': 'boughtTheThing'}}
       list.associateListPeople(function (error, count) {
         should.not.exist(error)
         count.should.equal(1)

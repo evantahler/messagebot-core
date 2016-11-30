@@ -200,7 +200,7 @@ describe('actions:event', function () {
       specHelper.requestWithLogin(email, password, 'events:search', {
         searchKeys: ['device'],
         searchValues: ['new_device'],
-        form: 0,
+        from: 0,
         size: 99
       }, function (response) {
         should.not.exist(response.error)

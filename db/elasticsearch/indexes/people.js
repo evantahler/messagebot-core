@@ -30,7 +30,7 @@ module.exports = {
       ],
 
       'properties': {
-        'guid': { 'type': 'string', 'required': true },
+        'guid': { 'type': 'keyword', 'required': true },
         'createdAt': { 'type': 'date', 'required': true },
         'updatedAt': { 'type': 'date', 'required': true },
         'data': { 'type': 'object', 'required': true },
@@ -38,11 +38,11 @@ module.exports = {
         'listOptOuts': { 'type': 'integer', 'required': true },
         'globalOptOut': { 'type': 'boolean', 'required': true },
 
-        'source': { 'type': 'string', 'required': true },
-        'device': { 'type': 'string', 'required': true },
+        'source': { 'type': 'keyword', 'required': true },
+        'device': { 'type': 'keyword', 'required': true },
         'location': {
           'type': 'geo_point',
-          'geohash_precision': (process.env.GEOHASH_PRECISION || '1km'),
+          // 'geohash_precision': (process.env.GEOHASH_PRECISION || '1km'),
           'required': false
         }
       }

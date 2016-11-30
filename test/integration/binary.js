@@ -227,7 +227,7 @@ describe('integartion:binary', function () {
     it('succeeds (deletes the person)', function (done) {
       var _person = new api.models.Person(team, user.personGuid)
       _person.hydrate(function (error) {
-        String(error).should.equal('Error: Person (' + user.personGuid + ') not found')
+        should.exist(error)
         done()
       })
     })
