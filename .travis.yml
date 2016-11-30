@@ -6,7 +6,6 @@ node_js:
   - "6"
 
 addons:
-  postgresql: "9.4"
   apt:
     packages:
     - mysql-server-5.6
@@ -41,7 +40,6 @@ env:
 
   matrix:
     - SEQUELIZE_DIALECT=mysql    SEQUELIZE_USER=root     SEQUELIZE_PORT=3306
-    - SEQUELIZE_DIALECT=postgres SEQUELIZE_USER=postgres SEQUELIZE_PORT=5432
 
 before_install:
   # Install build tools needed for some NPM packages
@@ -50,7 +48,7 @@ before_install:
   - sudo apt-get install gcc-4.8 g++-4.8 -y
 
   # Install Elasticsearch Latest Version
-  - curl -O ES_DOWNLOAD_URL
+  - curl -O $ES_DOWNLOAD_URL
   - sudo dpkg -i --force-confnew elasticsearch-$ES_VERSION.deb
   - sudo service elasticsearch restart
   - sleep 15
