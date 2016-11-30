@@ -94,5 +94,3 @@ script: npm run test
 services:
   - redis-server
   - mysql
-  - postgresql
-  - docker
