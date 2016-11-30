@@ -12,12 +12,17 @@ addons:
     - mysql-server-5.6
     - mysql-client-core-5.6
     - mysql-client-5.6
+    - oracle-java8-installer
+    - oracle-java8-set-default
 
 env:
   global:
     # Build Settings
     - NODE_ENV=test
     - CXX=g++-4.8
+    - ES_DOWNLOAD_URL=https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-5.0.2.deb
+    - ES_VERSION=5.0.2
+
 
     # App Setttnigs
     - MAXMIND_DB="./tmp/maxmind/GeoLite2-City.mmdb"
@@ -45,10 +50,11 @@ before_install:
   - sudo apt-get install gcc-4.8 g++-4.8 -y
 
   # Install Elasticsearch Latest Version
-  - curl -O https://download.elastic.co/elasticsearch/release/org/elasticsearch/distribution/deb/elasticsearch/$ELASTICSEARCH_VERSION/elasticsearch-$ELASTICSEARCH_VERSION.deb
-  - sudo dpkg -i --force-confnew elasticsearch-$ELASTICSEARCH_VERSION.deb
+  - curl -O ES_DOWNLOAD_URL
+  - sudo dpkg -i --force-confnew elasticsearch-$ES_VERSION.deb
   - sudo service elasticsearch restart
-  # - sleep 10 # (not needed as NPM install takes long enough)
+  - sleep 15
+  - curl http://localhost:9200
 
 before_script:
   # For some reason, Travis ES comes with a 'tweets' index?!
