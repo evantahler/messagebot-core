@@ -14,7 +14,7 @@
   "dependencies": {
     "actionhero": "^16.0.0",
     "ah-datadog-plugin": "0.0.4",
-    "ah-elasticsearch-orm": "^0.4.1",
+    "ah-elasticsearch-orm": "^0.4.2",
     "ah-resque-ui": "^0.2.0",
     "ah-swagger-plugin": "^1.0.0",
     "async": "^2.1.1",
