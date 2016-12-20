@@ -2,7 +2,7 @@
   "author": "Evan Tahler <evan@messagebot.io>",
   "name": "messagebot-core",
   "description": "MessageBot's core application",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
