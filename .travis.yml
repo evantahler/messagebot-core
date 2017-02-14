@@ -42,9 +42,6 @@ env:
     - ELASTICSEARCH_VERSION="2.3.4"
     - ELASTICSEARCH_URLS="http://localhost:9200"
 
-    # Flynn Deployment
-    - secure: "iwpcpET1OKOY2xl4CB1Qr5GXpTxosWmbpZK1tPB1Nhih9fUnsmaq7AuPIZPpwWcGtOMJ5Jr2hGchjO2OmyoKRYwcPxg1X7j15ZgssolwSE59nqi0yDJIGAAnAO4/kuWkAkiTWWQjuc/fB0rSZw04sjIo/DVLL3ZYWYxRVXizEm7qn7JAfMYghfeK4j3z2MLqsL7N84glJyEFXluheZ8sIqeA1CeU2qx7F1GPQJ4BhIRH2LWEEjb3AwIssasuUdAMgA/O748bmSgxuBes2x97Q2T3qvFAqT5ypPRFVtinukYABt9ACrGG7EtVvzpFXJxU95o+bwEG7/kIKrqdDvhfpAhr96/DY3ikPQMSJgPpBPjAHHYEktD4Pqicl4zZEYLJXW72iJQTswCognch9hLMhRZg+8Z7zSP0Wrn3J646U7jALTtYazt/srwaG4TC7/33rni4f00LZKTqNuX0k5zTXYMuGx55gXLOmyDhKRQ1iHvDEdi55MtDZSbSq7m5MOCmMWTUf4FaVzcOyH60avBSBE4w68ZOMzoDpkRVA3jJPLTsucixmRJg2o06HaQQbc+6emN0OmSO8d3IHq+D8kx4qT/ioXEjGX+7/Psqi6UcjergvvgdRZ4Nzcw4hautCwu3bnUq5V09fwCg2BE9I7F7X+2MWP8XePXRaFaneihUYV0="
-
   matrix:
     - SEQUELIZE_DIALECT=mysql    SEQUELIZE_USER=root     SEQUELIZE_PORT=3306
 
@@ -64,33 +61,5 @@ before_install:
 before_script:
   # For some reason, Travis ES comes with a 'tweets' index?!
   - "curl -X DELETE http://localhost:9200/*"
-
-after_success:
-  - |
-      declare exitCode;
-
-      $(npm bin)/travis-after-all
-      exitCode=$?
-
-      if [ $exitCode -eq 0 ]; then
-        FLYNN_APP=""
-
-        if [ "$TRAVIS_BRANCH" = "master" ]; then FLYNN_APP="staging-api"; fi
-        if [ "$TRAVIS_BRANCH" = "production" ]; then FLYNN_APP="api"; fi
-
-        if [ "$FLYNN_APP" = "" ]; then
-          echo "skipping deployment of branch $TRAVIS_BRANCH" && exit 0;
-        else
-          echo "*** DEPLOYING ***"
-          git pull
-          git remote add flynn https://user:$FLYNN_KEY@git.messagebot.io/$FLYNN_APP.git
-          git push flynn master
-        fi
-      fi
-
-      if [ $exitCode -eq 1 ]; then
-        # BUILD FAILURE
-        echo "BUSTED"
-      fi
 
 script: npm run test
