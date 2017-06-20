@@ -56,6 +56,18 @@ module.exports = {
         // User
         api.models.User.belongsTo(api.models.Team)
 
+        // Event
+        api.models.EventData.belongsTo(api.models.Event)
+        api.models.Event.hasMany(api.models.EventData)
+
+        // Message
+        api.models.MesasgeData.belongsTo(api.models.Message)
+        api.models.Message.hasMany(api.models.MesasgeData)
+
+        // Person
+        api.models.PersonData.belongsTo(api.models.Person)
+        api.models.Person.hasMany(api.models.PersonData)
+
         callback()
       },
 
