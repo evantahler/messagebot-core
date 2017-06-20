@@ -34,14 +34,6 @@ var teamCreate = function (api, callback) {
   })
 
   jobs.push(function (done) {
-    console.log('Migrating ElasticSearch for Team #' + team.id + ', (' + team.name + ')')
-    api.utils.doShell(['PREFIX="' + team.id + '" node ./node_modules/.bin/ah-elasticsearch-orm migrate'], function (error, lines) {
-      console.log(lines)
-      done(error)
-    }, true)
-  })
-
-  jobs.push(function (done) {
     user = api.models.User.build({
       email: argv.email,
       teamId: team.id,
@@ -54,23 +46,25 @@ var teamCreate = function (api, callback) {
   })
 
   jobs.push(function (done) {
-    person = new api.models.Person(team);
-
-    ['email', 'firstName', 'lastName', 'role'].forEach(function (p) {
-      person.data[p] = user[p]
+    person = api.models.Person.build({
+      email: user.email,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      role: user.role,
+      source: 'admin',
+      device: 'unknown',
+      teamId: team.id,
+      listOptOuts: null,
+      globalOptOut: false
     })
 
-    person.data.source = 'admin'
-    person.data.device = 'unknown'
-    person.data.teamId = team.id
-    person.data.listOptOuts = []
-    person.data.globalOptOut = false
-
-    person.create(done)
+    person.save().then(function () {
+      done()
+    }).catch(done)
   })
 
   jobs.push(function (done) {
-    user.personGuid = person.data.guid
+    user.personGuid = person.guid
     user.save().then(function () {
       var tableData = [user.apiData()]
 

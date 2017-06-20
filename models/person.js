@@ -20,8 +20,22 @@ var loader = function (api) {
         },
 
         'listOptOuts': {
-          type: Sequelize.INTEGER,
-          allowNull: false
+          type: Sequelize.TEXT,
+          allowNull: true,
+          get: function () {
+            var q = this.getDataValue('listOptOuts')
+            if (q && q.length > 0) {
+              return JSON.parse(q)
+            } else {
+              return []
+            }
+          },
+          set: function (q) {
+            if (q && typeof q !== 'string') {
+              q = JSON.stringify(q)
+            }
+            this.setDataValue('listOptOuts', q)
+          }
         },
         'globalOptOut': {
           type: Sequelize.BOOLEAN,

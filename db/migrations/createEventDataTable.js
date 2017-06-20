@@ -1,10 +1,14 @@
 module.exports = {
   up: function (queryInterface, Sequelize) {
     return queryInterface.createTable(
-      'messagesData',
+      'eventData',
       {
-        messageGuid: {
+        eventGuid: {
           type: Sequelize.UUID,
+          allowNull: false
+        },
+        teamId: {
+          type: Sequelize.INTEGER,
           allowNull: false
         },
 
@@ -19,7 +23,7 @@ module.exports = {
       }
     ).then(function () {
       return queryInterface.addIndex(
-        'messagesData', ['messageGuid', 'key'], {
+        'eventData', ['eventGuid', 'key'], {
           indicesType: 'UNIQUE'
         }
       )
@@ -27,6 +31,6 @@ module.exports = {
   },
 
   down: function (queryInterface, Sequelize) {
-    queryInterface.deleteTable('messagesData')
+    queryInterface.deleteTable('eventData')
   }
 }

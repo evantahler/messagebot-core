@@ -57,16 +57,16 @@ module.exports = {
         api.models.User.belongsTo(api.models.Team)
 
         // Event
-        api.models.EventData.belongsTo(api.models.Event)
-        api.models.Event.hasMany(api.models.EventData)
+        api.models.EventData.belongsTo(api.models.Event, {foreignKey: 'eventGuid'})
+        api.models.Event.hasMany(api.models.EventData, {foreignKey: 'eventGuid'})
 
         // Message
-        api.models.MessageData.belongsTo(api.models.Message)
-        api.models.Message.hasMany(api.models.MessageData)
+        api.models.MessageData.belongsTo(api.models.Message, {foreignKey: 'messageGuid'})
+        api.models.Message.hasMany(api.models.MessageData, {foreignKey: 'messageGuid'})
 
         // Person
-        api.models.PersonData.belongsTo(api.models.Person)
-        api.models.Person.hasMany(api.models.PersonData)
+        api.models.PersonData.belongsTo(api.models.Person, {foreignKey: 'personGuid'})
+        api.models.Person.hasMany(api.models.PersonData, {foreignKey: 'personGuid'})
 
         callback()
       },

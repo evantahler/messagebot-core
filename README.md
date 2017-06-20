@@ -8,7 +8,6 @@
 | Software          | Version   |
 |-------------------|-----------|
 | Node.JS           | >=4.0.0   |
-| ElasticSearch     | >=5.0.0   |
 | Redis             | >=2.0.0   |
 | MySQL or Postgres | "modern"  |
 
@@ -45,7 +44,6 @@
 ## Configuration and Running
 
 - Start `redis`
-- Start `elasticsearch`
 - Start your relational database, IE: `mySQL`
   - be sure to create the database you need for development, IE:
     - (mysql) `mysql -u root -e "crete database messagebot_development"`

@@ -19,8 +19,8 @@ module.exports = {
         },
 
         'listOptOuts': {
-          type: Sequelize.INTEGER,
-          allowNull: false
+          type: Sequelize.TEXT,
+          allowNull: true
         },
         'globalOptOut': {
           type: Sequelize.BOOLEAN,

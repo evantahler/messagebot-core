@@ -23,24 +23,15 @@ var teamDelete = function (api, callback) {
 
       done()
     }).catch(done)
-  })
-
-  jobs.push(function (done) {
-    console.log('Deleting all ElasticSearch data for Team #' + team.id + ', (' + team.name + ')')
-    var command = 'curl -s -X DELETE'
-    command += ' ' + api.config.elasticsearch.urls[0]
-    command += '/' + team.id + '-' + api.env + '-*'
-    api.utils.doShell([command], function (error, lines) {
-      console.log(lines)
-      done(error)
-    }, true)
   });
 
-  ['User', 'ListPerson', 'List', 'Campaign', 'Template'].forEach(function (model) {
+  ['Event', 'EventData', 'Person', 'PersonData', 'Message', 'MessageData', 'User', 'ListPerson', 'List', 'Campaign', 'Template'].forEach(function (model) {
     jobs.push(function (done) {
-      console.log('Delting all objects for team from table `' + model + '`')
-      api.models[model].destroy({where: {teamId: team.id}}).then(function () {
-        done()
+      api.models[model].count({where: {teamId: team.id}}).then(function (count) {
+        console.log('Delting all (' + count + ') objects for team from table `' + model + '`')
+        api.models[model].destroy({where: {teamId: team.id}}).then(function () {
+          done()
+        }).catch(done)
       }).catch(done)
     })
   })
