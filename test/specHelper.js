@@ -215,7 +215,7 @@ var specHelper = {
       jar: j,
       form: {email: email, password: password}
     }, function (error, response, body) {
-      if (error) { return callback({error: error}) }
+      if (error) { return callback({error: error}) } //eslint-disable-line
       body = JSON.parse(body)
       if (body.error) { return callback(body) }
 
@@ -229,7 +229,7 @@ var specHelper = {
         jar: j,
         form: params
       }, function (error, response, body) {
-        if (error) { return callback({error: error}) }
+        if (error) { return callback({error: error}) } //eslint-disable-line
         try {
           body = JSON.parse(body)
         } catch (e) { }
