@@ -61,8 +61,8 @@ module.exports = {
         api.models.Event.hasMany(api.models.EventData)
 
         // Message
-        api.models.MesasgeData.belongsTo(api.models.Message)
-        api.models.Message.hasMany(api.models.MesasgeData)
+        api.models.MessageData.belongsTo(api.models.Message)
+        api.models.Message.hasMany(api.models.MessageData)
 
         // Person
         api.models.PersonData.belongsTo(api.models.Person)
