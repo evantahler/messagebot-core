@@ -56,7 +56,7 @@
   - ensure that the databases you listed exist and that the user(s) you have configured can reach & access them
 - Source your environment, ie: `source .env`
 - Create the First Team from the CLI:
-  - `./bin/messagebot team create --name MessageBot --trackingDomainRegexp "^.*$" --trackingDomain "http://tracking.myapp.com" --email="me@myapp.com"`
+  - `./node_modules/.bin/actionhero messagebot team create --name MessageBot --trackingDomainRegexp "^.*$" --trackingDomain "http://tracking.myapp.com" --email="me@myapp.com"`
   - This will also create the first admin user for this team.  Take note of this user's email and password.
 - Start the App: `npm start`
 
