@@ -64,8 +64,7 @@
 
 ## Migration Options
 
-Run `npm run migrate` to migrate all databases (relational and ElasticSearch).
-`npm run migrate` is a composition of `npm run migrate:sequelize` and `npm run migrate:elasticsearh`, which you can also run separately if desired.
+Run `npm run migrate` to migrate the database.
 
 ElasticSearch migrations can be effected via a few environment variables, available for inspection at `db/ElasticSearch/indexes`:
 
