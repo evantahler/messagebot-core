@@ -215,13 +215,17 @@ describe('actions:user', function () {
 
     it('edits the person as well', function (done) {
       api.models.User.find({where: {id: userId}}).then(function (user) {
-        var person = new api.models.Person(team, user.personGuid)
-        person.hydrate(function (error) {
-          should.not.exist(error)
-          person.data.data.firstName.should.equal('new first name')
+        should.exist(user)
+        api.models.Person.find({where: {guid: user.personGuid}, include: api.models.PersonData}).then(function (person) {
+          person.source.should.equal('admin')
+          person.personData.length.should.equal(4)
+          person.personData.forEach(function (pd) {
+            if (pd.key === 'firstName') { pd.value.should.equal('new first name') }
+            if (pd.key === 'lastName') { pd.value.should.equal('user') }
+          })
           done()
-        })
-      })
+        }).catch(done)
+      }).catch(done)
     })
 
     it('succeeds (admin, other user)', function (done) {
@@ -352,9 +356,8 @@ describe('actions:user', function () {
           userId: userId
         }, function (response) {
           should.not.exist(response.error)
-          var person = new api.models.Person(team, user.personGuid)
-          person.hydrate(function (error) {
-            String(error).should.equal('Error: Person (' + user.personGuid + ') not found')
+          api.models.Person.find({where: {guid: user.personGuid}}).then(function (person) {
+            should.not.exist(person)
             done()
           })
         })
