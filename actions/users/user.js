@@ -1,3 +1,5 @@
+var async = require('async')
+
 exports.userCreate = {
   name: 'user:create',
   description: 'user:create',
@@ -13,36 +15,53 @@ exports.userCreate = {
   },
 
   run: function (api, data, next) {
-    var user = api.models.User.build(data.params)
-    user.teamId = data.session.teamId
+    var jobs = []
+    var user
+    var person
 
-    user.updatePassword(data.params.password, function (error) {
-      if (error) { return next(error) }
-
-      var person = new api.models.Person(data.team);
-
-      ['email', 'firstName', 'lastName', 'role'].forEach(function (p) {
-        person.data[p] = user[p]
-      })
-
-      person.data.source = 'admin'
-      person.data.device = 'unknown'
-      person.data.teamId = user.teamId
-      person.data.listOptOuts = []
-      person.data.globalOptOut = false
-
-      person.create(function (error) {
-        if (error) { api.log('person creation error: ' + error, 'error', data.params) }
-
-        user.personGuid = person.data.guid
-        user.save().then(function () {
-          data.response.user = user.apiData()
-          api.tasks.enqueueIn(api.config.elasticsearch.cacheTime * 1, 'people:buildCreateEvent', {guid: person.data.guid, teamId: data.team.id}, 'messagebot:people', next)
-        }).catch(function (errors) {
-          next(errors.errors[0].message)
-        })
-      })
+    jobs.push(function (done) {
+      user = api.models.User.build(data.params)
+      user.teamId = data.session.teamId
+      done()
     })
+
+    jobs.push(function (done) {
+      user.updatePassword(data.params.password, done)
+    })
+
+    jobs.push(function (done) {
+      person = api.models.Person.build(user)
+      person.source = 'admin'
+      person.device = 'unknown'
+      person.listOptOuts = []
+      person.globalOptOut = false
+      person.save().then(function () {
+        done()
+      }).catch(done)
+    })
+
+    jobs.push(function (done) {
+      var collection = [];
+      ['email', 'firstName', 'lastName', 'role'].forEach(function (k) {
+        collection.push({personGuid: person.guid, teamId: data.team.id, key: k, value: user[k]})
+      })
+
+      api.models.PersonData.bulkCreate(collection).then(function () {
+        done()
+      }).catch(done)
+    })
+
+    jobs.push(function (done) {
+      user.personGuid = person.guid
+      user.save().then(function () {
+        data.response.user = user.apiData()
+        api.tasks.enqueueIn(1, 'people:buildCreateEvent', {guid: person.guid, teamId: data.team.id}, 'messagebot:people', done)
+      }).catch(done)
+    })
+
+    async.series(jobs, next)
+
+    // TODO: email, firstName, lastName, role associated personData rows needed here
   }
 }
 

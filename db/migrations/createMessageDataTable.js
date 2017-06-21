@@ -3,12 +3,23 @@ module.exports = {
     return queryInterface.createTable(
       'messageData',
       {
+        id: {
+          type: Sequelize.BIGINT,
+          primaryKey: true,
+          autoIncrement: true
+        },
+        createdAt: {
+          type: Sequelize.DATE
+        },
+        updatedAt: {
+          type: Sequelize.DATE
+        },
         messageGuid: {
           type: Sequelize.UUID,
           allowNull: false
         },
         teamId: {
-          type: Sequelize.INTEGER,
+          type: Sequelize.BIGINT,
           allowNull: false
         },
 

@@ -127,7 +127,7 @@ var loader = function (api) {
     model: api.sequelize.sequelize.define('template',
       {
         'teamId': {
-          type: Sequelize.INTEGER,
+          type: Sequelize.BIGINT,
           allowNull: false
         },
         'name': {

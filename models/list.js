@@ -24,7 +24,7 @@ var loader = function (api) {
     model: api.sequelize.sequelize.define('list',
       {
         'teamId': {
-          type: Sequelize.INTEGER,
+          type: Sequelize.BIGINT,
           allowNull: false
         },
         'name': {
@@ -107,7 +107,7 @@ var loader = function (api) {
         },
 
         'peopleCount': {
-          type: Sequelize.INTEGER,
+          type: Sequelize.BIGINT,
           allowNull: false,
           defaultValue: 0
         },

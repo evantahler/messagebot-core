@@ -16,7 +16,7 @@ var loader = function (api) {
           defaultValue: Sequelize.UUIDV4
         },
         teamId: {
-          type: Sequelize.INTEGER
+          type: Sequelize.BIGINT
         },
 
         'listOptOuts': {

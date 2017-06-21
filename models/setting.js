@@ -19,7 +19,7 @@ var loader = function (api) {
     model: api.sequelize.sequelize.define('setting',
       {
         'teamId': {
-          type: Sequelize.INTEGER,
+          type: Sequelize.BIGINT,
           allowNull: false
         },
 

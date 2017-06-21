@@ -67,6 +67,17 @@ module.exports = {
     })
 
     jobs.push(function (done) {
+      var collection = [];
+      ['email', 'firstName', 'lastName', 'role'].forEach(function (k) {
+        collection.push({personGuid: person.guid, teamId: team.id, key: k, value: user[k]})
+      })
+
+      api.models.PersonData.bulkCreate(collection).then(function () {
+        done()
+      }).catch(done)
+    })
+
+    jobs.push(function (done) {
       user.personGuid = person.guid
       user.save().then(function () {
         var tableData = [user.apiData()]

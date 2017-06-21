@@ -11,11 +11,11 @@ var loader = function (api) {
     model: api.sequelize.sequelize.define('listPerson',
       {
         'teamId': {
-          type: Sequelize.INTEGER,
+          type: Sequelize.BIGINT,
           allowNull: false
         },
         'listId': {
-          type: Sequelize.INTEGER,
+          type: Sequelize.BIGINT,
           allowNull: false
         },
         'personGuid': {

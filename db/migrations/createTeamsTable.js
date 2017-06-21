@@ -4,7 +4,7 @@ module.exports = {
       'teams',
       {
         id: {
-          type: Sequelize.INTEGER,
+          type: Sequelize.BIGINT,
           primaryKey: true,
           autoIncrement: true
         },

@@ -9,7 +9,7 @@ module.exports = {
           defaultValue: Sequelize.UUIDV4
         },
         teamId: {
-          type: Sequelize.INTEGER
+          type: Sequelize.BIGINT
         },
         createdAt: {
           type: Sequelize.DATE
@@ -23,7 +23,7 @@ module.exports = {
           allowNull: false
         },
         'campaignId': {
-          type: Sequelize.INTEGER,
+          type: Sequelize.BIGINT,
           allowNull: false
         },
         'transport': {

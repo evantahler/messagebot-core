@@ -58,17 +58,6 @@ var specHelper = {
     }
   },
 
-  doElasticSearchBash: function (verb, pattern, callback, silent) {
-    var self = this
-
-    var command = 'curl'
-    command += ' -s '
-    command += ' -X ' + verb
-    command += ' ' + self.api.config.elasticsearch.urls[0]
-    command += '/' + pattern
-    self.api.utils.doShell(command, callback, silent)
-  },
-
   migrate: function (callback) {
     var self = this
     var jobs = []
@@ -118,10 +107,6 @@ var specHelper = {
     })
 
     jobs.push(function (done) {
-      self.doElasticSearchBash('DELETE', '*-test-*', done)
-    })
-
-    jobs.push(function (done) {
       console.log('\r\n----- TEST DATABASES CLEARED-----\r\n')
       done()
     })
@@ -143,7 +128,7 @@ var specHelper = {
     var command = ''
     command += ' NODE_ENV=test'
     command += ' NUMBER_OF_SHARDS=1'
-    command += ' ./bin/messagebot team create'
+    command += ' ./node_modules/.bin/actionhero messagebot team create'
     command += ' --name TestTeam'
     command += ' --trackingDomainRegexp "^.*$"'
     command += ' --trackingDomain "http://tracking.site.com"'

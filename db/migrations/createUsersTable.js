@@ -4,7 +4,7 @@ module.exports = {
       'users',
       {
         id: {
-          type: Sequelize.INTEGER,
+          type: Sequelize.BIGINT,
           primaryKey: true,
           autoIncrement: true
         },
@@ -16,7 +16,7 @@ module.exports = {
         },
 
         'teamId': {
-          type: Sequelize.INTEGER,
+          type: Sequelize.BIGINT,
           allowNull: false
         },
 

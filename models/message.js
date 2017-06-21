@@ -16,7 +16,7 @@ var loader = function (api) {
           defaultValue: Sequelize.UUIDV4
         },
         teamId: {
-          type: Sequelize.INTEGER
+          type: Sequelize.BIGINT
         },
 
         'personGuid': {
@@ -24,7 +24,7 @@ var loader = function (api) {
           allowNull: false
         },
         'campaignId': {
-          type: Sequelize.INTEGER,
+          type: Sequelize.BIGINT,
           allowNull: false
         },
         'transport': {

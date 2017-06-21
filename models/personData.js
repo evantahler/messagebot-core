@@ -14,6 +14,10 @@ var loader = function (api) {
           type: Sequelize.UUID,
           allowNull: false
         },
+        teamId: {
+          type: Sequelize.BIGINT,
+          allowNull: false
+        },
 
         'key': {
           type: Sequelize.STRING,

@@ -51,7 +51,7 @@ var loader = function (api) {
     model: api.sequelize.sequelize.define('campaign',
       {
         'teamId': {
-          type: Sequelize.INTEGER,
+          type: Sequelize.BIGINT,
           allowNull: false
         },
         'name': {
@@ -83,11 +83,11 @@ var loader = function (api) {
           allowNull: false
         },
         'listId': {
-          type: Sequelize.INTEGER,
+          type: Sequelize.BIGINT,
           allowNull: false
         },
         'templateId': {
-          type: Sequelize.INTEGER,
+          type: Sequelize.BIGINT,
           allowNull: false
         },
         'campaignVariables': {

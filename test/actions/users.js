@@ -65,12 +65,15 @@ describe('actions:user', function () {
 
     it('creates a person with each uesr', function (done) {
       api.models.User.find({where: {id: userId}}).then(function (user) {
-        var person = new api.models.Person(team, user.personGuid)
-        person.hydrate(function (error) {
-          should.not.exist(error)
-          person.data.data.firstName.should.equal('user')
+        api.models.Person.find({where: {guid: user.personGuid}, include: api.models.PersonData}).then(function (person) {
+          person.source.should.equal('admin')
+          person.personData.length.should.equal(4)
+          person.personData.forEach(function (pd) {
+            if (pd.key === 'firstName') { pd.value.should.equal('user') }
+            if (pd.key === 'email') { pd.value.should.equal('user@fake.com') }
+          })
           done()
-        })
+        }).catch(done)
       }).catch(done)
     })
 
