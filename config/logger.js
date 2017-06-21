@@ -1,16 +1,17 @@
-var fs = require('fs')
-var cluster = require('cluster')
-var env = process.env.NODE_ENV || 'development'
+'use strict'
 
-exports.default = {
+const fs = require('fs')
+const cluster = require('cluster')
+
+exports['default'] = {
   logger: function (api) {
-    var logger = { transports: [] }
+    let logger = {transports: []}
 
     // console logger
     if (cluster.isMaster) {
       logger.transports.push(function (api, winston) {
         return new (winston.transports.Console)({
-          colorize: env === 'development',
+          colorize: true,
           level: 'info',
           timestamp: function () { return api.id + ' @ ' + new Date().toISOString() }
         })
@@ -18,18 +19,18 @@ exports.default = {
     }
 
     // file logger
-    if (api.config.general.paths.log.length === 1) {
-      var logDirectory = api.config.general.paths.log[0]
-      try {
-        fs.mkdirSync(logDirectory)
-      } catch (e) {
-        if (e.code !== 'EEXIST') {
-          throw (new Error('Cannot create log directory @ ' + logDirectory))
+    logger.transports.push(function (api, winston) {
+      if (api.config.general.paths.log.length === 1) {
+        const logDirectory = api.config.general.paths.log[0]
+        try {
+          fs.mkdirSync(logDirectory)
+        } catch (e) {
+          if (e.code !== 'EEXIST') {
+            throw (new Error('Cannot create log directory @ ' + logDirectory))
+          }
         }
       }
-    }
 
-    logger.transports.push(function (api, winston) {
       return new (winston.transports.File)({
         filename: api.config.general.paths.log[0] + '/' + api.pids.title + '.log',
         level: 'info',

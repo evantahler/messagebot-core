@@ -12,8 +12,6 @@ exports.default = {
       //  id: 'myActionHeroServer',
       // A unique token to your application that servers will use to authenticate to each other
       serverToken: 'change-me',
-      // The welcome message seen by TCP and webSocket clients upon connection
-      welcomeMessage: 'Hello! Welcome to the messagebot api',
       // the redis prefix for actionhero's cache objects
       cachePrefix: 'actionhero:cache:',
       // the redis prefix for actionhero's cache/lock objects
@@ -69,9 +67,6 @@ exports.test = {
       startingChatRooms: {
         'defaultRoom': {},
         'otherRoom': {}
-      },
-      paths: {
-        'locale': ['/tmp/locale']
       }
     }
   }

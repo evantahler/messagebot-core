@@ -25,8 +25,15 @@ describe('actions:user', function () {
       users.forEach(function (user) {
         if (user.email !== 'admin@localhost.com') {
           jobs.push(function (next) {
-            var person = api.models.Person(team, user.personGuid)
-            person.del(next)
+            api.models.Person.destroy({where: {guid: user.personGuid}}).then(function () {
+              next()
+            }).catch(next)
+          })
+
+          jobs.push(function (next) {
+            api.models.PersonData.destroy({where: {personGuid: user.personGuid}}).then(function () {
+              next()
+            }).catch(next)
           })
 
           jobs.push(function (next) {
@@ -97,14 +104,16 @@ describe('actions:user', function () {
     it('succeeds (creates the proper person)', function (done) {
       api.models.User.find({where: {id: userId}}).then(function (user) {
         should.exist(user)
-        var person = api.models.Person(team, user.personGuid)
-        person.hydrate(function (error) {
-          should.not.exist(error)
-          person.data.data.firstName.should.equal(user.firstName)
-          person.data.data.lastName.should.equal(user.lastName)
-          person.data.data.email.should.equal(user.email)
+        api.models.Person.find({where: {guid: user.personGuid}, include: api.models.PersonData}).then(function (person) {
+          person.source.should.equal('admin')
+          person.personData.length.should.equal(4)
+          person.personData.forEach(function (pd) {
+            if (pd.key === 'firstName') { pd.value.should.equal(user.firstName) }
+            if (pd.key === 'lastName') { pd.value.should.equal(user.lastName) }
+            if (pd.key === 'email') { pd.value.should.equal(user.email) }
+          })
           done()
-        })
+        }).catch(done)
       }).catch(done)
     })
 
@@ -129,7 +138,7 @@ describe('actions:user', function () {
         password: 'abc123',
         role: 'admin'
       }, function (response) {
-        response.error.should.match(/must be unique/)
+        response.error.should.match(/Validation error/)
         done()
       })
     })

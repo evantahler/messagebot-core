@@ -52,7 +52,7 @@ module.exports = {
                   value: settingParent.value,
                   description: settingParent.description
                 }).then(function () {
-                  api.log(['[Team #%s] set default setting for `%s` to `%s`', team.id, settingParent.key, settingParent.value])
+                  api.log(`[Team ${team.id}] set default setting for \`${settingParent.key}\` to \`${settingParent.value}\``)
                   done()
                 }).catch(function (error) {
                   // another instance created the setting for us; it's OK.
