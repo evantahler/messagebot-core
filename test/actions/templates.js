@@ -140,28 +140,36 @@ describe('actions:template', function () {
     })
 
     before(function (done) {
-      person = new api.models.Person(team)
-      person.data.source = 'tester'
-      person.data.device = 'phone'
-      person.data.listOptOuts = []
-      person.data.globalOptOut = false
-      person.data.data = {
-        firstName: 'fname',
-        lastName: 'lame',
-        email: 'fake@faker.fake'
-      }
+      person = api.models.Person.build()
+      person.source = 'tester'
+      person.device = 'phone'
+      person.listOptOuts = []
+      person.globalOptOut = false
+      person.save().then(function () {
+        var collection = [
+          {personGuid: person.guid, teamId: team.id, key: 'firstName', value: 'fname'},
+          {personGuid: person.guid, teamId: team.id, key: 'lastName', value: 'lame'},
+          {personGuid: person.guid, teamId: team.id, key: 'email', value: 'fake@faker.fake'}
+        ]
 
-      person.create(function () {
-        person.hydrate(done)
-      })
+        api.models.PersonData.bulkCreate(collection).then(function () {
+          done()
+        }).catch(done)
+      }).catch(done)
     })
 
-    after(function (done) { person.del(done) })
+    after(function (done) {
+      person.destroy().then(function () {
+        api.models.PersonData.destroy({
+          where: {personGuid: person.guid}
+        }).then(function () { done() })
+      }).catch(done)
+    })
 
     it('succeeds (view; specHelper)', function (done) {
       specHelper.requestWithLogin(email, password, 'template:render', {
         templateId: templateId,
-        personGuid: person.data.guid
+        personGuid: person.guid
       }, function (response) {
         should.not.exist(response.error)
         response.html.should.equal('<h1>Hello, fname</h1>')
@@ -174,7 +182,7 @@ describe('actions:template', function () {
     it('succeeds (view; web request)', function (done) {
       specHelper.WebRequestWithLogin(email, password, 'get', '/api/template/render', {
         templateId: templateId,
-        personGuid: person.data.guid
+        personGuid: person.guid
       }, function (response, res) {
         should.not.exist(response.error)
         response.html.should.equal('<h1>Hello, fname</h1>')
@@ -187,7 +195,7 @@ describe('actions:template', function () {
     it('succeeds (rendered HTML; web request)', function (done) {
       specHelper.WebRequestWithLogin(email, password, 'get', '/api/template/render.html', {
         templateId: templateId,
-        personGuid: person.data.guid
+        personGuid: person.guid
       }, function (response, res) {
         response.should.equal('<h1>Hello, fname</h1>')
         res.statusCode.should.equal(200)

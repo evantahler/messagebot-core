@@ -82,7 +82,7 @@ var loader = function (api) {
 
         var url = ''
         url += page + '?'
-        url += 'personGuid=' + person.data.guid + '&'
+        url += 'personGuid=' + person.guid + '&'
         url += 'messageGuid=%%MESSAGEGUID%%&' + '&'
         if (view.campaign.id) { url += 'campaignId=' + view.campaign.id + '&' }
         if (view.list.id) { url += 'listId=' + view.list.id + '&' }
@@ -97,7 +97,8 @@ var loader = function (api) {
     }
 
     // person
-    view.person = Object.assign({}, person.data)
+    view.person = Object.assign({}, person.dataValues)
+    view.person.data = Object.assign({}, person.data)
     view.person.createdAt = expandDate(view.person.createdAt)
     view.person.updatedAt = expandDate(view.person.updatedAt)
     Object.keys(view.person.data).forEach(function (k) {
@@ -182,17 +183,19 @@ var loader = function (api) {
             })
 
             jobs.push(function (done) {
-              view = buildView(team, person, events, campaign, list, template, trackBeacon)
-              done()
+              try {
+                view = buildView(team, person, events, campaign, list, template, trackBeacon)
+                done()
+              } catch (e) { done(e) }
             })
 
             jobs.push(function (done) {
               try {
                 html = mustache.render(template.template, view)
                 if (message) {
-                  html = html.replace(/%%MESSAGEGUID%%/g, message.data.guid)
-                  view.beaconLink = view.beaconLink.replace(/%%MESSAGEGUID%%/g, message.data.guid)
-                  view.beacon = view.beacon.replace(/%%MESSAGEGUID%%/g, message.data.guid)
+                  html = html.replace(/%%MESSAGEGUID%%/g, message.guid)
+                  view.beaconLink = view.beaconLink.replace(/%%MESSAGEGUID%%/g, message.guid)
+                  view.beacon = view.beacon.replace(/%%MESSAGEGUID%%/g, message.guid)
                 }
                 done()
               } catch (e) {
@@ -239,8 +242,8 @@ var loader = function (api) {
               process.nextTick(function () {
                 if (error) { return callback(error) }
                 var logData = {}
-                if (message) { logData = {messageGuid: message.data.guid} }
-                api.log('rendered template #' + template.id + ' for person #' + person.data.guid, 'info', logData)
+                if (message) { logData = {messageGuid: message.guid} }
+                api.log('rendered template #' + template.id + ' for person #' + person.guid, 'info', logData)
                 return callback(null, html, view)
               })
             })

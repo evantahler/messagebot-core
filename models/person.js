@@ -60,6 +60,15 @@ var loader = function (api) {
       },
       {
         instanceMethods: {
+          hydrate: function (callback) {
+            this.data = {}
+            var self = this
+            api.models.PersonData.findAll({where: {personGuid: this.guid}}).then(function (datas) {
+              datas.forEach(function (d) { self.data[d.key] = d.value })
+              callback(null, datas)
+            }).catch(callback)
+          },
+
           apiData: function () {
             return {
               guid: this.guid,
