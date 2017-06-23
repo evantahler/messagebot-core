@@ -50,9 +50,9 @@ var loader = function (api) {
       },
       {
         hooks: {
-          beforeDestroy: function (self) {
-            return api.models.EventData.destroy({where: {eventGuid: self.guid}})
-          }
+          beforeCreate: (self) => { return api.sequelize.updatateData(self, api.models.EventData, 'eventGuid') },
+          beforeUpdate: (self) => { return api.sequelize.updatateData(self, api.models.EventData, 'eventGuid') },
+          beforeDestroy: function (self) { return api.models.EventData.destroy({where: {eventGuid: self.guid}}) }
         },
 
         instanceMethods: {

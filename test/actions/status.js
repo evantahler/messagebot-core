@@ -17,7 +17,6 @@ describe('system:status', function () {
 
   it('returns node status', function (done) {
     specHelper.requestWithLogin(email, password, 'system:status', {}, function (response) {
-      console.log(response)
       response.database.healthy.should.equal(true);
       ['Campaign', 'List', 'ListPerson', 'Template', 'User'].forEach(function (table) {
         should.exist(response.database[table])

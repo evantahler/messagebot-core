@@ -30,23 +30,19 @@ exports.userCreate = {
     })
 
     jobs.push(function (done) {
-      person = api.models.Person.build(user)
+      person = api.models.Person.build({teamId: user.teamId})
       person.source = 'admin'
       person.device = 'unknown'
       person.listOptOuts = []
       person.globalOptOut = false
+      person.data = {
+        email: user.email,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        role: user.role
+      }
+
       person.save().then(function () {
-        done()
-      }).catch(done)
-    })
-
-    jobs.push(function (done) {
-      var collection = [];
-      ['email', 'firstName', 'lastName', 'role'].forEach(function (k) {
-        collection.push({personGuid: person.guid, teamId: data.team.id, key: k, value: user[k]})
-      })
-
-      api.models.PersonData.bulkCreate(collection).then(function () {
         done()
       }).catch(done)
     })
@@ -154,23 +150,17 @@ exports.userEdit = {
         person = p
 
         if (!person) { return done(new Error('related person not found')) }
-        done()
+        person.hydrate(done)
       }).catch(done)
     })
 
     jobs.push(function (done) {
-      var personJobs = [];
-      ['email', 'firstName', 'lastName', 'role'].forEach(function (k) {
-        personJobs.push(function (personDone) {
-          api.models.PersonData.findOne({where: {personGuid: person.guid, teamId: data.team.id, key: k}}).then(function (personData) {
-            personData.updateAttributes({value: user[k]}).then(function () {
-              personDone()
-            })
-          }).catch(personDone)
-        })
-      })
+      person.data.email = user.email
+      person.data.firstName = user.firstName
+      person.data.lastName = user.lastName
+      person.data.role = user.role
 
-      async.parallel(personJobs, done)
+      person.save().then(function () { done() }).catch(done)
     })
 
     jobs.push(function (done) {

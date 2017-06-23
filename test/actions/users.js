@@ -5,19 +5,11 @@ var specHelper = require(path.join(__dirname, '/../specHelper'))
 var email = 'admin@localhost.com'
 var password = 'password'
 var api
-var team
 var userId
 var otherUserId
 
 describe('actions:user', function () {
   before(function () { api = specHelper.api })
-
-  before(function (done) {
-    api.models.Team.findOne().then(function (_team) {
-      team = _team
-      done()
-    })
-  })
 
   var cleanUsersTable = function (callback) {
     var jobs = []
@@ -26,12 +18,6 @@ describe('actions:user', function () {
         if (user.email !== 'admin@localhost.com') {
           jobs.push(function (next) {
             api.models.Person.destroy({where: {guid: user.personGuid}}).then(function () {
-              next()
-            }).catch(next)
-          })
-
-          jobs.push(function (next) {
-            api.models.PersonData.destroy({where: {personGuid: user.personGuid}}).then(function () {
               next()
             }).catch(next)
           })
@@ -72,14 +58,14 @@ describe('actions:user', function () {
 
     it('creates a person with each uesr', function (done) {
       api.models.User.find({where: {id: userId}}).then(function (user) {
-        api.models.Person.find({where: {guid: user.personGuid}, include: api.models.PersonData}).then(function (person) {
-          person.source.should.equal('admin')
-          person.personData.length.should.equal(4)
-          person.personData.forEach(function (pd) {
-            if (pd.key === 'firstName') { pd.value.should.equal('user') }
-            if (pd.key === 'email') { pd.value.should.equal('user@fake.com') }
+        api.models.Person.find({where: {guid: user.personGuid}}).then(function (person) {
+          person.hydrate(function () {
+            person.source.should.equal('admin')
+            Object.keys(person.data).length.should.equal(4)
+            person.data.firstName.should.equal('user')
+            person.data.email.should.equal('user@fake.com')
+            done()
           })
-          done()
         }).catch(done)
       }).catch(done)
     })
@@ -104,15 +90,15 @@ describe('actions:user', function () {
     it('succeeds (creates the proper person)', function (done) {
       api.models.User.find({where: {id: userId}}).then(function (user) {
         should.exist(user)
-        api.models.Person.find({where: {guid: user.personGuid}, include: api.models.PersonData}).then(function (person) {
-          person.source.should.equal('admin')
-          person.personData.length.should.equal(4)
-          person.personData.forEach(function (pd) {
-            if (pd.key === 'firstName') { pd.value.should.equal(user.firstName) }
-            if (pd.key === 'lastName') { pd.value.should.equal(user.lastName) }
-            if (pd.key === 'email') { pd.value.should.equal(user.email) }
+        api.models.Person.find({where: {guid: user.personGuid}}).then(function (person) {
+          person.hydrate(function () {
+            person.source.should.equal('admin')
+            Object.keys(person.data).length.should.equal(4)
+            person.data.firstName.should.equal(user.firstName)
+            person.data.lastName.should.equal(user.lastName)
+            person.data.email.should.equal(user.email)
+            done()
           })
-          done()
         }).catch(done)
       }).catch(done)
     })
@@ -216,14 +202,14 @@ describe('actions:user', function () {
     it('edits the person as well', function (done) {
       api.models.User.find({where: {id: userId}}).then(function (user) {
         should.exist(user)
-        api.models.Person.find({where: {guid: user.personGuid}, include: api.models.PersonData}).then(function (person) {
-          person.source.should.equal('admin')
-          person.personData.length.should.equal(4)
-          person.personData.forEach(function (pd) {
-            if (pd.key === 'firstName') { pd.value.should.equal('new first name') }
-            if (pd.key === 'lastName') { pd.value.should.equal('user') }
+        api.models.Person.find({where: {guid: user.personGuid}}).then(function (person) {
+          person.hydrate(function () {
+            person.source.should.equal('admin')
+            Object.keys(person.data).length.should.equal(4)
+            person.data.firstName.should.equal('new first name')
+            person.data.lastName.should.equal('user')
+            done()
           })
-          done()
         }).catch(done)
       }).catch(done)
     })

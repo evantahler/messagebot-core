@@ -53,26 +53,20 @@ module.exports = {
         email: user.email,
         firstName: user.firstName,
         lastName: user.lastName,
-        role: user.role,
         source: 'admin',
         device: 'unknown',
         teamId: team.id,
         listOptOuts: null,
-        globalOptOut: false
+        globalOptOut: false,
+        data: {
+          email: user.email,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          role: user.role
+        }
       })
 
       person.save().then(function () {
-        done()
-      }).catch(done)
-    })
-
-    jobs.push(function (done) {
-      var collection = [];
-      ['email', 'firstName', 'lastName', 'role'].forEach(function (k) {
-        collection.push({personGuid: person.guid, teamId: team.id, key: k, value: user[k]})
-      })
-
-      api.models.PersonData.bulkCreate(collection).then(function () {
         done()
       }).catch(done)
     })

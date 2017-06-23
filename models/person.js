@@ -1,5 +1,4 @@
 var Sequelize = require('sequelize')
-var async = require('async')
 
 var loader = function (api) {
   /* --- Priave Methods --- */
@@ -61,9 +60,9 @@ var loader = function (api) {
       },
       {
         hooks: {
-          beforeDestroy: function (self) {
-            return api.models.PersonData.destroy({where: {personGuid: self.guid}})
-          }
+          beforeCreate: (self) => { return api.sequelize.updatateData(self, api.models.PersonData, 'personGuid') },
+          beforeUpdate: (self) => { return api.sequelize.updatateData(self, api.models.PersonData, 'personGuid') },
+          beforeDestroy: function (self) { return api.models.PersonData.destroy({where: {personGuid: self.guid}}) }
         },
 
         instanceMethods: {

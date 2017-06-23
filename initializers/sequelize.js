@@ -1,6 +1,7 @@
 var path = require('path')
 var fs = require('fs')
 var Sequelize = require('sequelize')
+var async = require('async')
 
 module.exports = {
   loadPriority: 100,
@@ -89,6 +90,54 @@ module.exports = {
         api.sequelize.sequelize.query(q, {type: type}).then(function (users) {
           callback(null, users)
         }).catch(callback)
+      },
+
+      updatateData: function (self, model, remoteKey) {
+        return new Promise(function (resolve, reject) {
+          var jobs = []
+          if (!self.data) { self.data = {} }
+          var remainingKeys = Object.keys(self.data)
+          var consumedKeys = []
+
+          var where = {}
+          where[remoteKey] = self.guid
+          model.findAll({where: where}).then(function (datas) {
+            remainingKeys.forEach(function (k) {
+              datas.forEach(function (d) {
+                if (k === d.key) {
+                  consumedKeys.push(k)
+                  jobs.push(function (done) {
+                    d.updateAttributes({value: self.data[k]}).then(function () {
+                      done()
+                    }).catch(done)
+                  })
+                }
+              })
+            })
+
+            remainingKeys.forEach(function (k) {
+              if (consumedKeys.indexOf(k) < 0) {
+                jobs.push(function (done) {
+                  var o = {
+                    teamId: self.teamId,
+                    key: k,
+                    value: self.data[k]
+                  }
+                  o[remoteKey] = self.guid
+
+                  model.create(o).then(function () {
+                    done()
+                  }).catch(done)
+                })
+              }
+            })
+
+            async.series(jobs, function (error) {
+              if (error) { return reject(error) }
+              return resolve()
+            })
+          }).catch(reject)
+        })
       }
 
     }

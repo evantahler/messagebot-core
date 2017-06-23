@@ -22,11 +22,23 @@ describe('action:person', function () {
   })
 
   before(function (done) {
-    otherPerson = new api.models.Person(team)
-    otherPerson.data.source = 'tester'
-    otherPerson.data.device = 'phone'
-    otherPerson.data.listOptOuts = []
-    otherPerson.data.globalOptOut = false
+    otherPerson = api.models.Person.build({
+      source: 'tester',
+      device: 'phone',
+      listOptOuts: [],
+      globalOptOut: false
+    })
+
+    otherPerson.save().then(function () {
+      var collection = [
+        {personGuid: otherPerson.guid, teamId: team.id, key: 'firstName', value: 'fname'}
+      ]
+
+      api.models.PersonData.bulkCreate(collection).then(function () {
+        done()
+      }).catch(done)
+    })
+
     otherPerson.data.data = {
       firstName: 'fname',
       lastName: 'lame',
