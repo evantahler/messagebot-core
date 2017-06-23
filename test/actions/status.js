@@ -17,13 +17,11 @@ describe('system:status', function () {
 
   it('returns node status', function (done) {
     specHelper.requestWithLogin(email, password, 'system:status', {}, function (response) {
+      console.log(response)
       response.database.healthy.should.equal(true);
       ['Campaign', 'List', 'ListPerson', 'Template', 'User'].forEach(function (table) {
         should.exist(response.database[table])
       })
-
-      should.exist(response.elasticsearch.info.name)
-      // response.elasticsearch.health.status.should.equal('green');
 
       response.redis.tasks.healthy.should.equal(true)
       response.redis.client.healthy.should.equal(true)

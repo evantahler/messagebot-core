@@ -70,20 +70,10 @@ exports.status = {
       done()
     })
 
-    jobs.push(function (done) {
-      data.response.node.elasticsaerchPendingOperations = api.elasticsearch.pendingOperations
-      data.response.node.elasticsaerchPendingOperationsPercent = Math.round(api.elasticsearch.pendingOperations / api.config.elasticsearch.maxPendingOperations * 10000) / 100
-      if (api.elasticsearch.pendingOperations > api.config.elasticsearch.maxPendingOperations) {
-        data.response.node.nodeHealthy = false
-      }
-
-      done()
-    })
-
     /* ------ Database ------ */
 
     data.response.database.healthy = true;
-    ['Campaign', 'List', 'ListPerson', 'Template', 'User', 'Setting'].forEach(function (model) {
+    ['Event', 'Person', 'Message', 'Campaign', 'List', 'ListPerson', 'Template', 'User', 'Setting'].forEach(function (model) {
       jobs.push(function (done) {
         api.models[model].count().then(function (count) {
           data.response.database[model] = count
@@ -92,22 +82,6 @@ exports.status = {
           data.response.database.health = false
           done(error)
         })
-      })
-    })
-
-    /* ------ ElasticSearch ------ */
-
-    jobs.push(function (done) {
-      api.elasticsearch.client.info({}, function (error, info) {
-        data.response.elasticsearch.info = info
-        done(error)
-      })
-    })
-
-    jobs.push(function (done) {
-      api.elasticsearch.client.cluster.health({}, function (error, health) {
-        data.response.elasticsearch.health = health
-        done(error)
       })
     });
 
