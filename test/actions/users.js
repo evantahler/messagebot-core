@@ -358,7 +358,10 @@ describe('actions:user', function () {
           should.not.exist(response.error)
           api.models.Person.find({where: {guid: user.personGuid}}).then(function (person) {
             should.not.exist(person)
-            done()
+            api.models.PersonData.count({where: {personGuid: user.personGuid}}).then(function (count) {
+              count.should.equal(0)
+              done()
+            })
           })
         })
       }).catch(done)

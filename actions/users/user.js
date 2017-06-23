@@ -234,14 +234,6 @@ exports.userDelete = {
     })
 
     jobs.push(function (done) {
-      api.models.PersonData.destroy({
-        where: {personGuid: person.guid}
-      }).then(function () {
-        done()
-      }).catch(done)
-    })
-
-    jobs.push(function (done) {
       person.destroy().then(function () {
         done()
       }).catch(done)

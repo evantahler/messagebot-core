@@ -160,9 +160,7 @@ describe('actions:template', function () {
 
     after(function (done) {
       person.destroy().then(function () {
-        api.models.PersonData.destroy({
-          where: {personGuid: person.guid}
-        }).then(function () { done() })
+        done()
       }).catch(done)
     })
 

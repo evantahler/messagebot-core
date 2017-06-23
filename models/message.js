@@ -49,6 +49,12 @@ var loader = function (api) {
         }
       },
       {
+        hooks: {
+          beforeDestroy: function (self) {
+            return api.models.MessageData.destroy({where: {messageGuid: self.guid}})
+          }
+        },
+
         instanceMethods: {
           hydrate: function (callback) {
             this.data = {}
