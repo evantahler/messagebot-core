@@ -22,23 +22,36 @@ exports.task = {
     })
 
     jobs.push(function (done) {
-      person = new api.models.Person(team, params.guid)
+      api.models.Person.findOne({where: {
+        teamId: team.id,
+        guid: params.guid
+      }}).then(function (p) {
+        person = p
+        if (!person) { return done(new Error('Person not found')) }
+        done()
+      }).catch(done)
+    })
+
+    jobs.push(function (done) {
       person.hydrate(done)
     })
 
     jobs.push(function (done) {
-      event = new api.models.Event(team)
-      event.data.personGuid = person.data.guid
-      event.data.type = 'person_created'
-      event.data.ip = 'internal'
-      event.data.device = person.data.device
-      event.create(done)
+      event = api.models.Event.create({
+        teamId: team.id,
+        personGuid: person.guid,
+        type: 'person_created',
+        ip: 'internal',
+        device: person.device
+      }).then(function () {
+        done()
+      }).catch(done)
     })
 
     jobs.push(function (done) {
-      api.tasks.enqueueIn(api.config.elasticsearch.cacheTime * 1, 'events:process', {
+      api.tasks.enqueueIn(1, 'events:process', {
         teamId: team.id,
-        events: [event.data.guid]
+        events: [event.guid]
       }, 'messagebot:events', done)
     })
 

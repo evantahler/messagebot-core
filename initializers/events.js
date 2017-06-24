@@ -40,7 +40,7 @@ module.exports = {
               if (campaign.triggerDelay) { delay = campaign.triggerDelay * 1000 }
               api.tasks.enqueueIn(delay, 'campaigns:triggerEventCheck', {
                 teamId: team.id,
-                eventGuid: event.data.guid,
+                eventGuid: event.guid,
                 personGuid: event.data.personGuid,
                 campaignId: campaign.id,
                 listId: campaign.listId,

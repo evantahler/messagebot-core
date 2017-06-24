@@ -46,7 +46,7 @@ describe('actions:event', function () {
         sync: true,
         device: 'tester',
         type: 'tester',
-        personGuid: person.data.guid,
+        personGuid: person.guid,
         data: {thing: 'stuff'},
         ip: '173.247.192.214'
       }, function (response) {
@@ -63,7 +63,7 @@ describe('actions:event', function () {
         sync: true,
         device: 'tester',
         type: 'tester',
-        personGuid: person.data.guid
+        personGuid: person.guid
       }, function (response, res) {
         response.toString().indexOf('GIF').should.equal(0)
         res.statusCode.should.equal(200)
@@ -79,7 +79,7 @@ describe('actions:event', function () {
         sync: true,
         device: 'tester',
         type: 'tester',
-        personGuid: person.data.guid,
+        personGuid: person.guid,
         data: {thing: 'stuff'},
         ip: '173.247.192.214'
       }, function (response) {
@@ -133,7 +133,7 @@ describe('actions:event', function () {
         teamId: team.id,
         sync: true,
         type: 'tester',
-        personGuid: person.data.guid,
+        personGuid: person.guid,
         data: {thing: 'stuff'}
       }, function (response) {
         response.error.should.equal('Error: device is a required parameter for this action')
@@ -153,7 +153,7 @@ describe('actions:event', function () {
       }, function (response) {
         should.not.exist(response.error)
         response.event.data.thing.should.equal('stuff')
-        response.event.personGuid.should.equal(person.data.guid)
+        response.event.personGuid.should.equal(person.guid)
         should.exist(response.event.createdAt)
         should.exist(response.event.updatedAt)
         done()

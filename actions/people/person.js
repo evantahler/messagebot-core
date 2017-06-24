@@ -8,7 +8,6 @@ exports.personCreate = {
 
   inputs: {
     teamId: { required: false, formatter: function (p) { return parseInt(p) } },
-    sync: { required: true, default: false },
     guid: { required: false },
     data: { required: false, default: {} },
     source: { required: true },
@@ -21,35 +20,22 @@ exports.personCreate = {
   },
 
   run: function (api, data, next) {
-    var person = new api.models.Person(data.team)
-    person.data = data.params
+    var person = api.models.Person.build(data.params)
+    person.data = data.params.data
+    person.teamId = data.team.id
 
     // location and device will be updated by events as they come in
+    person.device = 'unknown'
+    person.listOptOuts = []
+    person.globalOptOut = false
 
-    person.data.device = 'unknown'
-
-    person.data.listOptOuts = []
-    person.data.globalOptOut = false
-
-    // return without waiting for the crete callback; log errors
-    // this effectivley allows the tracking request to 'buffer' in RAM & returning to the client quickly
-    // guid will be hydrated syncrhonusly before the save operation
-    if (data.params.sync === false) {
-      person.create(function (error) {
+    person.save().then(function () {
+      api.tasks.enqueueIn(1, 'people:buildCreateEvent', {guid: person.guid, teamId: data.team.id}, 'messagebot:people', function (error) {
         if (error) { return api.log('person creation error: ' + error, 'error', data.params) }
-        api.tasks.enqueueIn(api.config.elasticsearch.cacheTime * 1, 'people:buildCreateEvent', {guid: person.data.guid, teamId: data.team.id}, 'messagebot:people', function (error) {
-          if (error) { return api.log('person creation error: ' + error, 'error', data.params) }
-        })
+        data.response.person = person.apiData()
+        next()
       })
-      data.response.guid = person.data.guid
-      next()
-    } else {
-      person.create(function (error) {
-        if (error) { return next(error) }
-        data.response.guid = person.data.guid
-        api.tasks.enqueueIn(api.config.elasticsearch.cacheTime * 1, 'people:buildCreateEvent', {guid: person.data.guid, teamId: data.team.id}, 'messagebot:people', next)
-      })
-    }
+    }).catch(next)
   }
 }
 
@@ -67,14 +53,26 @@ exports.personEdit = {
   },
 
   run: function (api, data, next) {
-    var person = new api.models.Person(data.team, data.params.guid)
-    person.data = data.params
+    api.models.Person.findOne({
+      where: {
+        teamId: data.team.id,
+        guid: data.params.guid
+      }
+    }).then(function (person) {
+      if (!person) { return next(new Error(`Person (${data.params.guid}) not found`)) }
+      person.hydrate(function (error) {
+        if (error) { return next(error) }
+        if (data.params.source) { person.source = data.params.source }
+        Object.keys(data.params.data).forEach(function (k) {
+          person.data[k] = data.params.data[k]
+        })
 
-    person.edit(function (error) {
-      if (error) { return next(error) }
-      data.response.person = person.data
-      next()
-    })
+        person.save().then(function () {
+          data.response.person = person.apiData()
+          next()
+        }).catch(next)
+      })
+    }).catch(next)
   }
 }
 
@@ -92,29 +90,34 @@ exports.personView = {
   run: function (api, data, next) {
     // TODO: How to prevent people from accessing other folks' data?
     // Do we require-admin for person:view?
+    api.models.Person.findOne({
+      where: {
+        teamId: data.team.id,
+        guid: data.params.guid
+      }
+    }).then(function (person) {
+      if (!person) { return next(new Error(`Person (${data.params.guid}) not found`)) }
 
-    var person = new api.models.Person(data.team, data.params.guid)
-    person.data = data.params
+      person.hydrate(function (error) {
+        if (error) { return next(error) }
+        data.response.person = person.apiData()
+        data.response.lists = []
 
-    person.hydrate(function (error) {
-      if (error) { return next(error) }
-      data.response.person = person.data
-      data.response.lists = []
+        api.models.ListPerson.findAll({where: {
+          personGuid: person.guid
+        },
+          include: [api.models.List]
+        }).then(function (listPeople) {
+          listPeople.forEach(function (listPerson) {
+            var d = listPerson.list.apiData()
+            d.joinedAt = listPerson.createdAt
+            data.response.lists.push(d)
+          })
 
-      api.models.ListPerson.findAll({where: {
-        personGuid: person.data.guid
-      },
-        include: [api.models.List]
-      }).then(function (listPeople) {
-        listPeople.forEach(function (listPerson) {
-          var d = listPerson.list.apiData()
-          d.joinedAt = listPerson.createdAt
-          data.response.lists.push(d)
-        })
-
-        next()
-      }).catch(next)
-    })
+          next()
+        }).catch(next)
+      })
+    }).catch(next)
   }
 }
 
@@ -229,7 +232,7 @@ exports.personDelete = {
     jobs.push(function (done) {
       api.models.ListPerson.destroy({
         where: {
-          personGuid: person.data.guid,
+          personGuid: person.guid,
           teamId: data.team.id
         }
       }).then(function () {
@@ -255,7 +258,7 @@ exports.personDelete = {
           api.elasticsearch.search(
             alias,
             ['personGuid'],
-            [person.data.guid],
+            [person.guid],
             0,
             1000,
             null,

@@ -221,7 +221,7 @@ describe('actions:lists', function () {
       it('succeeds with personGuids via Form', function (done) {
         specHelper.requestWithLogin(email, password, 'list:people:add', {
           listId: listId,
-          personGuids: person.data.guid
+          personGuids: person.guid
         }, function (response) {
           should.not.exist(response.error)
           response.personGuids.length.should.equal(1)
@@ -232,7 +232,7 @@ describe('actions:lists', function () {
       it('fails (re-adding an existing person)', function (done) {
         specHelper.requestWithLogin(email, password, 'list:people:add', {
           listId: listId,
-          personGuids: person.data.guid
+          personGuids: person.guid
         }, function (response) {
           should.not.exist(response.error)
           response.personGuids.length.should.equal(1)
@@ -255,7 +255,7 @@ describe('actions:lists', function () {
       it('fails (list is not found)', function (done) {
         specHelper.requestWithLogin(email, password, 'list:people:add', {
           listId: 999,
-          personGuids: person.data.guid
+          personGuids: person.guid
         }, function (response) {
           response.error.should.equal('Error: list not found')
           done()
@@ -275,7 +275,7 @@ describe('actions:lists', function () {
       it('fails (list is not static)', function (done) {
         specHelper.requestWithLogin(email, password, 'list:people:add', {
           listId: dynamicListId,
-          personGuids: person.data.guid
+          personGuids: person.guid
         }, function (response) {
           response.error.should.equal('Error: you can only modify static list membership via this method')
           done()
@@ -287,11 +287,11 @@ describe('actions:lists', function () {
       it('succeeds with personGuids', function (done) {
         specHelper.requestWithLogin(email, password, 'list:people:delete', {
           listId: listId,
-          personGuids: person.data.guid
+          personGuids: person.guid
         }, function (response) {
           should.not.exist(response.error)
           response.deletedListPeople.length.should.equal(1)
-          response.deletedListPeople[0].personGuid.should.equal(person.data.guid)
+          response.deletedListPeople[0].personGuid.should.equal(person.guid)
           done()
         })
       })
@@ -309,7 +309,7 @@ describe('actions:lists', function () {
       it('fails (list is not found)', function (done) {
         specHelper.requestWithLogin(email, password, 'list:people:delete', {
           listId: 999,
-          personGuids: person.data.guid
+          personGuids: person.guid
         }, function (response) {
           response.error.should.equal('Error: list not found')
           done()
@@ -319,7 +319,7 @@ describe('actions:lists', function () {
       it('fails (list is not static)', function (done) {
         specHelper.requestWithLogin(email, password, 'list:people:add', {
           listId: dynamicListId,
-          personGuids: person.data.guid
+          personGuids: person.guid
         }, function (response) {
           response.error.should.equal('Error: you can only modify static list membership via this method')
           done()

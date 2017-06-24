@@ -23,29 +23,21 @@ describe('action:person', function () {
 
   before(function (done) {
     otherPerson = api.models.Person.build({
+      teamId: team.id,
       source: 'tester',
       device: 'phone',
       listOptOuts: [],
       globalOptOut: false
     })
-
-    otherPerson.save().then(function () {
-      var collection = [
-        {personGuid: otherPerson.guid, teamId: team.id, key: 'firstName', value: 'fname'}
-      ]
-
-      api.models.PersonData.bulkCreate(collection).then(function () {
-        done()
-      }).catch(done)
-    })
-
-    otherPerson.data.data = {
+    otherPerson.data = {
       firstName: 'fname',
-      lastName: 'lame',
+      lastName: 'lname',
       email: 'otherPerson@faker.fake'
     }
 
-    otherPerson.create(done)
+    otherPerson.save().then(function () {
+      done()
+    }).catch(done)
   })
 
   before(function (done) {
@@ -61,13 +53,12 @@ describe('action:person', function () {
   })
 
   after(function (done) { list.destroy().then(function () { done() }) })
-  after(function (done) { otherPerson.del(done) })
+  after(function (done) { otherPerson.destroy().then(function () { done() }) })
 
   describe('person:create', function () {
     it('succeeds', function (done) {
       api.specHelper.runAction('person:create', {
         teamId: team.id,
-        sync: true,
         source: 'tester',
         data: {
           firstName: 'fname',
@@ -76,8 +67,10 @@ describe('action:person', function () {
         }
       }, function (response) {
         should.not.exist(response.error)
-        should.exist(response.guid)
-        personGuid = response.guid
+        should.exist(response.person.guid)
+        personGuid = response.person.guid
+        response.person.source.should.equal('tester')
+        response.person.data.email.should.equal('fake@faker.fake')
         done()
       })
     })
@@ -119,7 +112,6 @@ describe('action:person', function () {
     it('fails (uniqueness failure)', function (done) {
       api.specHelper.runAction('person:create', {
         teamId: team.id,
-        sync: true,
         source: 'tester',
         data: {
           firstName: 'fname',
@@ -127,7 +119,7 @@ describe('action:person', function () {
           email: 'fake@faker.fake'
         }
       }, function (response) {
-        response.error.should.equal('Error: uniqueFields:data.email uniqueness violated via #' + personGuid)
+        response.error.should.equal(`Error: personGuid ${personGuid} already exists with email of fake@faker.fake`)
         done()
       })
     })
@@ -135,7 +127,6 @@ describe('action:person', function () {
     it('fails (missing param)', function (done) {
       api.specHelper.runAction('person:create', {
         teamId: team.id,
-        sync: true,
         data: {}
       }, function (response) {
         response.error.should.equal('Error: source is a required parameter for this action')
@@ -204,7 +195,7 @@ describe('action:person', function () {
         guid: personGuid,
         data: {email: 'otherPerson@faker.fake'}
       }, function (response) {
-        response.error.should.equal('Error: uniqueFields:data.email uniqueness violated via #' + otherPerson.data.guid)
+        response.error.should.equal(`Error: personGuid ${otherPerson.guid} already exists with email of otherPerson@faker.fake`)
         done()
       })
     })
@@ -405,17 +396,17 @@ describe('action:person', function () {
       var jobs = []
 
       jobs.push(function (next) {
-        var checkMessage = new api.models.Message(team, message.data.guid)
+        var checkMessage = new api.models.Message(team, message.guid)
         checkMessage.hydrate(function (error) {
-          String(error).should.equal('Error: Message (' + message.data.guid + ') not found')
+          String(error).should.equal('Error: Message (' + message.guid + ') not found')
           next()
         })
       })
 
       jobs.push(function (next) {
-        var checkEvent = new api.models.Event(team, event.data.guid)
+        var checkEvent = new api.models.Event(team, event.guid)
         checkEvent.hydrate(function (error) {
-          String(error).should.equal('Error: Event (' + event.data.guid + ') not found')
+          String(error).should.equal('Error: Event (' + event.guid + ') not found')
           next()
         })
       })

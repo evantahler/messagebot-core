@@ -2,6 +2,12 @@ var Sequelize = require('sequelize')
 
 var loader = function (api) {
   /* --- Priave Methods --- */
+  var uniqueDataKeys = [
+    'email',
+    'phoneNumber',
+    'token',
+    'pushToken'
+  ]
 
   /* --- Public Model --- */
 
@@ -60,8 +66,8 @@ var loader = function (api) {
       },
       {
         hooks: {
-          beforeCreate: (self) => { return api.sequelize.updatateData(self, api.models.PersonData, 'personGuid') },
-          beforeUpdate: (self) => { return api.sequelize.updatateData(self, api.models.PersonData, 'personGuid') },
+          beforeCreate: (self) => { return api.sequelize.updatateData(self, api.models.PersonData, 'personGuid', uniqueDataKeys) },
+          beforeUpdate: (self) => { return api.sequelize.updatateData(self, api.models.PersonData, 'personGuid', uniqueDataKeys) },
           beforeDestroy: function (self) { return api.models.PersonData.destroy({where: {personGuid: self.guid}}) }
         },
 
@@ -85,6 +91,8 @@ var loader = function (api) {
               device: this.device,
               lat: this.lat,
               lng: this.lng,
+
+              data: this.data || {},
 
               updatedAt: this.updatedAt,
               createdAt: this.createdAt

@@ -27,12 +27,21 @@ exports.eventsSearch = {
   },
 
   run: function (api, data, next) {
-    api.elasticsearch.search(alias(api, data.team), data.params.searchKeys, data.params.searchValues, data.params.from, data.params.size, data.params.sort, function (error, results, total) {
-      if (error) { return next(error) }
-      data.response.total = total
-      data.response.events = results
+    var where = {}
+    for (var i in data.params.searchKeys) {
+      where[data.params.searchKeys[i]] = data.params.searchValues[i]
+    }
+
+    api.models.Event.findAndCountAll({
+      where: where,
+      order: data.params.sort,
+      limit: data.params.size,
+      offset: data.params.from
+    }).then(function (result) {
+      data.response.total = result.count
+      data.response.events = result.rows.map(function (row) { return row.apiData() })
       next()
-    })
+    }).catch(next)
   }
 }
 

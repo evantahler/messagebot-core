@@ -75,6 +75,9 @@ var loader = function (api) {
               type: this.type,
               lat: this.lat,
               lng: this.lng,
+
+              data: this.data || {},
+
               updatedAt: this.updatedAt
             }
           }

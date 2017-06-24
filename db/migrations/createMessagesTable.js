@@ -47,7 +47,13 @@ module.exports = {
           allowNull: true
         }
       }
-    )
+    ).then(function () {
+      return queryInterface.addIndex(
+        'messages', ['teamId', 'guid'], {
+          indicesType: 'UNIQUE'
+        }
+      )
+    })
   },
 
   down: function (queryInterface, Sequelize) {

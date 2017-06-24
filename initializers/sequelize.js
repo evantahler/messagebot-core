@@ -87,17 +87,36 @@ module.exports = {
         if (typeof type === 'function') { callback = type; type = null }
         if (!type) { type = api.sequelize.sequelize.QueryTypes.SELECT }
 
-        api.sequelize.sequelize.query(q, {type: type}).then(function (users) {
-          callback(null, users)
+        api.sequelize.sequelize.query(q, {type: type}).then(function (rows) {
+          callback(null, rows)
         }).catch(callback)
       },
 
-      updatateData: function (self, model, remoteKey) {
+      updatateData: function (self, model, remoteKey, uniqueDataKeys) {
         return new Promise(function (resolve, reject) {
           var jobs = []
           if (!self.data) { self.data = {} }
           var remainingKeys = Object.keys(self.data)
           var consumedKeys = []
+          if (!uniqueDataKeys) { uniqueDataKeys = [] }
+
+          remainingKeys.forEach(function (k) {
+            if (uniqueDataKeys.indexOf(k) >= 0) {
+              jobs.push(function (done) {
+                var where = {
+                  teamId: self.teamId,
+                  key: k,
+                  value: self.data[k]
+                }
+                where[remoteKey] = {$not: self.guid}
+
+                model.findOne({where: where}).then(function (item) {
+                  if (item) { return done(new Error(`${remoteKey} ${item[remoteKey]} already exists with ${k} of ${self.data[k]}`)) }
+                  done()
+                }).catch(done)
+              })
+            }
+          })
 
           var where = {}
           where[remoteKey] = self.guid

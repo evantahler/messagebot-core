@@ -33,7 +33,7 @@ exports.messageCreate = {
     message.data = data.params
 
     message.create(function (error) {
-      if (!error) { data.response.guid = message.data.guid }
+      if (!error) { data.response.guid = message.guid }
       next(error)
     })
   }
@@ -198,7 +198,7 @@ exports.messageTrack = {
     jobs.push(function (done) {
       event = new api.models.Event(data.team)
 
-      event.data.messageGuid = message.data.guid
+      event.data.messageGuid = message.guid
       event.data.personGuid = message.data.personGuid
       event.data.type = eventType
       event.data.ip = ip
@@ -223,7 +223,7 @@ exports.messageTrack = {
     async.series(jobs, function (error) {
       if (error) { return next(error) }
 
-      data.response.eventGuid = event.data.guid
+      data.response.eventGuid = event.guid
 
       if (data.params.link) {
         data.connection.rawConnection.responseHeaders.push(['Location', data.params.link])
@@ -236,7 +236,7 @@ exports.messageTrack = {
 
       api.tasks.enqueueIn(api.config.elasticsearch.cacheTime * 1, 'events:process', {
         teamId: data.team.id,
-        events: [event.data.guid]
+        events: [event.guid]
       }, 'messagebot:events', next)
     })
   }

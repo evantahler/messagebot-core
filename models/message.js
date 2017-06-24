@@ -76,6 +76,8 @@ var loader = function (api) {
               readAt: this.readAt,
               actedAt: this.actedAt,
 
+              data: this.data || {},
+
               updatedAt: this.updatedAt,
               createdAt: this.createdAt
             }

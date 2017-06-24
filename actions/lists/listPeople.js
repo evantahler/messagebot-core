@@ -65,11 +65,11 @@ exports.listPeopleAdd = {
             person.hydrate(function (error) {
               if (error) { return done(new Error('Error adding guid #' + personGuid + ': ' + String(error))) }
               api.models.ListPerson.findOrCreate({where: {
-                personGuid: person.data.guid,
+                personGuid: person.guid,
                 listId: list.id,
                 teamId: list.teamId
               }}).then(function (listPerson) {
-                data.response.personGuids.push(person.data.guid)
+                data.response.personGuids.push(person.guid)
                 done()
               }).catch(done)
             })
@@ -88,7 +88,7 @@ exports.listPeopleAdd = {
           jobs.push(function (done) {
             var person = new api.models.Person(data.team)
 
-            if (d.guid) { person.data.guid = d.guid }
+            if (d.guid) { person.guid = d.guid }
             if (d.createdAt) { person.data.createdAt = d.createdAt }
 
             for (var i in d) {
@@ -114,13 +114,13 @@ exports.listPeopleAdd = {
               }
 
               api.models.ListPerson.findOrCreate({where: {
-                personGuid: (existingPersonGuid || person.data.guid),
+                personGuid: (existingPersonGuid || person.guid),
                 listId: list.id,
                 teamId: list.teamId
               }}).then(function () {
-                data.response.personGuids.push((existingPersonGuid || person.data.guid))
+                data.response.personGuids.push((existingPersonGuid || person.guid))
                 if (!existingPersonGuid) {
-                  api.tasks.enqueueIn(api.config.elasticsearch.cacheTime * 1, 'people:buildCreateEvent', {guid: person.data.guid, teamId: data.team.id}, 'messagebot:people', done)
+                  api.tasks.enqueueIn(api.config.elasticsearch.cacheTime * 1, 'people:buildCreateEvent', {guid: person.guid, teamId: data.team.id}, 'messagebot:people', done)
                 } else {
                   return done()
                 }

@@ -109,7 +109,7 @@ exports.task = {
         message.data[k] = campaign.campaignVariables[k]
       })
 
-      message.data.personGuid = person.data.guid
+      message.data.personGuid = person.guid
       message.data.transport = transport.name
       message.data.campaignId = campaign.id
       message.data.body = body
@@ -126,12 +126,12 @@ exports.task = {
       }
 
       if (toSend && person.data.globalOptOut === true) {
-        api.log(['person #%s is globally opted-out', person.data.guid])
+        api.log(['person #%s is globally opted-out', person.guid])
         toSend = false
       }
 
       if (toSend && person.data.listOptOuts.indexOf(list.id) >= 0) {
-        api.log(['person #%s is opted-out of this list (#%s)', person.data.guid, list.id])
+        api.log(['person #%s is opted-out of this list (#%s)', person.guid, list.id])
         toSend = false
       }
 

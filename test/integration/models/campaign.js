@@ -155,7 +155,7 @@ describe('integartion:campaigns', function () {
       listPerson = api.models.ListPerson.build({
         teamId: 1,
         listId: list.id,
-        personGuid: person.data.guid
+        personGuid: person.guid
       })
 
       listPerson.save().then(function () { done() })
@@ -391,7 +391,7 @@ describe('integartion:campaigns', function () {
             device: 'tester',
             type: 'pageView',
             page: 'myPage',
-            personGuid: person.data.guid,
+            personGuid: person.guid,
             data: {page: 'myPage'}
           }, function (result) {
             should.not.exist(result.error)
@@ -424,7 +424,7 @@ describe('integartion:campaigns', function () {
             device: 'tester',
             type: 'pageView',
             page: 'myPage',
-            personGuid: person.data.guid,
+            personGuid: person.guid,
             data: {page: 'otherPage'}
           }, function (result) {
             should.not.exist(result.error)
