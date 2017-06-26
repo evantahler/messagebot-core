@@ -1,4 +1,5 @@
 var Sequelize = require('sequelize')
+var async = require('async')
 
 var loader = function (api) {
   /* --- Priave Methods --- */
@@ -68,7 +69,45 @@ var loader = function (api) {
         hooks: {
           beforeCreate: (self) => { return api.sequelize.updatateData(self, api.models.PersonData, 'personGuid', uniqueDataKeys) },
           beforeUpdate: (self) => { return api.sequelize.updatateData(self, api.models.PersonData, 'personGuid', uniqueDataKeys) },
-          beforeDestroy: function (self) { return api.models.PersonData.destroy({where: {personGuid: self.guid}}) }
+          beforeDestroy: function (self) {
+            return new Promise(function (resolve, reject) {
+              var jobs = []
+
+              jobs.push(function (done) {
+                api.models.ListPerson.destroy({
+                  where: {
+                    personGuid: self.guid,
+                    teamId: self.teamId
+                  }
+                }).then(function () {
+                  done()
+                }).catch(done)
+              })
+
+              jobs.push(function (done) {
+                api.models.Event.destroy({where: {personGuid: self.guid}}).then(() => {
+                  done()
+                }).catch(done)
+              })
+
+              jobs.push(function (done) {
+                api.models.Message.destroy({where: {personGuid: self.guid}}).then(() => {
+                  done()
+                }).catch(done)
+              })
+
+              jobs.push(function (done) {
+                api.models.PersonData.destroy({where: {personGuid: self.guid}}).then(() => {
+                  done()
+                }).catch(done)
+              })
+
+              async.series(jobs, (error) => {
+                if (error) { return reject(error) }
+                resolve()
+              })
+            })
+          }
         },
 
         instanceMethods: {

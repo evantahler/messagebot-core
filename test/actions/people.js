@@ -307,7 +307,7 @@ describe('action:person', function () {
     it('succeeds', function (done) {
       specHelper.requestWithLogin(email, password, 'people:search', {
         searchKeys: ['data.email'],
-        searchValues: ['*@faker.fake'],
+        searchValues: ['%@faker.fake'],
         from: 1,
         size: 1
       }, function (response) {
@@ -321,7 +321,7 @@ describe('action:person', function () {
     it('fails (not logged in)', function (done) {
       api.specHelper.runAction('people:search', {
         searchKeys: ['data.email'],
-        searchValues: ['*@faker.fake']
+        searchValues: ['%@faker.fake']
       }, function (response) {
         response.error.should.equal('Error: Please log in to continue')
         done()
@@ -333,14 +333,15 @@ describe('action:person', function () {
     it('succeeds', function (done) {
       specHelper.requestWithLogin(email, password, 'people:aggregation', {
         searchKeys: ['data.email'],
-        searchValues: ['*@faker.fake'],
-        interval: 'day'
+        searchValues: ['%@faker.fake'],
+        interval: 'date'
       }, function (response) {
         should.not.exist(response.error)
-        Object.keys(response.aggregations).length.should.equal(2)
-        response.aggregations.tester[0].doc_count.should.equal(2)
-        response.selections.should.deepEqual(['tester'])
-        response.selectionsName.should.equal('sources')
+        Object.keys(response.aggregations).length.should.equal(1)
+        var key = Object.keys(response.aggregations)[0]
+        var date = new Date(key)
+        date.getDate().should.equal(new Date().getDate())
+        response.aggregations[key].should.equal(2)
         done()
       })
     })
@@ -348,8 +349,8 @@ describe('action:person', function () {
     it('fails (not logged in)', function (done) {
       api.specHelper.runAction('people:aggregation', {
         searchKeys: ['data.email'],
-        searchValues: ['*@faker.fake'],
-        interval: 'day'
+        searchValues: ['%@faker.fake'],
+        interval: 'date'
       }, function (response) {
         response.error.should.equal('Error: Please log in to continue')
         done()
@@ -362,24 +363,32 @@ describe('action:person', function () {
     var message
 
     before(function (done) {
-      event = new api.models.Event(team)
-      event.data.messageGuid = Math.random()
-      event.data.personGuid = personGuid
-      event.data.type = 'boughtTheThing'
-      event.data.ip = '0.0.0.0'
-      event.data.device = 'phone'
-      event.create(done)
+      event = api.models.Event.build({
+        messageGuid: Math.random(),
+        personGuid: personGuid,
+        ip: '0.0.0.0',
+        device: 'phone',
+        type: 'boughtTheThing'
+      })
+
+      event.save().then(() => {
+        done()
+      }).catch(done)
     })
 
     before(function (done) {
-      message = new api.models.Message(team)
-      message.data.personGuid = personGuid
-      message.data.transport = 'smtp'
-      message.data.campaignId = '1'
-      message.data.body = ''
-      message.data.view = {}
-      message.data.sentAt = new Date()
-      message.create(done)
+      message = api.models.Message.build({
+        transport: 'smtp',
+        personGuid: personGuid,
+        campaignId: 1,
+        body: '',
+        view: {},
+        sentAt: new Date()
+      })
+
+      message.save().then(() => {
+        done()
+      }).catch(done)
     })
 
     it('succeeds', function (done) {
@@ -396,19 +405,31 @@ describe('action:person', function () {
       var jobs = []
 
       jobs.push(function (next) {
-        var checkMessage = new api.models.Message(team, message.guid)
-        checkMessage.hydrate(function (error) {
-          String(error).should.equal('Error: Message (' + message.guid + ') not found')
+        api.models.Message.count({personGuid: personGuid}).then((count) => {
+          count.should.equal(0)
           next()
-        })
+        }).catch(next)
       })
 
       jobs.push(function (next) {
-        var checkEvent = new api.models.Event(team, event.guid)
-        checkEvent.hydrate(function (error) {
-          String(error).should.equal('Error: Event (' + event.guid + ') not found')
+        api.models.MessageData.count({messageGuid: message.guid}).then((count) => {
+          count.should.equal(0)
           next()
-        })
+        }).catch(next)
+      })
+
+      jobs.push(function (next) {
+        api.models.Event.count({personGuid: personGuid}).then((count) => {
+          count.should.equal(0)
+          next()
+        }).catch(next)
+      })
+
+      jobs.push(function (next) {
+        api.models.EventData.count({eventGuid: event.guid}).then((count) => {
+          count.should.equal(0)
+          next()
+        }).catch(next)
       })
 
       jobs.push(function (done) {

@@ -1,7 +1,26 @@
-var async = require('async')
+var buildWhere = function (api, data) {
+  var where = {
+    teamId: data.team.id
+  }
 
-var alias = function (api, team) {
-  return api.utils.buildAlias(team, 'people')
+  for (var i in data.params.searchKeys) {
+    if (data.params.searchKeys[i].indexOf('data.') === 0) {
+      var key = data.params.searchKeys[i].split('.')[1]
+      var value = data.params.searchValues[i]
+      if (!where.guid) { where.guid = [] }
+      where.guid.push(
+        api.sequelize.sequelize.literal(`SELECT personGuid FROM personData WHERE \`key\` = "${key}" and \`value\` LIKE "${value}"`)
+      )
+    }
+  }
+
+  for (var j in data.params.searchKeys) {
+    if (data.params.searchKeys[j].indexOf('data.') !== 0) {
+      where[data.params.searchKeys[j]] = data.params.searchValues[j]
+    }
+  }
+
+  return where
 }
 
 exports.peopleSearch = {
@@ -27,13 +46,8 @@ exports.peopleSearch = {
   },
 
   run: function (api, data, next) {
-    var where = {}
-    for (var i in data.params.searchKeys) {
-      where[data.params.searchKeys[i]] = data.params.searchValues[i]
-    }
-
     api.models.Person.findAndCountAll({
-      where: where,
+      where: buildWhere(api, data),
       order: data.params.sort,
       limit: data.params.size,
       offset: data.params.from
@@ -54,113 +68,40 @@ exports.peopleAggregation = {
   inputs: {
     searchKeys: { required: true },
     searchValues: { required: true },
-    maximumSelections: {
+    interval: {
       required: true,
+      default: 'DATE'
+    },
+    from: {
+      required: false,
       formatter: function (p) { return parseInt(p) },
-      default: function (p) { return 5 }
-    },
-    selections: {
-      required: false,
-      formatter: function (p) {
-        if (p.length === 0) { return [] }
-        return p.split(',')
-      },
-      default: function (p) { return '' }
-    },
-    start: {
-      required: false,
-      formatter: function (p) { return new Date(parseInt(p)) },
       default: function (p) { return 0 }
     },
-    end: {
+    size: {
       required: false,
-      formatter: function (p) { return new Date(parseInt(p)) },
-      default: function (p) { return new Date().getTime() }
+      formatter: function (p) { return parseInt(p) },
+      default: function (p) { return 100 }
     },
-    interval: { required: true }
+    sort: { required: false }
   },
 
   run: function (api, data, next) {
-    var jobs = []
-    var aggJobs = []
-    var sources = []
-    data.response.aggregations = {}
-
-    jobs.push(function (done) {
-      api.elasticsearch.distinct(
-        alias(api, data.team),
-        data.params.searchKeys,
-        data.params.searchValues,
-        data.params.start,
-        data.params.end,
-        'createdAt',
-        'source',
-        function (error, buckets) {
-          if (error) { return done(error) }
-          buckets.buckets.forEach(function (b) {
-            sources.push(b.key)
-          })
-          data.response.selections = sources
-          data.response.selectionsName = 'sources'
-          done()
-        }
-      )
-    })
-
-    jobs.push(function (done) {
-      aggJobs.push(function (aggDone) {
-        api.elasticsearch.aggregation(
-          alias(api, data.team),
-          ['guid'],
-          ['_exists'],
-          data.params.start,
-          data.params.end,
-          'createdAt',
-          'date_histogram',
-          'createdAt',
-          data.params.interval,
-          function (error, buckets) {
-            if (error) { return aggDone(error) }
-            data.response.aggregations._all = buckets.buckets
-            aggDone()
-          }
-        )
+    api.models.Person.findAll({
+      attributes: [
+        [`${data.params.interval}(createdAt)`, data.params.interval],
+        [api.sequelize.sequelize.fn('count', api.sequelize.sequelize.col('guid')), 'TOTAL']
+      ],
+      where: buildWhere(api, data),
+      order: data.params.sort,
+      limit: data.params.size,
+      offset: data.params.from,
+      group: `${data.params.interval}(createdAt)`
+    }).then(function (results) {
+      data.response.aggregations = {}
+      results.forEach(function (r) {
+        data.response.aggregations[r.dataValues[data.params.interval]] = r.dataValues.TOTAL
       })
-
-      done()
-    })
-
-    jobs.push(function (done) {
-      sources.forEach(function (source) {
-        if (aggJobs.length <= data.params.maximumSelections && (data.params.selections.length === 0 || data.params.selections.indexOf(source) >= 0)) {
-          aggJobs.push(function (aggDone) {
-            api.elasticsearch.aggregation(
-              alias(api, data.team),
-              ['source'].concat(data.params.searchKeys),
-              [source].concat(data.params.searchValues),
-              data.params.start,
-              data.params.end,
-              'createdAt',
-              'date_histogram',
-              'createdAt',
-              data.params.interval,
-              function (error, buckets) {
-                if (error) { return aggDone(error) }
-                data.response.aggregations[source] = buckets.buckets
-                aggDone()
-              }
-            )
-          })
-        }
-      })
-
-      done()
-    })
-
-    jobs.push(function (done) {
-      async.series(aggJobs, done)
-    })
-
-    async.series(jobs, next)
+      next()
+    }).catch(next)
   }
 }
