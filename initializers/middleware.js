@@ -1,4 +1,4 @@
-'use strict'
+
 
 var qs = require('qs')
 

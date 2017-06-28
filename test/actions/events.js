@@ -20,24 +20,25 @@ describe('actions:event', function () {
   })
 
   before(function (done) {
-    person = new api.models.Person(team)
-    person.data.source = 'someSource'
-    person.data.device = 'unknown'
-    person.data.listOptOuts = []
-    person.data.globalOptOut = false
-    person.data.data = {
+    person = api.models.Person.build({
+      teamId: team.id,
+      source: 'someSource',
+      device: 'unknown',
+      listOptOuts: [],
+      globalOptOut: false
+    })
+    person.data = {
       firstName: 'fname',
       lastName: 'lame',
       email: 'fake@faker.fake'
     }
 
-    person.create(function (error) {
-      should.not.exist(error)
+    person.save().then(() => {
       person.hydrate(done)
-    })
+    }).catch(done)
   })
 
-  after(function (done) { person.del(done) })
+  after(function (done) { person.destroy().then(() => { done() }) })
 
   describe('event:create', function () {
     it('succeeds', function (done) {
@@ -51,8 +52,8 @@ describe('actions:event', function () {
         ip: '173.247.192.214'
       }, function (response) {
         should.not.exist(response.error)
-        should.exist(response.guid)
-        eventGuid = response.guid
+        should.exist(response.event.guid)
+        eventGuid = response.event.guid
         done()
       })
     })
@@ -81,18 +82,13 @@ describe('actions:event', function () {
         type: 'tester',
         personGuid: person.guid,
         data: {thing: 'stuff'},
-        ip: '173.247.192.214'
+        ip: '8.8.8.8'
       }, function (response) {
         should.not.exist(response.error)
-        should.exist(response.guid)
-
-        var event = new api.models.Event(team, response.guid)
-        event.hydrate(function (error) {
-          should.not.exist(error)
-          Math.round(event.data.location.lat).should.equal(38)
-          Math.round(event.data.location.lon).should.equal(-122)
-          done()
-        })
+        should.exist(response.event.guid)
+        Math.round(response.event.lat).should.equal(37)
+        Math.round(response.event.lng).should.equal(-122)
+        done()
       })
     })
 
@@ -110,21 +106,23 @@ describe('actions:event', function () {
     })
 
     it('succeeds (can run events:process and update the user)', function (done) {
-      person.data.device.should.equal('unknown')
-      should.not.exist(person.data.location)
+      person.device.should.equal('unknown')
+      should.not.exist(person.location)
 
       api.specHelper.runTask('events:process', {
         teamId: team.id,
         events: [eventGuid]
       }, function (error) {
         should.not.exist(error)
-        person.hydrate(function (error) {
-          should.not.exist(error)
-          Math.round(person.data.location.lat).should.equal(38)
-          Math.round(person.data.location.lon).should.equal(-122)
-          person.data.device.should.equal('tester')
-          done()
-        })
+        person.reload().then(() => {
+          person.hydrate((error) => {
+            should.not.exist(error)
+            Math.round(person.lat).should.equal(38)
+            Math.round(person.lng).should.equal(-122)
+            person.device.should.equal('tester')
+            done()
+          })
+        }).catch(done)
       })
     })
 

@@ -1,4 +1,4 @@
-'use strict'
+
 
 // error messages can be strings of objects
 exports['default'] = {

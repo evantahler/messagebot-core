@@ -167,7 +167,7 @@ exports.messageTrack = {
       required: false,
       formatter: function (p) { return parseFloat(p) }
     },
-    lon: {
+    lng: {
       required: false,
       formatter: function (p) { return parseFloat(p) }
     }
@@ -241,7 +241,7 @@ exports.messageTrack = {
       event.data = {}
       if (data.params.link) { event.data.link = data.params.link }
       var location = api.geolocation.build(data.params, event.ip)
-      if (location) { event.data.location = location }
+      if (location) { event.lat = location.lat; event.lng = location.lng }
 
       event.save().then(function () {
         data.response.event = event.apiData()

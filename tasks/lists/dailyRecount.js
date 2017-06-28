@@ -1,4 +1,4 @@
-'use strict'
+
 var async = require('async')
 
 exports.task = {

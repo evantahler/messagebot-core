@@ -14,22 +14,22 @@ module.exports = {
 
           Object.keys(campaign.triggerEventMatch).forEach(function (k) {
             if (k !== 'data') {
-              if (!event.data[k]) {
+              if (!event[k]) {
                 matched = false
               } else {
                 var regexp = new RegExp(campaign.triggerEventMatch[k])
-                if (!event.data[k].match(regexp)) { matched = false }
+                if (!event[k].match(regexp)) { matched = false }
               }
             }
           })
 
           if (campaign.triggerEventMatch.data) {
             Object.keys(campaign.triggerEventMatch.data).forEach(function (k) {
-              if (!event.data.data[k]) {
+              if (!event.data[k]) {
                 matched = false
               } else {
                 var regexp = new RegExp(campaign.triggerEventMatch.data[k])
-                if (!event.data.data[k].match(regexp)) { matched = false }
+                if (!event.data[k].match(regexp)) { matched = false }
               }
             })
           }
@@ -41,7 +41,7 @@ module.exports = {
               api.tasks.enqueueIn(delay, 'campaigns:triggerEventCheck', {
                 teamId: team.id,
                 eventGuid: event.guid,
-                personGuid: event.data.personGuid,
+                personGuid: event.personGuid,
                 campaignId: campaign.id,
                 listId: campaign.listId,
                 enqueuedAt: new Date().getTime()
@@ -54,25 +54,25 @@ module.exports = {
       },
 
       propigateLocationToPerson: function (team, event, callback) {
-        if (!event.data.location) { return callback() }
+        if (!event.lat && !event.lng) { return callback() }
 
-        var person = new api.models.Person(team, event.data.personGuid)
-        person.hydrate(function (error) {
-          if (error) { return callback(error) }
+        api.models.Person.findOne({where: {
+          teamId: team.id,
+          guid: event.personGuid
+        }}).then((person) => {
+          person.hydrate((error) => {
+            if (error) { return callback(error) }
 
-          if (event.data.device !== 'message') {
-            person.data.device = event.data.device
-          }
-
-          if (event.data.location && event.data.location.lat && event.data.location.lon) {
-            person.data.location = {
-              lat: event.data.location.lat,
-              lon: event.data.location.lon
+            if (event.device !== 'message') {
+              person.device = event.device
             }
-          }
 
-          person.edit(callback)
-        })
+            person.lat = event.lat
+            person.lng = event.lng
+
+            person.save().then(() => { callback() }).catch(callback)
+          })
+        }).catch(callback)
       }
     }
 

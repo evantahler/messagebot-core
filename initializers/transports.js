@@ -1,4 +1,4 @@
-'use strict'
+
 
 module.exports = {
   loadPriority: 900,
