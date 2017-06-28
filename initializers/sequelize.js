@@ -42,6 +42,7 @@ module.exports = {
         // List Person
         api.models.ListPerson.belongsTo(api.models.List)
         api.models.ListPerson.belongsTo(api.models.Team)
+        api.models.ListPerson.belongsTo(api.models.Person)
 
         // Team
         api.models.Team.hasMany(api.models.Campaign)

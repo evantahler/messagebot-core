@@ -42,7 +42,7 @@ exports.listPeopleAdd = {
       teamId: data.session.teamId
     }}).then(function (list) {
       if (!list) { return next(new Error('list not found')) }
-      if (list.type !== 'static') { return next(new Error('you can only modify static list membership via this method')) }
+      if (list.type !== 'static') { return next(new Error('you cannot modify static list membership via this method')) }
 
       var complete = function () {
         if (jobs.length === 0) { return next(new Error('nothing to edit')) }
@@ -61,9 +61,11 @@ exports.listPeopleAdd = {
       if (data.params.personGuids && data.params.personGuids.length > 0) {
         data.params.personGuids.forEach(function (personGuid) {
           jobs.push(function (done) {
-            var person = new api.models.Person(data.team, personGuid)
-            person.hydrate(function (error) {
-              if (error) { return done(new Error('Error adding guid #' + personGuid + ': ' + String(error))) }
+            api.models.Person.find({where: {
+              teamId: data.team.id,
+              guid: personGuid
+            }}).then((person) => {
+              if (!person) { return done(new Error(`Person (${personGuid}) not found`)) }
               api.models.ListPerson.findOrCreate({where: {
                 personGuid: person.guid,
                 listId: list.id,
@@ -72,7 +74,7 @@ exports.listPeopleAdd = {
                 data.response.personGuids.push(person.guid)
                 done()
               }).catch(done)
-            })
+            }).catch(done)
           })
         })
 
@@ -86,44 +88,57 @@ exports.listPeopleAdd = {
           trim: true
         }).on('data', function (d) {
           jobs.push(function (done) {
-            var person = new api.models.Person(data.team)
+            var person = api.models.Person.build({
+              teamId: data.team.id,
+              device: d.device || 'unknown',
+              listOptOuts: [],
+              globalOptOut: false,
+              source: d.source || 'upload'
+            })
+            person.data = {}
 
             if (d.guid) { person.guid = d.guid }
-            if (d.createdAt) { person.data.createdAt = d.createdAt }
+            if (d.createdAt) { person.createdAt = d.createdAt }
 
             for (var i in d) {
-              if (person.data[i] === null || person.data[i] === undefined) {
-                person.data[i] = d[i]
-              }
+              if (person[i] === null || person[i] === undefined) { person.data[i] = d[i] }
             }
 
-            person.data.device = 'unknown'
-
-            person.data.listOptOuts = []
-            person.data.globalOptOut = false
-
-            person.create(function (error) {
-              if (error) {
-                // if this person is already in our system, we can use the existing person
-                // TODO: This is brittle as is relies on string parsing...
-                if (error.toString().match(/uniqueness violated via/)) {
-                  var existingPersonGuid = error.toString().split('violated via #')[1]
-                } else {
-                  return done(new Error('Error adding person ' + JSON.stringify(d) + ' | ' + error))
-                }
-              }
-
+            person.save().then(() => {
               api.models.ListPerson.findOrCreate({where: {
-                personGuid: (existingPersonGuid || person.guid),
+                personGuid: person.guid,
                 listId: list.id,
                 teamId: list.teamId
               }}).then(function () {
-                data.response.personGuids.push((existingPersonGuid || person.guid))
-                if (!existingPersonGuid) {
-                  api.tasks.enqueueIn(1, 'people:buildCreateEvent', {guid: person.guid, teamId: data.team.id}, 'messagebot:people', done)
-                } else {
-                  return done()
-                }
+                data.response.personGuids.push(person.guid)
+                api.tasks.enqueueIn(1, 'people:buildCreateEvent', {guid: person.guid, teamId: data.team.id}, 'messagebot:people', done)
+              }).catch(done)
+            }).catch((error) => {
+              // TODO: this is brittle as it relies on string parsing
+              if (!error.toString().match(/^Error: personGuid .* already exists with/)) { return done(error) }
+
+              var personGuid = error.toString().split(' ')[2]
+              api.models.Person.findOne({where: {guid: personGuid}}).then((person) => {
+                if (!person) { return done(new Error(`Person (${personGuid}) not found`)) }
+                person.hydrate((error) => {
+                  if (error) { return done(error) }
+                  if (d.device) { person.device = d.device }
+                  if (d.source) { person.source = d.source }
+                  for (var i in d) {
+                    if (person[i] === null || person[i] === undefined) { person.data[i] = d[i] }
+                  }
+
+                  person.save().then(() => {
+                    api.models.ListPerson.findOrCreate({where: {
+                      personGuid: person.guid,
+                      listId: list.id,
+                      teamId: list.teamId
+                    }}).then(function () {
+                      data.response.personGuids.push(person.guid)
+                      done()
+                    }).catch(done)
+                  }).catch(done)
+                })
               }).catch(done)
             })
           })
@@ -131,7 +146,7 @@ exports.listPeopleAdd = {
 
         fileStream.pipe(csvStream)
       } else {
-        return next(new Error('No people are provided'))
+        return next(new Error('No people are provided via CSV'))
       }
     }).catch(next)
   }
@@ -259,23 +274,19 @@ exports.listPeopleView = {
           listId: list.id,
           teamId: list.teamId
         },
+        include: [api.models.Person],
         order: [['personGuid', 'asc']],
         offset: data.params.from,
         limit: data.params.size
       }).then(function (response) {
         data.response.total = response.count
-        var personGuids = []
 
+        data.response.people = []
         response.rows.forEach(function (listPerson) {
-          personGuids.push(listPerson.personGuid)
+          data.response.people.push(listPerson.person.apiData())
         })
 
-        var alias = api.utils.buildAlias(data.team, 'people')
-        api.elasticsearch.mget(alias, personGuids, function (error, results) {
-          if (error) { return next(error) }
-          data.response.people = results
-          next()
-        })
+        next()
       }).catch(next)
     }).catch(next)
   }
