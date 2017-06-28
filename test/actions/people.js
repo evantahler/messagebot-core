@@ -333,15 +333,14 @@ describe('action:person', function () {
     it('succeeds', function (done) {
       specHelper.requestWithLogin(email, password, 'people:aggregation', {
         searchKeys: ['data.email'],
-        searchValues: ['%@faker.fake'],
-        interval: 'date'
+        searchValues: ['%@faker.fake']
       }, function (response) {
         should.not.exist(response.error)
         Object.keys(response.aggregations).length.should.equal(1)
         var key = Object.keys(response.aggregations)[0]
         var date = new Date(key)
         date.getDate().should.equal(new Date().getDate())
-        response.aggregations[key].should.equal(2)
+        response.aggregations[key].should.deepEqual({tester: 2})
         done()
       })
     })
@@ -349,8 +348,7 @@ describe('action:person', function () {
     it('fails (not logged in)', function (done) {
       api.specHelper.runAction('people:aggregation', {
         searchKeys: ['data.email'],
-        searchValues: ['%@faker.fake'],
-        interval: 'date'
+        searchValues: ['%@faker.fake']
       }, function (response) {
         response.error.should.equal('Error: Please log in to continue')
         done()

@@ -120,7 +120,7 @@ exports.listPeopleAdd = {
               }}).then(function () {
                 data.response.personGuids.push((existingPersonGuid || person.guid))
                 if (!existingPersonGuid) {
-                  api.tasks.enqueueIn(api.config.elasticsearch.cacheTime * 1, 'people:buildCreateEvent', {guid: person.guid, teamId: data.team.id}, 'messagebot:people', done)
+                  api.tasks.enqueueIn(1, 'people:buildCreateEvent', {guid: person.guid, teamId: data.team.id}, 'messagebot:people', done)
                 } else {
                   return done()
                 }

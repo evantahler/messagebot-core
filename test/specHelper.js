@@ -127,7 +127,6 @@ var specHelper = {
     var self = this
     var command = ''
     command += ' NODE_ENV=test'
-    command += ' NUMBER_OF_SHARDS=1'
     command += ' ./node_modules/.bin/actionhero messagebot team create'
     command += ' --name TestTeam'
     command += ' --trackingDomainRegexp "^.*$"'
@@ -135,10 +134,10 @@ var specHelper = {
     command += ' --email "admin@localhost.com"'
     command += ' --password "password"'
 
-    console.log('\r\n----- Creating Test Team -----\r\n')
+    console.log('\r\n----- CREATING TEST TEAM -----\r\n')
     self.api.utils.doShell(command, function (error) {
       if (error) { console.log('error', error); return callback(error) }
-      console.log('\r\n----- Test Team Created -----\r\n')
+      console.log('\r\n----- TEST TEAM CREATED -----\r\n')
       return callback()
     }, false)
   },

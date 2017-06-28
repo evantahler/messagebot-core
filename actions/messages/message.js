@@ -7,7 +7,6 @@ exports.messageCreate = {
   middleware: ['require-team'],
 
   inputs: {
-    teamId: { required: false, formatter: function (p) { return parseInt(p) } },
     guid: { required: false },
     personGuid: { required: true },
     campaignId: {
@@ -29,13 +28,14 @@ exports.messageCreate = {
   },
 
   run: function (api, data, next) {
-    var message = new api.models.Message(data.team)
-    message.data = data.params
+    var message = api.models.Message.build(data.params)
+    message.data = data.params.data
+    message.teamId = data.team.id
 
-    message.create(function (error) {
-      if (!error) { data.response.guid = message.guid }
-      next(error)
-    })
+    message.save().then(function () {
+      data.response.message = message.apiData()
+      next()
+    }).catch(next)
   }
 }
 
@@ -46,7 +46,6 @@ exports.messageEdit = {
   middleware: ['require-team'],
 
   inputs: {
-    teamId: { required: false, formatter: function (p) { return parseInt(p) } },
     guid: { required: true },
     personGuid: { required: false },
     campaignId: {
@@ -62,14 +61,33 @@ exports.messageEdit = {
   },
 
   run: function (api, data, next) {
-    var message = new api.models.Message(data.team, data.params.guid)
-    message.data = data.params
+    api.models.Message.findOne({
+      where: {
+        teamId: data.team.id,
+        guid: data.params.guid
+      }
+    }).then(function (message) {
+      if (!message) { return next(new Error(`Message (${data.params.guid}) not found`)) }
+      message.hydrate((error) => {
+        if (error) { return next(error) }
 
-    message.edit(function (error) {
-      if (error) { return next(error) }
-      data.response.message = message.data
-      next()
-    })
+        ['personGuid', 'campaignId', 'transport', 'body', 'sentAt', 'readAt', 'actedAt'].forEach((k) => {
+          if (data.params[k]) { message[k] = data.params[k] }
+        })
+
+        if (data.params.data) {
+          Object.keys(data.params.data).forEach(function (k) {
+            message.data[k] = data.params.data[k]
+          })
+        }
+
+        message.save().then(function () {
+          data.response.message = message.apiData()
+          next()
+        }).catch(next)
+        next()
+      })
+    }).catch(next)
   }
 }
 
@@ -80,18 +98,23 @@ exports.messageView = {
   middleware: ['require-team'],
 
   inputs: {
-    teamId: { required: false, formatter: function (p) { return parseInt(p) } },
     guid: { required: true }
   },
 
   run: function (api, data, next) {
-    var message = new api.models.Message(data.team, data.params.guid)
-
-    message.hydrate(function (error) {
-      if (error) { return next(error) }
-      data.response.message = message.data
-      next()
-    })
+    api.models.Message.findOne({
+      where: {
+        teamId: data.team.id,
+        guid: data.params.guid
+      }
+    }).then(function (message) {
+      if (!message) { return next(new Error(`Message (${data.params.guid}) not found`)) }
+      message.hydrate((error) => {
+        if (error) { return next(error) }
+        data.response.message = message.apiData()
+        next()
+      })
+    }).catch(next)
   }
 }
 
@@ -102,20 +125,19 @@ exports.messageDelete = {
   middleware: ['require-team'],
 
   inputs: {
-    teamId: { required: false, formatter: function (p) { return parseInt(p) } },
     guid: { required: true }
   },
 
   run: function (api, data, next) {
-    var message = new api.models.Message(data.team, data.params.guid)
-
-    message.hydrate(function (error) {
-      if (error) { return next(error) }
-      message.del(function (error) {
-        if (error) { return next(error) }
-        next()
-      })
-    })
+    api.models.Message.findOne({
+      where: {
+        teamId: data.team.id,
+        guid: data.params.guid
+      }
+    }).then(function (message) {
+      if (!message) { return next(new Error(`Message (${data.params.guid}) not found`)) }
+      message.destroy().then(() => { next() }).catch(next)
+    }).catch(next)
   }
 }
 
@@ -127,7 +149,6 @@ exports.messageTrack = {
   middleware: ['require-team'],
 
   inputs: {
-    teamId: { required: false, formatter: function (p) { return parseInt(p) } },
     guid: { required: true },
     ip: { required: false },
     link: { required: false },
@@ -157,8 +178,7 @@ exports.messageTrack = {
     var ip = data.params.ip
     var eventType
     var event
-
-    var message = new api.models.Message(data.team, data.params.guid)
+    var message
 
     // testing GUID or verb
     if (data.params.guid === '%%MESSAGEGUID%%' || data.params.verb === 'test') {
@@ -176,54 +196,61 @@ exports.messageTrack = {
     if (!ip) { ip = data.connection.remoteIP }
 
     jobs.push(function (done) {
+      api.models.Message.findOne({
+        where: {
+          teamId: data.team.id,
+          guid: data.params.guid
+        }
+      }).then(function (m) {
+        message = m
+        if (!message) { return done(new Error(`Message (${data.params.guid}) not found`)) }
+        done()
+      }).catch(done)
+    })
+
+    jobs.push(function (done) {
       message.hydrate(done)
     })
 
     jobs.push(function (done) {
       if (data.params.verb === 'read') {
-        message.data.readAt = new Date()
+        message.readAt = new Date()
         eventType = 'message_read'
       }
       if (data.params.verb === 'act') {
         eventType = 'message_acted_on'
-        message.data.actedAt = new Date()
+        message.actedAt = new Date()
       }
       done()
     })
 
     jobs.push(function (done) {
-      message.edit(done)
+      message.save().then(() => { done() }).catch(done)
     })
 
     jobs.push(function (done) {
-      event = new api.models.Event(data.team)
+      event = api.models.Event.build({
+        messageGuid: message.guid,
+        personGuid: message.personGuid,
+        type: eventType,
+        ip: ip,
+        device: data.params.device,
+        teamId: data.team.id
+      })
 
-      event.data.messageGuid = message.guid
-      event.data.personGuid = message.data.personGuid
-      event.data.type = eventType
-      event.data.ip = ip
-      event.data.device = data.params.device
-      event.data.data = {}
+      event.data = {}
+      if (data.params.link) { event.data.link = data.params.link }
+      var location = api.geolocation.build(data.params, event.ip)
+      if (location) { event.data.location = location }
 
-      if (data.params.link) { event.data.data.link = data.params.link }
-
-      event.data.location = api.geolocation.build(data.params, event.data.ip)
-
-      if (data.params.sync === false) {
-        event.create(function (error) {
-          if (error) { api.log('event creation error: ' + error, 'error', event.data) }
-        })
-
+      event.save().then(function () {
+        data.response.event = event.apiData()
         done()
-      } else {
-        event.create(done)
-      }
+      }).catch(done)
     })
 
     async.series(jobs, function (error) {
       if (error) { return next(error) }
-
-      data.response.eventGuid = event.guid
 
       if (data.params.link) {
         data.connection.rawConnection.responseHeaders.push(['Location', data.params.link])
@@ -234,10 +261,12 @@ exports.messageTrack = {
         data.connection.sendFile('tracking/tracking.gif')
       }
 
-      api.tasks.enqueueIn(api.config.elasticsearch.cacheTime * 1, 'events:process', {
+      api.tasks.enqueueIn(1, 'events:process', {
         teamId: data.team.id,
         events: [event.guid]
-      }, 'messagebot:events', next)
+      }, 'messagebot:events', (e) => {
+        next(e)
+      })
     })
   }
 }

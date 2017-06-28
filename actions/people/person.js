@@ -62,10 +62,14 @@ exports.personEdit = {
       if (!person) { return next(new Error(`Person (${data.params.guid}) not found`)) }
       person.hydrate(function (error) {
         if (error) { return next(error) }
+
         if (data.params.source) { person.source = data.params.source }
-        Object.keys(data.params.data).forEach(function (k) {
-          person.data[k] = data.params.data[k]
-        })
+
+        if (data.params.data) {
+          Object.keys(data.params.data).forEach(function (k) {
+            person.data[k] = data.params.data[k]
+          })
+        }
 
         person.save().then(function () {
           data.response.person = person.apiData()

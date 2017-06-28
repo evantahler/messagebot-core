@@ -68,6 +68,7 @@ exports.peopleAggregation = {
   inputs: {
     searchKeys: { required: true },
     searchValues: { required: true },
+    aggregation: { required: true, default: 'source' },
     interval: {
       required: true,
       default: 'DATE'
@@ -89,17 +90,24 @@ exports.peopleAggregation = {
     api.models.Person.findAll({
       attributes: [
         [`${data.params.interval}(createdAt)`, data.params.interval],
+        data.params.aggregation,
         [api.sequelize.sequelize.fn('count', api.sequelize.sequelize.col('guid')), 'TOTAL']
       ],
       where: buildWhere(api, data),
       order: data.params.sort,
       limit: data.params.size,
       offset: data.params.from,
-      group: `${data.params.interval}(createdAt)`
+      group: [api.sequelize.sequelize.literal(`${data.params.interval}(createdAt)`), data.params.aggregation]
     }).then(function (results) {
       data.response.aggregations = {}
       results.forEach(function (r) {
-        data.response.aggregations[r.dataValues[data.params.interval]] = r.dataValues.TOTAL
+        if (!data.response.aggregations[r.dataValues[data.params.interval]]) {
+          var d = {}
+          d[r[data.params.aggregation]] = r.dataValues.TOTAL
+          data.response.aggregations[r.dataValues[data.params.interval]] = d
+        } else {
+          data.response.aggregations[r.dataValues[data.params.interval]][r[data.params.aggregation]] = r.dataValues.TOTAL
+        }
       })
       next()
     }).catch(next)

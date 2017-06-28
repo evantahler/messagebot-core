@@ -46,7 +46,7 @@ exports.eventCreate = {
         if (error) {
           api.log('event creation error: ' + error, 'error', data.params)
         } else {
-          api.tasks.enqueueIn(api.config.elasticsearch.cacheTime * 1, 'events:process', {teamId: data.team.id, events: [event.guid]}, 'messagebot:events')
+          api.tasks.enqueueIn(1, 'events:process', {teamId: data.team.id, events: [event.guid]}, 'messagebot:events')
         }
       })
       data.response.guid = event.guid
@@ -60,7 +60,7 @@ exports.eventCreate = {
           data.connection.rawConnection.responseHttpCode = 200
           data.connection.sendFile('tracking/tracking.gif')
         }
-        api.tasks.enqueueIn(api.config.elasticsearch.cacheTime * 1, 'events:process', {teamId: data.team.id, events: [event.guid]}, 'messagebot:events', next)
+        api.tasks.enqueueIn(1, 'events:process', {teamId: data.team.id, events: [event.guid]}, 'messagebot:events', next)
       })
     }
   }
@@ -101,7 +101,7 @@ exports.eventEdit = {
     event.edit(function (error) {
       if (error) { return next(error) }
       data.response.event = event.data
-      api.tasks.enqueueIn(api.config.elasticsearch.cacheTime * 1, 'events:process', {teamId: data.team.id, events: [event.guid]}, 'messagebot:events', next)
+      api.tasks.enqueueIn(1, 'events:process', {teamId: data.team.id, events: [event.guid]}, 'messagebot:events', next)
     })
   }
 }
