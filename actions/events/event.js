@@ -77,17 +77,30 @@ exports.eventEdit = {
   },
 
   run: function (api, data, next) {
-    var event = new api.models.Event(data.team, data.params.guid)
-    event.data = data.params
+    api.models.Event.findOne({where: {
+      teamId: data.team.id,
+      guid: data.params.guid
+    }}).then((event) => {
+      if (!event) { return next(new Error(`Event (${data.params.guid}) not found`)) }
+      event.hydrate(function (error) {
+        if (error) { return next(error) }
 
-    var newLocation = api.geolocation.build(data.params, event.data.ip)
-    if (newLocation) { event.data.location = newLocation }
+        ['ip', 'device', 'personGuid', 'messageGuid', 'type', 'lat', 'lng'].forEach((k) => {
+          if (data.params[k]) { event[k] = data.params[k] }
+        })
 
-    event.edit(function (error) {
-      if (error) { return next(error) }
-      data.response.event = event.data
-      api.tasks.enqueueIn(1, 'events:process', {teamId: data.team.id, events: [event.guid]}, 'messagebot:events', next)
-    })
+        if (data.params.data) {
+          Object.keys(data.params.data).forEach(function (k) {
+            event.data[k] = data.params.data[k]
+          })
+        }
+
+        event.save().then(() => {
+          data.response.event = event.apiData()
+          api.tasks.enqueueIn(1, 'events:process', {teamId: data.team.id, events: [event.guid]}, 'messagebot:events', next)
+        }).catch(next)
+      })
+    }).catch(next)
   }
 }
 
@@ -103,13 +116,17 @@ exports.eventView = {
   },
 
   run: function (api, data, next) {
-    var event = new api.models.Event(data.team, data.params.guid)
-
-    event.hydrate(function (error) {
-      if (error) { return next(error) }
-      data.response.event = event.data
-      next()
-    })
+    api.models.Event.findOne({where: {
+      teamId: data.team.id,
+      guid: data.params.guid
+    }}).then((event) => {
+      if (!event) { return next(new Error(`Event (${data.params.guid}) not found`)) }
+      event.hydrate(function (error) {
+        if (error) { return next(error) }
+        data.response.event = event.apiData()
+        next()
+      })
+    }).catch(next)
   }
 }
 
@@ -125,14 +142,12 @@ exports.eventDelete = {
   },
 
   run: function (api, data, next) {
-    var event = new api.models.Event(data.team, data.params.guid)
-
-    event.hydrate(function (error) {
-      if (error) { return next(error) }
-      event.del(function (error) {
-        if (error) { return next(error) }
-        next()
-      })
-    })
+    api.models.Event.findOne({where: {
+      teamId: data.team.id,
+      guid: data.params.guid
+    }}).then((event) => {
+      if (!event) { return next(new Error(`Event (${data.params.guid}) not found`)) }
+      event.destroy().then(() => { next() }).catch(next)
+    }).catch(next)
   }
 }

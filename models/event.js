@@ -79,6 +79,7 @@ var loader = function (api) {
 
               data: this.data || {},
 
+              createdAt: this.createdAt,
               updatedAt: this.updatedAt
             }
           }

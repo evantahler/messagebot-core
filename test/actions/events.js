@@ -224,13 +224,14 @@ describe('actions:event', function () {
       specHelper.requestWithLogin(email, password, 'events:aggregation', {
         searchKeys: ['device'],
         searchValues: ['new_device'],
-        interval: 'day'
+        interval: 'date'
       }, function (response) {
         should.not.exist(response.error)
-        Object.keys(response.aggregations).length.should.equal(2)
-        response.aggregations.tester[0].doc_count.should.equal(1)
-        response.selections.should.deepEqual(['tester'])
-        response.selectionsName.should.equal('types')
+        Object.keys(response.aggregations).length.should.equal(1)
+        var key = Object.keys(response.aggregations)[0]
+        var date = new Date(key)
+        date.getDate().should.equal(new Date().getDate())
+        response.aggregations[key].should.deepEqual({tester: 1})
         done()
       })
     })

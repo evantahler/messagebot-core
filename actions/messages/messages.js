@@ -9,7 +9,7 @@ var buildWhere = function (api, data) {
       var value = data.params.searchValues[i]
       if (!where.guid) { where.guid = [] }
       where.guid.push(
-        api.sequelize.sequelize.literal(`SELECT eventGuid FROM eventData WHERE \`key\` = "${key}" and \`value\` LIKE "${value}"`)
+        api.sequelize.sequelize.literal(`SELECT messageGuid FROM messageData WHERE \`key\` = "${key}" and \`value\` LIKE "${value}"`)
       )
     }
   }

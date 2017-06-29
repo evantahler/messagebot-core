@@ -1,5 +1,27 @@
-var async = require('async')
+var buildWhere = function (api, data) {
+  var where = {
+    teamId: data.team.id
+  }
 
+  for (var i in data.params.searchKeys) {
+    if (data.params.searchKeys[i].indexOf('data.') === 0) {
+      var key = data.params.searchKeys[i].split('.')[1]
+      var value = data.params.searchValues[i]
+      if (!where.guid) { where.guid = [] }
+      where.guid.push(
+        api.sequelize.sequelize.literal(`SELECT eventGuid FROM eventData WHERE \`key\` = "${key}" and \`value\` LIKE "${value}"`)
+      )
+    }
+  }
+
+  for (var j in data.params.searchKeys) {
+    if (data.params.searchKeys[j].indexOf('data.') !== 0) {
+      where[data.params.searchKeys[j]] = data.params.searchValues[j]
+    }
+  }
+
+  return where
+}
 var alias = function (api, team) {
   return api.utils.buildAlias(team, 'events')
 }
@@ -27,13 +49,8 @@ exports.eventsSearch = {
   },
 
   run: function (api, data, next) {
-    var where = {}
-    for (var i in data.params.searchKeys) {
-      where[data.params.searchKeys[i]] = data.params.searchValues[i]
-    }
-
     api.models.Event.findAndCountAll({
-      where: where,
+      where: buildWhere(api, data),
       order: data.params.sort,
       limit: data.params.size,
       offset: data.params.from
@@ -54,113 +71,48 @@ exports.eventsAggregation = {
   inputs: {
     searchKeys: { required: true },
     searchValues: { required: true },
-    maximumSelections: {
+    aggregation: { required: true, default: 'type' },
+    interval: {
       required: true,
+      default: 'DATE'
+    },
+    from: {
+      required: false,
       formatter: function (p) { return parseInt(p) },
-      default: function (p) { return 5 }
-    },
-    selections: {
-      required: false,
-      formatter: function (p) {
-        if (p.length === 0) { return [] }
-        return p.split(',')
-      },
-      default: function (p) { return [] }
-    },
-    start: {
-      required: false,
-      formatter: function (p) { return new Date(parseInt(p)) },
       default: function (p) { return 0 }
     },
-    end: {
+    size: {
       required: false,
-      formatter: function (p) { return new Date(parseInt(p)) },
-      default: function (p) { return new Date().getTime() }
+      formatter: function (p) { return parseInt(p) },
+      default: function (p) { return 100 }
     },
-    interval: { required: false }
+    sort: { required: false }
   },
 
   run: function (api, data, next) {
-    var jobs = []
-    var aggJobs = []
-    var types = []
-    data.response.aggregations = {}
-
-    jobs.push(function (done) {
-      api.elasticsearch.distinct(
-        alias(api, data.team),
-        data.params.searchKeys,
-        data.params.searchValues,
-        data.params.start,
-        data.params.end,
-        'createdAt',
-        'type',
-        function (error, buckets) {
-          if (error) { return done(error) }
-          buckets.buckets.forEach(function (b) {
-            types.push(b.key)
-          })
-          data.response.selections = types
-          data.response.selectionsName = 'types'
-          done()
-        }
-      )
-    })
-
-    jobs.push(function (done) {
-      aggJobs.push(function (aggDone) {
-        api.elasticsearch.aggregation(
-          alias(api, data.team),
-          ['guid'],
-          ['_exists'],
-          data.params.start,
-          data.params.end,
-          'createdAt',
-          'date_histogram',
-          'createdAt',
-          data.params.interval,
-          function (error, buckets) {
-            if (error) { return aggDone(error) }
-            data.response.aggregations._all = buckets.buckets
-            aggDone()
-          }
-        )
-      })
-
-      done()
-    })
-
-    jobs.push(function (done) {
-      types.forEach(function (type) {
-        if (aggJobs.length <= data.params.maximumSelections && (data.params.selections.length === 0 || data.params.selections.indexOf(type) >= 0)) {
-          aggJobs.push(function (aggDone) {
-            api.elasticsearch.aggregation(
-              alias(api, data.team),
-              ['type'].concat(data.params.searchKeys),
-              [type].concat(data.params.searchValues),
-              data.params.start,
-              data.params.end,
-              'createdAt',
-              'date_histogram',
-              'createdAt',
-              data.params.interval,
-              function (error, buckets) {
-                if (error) { return aggDone(error) }
-                data.response.aggregations[type] = buckets.buckets
-                aggDone()
-              }
-            )
-          })
+    api.models.Event.findAll({
+      attributes: [
+        [`${data.params.interval}(createdAt)`, data.params.interval],
+        data.params.aggregation,
+        [api.sequelize.sequelize.fn('count', api.sequelize.sequelize.col('guid')), 'TOTAL']
+      ],
+      where: buildWhere(api, data),
+      order: data.params.sort,
+      limit: data.params.size,
+      offset: data.params.from,
+      group: [api.sequelize.sequelize.literal(`${data.params.interval}(createdAt)`), data.params.aggregation]
+    }).then(function (results) {
+      data.response.aggregations = {}
+      results.forEach(function (r) {
+        if (!data.response.aggregations[r.dataValues[data.params.interval]]) {
+          var d = {}
+          d[r[data.params.aggregation]] = r.dataValues.TOTAL
+          data.response.aggregations[r.dataValues[data.params.interval]] = d
+        } else {
+          data.response.aggregations[r.dataValues[data.params.interval]][r[data.params.aggregation]] = r.dataValues.TOTAL
         }
       })
-
-      done()
-    })
-
-    jobs.push(function (done) {
-      async.series(aggJobs, done)
-    })
-
-    async.series(jobs, next)
+      next()
+    }).catch(next)
   }
 }
