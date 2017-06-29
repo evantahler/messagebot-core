@@ -232,7 +232,7 @@ exports.campaignStats = {
     },
     interval: {
       required: true,
-      default: 'hour'
+      default: 'date'
     }
   },
   run: function (api, data, next) {
