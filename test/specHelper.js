@@ -170,6 +170,13 @@ var specHelper = {
     })
   },
 
+  dateCompare: function (a, b) {
+    // hack to compare that dates are within 24h of eachother
+    if (!b) { b = new Date() }
+    let diff = Math.abs(a.getTime() - b.getTime())
+    return diff < (1000 * 60 * 60 * 24)
+  },
+
   login: function (connection, email, password, callback) {
     var self = this
     connection.params = {

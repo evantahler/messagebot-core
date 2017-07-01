@@ -203,17 +203,17 @@ describe('actions:campaign', function () {
 
         key = Object.keys(response.sentAt[0])[0]
         date = new Date(key)
-        date.getDate().should.equal(new Date().getDate())
+        specHelper.dateCompare(date).should.equal(true)
         response.sentAt[0][key].should.deepEqual({smtp: 3})
 
         key = Object.keys(response.readAt[0])[0]
         date = new Date(key)
-        date.getDate().should.equal(new Date().getDate())
+        specHelper.dateCompare(date).should.equal(true)
         response.readAt[0][key].should.deepEqual({smtp: 2})
 
         key = Object.keys(response.actedAt[0])[0]
         date = new Date(key)
-        date.getDate().should.equal(new Date().getDate())
+        specHelper.dateCompare(date).should.equal(true)
         response.actedAt[0][key].should.deepEqual({smtp: 1})
 
         done()

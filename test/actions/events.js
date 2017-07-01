@@ -230,7 +230,7 @@ describe('actions:event', function () {
         Object.keys(response.aggregations).length.should.equal(1)
         var key = Object.keys(response.aggregations)[0]
         var date = new Date(key)
-        date.getDate().should.equal(new Date().getDate())
+        specHelper.dateCompare(date).should.equal(true)
         response.aggregations[key].should.deepEqual({tester: 1})
         done()
       })

@@ -339,7 +339,7 @@ describe('action:person', function () {
         Object.keys(response.aggregations).length.should.equal(1)
         var key = Object.keys(response.aggregations)[0]
         var date = new Date(key)
-        date.getDate().should.equal(new Date().getDate())
+        specHelper.dateCompare(date).should.equal(true)
         response.aggregations[key].should.deepEqual({tester: 2})
         done()
       })
@@ -399,42 +399,49 @@ describe('action:person', function () {
       })
     })
 
-    it('succeeds (deletes related listPeople, messages, and events)', function (done) {
+    it('succeeds (deletes related personData, listPeople, messages, and events)', function (done) {
       var jobs = []
 
       jobs.push(function (next) {
-        api.models.Message.count({personGuid: personGuid}).then((count) => {
+        api.models.PersonData.count({where: {personGuid: personGuid}}).then((count) => {
           count.should.equal(0)
           next()
         }).catch(next)
       })
 
       jobs.push(function (next) {
-        api.models.MessageData.count({messageGuid: message.guid}).then((count) => {
+        api.models.Message.count({where: {personGuid: personGuid}}).then((count) => {
           count.should.equal(0)
           next()
         }).catch(next)
       })
 
       jobs.push(function (next) {
-        api.models.Event.count({personGuid: personGuid}).then((count) => {
+        api.models.MessageData.count({where: {messageGuid: message.guid}}).then((count) => {
           count.should.equal(0)
           next()
         }).catch(next)
       })
 
       jobs.push(function (next) {
-        api.models.EventData.count({eventGuid: event.guid}).then((count) => {
+        api.models.Event.count({where: {personGuid: personGuid}}).then((count) => {
           count.should.equal(0)
           next()
         }).catch(next)
       })
 
-      jobs.push(function (done) {
+      jobs.push(function (next) {
+        api.models.EventData.count({where: {eventGuid: event.guid}}).then((count) => {
+          count.should.equal(0)
+          next()
+        }).catch(next)
+      })
+
+      jobs.push(function (next) {
         api.models.ListPerson.count({ where: { teamId: team.id, personGuid: personGuid } }).then(function (count) {
           count.should.equal(0)
-          done()
-        })
+          next()
+        }).catch(next)
       })
 
       async.series(jobs, function (error) {

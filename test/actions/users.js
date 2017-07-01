@@ -124,7 +124,7 @@ describe('actions:user', function () {
         password: 'abc123',
         role: 'admin'
       }, function (response) {
-        response.error.should.match(/Validation error/)
+        response.error.should.match(/Error: personGuid .* already exists with email of user@fake.com/)
         done()
       })
     })
