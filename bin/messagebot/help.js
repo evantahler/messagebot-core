@@ -10,12 +10,12 @@ module.exports = {
   description: 'messagebot help',
 
   run: function (api, data, next) {
-    console.log('Name: ' + pkg.name)
-    console.log('Description: ' + pkg.description)
-    console.log('Version: ' + pkg.version)
-    console.log('')
+    api.log('Name: ' + pkg.name)
+    api.log('Description: ' + pkg.description)
+    api.log('Version: ' + pkg.version)
+    api.log('')
 
-    console.log(content)
+    api.log(content)
 
     next(null)
   }

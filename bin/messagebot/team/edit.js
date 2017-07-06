@@ -37,9 +37,9 @@ module.exports = {
     })
 
     jobs.push(function (done) {
-      console.log('Updated Team\r\n')
+      api.log('Updated Team\r\n')
       var tableData = [team.apiData()]
-      console.log(Table.print(tableData))
+      api.log(Table.print(tableData))
       done()
     })
 

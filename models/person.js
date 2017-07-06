@@ -23,6 +23,7 @@ var loader = function (api) {
           defaultValue: Sequelize.UUIDV4
         },
         teamId: {
+          allowNull: false,
           type: Sequelize.BIGINT
         },
 

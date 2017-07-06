@@ -1,5 +1,3 @@
-
-
 var async = require('async')
 
 exports.task = {
@@ -57,17 +55,20 @@ exports.task = {
     })
 
     jobs.push(function (done) {
-      message = new api.models.Message(team)
-      message.ensureGuid()
-      done()
+      api.models.Person.findOne({where: {
+        guid: listPerson.personGuid,
+        teamId: team.id
+      }}).then((_person) => {
+        person = _person
+        if (!person) { return done(new Error(`Person (${listPerson.personGuid}) not found`)) }
+        person.hydrate(done)
+      }).catch(done)
     })
 
     jobs.push(function (done) {
-      person = new api.models.Person(team, listPerson.personGuid)
-      person.hydrate(function (error) {
-        if (error) { return done(error) }
-        done()
-      })
+      message = api.models.Message.build({})
+      message.data = {}
+      done()
     })
 
     jobs.push(function (done) {
@@ -91,7 +92,7 @@ exports.task = {
       if (!transport) { return done(new Error('transport not found')) }
 
       transport.requiredDataKeys.person.forEach(function (k) {
-        if (!person.data.data[k]) {
+        if (!person.data[k]) {
           missingType = 'person'
           missingKey = k
         }
@@ -109,13 +110,14 @@ exports.task = {
         message.data[k] = campaign.campaignVariables[k]
       })
 
-      message.data.personGuid = person.guid
-      message.data.transport = transport.name
-      message.data.campaignId = campaign.id
-      message.data.body = body
-      message.data.sentAt = new Date()
+      message.teamId = team.id
+      message.personGuid = person.guid
+      message.transport = transport.name
+      message.campaignId = campaign.id
+      message.body = body
+      message.sentAt = new Date()
 
-      message.create(done)
+      message.save().then(() => { done() }).catch(done)
     })
 
     jobs.push(function (done) {

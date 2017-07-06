@@ -257,11 +257,7 @@ var loader = function (api) {
               }).catch(done)
             })
 
-            async.series(jobs, function (error) {
-              process.nextTick(function () {
-                return callback(error)
-              })
-            })
+            async.series(jobs, callback)
           },
 
           apiData: function () {

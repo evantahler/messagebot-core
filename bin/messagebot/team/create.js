@@ -29,8 +29,8 @@ module.exports = {
       team.save().then(function () {
         var tableData = [team.apiData()]
 
-        console.log('New Team\r\n')
-        console.log(Table.print(tableData))
+        api.log('New Team\r\n')
+        api.log(Table.print(tableData))
 
         done()
       }).catch(done)
@@ -56,15 +56,16 @@ module.exports = {
         source: 'admin',
         device: 'unknown',
         teamId: team.id,
-        listOptOuts: null,
-        globalOptOut: false,
-        data: {
-          email: user.email,
-          firstName: user.firstName,
-          lastName: user.lastName,
-          role: user.role
-        }
+        listOptOuts: [],
+        globalOptOut: false
       })
+
+      person.data = {
+        email: user.email,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        role: user.role
+      }
 
       person.save().then(function () {
         done()
@@ -76,10 +77,10 @@ module.exports = {
       user.save().then(function () {
         var tableData = [user.apiData()]
 
-        console.log('New User')
-        console.log('Email: ' + data.params.email)
-        console.log('Password: ' + data.params.password + '\r\n')
-        console.log(Table.print(tableData))
+        api.log('New User')
+        api.log('Email: ' + data.params.email)
+        api.log('Password: ' + data.params.password + '\r\n')
+        api.log(Table.print(tableData))
 
         done()
       }).catch(done)

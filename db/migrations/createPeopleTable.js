@@ -9,6 +9,7 @@ module.exports = {
           defaultValue: Sequelize.UUIDV4
         },
         teamId: {
+          allowNull: false,
           type: Sequelize.BIGINT
         },
         createdAt: {

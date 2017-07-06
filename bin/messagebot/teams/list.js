@@ -17,8 +17,8 @@ module.exports = {
         var tableData = []
         teams.forEach(function (team) { tableData.push(team.apiData()) })
 
-        console.log(teams.length + ' Total Teams\r\n')
-        console.log(Table.print(tableData))
+        api.log(teams.length + ' Total Teams\r\n')
+        api.log(Table.print(tableData))
 
         done()
       }).catch(done)
