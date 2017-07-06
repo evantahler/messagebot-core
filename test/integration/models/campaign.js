@@ -254,226 +254,230 @@ describe('integartion:campaigns', function () {
         })
       })
 
-      // it('sends (failure; double-send)', function (done) {
-      //   var jobs = []
-      //
-      //   jobs.push(function (next) {
-      //     campaign.send(next)
-      //   })
-      //
-      //   async.series(jobs, function (error) {
-      //     error.toString().should.equal('Error: campaign already sent')
-      //     done()
-      //   })
-      // })
+      it('sends (failure; double-send)', function (done) {
+        var jobs = []
+
+        jobs.push(function (next) {
+          campaign.send(next)
+        })
+
+        async.series(jobs, function (error) {
+          error.toString().should.equal('Error: campaign already sent')
+          done()
+        })
+      })
     })
 
-    // describe('send#recurring', function () {
-    //   before(function (done) {
-    //     campaign = api.models.Campaign.build({
-    //       teamId: 1,
-    //       name: 'my campaign',
-    //       description: 'my campaign',
-    //       type: 'recurring',
-    //       reSendDelay: 1,
-    //       folder: 'default',
-    //       transport: 'smtp',
-    //       listId: list.id,
-    //       templateId: template.id
-    //     })
-    //
-    //     campaign.save().then(function () { done() })
-    //   })
-    //
-    //   after(function (done) { campaign.destroy().then(function () { done() }) })
-    //
-    //   it('sends (success; first time)', function (done) {
-    //     var jobs = []
-    //
-    //     jobs.push(function (next) {
-    //       campaign.send(next)
-    //     })
-    //
-    //     jobs.push(function (next) { setTimeout(next, 1000 * 5) })
-    //
-    //     async.series(jobs, function (error) {
-    //       should.not.exist(error)
-    //       var alias = api.utils.buildAlias(team, 'messages')
-    //       api.elasticsearch.search(alias, ['campaignId'], [campaign.id], 0, 10, null, 1, function (error, results, total) {
-    //         should.not.exist(error)
-    //         results.length.should.equal(1)
-    //         results[0].body.should.equal('Hello there, fname')
-    //         done()
-    //       })
-    //     })
-    //   })
-    //
-    //   it('sleeps for reSendDelay', function (done) {
-    //     setTimeout(done, 1000)
-    //   })
-    //
-    //   it('sends (success; second time)', function (done) {
-    //     var jobs = []
-    //
-    //     jobs.push(function (next) {
-    //       campaign.send(next)
-    //     })
-    //
-    //     jobs.push(function (next) { setTimeout(next, 1000 * 5) })
-    //
-    //     async.series(jobs, function (error) {
-    //       should.not.exist(error)
-    //       var alias = api.utils.buildAlias(team, 'messages')
-    //       api.elasticsearch.search(alias, ['campaignId'], [campaign.id], 0, 10, null, 1, function (error, results, total) {
-    //         should.not.exist(error)
-    //         results[0].body.should.equal('Hello there, fname')
-    //         results[1].body.should.equal('Hello there, fname')
-    //         results[0].guid.should.not.equal(results[1].guid)
-    //         results[0].personGuid.should.equal(results[1].personGuid)
-    //         done()
-    //       })
-    //     })
-    //   })
-    //
-    //   it('sends (failure; sending too soon)', function (done) {
-    //     var jobs = []
-    //
-    //     jobs.push(function (next) {
-    //       campaign.updateAttributes({reSendDelay: 9999}).then(function () {
-    //         next()
-    //       }).catch(next)
-    //     })
-    //
-    //     jobs.push(function (next) {
-    //       campaign.send(next)
-    //     })
-    //
-    //     async.series(jobs, function (error) {
-    //       error.toString().should.equal('Error: campaign should not be sent yet')
-    //       done()
-    //     })
-    //   })
-    // })
-    //
-    // describe('send#trigger', function () {
-    //   before(function (done) {
-    //     campaign = api.models.Campaign.build({
-    //       teamId: 1,
-    //       name: 'my campaign',
-    //       description: 'my campaign',
-    //       type: 'trigger',
-    //       folder: 'default',
-    //       transport: 'smtp',
-    //       listId: list.id,
-    //       templateId: template.id,
-    //       triggerDelay: 10,
-    //       triggerEventMatch: {'type': 'person_created'}
-    //     })
-    //
-    //     campaign.save().then(function () { done() })
-    //   })
-    //
-    //   after(function (done) { campaign.destroy().then(function () { done() }) })
-    //
-    //   it('sends (failure; not how it is done)', function (done) {
-    //     var jobs = []
-    //
-    //     jobs.push(function (next) {
-    //       campaign.send(next)
-    //     })
-    //
-    //     async.series(jobs, function (error) {
-    //       error.toString().should.equal('Error: Triggered Campaigns are not sent via this method')
-    //       done()
-    //     })
-    //   })
-    // })
-    //
-    // describe('triggered messages', function () {
-    //   before(function (done) {
-    //     campaign = api.models.Campaign.build({
-    //       teamId: 1,
-    //       name: 'my campaign',
-    //       description: 'my campaign',
-    //       type: 'trigger',
-    //       folder: 'default',
-    //       transport: 'smtp',
-    //       listId: list.id,
-    //       templateId: template.id,
-    //       triggerDelay: 1,
-    //       triggerEventMatch: {'type': 'pageView', data: {'page': 'myPage'}}
-    //     })
-    //
-    //     campaign.save().then(function () { done() })
-    //   })
-    //
-    //   after(function (done) { campaign.destroy().then(function () { done() }) })
-    //
-    //   it('sends (success)', function (done) {
-    //     var jobs = []
-    //
-    //     jobs.push(function (next) {
-    //       api.specHelper.runAction('event:create', {
-    //         teamId: team.id,
-    //         sync: true,
-    //         device: 'tester',
-    //         type: 'pageView',
-    //         page: 'myPage',
-    //         personGuid: person.guid,
-    //         data: {page: 'myPage'}
-    //       }, function (result) {
-    //         should.not.exist(result.error)
-    //         next()
-    //       })
-    //     })
-    //
-    //     // sleep for the trigger delay
-    //     jobs.push(function (next) { setTimeout(next, 1000 * 5) })
-    //
-    //     async.series(jobs, function (error) {
-    //       should.not.exist(error)
-    //       var alias = api.utils.buildAlias(team, 'messages')
-    //       api.elasticsearch.search(alias, ['campaignId'], [campaign.id], 0, 10, null, 1, function (error, results, total) {
-    //         should.not.exist(error)
-    //         results.length.should.equal(1)
-    //         results[0].body.should.equal('Hello there, fname')
-    //         done()
-    //       })
-    //     })
-    //   })
-    //
-    //   it('will not send for other events', function (done) {
-    //     var jobs = []
-    //
-    //     jobs.push(function (next) {
-    //       api.specHelper.runAction('event:create', {
-    //         teamId: team.id,
-    //         sync: true,
-    //         device: 'tester',
-    //         type: 'pageView',
-    //         page: 'myPage',
-    //         personGuid: person.guid,
-    //         data: {page: 'otherPage'}
-    //       }, function (result) {
-    //         should.not.exist(result.error)
-    //         next()
-    //       })
-    //     })
-    //
-    //     // sleep for the trigger delay
-    //     jobs.push(function (next) { setTimeout(next, 1000 * 5) })
-    //
-    //     async.series(jobs, function (error) {
-    //       should.not.exist(error)
-    //       var alias = api.utils.buildAlias(team, 'messages')
-    //       api.elasticsearch.search(alias, ['campaignId'], [campaign.id], 0, 10, null, 1, function (error, results, total) {
-    //         should.not.exist(error)
-    //         results.length.should.equal(1)
-    //         results[0].body.should.equal('Hello there, fname')
-    //         done()
-    //       })
-    //     })
-    //   })
-    // })
+    describe('send#recurring', function () {
+      before(function (done) {
+        campaign = api.models.Campaign.build({
+          teamId: 1,
+          name: 'my campaign',
+          description: 'my campaign',
+          type: 'recurring',
+          reSendDelay: 1,
+          folder: 'default',
+          transport: 'smtp',
+          listId: list.id,
+          templateId: template.id
+        })
+
+        campaign.save().then(function () { done() }).catch(done)
+      })
+
+      after(function (done) { campaign.destroy().then(function () { done() }).catch(done) })
+
+      it('sends (success; first time)', function (done) {
+        var jobs = []
+
+        jobs.push(function (next) {
+          campaign.send(next)
+        })
+
+        jobs.push(function (next) { setTimeout(next, 3000 + 1) })
+
+        async.series(jobs, function (error) {
+          should.not.exist(error)
+          api.models.Message.findAll({where: {
+            campaignId: campaign.id
+          }}).then((messages) => {
+            messages.length.should.equal(1)
+            messages[0].body.should.equal('Hello there, fname')
+            done()
+          }).catch(done)
+        })
+      })
+
+      it('sleeps for reSendDelay', function (done) {
+        setTimeout(done, 1000)
+      })
+
+      it('sends (success; second time)', function (done) {
+        this.timeout(10 * 1000)
+        var jobs = []
+
+        jobs.push(function (next) {
+          campaign.send(next)
+        })
+
+        jobs.push(function (next) { setTimeout(next, 1000 * 5) })
+
+        async.series(jobs, function (error) {
+          should.not.exist(error)
+          api.models.Message.findAll({where: {
+            campaignId: campaign.id
+          }}).then((messages) => {
+            messages.length.should.equal(2)
+            messages[0].body.should.equal('Hello there, fname')
+            messages[1].body.should.equal('Hello there, fname')
+            messages[0].guid.should.not.equal(messages[1].guid)
+            messages[0].personGuid.should.equal(messages[1].personGuid)
+            done()
+          }).catch(done)
+        })
+      })
+
+      it('sends (failure; sending too soon)', function (done) {
+        var jobs = []
+
+        jobs.push(function (next) {
+          campaign.updateAttributes({reSendDelay: 9999}).then(function () {
+            next()
+          }).catch(next)
+        })
+
+        jobs.push(function (next) {
+          campaign.send(next)
+        })
+
+        async.series(jobs, function (error) {
+          error.toString().should.equal('Error: campaign should not be sent yet')
+          done()
+        })
+      })
+    })
+
+    describe('send#trigger', function () {
+      before(function (done) {
+        campaign = api.models.Campaign.build({
+          teamId: 1,
+          name: 'my campaign',
+          description: 'my campaign',
+          type: 'trigger',
+          folder: 'default',
+          transport: 'smtp',
+          listId: list.id,
+          templateId: template.id,
+          triggerDelay: 10,
+          triggerEventMatch: {'type': 'person_created'}
+        })
+
+        campaign.save().then(function () { done() }).catch(done)
+      })
+
+      after(function (done) { campaign.destroy().then(function () { done() }).catch(done) })
+
+      it('sends (failure; not how it is done)', function (done) {
+        var jobs = []
+
+        jobs.push(function (next) {
+          campaign.send(next)
+        })
+
+        async.series(jobs, function (error) {
+          error.toString().should.equal('Error: Triggered Campaigns are not sent via this method')
+          done()
+        })
+      })
+    })
+
+    describe('triggered messages', function () {
+      before(function (done) {
+        campaign = api.models.Campaign.build({
+          teamId: 1,
+          name: 'my campaign',
+          description: 'my campaign',
+          type: 'trigger',
+          folder: 'default',
+          transport: 'smtp',
+          listId: list.id,
+          templateId: template.id,
+          triggerDelay: 1,
+          triggerEventMatch: {'type': 'pageView', data: {'page': 'myPage'}}
+        })
+
+        campaign.save().then(function () { done() }).catch(done)
+      })
+
+      after(function (done) { campaign.destroy().then(function () { done() }).catch(done) })
+
+      it('sends (success)', function (done) {
+        this.timeout(10 * 1000)
+        var jobs = []
+
+        jobs.push(function (next) {
+          api.specHelper.runAction('event:create', {
+            teamId: team.id,
+            sync: true,
+            device: 'tester',
+            type: 'pageView',
+            page: 'myPage',
+            personGuid: person.guid,
+            data: {page: 'myPage'}
+          }, function (result) {
+            should.not.exist(result.error)
+            next()
+          })
+        })
+
+        // sleep for the trigger delay
+        jobs.push(function (next) { setTimeout(next, 1000 * 5) })
+
+        async.series(jobs, function (error) {
+          should.not.exist(error)
+          api.models.Message.findAll({where: {
+            campaignId: campaign.id
+          }}).then((messages) => {
+            messages.length.should.equal(1)
+            messages[0].body.should.equal('Hello there, fname')
+            done()
+          }).catch(done)
+        })
+      })
+
+      it('will not send for other events', function (done) {
+        this.timeout(10 * 1000)
+        var jobs = []
+
+        jobs.push(function (next) {
+          api.specHelper.runAction('event:create', {
+            teamId: team.id,
+            sync: true,
+            device: 'tester',
+            type: 'pageView',
+            page: 'myPage',
+            personGuid: person.guid,
+            data: {page: 'otherPage'}
+          }, function (result) {
+            should.not.exist(result.error)
+            next()
+          })
+        })
+
+        // sleep for the trigger delay
+        jobs.push(function (next) { setTimeout(next, 1000 * 5) })
+
+        async.series(jobs, function (error) {
+          should.not.exist(error)
+          api.models.Message.findAll({where: {
+            campaignId: campaign.id
+          }}).then((messages) => {
+            messages.length.should.equal(1)
+            messages[0].body.should.equal('Hello there, fname')
+            done()
+          }).catch(done)
+        })
+      })
+    })
   })
 })
