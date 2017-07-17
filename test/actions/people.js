@@ -363,6 +363,7 @@ describe('action:person', function () {
     before(function (done) {
       event = api.models.Event.build({
         messageGuid: Math.random(),
+        teamId: team.id,
         personGuid: personGuid,
         ip: '0.0.0.0',
         device: 'phone',
@@ -376,6 +377,7 @@ describe('action:person', function () {
 
     before(function (done) {
       message = api.models.Message.build({
+        teamId: team.id,
         transport: 'smtp',
         personGuid: personGuid,
         campaignId: 1,

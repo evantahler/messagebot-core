@@ -142,6 +142,7 @@ describe('actions:template', function () {
     before(function (done) {
       person = api.models.Person.build()
       person.source = 'tester'
+      person.teamId = team.id
       person.device = 'phone'
       person.listOptOuts = []
       person.globalOptOut = false
