@@ -46,37 +46,41 @@ describe('integartion:template', function () {
     })
 
     before(function (done) {
-      person = new api.models.Person(team)
-      person.data.source = 'tester'
-      person.data.device = 'phone'
-      person.data.listOptOuts = []
-      person.data.globalOptOut = false
-      person.data.data = {
+      person = api.models.Person.build({
+        teamId: 1,
+        source: 'tester',
+        device: 'phone',
+        listOptOuts: [],
+        globalOptOut: false
+      })
+
+      person.data = {
         firstName: 'fname',
         lastName: 'lame',
         email: 'fake@faker.fake'
       }
 
-      person.create(done)
+      person.save().then(() => { done() }).catch(done)
     })
 
     before(function (done) {
-      message = new api.models.Message(team)
+      message = api.models.Message.build({
+        teamId: 1,
+        personGuid: person.guid,
+        transport: 'smtp',
+        campaignId: '1',
+        body: '',
+        view: {},
+        sentAt: new Date()
+      })
 
-      message.data.personGuid = person.guid
-      message.data.transport = 'smtp'
-      message.data.campaignId = '1'
-      message.data.body = ''
-      message.data.view = {}
-      message.data.sentAt = new Date()
-
-      message.create(done)
+      message.save().then(() => { done() }).catch(done)
     })
 
     before(function (done) { person.hydrate(done) })
 
-    after(function (done) { person.del(done) })
-    after(function (done) { message.del(done) })
+    after(function (done) { person.destroy().then(() => { done() }) })
+    after(function (done) { message.destroy().then(() => { done() }) })
     after(function (done) { footerTemplate.destroy().then(function () { done() }) })
     after(function (done) { template.destroy().then(function () { done() }) })
 
