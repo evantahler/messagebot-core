@@ -1,0 +1,15 @@
+machine:
+  services:
+    - redis
+  environment:
+    MAXMIND_DB: "./tmp/maxmind/GeoLite2-City.mmdb"
+    SEQUELIZE_HOST: "localhost"
+    SEQUELIZE_DATABASE: "messagebot_test"
+    SEQUELIZE_PASSWORD: ""
+    REDIS_HOST: "127.0.0.1"
+    REDIS_PORT: 6379
+    REDIS_DB: 1
+    REDIS_PASSWORD: ""
+test:
+  override:
+    - 'npm test'

@@ -17,7 +17,6 @@
     "ah-swagger-plugin": "^1.0.1",
     "async": "^2.4.1",
     "bcrypt": "^1.0.2",
-    "dateformat": "^2.0.0",
     "easy-table": "^1.1.0",
     "faker": "^4.1.0",
     "fakeredis": "^2.0.0",
@@ -41,8 +40,7 @@
   "devDependencies": {
     "mocha": "^3.4.2",
     "should": "^11.2.1",
-    "standard": "^10.0.2",
-    "travis-after-all": "^1.4.5"
+    "standard": "^10.0.2"
   },
   "standard": {
     "ignore": [

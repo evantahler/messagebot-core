@@ -1,5 +1,4 @@
 
-
 module.exports = {
   initialize: function (api, next) {
     api.campaigns = {

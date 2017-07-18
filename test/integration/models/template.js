@@ -10,16 +10,8 @@ describe('integartion:template', function () {
     var message
     var template
     var footerTemplate
-    var team
 
     before(function () { api = specHelper.api })
-
-    before(function (done) {
-      api.models.Team.findOne().then(function (_team) {
-        team = _team
-        done()
-      }).catch(done)
-    })
 
     before(function (done) {
       template = api.models.Template.build({

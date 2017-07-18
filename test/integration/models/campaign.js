@@ -1,5 +1,4 @@
 var should = require('should')
-var dateformat = require('dateformat')
 var async = require('async')
 var path = require('path')
 var specHelper = require(path.join(__dirname, '/../../specHelper'))

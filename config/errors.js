@@ -1,5 +1,4 @@
 
-
 // error messages can be strings of objects
 exports['default'] = {
   errors: function (api) {

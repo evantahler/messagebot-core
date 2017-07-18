@@ -1,5 +1,4 @@
 
-
 var fs = require('fs')
 var path = require('path')
 var content = fs.readFileSync(path.join(__dirname, '/../support/help.txt')).toString()

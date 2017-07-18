@@ -1,5 +1,4 @@
 
-
 exports.task = {
   name: 'campaigns:sendCampaign',
   description: 'campaigns:sendCampaign',
