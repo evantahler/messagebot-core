@@ -22,9 +22,6 @@ var buildWhere = function (api, data) {
 
   return where
 }
-var alias = function (api, team) {
-  return api.utils.buildAlias(team, 'events')
-}
 
 exports.eventsSearch = {
   name: 'events:search',

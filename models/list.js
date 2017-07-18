@@ -6,17 +6,6 @@ var loader = function (api) {
 
   var validTypes = ['dynamic', 'static']
 
-  var extractor = function (arr) {
-    var guids = []
-    if (!arr || arr.length === 0) { return guids }
-
-    arr.forEach(function (e) {
-      if (e.personGuid) { guids = guids.concat(e.personGuid) } else if (e.guid) { guids = guids.concat(e.guid) }
-    })
-
-    return guids
-  }
-
   /* --- Public Model --- */
 
   return {
@@ -126,6 +115,8 @@ var loader = function (api) {
           associateListPeople: function (callback) {
             var list = this
             var jobs = []
+            var people = []
+            var wheres = []
             var count
 
             // TODO: This is going to crash the node with large listPerson
@@ -139,53 +130,32 @@ var loader = function (api) {
                 }).catch(done)
               })
             } else {
-              var queryResults = {
-                people: false,
-                events: false,
-                messages: false,
-                final: []
-              }
-
-              var team = api.utils.determineActionsTeam({params: {teamId: list.teamId}});
-
               [
-                { alias: api.utils.buildAlias(team, 'people'), q: list.personQuery, set: 'people' },
-                { alias: api.utils.buildAlias(team, 'events'), q: list.eventQuery, set: 'events' },
-                { alias: api.utils.buildAlias(team, 'messages'), q: list.messageQuery, set: 'messages' }
-              ].forEach(function (collection) {
-                if (collection.q) {
-                  jobs.push(function (done) {
-                    api.elasticsearch.scroll(collection.alias, collection.q, ['guid', 'personGuid'], function (error, data, _count) {
-                      if (error) { return done(error) }
-                      queryResults[collection.set] = extractor(data)
-                      done()
-                    })
+                {q: 'personQuery', guidKey: 'personGuid', table: 'personData'}
+                // {q: 'eventQuery', set: 'events', model: 'EventData'},
+                // {q: 'messageQuery', set: 'messages', model: 'MessageData'}
+              ].forEach((collection) => {
+                for (var k in this[collection.q]) {
+                  this[collection.q][k].forEach((v) => {
+                    wheres.push({ $in: api.sequelize.sequelize.literal(`(select ${collection.guidKey} from ${collection.table} where \`key\` = "${k}" and \`value\` LIKE "${v}")`) })
                   })
                 }
               })
 
-              jobs.push(function (done) {
-                var o = {}
-                var needed = 0
-                queryResults.final = [];
+              jobs.push((done) => {
+                // TODO: find in batches
 
-                ['people', 'events', 'messages'].forEach(function (type) {
-                  if (queryResults[type] !== false) {
-                    needed++
-                    queryResults[type].forEach(function (guid) {
-                      if (!o[guid]) { o[guid] = 0 }
-                      o[guid] = o[guid] + 1
-                    })
+                api.models.Person.findAll({
+                  where: {
+                    guid: {
+                      $and: wheres
+                    }
                   }
-                })
-
-                Object.keys(o).forEach(function (guid) {
-                  if (o[guid] === needed) { queryResults.final.push(guid) }
-                })
-
-                count = queryResults.final.length
-
-                done()
+                }).then((_people) => {
+                  people = _people
+                  count = people.length
+                  done()
+                }).catch(done)
               })
 
               jobs.push(function (done) {
@@ -199,9 +169,9 @@ var loader = function (api) {
               jobs.push(function (done) {
                 var bulk = []
 
-                queryResults.final.forEach(function (personGuid) {
+                people.forEach(function (person) {
                   bulk.push({
-                    personGuid: personGuid,
+                    personGuid: person.guid,
                     teamId: list.teamId,
                     listId: list.id
                   })
