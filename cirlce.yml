@@ -1,6 +1,9 @@
 machine:
   services:
     - redis
+  node:
+    version: 8
+
   environment:
     MAXMIND_DB: "./tmp/maxmind/GeoLite2-City.mmdb"
     SEQUELIZE_HOST: "localhost"
