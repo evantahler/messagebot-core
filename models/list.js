@@ -121,11 +121,8 @@ var loader = function (api) {
           associateListPeople: function (callback) {
             var list = this
             var jobs = []
-            var people = []
             var wheres = []
-            var count
-
-            // TODO: Escape k & v
+            var count = 0
 
             if (list.type === 'static') {
               jobs.push(function (done) {
@@ -183,22 +180,6 @@ var loader = function (api) {
                 }
               })
 
-              jobs.push((done) => {
-                // TODO: find in batches
-
-                api.models.Person.findAll({
-                  where: {
-                    guid: {
-                      $and: wheres
-                    }
-                  }
-                }).then((_people) => {
-                  people = _people
-                  count = people.length
-                  done()
-                }).catch(done)
-              })
-
               jobs.push(function (done) {
                 api.models.ListPerson.destroy({
                   where: {listId: list.id}
@@ -207,20 +188,23 @@ var loader = function (api) {
                 }).catch(done)
               })
 
-              jobs.push(function (done) {
-                var bulk = []
+              jobs.push((done) => {
+                let query = {
+                  where: {
+                    guid: {
+                      $and: wheres
+                    }
+                  }
+                }
 
-                people.forEach(function (person) {
-                  bulk.push({
+                api.utils.findInBatches(api.models.Person, query, (person, next) => {
+                  count++
+                  api.models.ListPerson.create({
                     personGuid: person.guid,
                     teamId: list.teamId,
                     listId: list.id
-                  })
-                })
-
-                api.models.ListPerson.bulkCreate(bulk, {validate: true}).then(function () {
-                  done()
-                }).catch(done)
+                  }).then(() => { next() }).catch(done)
+                }, done)
               })
             }
 
