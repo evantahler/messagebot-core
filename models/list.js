@@ -119,8 +119,7 @@ var loader = function (api) {
             var wheres = []
             var count
 
-            // TODO: This is going to crash the node with large listPerson
-            // TODO: This is slow.
+            // TODO: Escape k & v
 
             if (list.type === 'static') {
               jobs.push(function (done) {
@@ -131,13 +130,46 @@ var loader = function (api) {
               })
             } else {
               [
-                {q: 'personQuery', guidKey: 'personGuid', table: 'personData'}
-                // {q: 'eventQuery', set: 'events', model: 'EventData'},
-                // {q: 'messageQuery', set: 'messages', model: 'MessageData'}
+                {q: 'personQuery', parentProps: ['source', 'device', 'lat', 'lng']},
+                {q: 'eventQuery', parentProps: ['ip', 'device', 'type', 'lat', 'lng']},
+                {q: 'messageQuery', parentProps: ['campaignId', 'transport', 'body']}
               ].forEach((collection) => {
                 for (var k in this[collection.q]) {
                   this[collection.q][k].forEach((v) => {
-                    wheres.push({ $in: api.sequelize.sequelize.literal(`(select ${collection.guidKey} from ${collection.table} where \`key\` = "${k}" and \`value\` LIKE "${v}")`) })
+                    let matcher = '='
+                    if (v.indexOf('%') >= 0) { matcher = 'LIKE' }
+
+                    if (collection.q === 'personQuery') {
+                      if (collection.parentProps.indexOf(k) >= 0) {
+                        wheres.push({ $in: api.sequelize.sequelize.literal(
+                          `(select guid from people where people.${k} ${matcher} "${v}")`
+                        )})
+                      } else {
+                        wheres.push({ $in: api.sequelize.sequelize.literal(
+                          `(select personGuid from personData where personData.key = "${k}" and personData.value ${matcher} "${v}")`
+                        )})
+                      }
+                    } else if (collection.q === 'eventQuery') {
+                      if (collection.parentProps.indexOf(k) >= 0) {
+                        wheres.push({ $in: api.sequelize.sequelize.literal(
+                          `(select personGuid from events where events.${k} ${matcher} "${v}")`
+                        )})
+                      } else {
+                        wheres.push({ $in: api.sequelize.sequelize.literal(
+                          `(select events.personGuid from events join eventData on eventData.eventGuid = events.guid where eventData.key = "${k}" and eventData.value ${matcher} "${v}")`
+                        )})
+                      }
+                    } else if (collection.q === 'messageQuery') {
+                      if (collection.parentProps.indexOf(k) >= 0) {
+                        wheres.push({ $in: api.sequelize.sequelize.literal(
+                          `(select personGuid from messages where messages.${k} ${matcher} "${v}")`
+                        )})
+                      } else {
+                        wheres.push({ $in: api.sequelize.sequelize.literal(
+                          `(select messages.personGuid from messages join messageData on messageData.messageGuid = messages.guid where messageData.key = "${k}" and messageData.value ${matcher} "${v}")`
+                        )})
+                      }
+                    }
                   })
                 }
               })

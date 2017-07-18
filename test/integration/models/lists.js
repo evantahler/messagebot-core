@@ -107,14 +107,14 @@ describe('integartion:lists', function () {
 
     it('#associateListPeople (dyanamic, with exlusion)', function (done) {
       list.type = 'dynamic'
-      list.personQuery = {wildcard: {'data.firstName': '*'}}
-      list.eventQuery = {term: {'type': 'boughtTheThing'}}
+      list.personQuery = {firstName: ['%']}
+      list.eventQuery = {type: ['boughtTheThing']}
       list.associateListPeople(function (error, count) {
         should.not.exist(error)
         count.should.equal(1)
         api.models.ListPerson.findAll({where: {listId: list.id}}).then(function (listPeople) {
           listPeople.length.should.equal(1)
-          listPeople[0].personGuid.should.equal(people[0].data.guid)
+          listPeople[0].personGuid.should.equal(people[0].guid)
           done()
         })
       })
