@@ -4,23 +4,46 @@ var path = require('path')
 var specHelper = require(path.join(__dirname, '/../../specHelper'))
 var api
 
+var people = []
+var event
+var person
+var list
+var team
+
 describe('integartion:lists', function () {
+  before(function () { api = specHelper.api })
+
+  before(function (done) {
+    api.models.Team.findOne().then(function (_team) {
+      team = _team
+      done()
+    })
+  })
+
+  before(function (done) {
+    list = api.models.List.build({
+      teamId: team.id,
+      name: 'my list',
+      description: 'my list',
+      type: 'static',
+      folder: 'default'
+    })
+
+    list.save().then(function () { done() }).catch(done)
+  })
+
+  after(function (done) { list.destroy().then(() => { done() }).catch(done) })
+
+  describe('#escape', () => {
+    it('works', () => {
+      list.escape('hi').should.equal('hi')
+      list.escape('hi"').should.equal('hi')
+      list.escape('hi"f').should.equal('hif')
+      list.escape('hi\'bobby drop tables;').should.equal('hibobby drop tables;')
+    })
+  })
+
   describe('#associateListPeople', function () {
-    var people = []
-    var event
-    var person
-    var list
-    var team
-
-    before(function () { api = specHelper.api })
-
-    before(function (done) {
-      api.models.Team.findOne().then(function (_team) {
-        team = _team
-        done()
-      })
-    });
-
     ['aaron', 'brian', 'chuck', 'dave', 'evan'].forEach(function (fname) {
       before(function (done) {
         person = api.models.Person.build({
@@ -57,19 +80,6 @@ describe('integartion:lists', function () {
       event.save().then(() => { done() }).catch(done)
     })
 
-    before(function (done) {
-      list = api.models.List.build({
-        teamId: team.id,
-        name: 'my list',
-        description: 'my list',
-        type: 'static',
-        folder: 'default'
-      })
-
-      list.save().then(function () { done() }).catch(done)
-    })
-
-    after(function (done) { list.destroy().then(() => { done() }).catch(done) })
     after(function (done) { event.destroy().then(() => { done() }).catch(done) })
     after(function (done) {
       var jobs = []

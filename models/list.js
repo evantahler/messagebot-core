@@ -112,6 +112,12 @@ var loader = function (api) {
             return validTypes
           },
 
+          escape: (k) => {
+            k = k.replace(/'/g, '')
+            k = k.replace(/"/g, '')
+            return k
+          },
+
           associateListPeople: function (callback) {
             var list = this
             var jobs = []
@@ -138,6 +144,9 @@ var loader = function (api) {
                   this[collection.q][k].forEach((v) => {
                     let matcher = '='
                     if (v.indexOf('%') >= 0) { matcher = 'LIKE' }
+
+                    k = list.escape(k)
+                    v = list.escape(v)
 
                     if (collection.q === 'personQuery') {
                       if (collection.parentProps.indexOf(k) >= 0) {
