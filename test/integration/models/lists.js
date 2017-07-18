@@ -126,7 +126,7 @@ describe('integartion:lists', function () {
       var listPerson = api.models.ListPerson.build({
         teamId: team.id,
         listId: list.id,
-        personGuid: people[3].data.guid
+        personGuid: people[3].guid
       })
 
       listPerson.save().then(function () {
@@ -135,7 +135,7 @@ describe('integartion:lists', function () {
           count.should.equal(1)
           api.models.ListPerson.findAll({where: {listId: list.id}}).then(function (listPeople) {
             listPeople.length.should.equal(1)
-            listPeople[0].personGuid.should.equal(people[3].data.guid)
+            listPeople[0].personGuid.should.equal(people[3].guid)
             listPerson.destroy().then(function () { done() })
           })
         })
