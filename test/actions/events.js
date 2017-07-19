@@ -86,8 +86,8 @@ describe('actions:event', function () {
       }, function (response) {
         should.not.exist(response.error)
         should.exist(response.event.guid)
-        Math.round(response.event.lat).should.equal(37)
-        Math.round(response.event.lng).should.equal(-122)
+        response.event.lat.should.be.within(37, 38)
+        response.event.lng.should.withing(-122, -121)
         done()
       })
     })
