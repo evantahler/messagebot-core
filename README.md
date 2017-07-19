@@ -64,16 +64,6 @@
 
 Run `npm run migrate` to migrate the database.
 
-ElasticSearch migrations can be effected via a few environment variables, available for inspection at `db/ElasticSearch/indexes`:
-
-- `NUMBER_OF_SHARDS` (default: `10`)
-- `NUMBER_OF_REPLICAS` (default: `0`)
-- `GEOHASH_PRECISION` (default: `1km`)
-
-There are no options available for the relational database, other than connection options.  Migration files are available for inspection at `db/sequelize/migrations`
-
-ElasticSearch Migrations will also be run automatically via the MessageBot application every night to ensure that the monthly database are created.
-
 ## Faker
 
 To generate seed data, you can run 2 faker commands:
@@ -107,7 +97,7 @@ The MessageBot CLI is used to manage system-level data, IE: the creation and rem
 
 ## Testing
 
-`npm test` should postinstall and run everything you need, including the creation and seeding of both your ElasticsSearch and Relational database.  Ensure that the environment and various config files are prepared correctly.
+`npm test` should postinstall and run everything you need, including the creation and seeding of your database.  Ensure that the environment and various config files are prepared correctly.
 
 **Notes**
 - At this time, the test suite will only run on MySQL or Postgres, and assumes the test databases are local (on the same host) as where you are running the test suite code.
