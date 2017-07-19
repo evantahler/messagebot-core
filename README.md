@@ -1,7 +1,7 @@
 # MessageBot.io
 *A modern customer relationship and analytics platform*
 
-[![Build Status](https://travis-ci.org/messagebot/messagebot-core.svg?branch=master)](https://travis-ci.org/messagebot/messagebot-core)
+[![CircleCI](https://circleci.com/gh/messagebot/messagebot-core.svg?style=svg)](https://circleci.com/gh/messagebot/messagebot-core)
 
 ## Requirements
 
