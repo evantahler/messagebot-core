@@ -6,6 +6,7 @@ machine:
     version: 8
   environment:
     MAXMIND_DB: "./tmp/maxmind/GeoLite2-City.mmdb"
+    SEQUELIZE_USER: ubuntu
     SEQUELIZE_DIALECT: mysql
     SEQUELIZE_HOST: "localhost"
     SEQUELIZE_DATABASE: "messagebot_test"
