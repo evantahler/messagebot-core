@@ -1,4 +1,3 @@
-'use strict'
 
 var async = require('async')
 var exec = require('child_process').exec
@@ -57,21 +56,13 @@ module.exports = {
     api.utils.doShell = function (commands, callback, silent) {
       if (!silent) { silent = false }
       if (!Array.isArray(commands)) { commands = [commands] }
-      var fullCommand = '/bin/sh -c \'' + commands.join(' && ') + '\''
+      // var fullCommand = '/bin/sh -c \'' + commands.join(' && ') + '\''
+      var fullCommand = commands.join(' && ')
       if (!silent) { console.log('>> ' + fullCommand) }
       exec(fullCommand, function (error, stdout, stderr) {
-        if (!error && stderr) { error = stderr }
-        callback(error, stdout)
+        if (stderr) { error = stderr }
+        callback(error, stdout, stderr)
       })
-    }
-
-    api.utils.buildAlias = function (team, type) {
-      var alias = ''
-      alias += team.id + '-'
-      alias += api.env + '-'
-      alias += type
-
-      return alias
     }
 
     next()

@@ -51,7 +51,7 @@ var loader = function (api) {
     model: api.sequelize.sequelize.define('campaign',
       {
         'teamId': {
-          type: Sequelize.INTEGER,
+          type: Sequelize.BIGINT,
           allowNull: false
         },
         'name': {
@@ -83,11 +83,11 @@ var loader = function (api) {
           allowNull: false
         },
         'listId': {
-          type: Sequelize.INTEGER,
+          type: Sequelize.BIGINT,
           allowNull: false
         },
         'templateId': {
-          type: Sequelize.INTEGER,
+          type: Sequelize.BIGINT,
           allowNull: false
         },
         'campaignVariables': {
@@ -152,10 +152,17 @@ var loader = function (api) {
       {
         hooks: {
           afterCreate: function () { reloadCampaigns() },
-          afterDestroy: function () { reloadCampaigns() },
           afterUpdate: function () { reloadCampaigns() },
           afterSave: function () { reloadCampaigns() },
-          afterUpsert: function () { reloadCampaigns() }
+          afterUpsert: function () { reloadCampaigns() },
+          beforeDestroy: function (self) {
+            return new Promise((resolve, reject) => {
+              api.models.Message.destroy({where: {campaignId: self.id}}).then(() => {
+                reloadCampaigns()
+                resolve()
+              }).catch(reject)
+            })
+          }
         },
 
         instanceMethods: {
@@ -166,35 +173,37 @@ var loader = function (api) {
           stats: function (start, end, interval, callback) {
             var campaign = this
             var jobs = []
-            var terms = {}
-            var totals = {}
-            var searchTerms = ['sentAt', 'readAt', 'actedAt']
+            var terms = {sentAt: [], readAt: [], actedAt: []}
+            var totals = {sentAt: 0, readAt: 0, actedAt: 0}
 
             var team = api.utils.determineActionsTeam({params: {teamId: campaign.teamId}})
-            var alias = api.utils.buildAlias(team, 'messages')
 
-            searchTerms.forEach(function (term) {
+            Object.keys(totals).forEach(function (term) {
               jobs.push(function (done) {
-                api.elasticsearch.aggregation(
-                  alias,
-                  ['campaignId', term],
-                  [campaign.id, '_exists'],
-                  start,
-                  end,
-                  'createdAt',
-                  'date_histogram',
-                  term,
-                  interval,
-                  function (error, buckets) {
-                    if (error) { return done(error) }
-
-                    terms[term] = buckets.buckets
-                    var total = 0
-                    buckets.buckets.forEach(function (bucket) { total += bucket.doc_count })
-                    totals[term] = total
-                    done()
-                  }
-                )
+                var where = {
+                  teamId: team.id,
+                  campaignId: campaign.id,
+                  createdAt: { $lte: end, $gte: start }
+                }
+                where[term] = { $not: null }
+                api.models.Message.findAll({
+                  attributes: [
+                    [`${interval}(createdAt)`, 'DATE'],
+                    'transport',
+                    [api.sequelize.sequelize.fn('count', api.sequelize.sequelize.col('guid')), 'TOTAL']
+                  ],
+                  where: where,
+                  group: [api.sequelize.sequelize.literal(`${interval}(createdAt)`), 'transport']
+                }).then((rows) => {
+                  rows.forEach((row) => {
+                    totals[term] = totals[term] + row.dataValues.TOTAL
+                    var d = {}
+                    d[row.dataValues.DATE] = {}
+                    d[row.dataValues.DATE][row.dataValues.transport] = row.dataValues.TOTAL
+                    terms[term].push(d)
+                  })
+                  done()
+                }).catch(done)
               })
             })
 
@@ -248,11 +257,7 @@ var loader = function (api) {
               }).catch(done)
             })
 
-            async.series(jobs, function (error) {
-              process.nextTick(function () {
-                return callback(error)
-              })
-            })
+            async.series(jobs, callback)
           },
 
           apiData: function () {

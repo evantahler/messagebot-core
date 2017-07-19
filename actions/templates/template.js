@@ -81,32 +81,37 @@ exports.templateRender = {
       id: data.params.templateId,
       teamId: data.session.teamId
     }}).then(function (template) {
-      var person = new api.models.Person(data.team, data.params.personGuid)
-      person.hydrate(function (error) {
-        if (error) { return next(error) }
-        if (data.params.temporaryTemplate) { template.template = data.params.temporaryTemplate }
-        template.render(person, null, null, null, data.params.trackBeacon, function (error, html, view) {
+      api.models.Person.findOne({
+        where: {guid: data.params.personGuid}
+      }).then(function (person) {
+        if (!person) { return next(new Error('person not found')) }
+        person.hydrate(function (error) {
           if (error) { return next(error) }
-          if (data.connection.extension === 'html') {
-            data.toRender = false
-            for (var i in data.connection.rawConnection.responseHeaders) {
-              if (data.connection.rawConnection.responseHeaders[i][0] === 'Content-Type') {
-                delete data.connection.rawConnection.responseHeaders[i]
-              }
-            }
+          if (data.params.temporaryTemplate) { template.template = data.params.temporaryTemplate }
 
-            data.connection.rawConnection.responseHeaders.push(['Content-Type', 'text/html'])
-            data.connection.rawConnection.res.writeHead(200, data.connection.rawConnection.responseHeaders)
-            data.connection.rawConnection.res.end(html)
-            data.connection.destroy()
-            next()
-          } else {
-            data.response.html = html
-            data.response.view = view
-            next()
-          }
+          template.render(person, null, null, null, data.params.trackBeacon, function (error, html, view) {
+            if (error) { return next(error) }
+            if (data.connection.extension === 'html') {
+              data.toRender = false
+              for (var i in data.connection.rawConnection.responseHeaders) {
+                if (data.connection.rawConnection.responseHeaders[i][0] === 'Content-Type') {
+                  data.connection.rawConnection.responseHeaders.splice(i, 1)
+                }
+              }
+
+              data.connection.rawConnection.responseHeaders.push(['Content-Type', 'text/html'])
+              data.connection.rawConnection.res.writeHead(200, data.connection.rawConnection.responseHeaders)
+              data.connection.rawConnection.res.end(html)
+              data.connection.destroy()
+              next()
+            } else {
+              data.response.html = html
+              data.response.view = view
+              next()
+            }
+          })
         })
-      })
+      }).catch(next)
     }).catch(next)
   }
 }

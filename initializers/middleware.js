@@ -1,4 +1,3 @@
-'use strict'
 
 var qs = require('qs')
 
@@ -29,7 +28,7 @@ module.exports = {
             try {
               data.params.data = JSON.parse(data.params.data)
             } catch (e) {
-              return callback('cannot parse `data`. Are you sure that it is JSON?')
+              return callback(new Error('cannot parse `data`. Are you sure that it is JSON?'))
             }
           }
 

@@ -1,4 +1,3 @@
-'use strict'
 
 module.exports = {
   initialize: function (api, next) {

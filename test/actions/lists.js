@@ -190,38 +190,46 @@ describe('actions:lists', function () {
     })
 
     before(function (done) {
-      person = new api.models.Person(team)
-      person.data.source = 'tester'
-      person.data.device = 'phone'
-      person.data.listOptOuts = []
-      person.data.globalOptOut = false
-      person.data.data = {
+      person = api.models.Person.build({
+        teamId: team.id,
+        source: 'tester',
+        device: 'phone',
+        listOptOuts: [],
+        globalOptOut: false
+      })
+      person.data = {
         firstName: 'fname',
         lastName: 'lame',
         email: 'fake@faker.fake'
       }
 
-      person.create(done)
+      person.save().then(() => {
+        done()
+      }).catch(done)
     })
 
-    after(function (done) { person.del(done) })
-    after(function (done) {
+    after((done) => { person.destroy().then(() => { done() }) })
+    after((done) => {
       var jobs = []
       csvPeople.forEach(function (guid) {
         jobs.push(function (next) {
-          var p = new api.models.Person(team, guid)
-          p.del(next)
+          api.models.Person.destroy({where: {
+            teamId: team.id,
+            guid: guid
+          }}).then(() => {
+            next()
+          }).catch(next)
         })
       })
 
-      async.series(jobs, done)
+      async.parallel(jobs, done)
     })
 
     describe('list:people:add', function () {
       it('succeeds with personGuids via Form', function (done) {
         specHelper.requestWithLogin(email, password, 'list:people:add', {
           listId: listId,
-          personGuids: person.data.guid
+          personGuids: person.guid
         }, function (response) {
           should.not.exist(response.error)
           response.personGuids.length.should.equal(1)
@@ -232,7 +240,7 @@ describe('actions:lists', function () {
       it('fails (re-adding an existing person)', function (done) {
         specHelper.requestWithLogin(email, password, 'list:people:add', {
           listId: listId,
-          personGuids: person.data.guid
+          personGuids: person.guid
         }, function (response) {
           should.not.exist(response.error)
           response.personGuids.length.should.equal(1)
@@ -245,17 +253,65 @@ describe('actions:lists', function () {
           listId: listId,
           file: { path: path.join(__dirname, '/../../samples/email-upload.csv') }
         }, function (response) {
+          var jobs = []
           should.not.exist(response.error)
           response.personGuids.length.should.equal(4)
           csvPeople = response.personGuids
-          done()
+
+          response.personGuids.forEach((pesonGuid) => {
+            jobs.push((next) => {
+              api.models.Person.findOne({where: {guid: pesonGuid}}).then((person) => {
+                person.hydrate((error) => {
+                  should.not.exist(error)
+                  person.source.should.equal('form_upload')
+                  person.device.should.equal('phone')
+                  var keys = Object.keys(person.data)
+                  keys.should.not.containEql('source')
+                  keys.should.not.containEql('device')
+                  keys.should.containEql('email')
+                  keys.should.containEql('firstName')
+                  keys.should.containEql('lastName')
+                  next()
+                })
+              }).catch(next)
+            })
+          })
+
+          async.series(jobs, done)
+        })
+      })
+
+      it('succeeds will update people with CSV upload', function (done) {
+        specHelper.requestWithLogin(email, password, 'list:people:add', {
+          listId: listId,
+          file: { path: path.join(__dirname, '/../../samples/email-upload2.csv') }
+        }, function (response) {
+          should.not.exist(response.error)
+          response.personGuids.length.should.equal(1)
+          api.models.Person.findOne({where: {guid: response.personGuids[0]}}).then((person) => {
+            person.hydrate((error) => {
+              should.not.exist(error)
+              person.source.should.equal('other_source')
+              person.device.should.equal('phone')
+              var keys = Object.keys(person.data)
+              keys.should.not.containEql('source')
+              keys.should.not.containEql('device')
+              keys.should.containEql('email') // the conflicting key is email which should trigger the merge
+              keys.should.containEql('firstName')
+              keys.should.containEql('lastName')
+
+              person.data.firstName.should.equal('Evan') // data from first uplaod
+              person.data.lastName.should.equal('newLastName') // data from this upload which should be merged
+              done()
+            })
+          }).catch(done)
         })
       })
 
       it('fails (list is not found)', function (done) {
         specHelper.requestWithLogin(email, password, 'list:people:add', {
           listId: 999,
-          personGuids: person.data.guid
+          personGuids: person.guid
         }, function (response) {
           response.error.should.equal('Error: list not found')
           done()
@@ -267,7 +323,7 @@ describe('actions:lists', function () {
           listId: listId,
           personGuids: ''
         }, function (response) {
-          response.error.should.equal('Error: No people are provided')
+          response.error.should.equal('Error: No people are provided via CSV')
           done()
         })
       })
@@ -275,9 +331,9 @@ describe('actions:lists', function () {
       it('fails (list is not static)', function (done) {
         specHelper.requestWithLogin(email, password, 'list:people:add', {
           listId: dynamicListId,
-          personGuids: person.data.guid
+          personGuids: person.guid
         }, function (response) {
-          response.error.should.equal('Error: you can only modify static list membership via this method')
+          response.error.should.equal('Error: you cannot modify static list membership via this method')
           done()
         })
       })
@@ -287,11 +343,11 @@ describe('actions:lists', function () {
       it('succeeds with personGuids', function (done) {
         specHelper.requestWithLogin(email, password, 'list:people:delete', {
           listId: listId,
-          personGuids: person.data.guid
+          personGuids: person.guid
         }, function (response) {
           should.not.exist(response.error)
           response.deletedListPeople.length.should.equal(1)
-          response.deletedListPeople[0].personGuid.should.equal(person.data.guid)
+          response.deletedListPeople[0].personGuid.should.equal(person.guid)
           done()
         })
       })
@@ -309,7 +365,7 @@ describe('actions:lists', function () {
       it('fails (list is not found)', function (done) {
         specHelper.requestWithLogin(email, password, 'list:people:delete', {
           listId: 999,
-          personGuids: person.data.guid
+          personGuids: person.guid
         }, function (response) {
           response.error.should.equal('Error: list not found')
           done()
@@ -319,9 +375,9 @@ describe('actions:lists', function () {
       it('fails (list is not static)', function (done) {
         specHelper.requestWithLogin(email, password, 'list:people:add', {
           listId: dynamicListId,
-          personGuids: person.data.guid
+          personGuids: person.guid
         }, function (response) {
-          response.error.should.equal('Error: you can only modify static list membership via this method')
+          response.error.should.equal('Error: you cannot modify static list membership via this method')
           done()
         })
       })

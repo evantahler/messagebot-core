@@ -1,7 +1,26 @@
-var async = require('async')
+var buildWhere = function (api, data) {
+  var where = {
+    teamId: data.team.id
+  }
 
-var alias = function (api, team) {
-  return api.utils.buildAlias(team, 'messages')
+  for (var i in data.params.searchKeys) {
+    if (data.params.searchKeys[i].indexOf('data.') === 0) {
+      var key = data.params.searchKeys[i].split('.')[1]
+      var value = data.params.searchValues[i]
+      if (!where.guid) { where.guid = [] }
+      where.guid.push(
+        api.sequelize.sequelize.literal(`SELECT messageGuid FROM messageData WHERE \`key\` = "${key}" and \`value\` LIKE "${value}"`)
+      )
+    }
+  }
+
+  for (var j in data.params.searchKeys) {
+    if (data.params.searchKeys[j].indexOf('data.') !== 0) {
+      where[data.params.searchKeys[j]] = data.params.searchValues[j]
+    }
+  }
+
+  return where
 }
 
 exports.messagesSearch = {
@@ -27,12 +46,16 @@ exports.messagesSearch = {
   },
 
   run: function (api, data, next) {
-    api.elasticsearch.search(alias(api, data.team), data.params.searchKeys, data.params.searchValues, data.params.from, data.params.size, data.params.sort, function (error, results, total) {
-      if (error) { return next(error) }
-      data.response.total = total
-      data.response.messages = results
+    api.models.Message.findAndCountAll({
+      where: buildWhere(api, data),
+      order: data.params.sort,
+      limit: data.params.size,
+      offset: data.params.from
+    }).then(function (result) {
+      data.response.total = result.count
+      data.response.messages = result.rows.map(function (row) { return row.apiData() })
       next()
-    })
+    }).catch(next)
   }
 }
 
@@ -45,113 +68,48 @@ exports.messagesAggregation = {
   inputs: {
     searchKeys: { required: true },
     searchValues: { required: true },
-    maximumSelections: {
+    aggregation: { required: true, default: 'transport' },
+    interval: {
       required: true,
+      default: 'DATE'
+    },
+    from: {
+      required: false,
       formatter: function (p) { return parseInt(p) },
-      default: function (p) { return 5 }
-    },
-    selections: {
-      required: false,
-      formatter: function (p) {
-        if (p.length === 0) { return [] }
-        return p.split(',')
-      },
-      default: function (p) { return [] }
-    },
-    start: {
-      required: false,
-      formatter: function (p) { return new Date(parseInt(p)) },
       default: function (p) { return 0 }
     },
-    end: {
+    size: {
       required: false,
-      formatter: function (p) { return new Date(parseInt(p)) },
-      default: function (p) { return new Date().getTime() }
+      formatter: function (p) { return parseInt(p) },
+      default: function (p) { return 100 }
     },
-    interval: { required: false }
+    sort: { required: false }
   },
 
   run: function (api, data, next) {
-    var jobs = []
-    var aggJobs = []
-    var transports = []
-    data.response.aggregations = {}
-
-    jobs.push(function (done) {
-      api.elasticsearch.distinct(
-        alias(api, data.team),
-        data.params.searchKeys,
-        data.params.searchValues,
-        data.params.start,
-        data.params.end,
-        'createdAt',
-        'transport',
-        function (error, buckets) {
-          if (error) { return done(error) }
-          buckets.buckets.forEach(function (b) {
-            transports.push(b.key)
-          })
-          data.response.selections = transports
-          data.response.selectionsName = 'transports'
-          done()
-        }
-      )
-    })
-
-    jobs.push(function (done) {
-      aggJobs.push(function (aggDone) {
-        api.elasticsearch.aggregation(
-          alias(api, data.team),
-          ['guid'],
-          ['_exists'],
-          data.params.start,
-          data.params.end,
-          'createdAt',
-          'date_histogram',
-          'createdAt',
-          data.params.interval,
-          function (error, buckets) {
-            if (error) { return aggDone(error) }
-            data.response.aggregations._all = buckets.buckets
-            aggDone()
-          }
-        )
-      })
-
-      done()
-    })
-
-    jobs.push(function (done) {
-      transports.forEach(function (transport) {
-        if (aggJobs.length <= data.params.maximumSelections && (data.params.selections.length === 0 || data.params.selections.indexOf(transport) >= 0)) {
-          aggJobs.push(function (aggDone) {
-            api.elasticsearch.aggregation(
-              alias(api, data.team),
-              ['transport'].concat(data.params.searchKeys),
-              [transport].concat(data.params.searchValues),
-              data.params.start,
-              data.params.end,
-              'createdAt',
-              'date_histogram',
-              'createdAt',
-              data.params.interval,
-              function (error, buckets) {
-                if (error) { return aggDone(error) }
-                data.response.aggregations[transport] = buckets.buckets
-                aggDone()
-              }
-            )
-          })
+    api.models.Message.findAll({
+      attributes: [
+        [`${data.params.interval}(createdAt)`, data.params.interval],
+        data.params.aggregation,
+        [api.sequelize.sequelize.fn('count', api.sequelize.sequelize.col('guid')), 'TOTAL']
+      ],
+      where: buildWhere(api, data),
+      order: data.params.sort,
+      limit: data.params.size,
+      offset: data.params.from,
+      group: [api.sequelize.sequelize.literal(`${data.params.interval}(createdAt)`), data.params.aggregation]
+    }).then(function (results) {
+      data.response.aggregations = {}
+      results.forEach(function (r) {
+        if (!data.response.aggregations[r.dataValues[data.params.interval]]) {
+          var d = {}
+          d[r[data.params.aggregation]] = r.dataValues.TOTAL
+          data.response.aggregations[r.dataValues[data.params.interval]] = d
+        } else {
+          data.response.aggregations[r.dataValues[data.params.interval]][r[data.params.aggregation]] = r.dataValues.TOTAL
         }
       })
-
-      done()
-    })
-
-    jobs.push(function (done) {
-      async.series(aggJobs, done)
-    })
-
-    async.series(jobs, next)
+      next()
+    }).catch(next)
   }
 }

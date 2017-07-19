@@ -5,19 +5,11 @@ var specHelper = require(path.join(__dirname, '/../specHelper'))
 var email = 'admin@localhost.com'
 var password = 'password'
 var api
-var team
 var userId
 var otherUserId
 
 describe('actions:user', function () {
   before(function () { api = specHelper.api })
-
-  before(function (done) {
-    api.models.Team.findOne().then(function (_team) {
-      team = _team
-      done()
-    })
-  })
 
   var cleanUsersTable = function (callback) {
     var jobs = []
@@ -25,8 +17,9 @@ describe('actions:user', function () {
       users.forEach(function (user) {
         if (user.email !== 'admin@localhost.com') {
           jobs.push(function (next) {
-            var person = api.models.Person(team, user.personGuid)
-            person.del(next)
+            api.models.Person.destroy({where: {guid: user.personGuid}}).then(function () {
+              next()
+            }).catch(next)
           })
 
           jobs.push(function (next) {
@@ -65,12 +58,15 @@ describe('actions:user', function () {
 
     it('creates a person with each uesr', function (done) {
       api.models.User.find({where: {id: userId}}).then(function (user) {
-        var person = new api.models.Person(team, user.personGuid)
-        person.hydrate(function (error) {
-          should.not.exist(error)
-          person.data.data.firstName.should.equal('user')
-          done()
-        })
+        api.models.Person.find({where: {guid: user.personGuid}}).then(function (person) {
+          person.hydrate(function () {
+            person.source.should.equal('admin')
+            Object.keys(person.data).length.should.equal(4)
+            person.data.firstName.should.equal('user')
+            person.data.email.should.equal('user@fake.com')
+            done()
+          })
+        }).catch(done)
       }).catch(done)
     })
 
@@ -94,14 +90,16 @@ describe('actions:user', function () {
     it('succeeds (creates the proper person)', function (done) {
       api.models.User.find({where: {id: userId}}).then(function (user) {
         should.exist(user)
-        var person = api.models.Person(team, user.personGuid)
-        person.hydrate(function (error) {
-          should.not.exist(error)
-          person.data.data.firstName.should.equal(user.firstName)
-          person.data.data.lastName.should.equal(user.lastName)
-          person.data.data.email.should.equal(user.email)
-          done()
-        })
+        api.models.Person.find({where: {guid: user.personGuid}}).then(function (person) {
+          person.hydrate(function () {
+            person.source.should.equal('admin')
+            Object.keys(person.data).length.should.equal(4)
+            person.data.firstName.should.equal(user.firstName)
+            person.data.lastName.should.equal(user.lastName)
+            person.data.email.should.equal(user.email)
+            done()
+          })
+        }).catch(done)
       }).catch(done)
     })
 
@@ -126,7 +124,7 @@ describe('actions:user', function () {
         password: 'abc123',
         role: 'admin'
       }, function (response) {
-        response.error.should.match(/must be unique/)
+        response.error.should.match(/Error: personGuid .* already exists with email of user@fake.com/)
         done()
       })
     })
@@ -203,13 +201,17 @@ describe('actions:user', function () {
 
     it('edits the person as well', function (done) {
       api.models.User.find({where: {id: userId}}).then(function (user) {
-        var person = new api.models.Person(team, user.personGuid)
-        person.hydrate(function (error) {
-          should.not.exist(error)
-          person.data.data.firstName.should.equal('new first name')
-          done()
-        })
-      })
+        should.exist(user)
+        api.models.Person.find({where: {guid: user.personGuid}}).then(function (person) {
+          person.hydrate(function () {
+            person.source.should.equal('admin')
+            Object.keys(person.data).length.should.equal(4)
+            person.data.firstName.should.equal('new first name')
+            person.data.lastName.should.equal('user')
+            done()
+          })
+        }).catch(done)
+      }).catch(done)
     })
 
     it('succeeds (admin, other user)', function (done) {
@@ -340,10 +342,12 @@ describe('actions:user', function () {
           userId: userId
         }, function (response) {
           should.not.exist(response.error)
-          var person = new api.models.Person(team, user.personGuid)
-          person.hydrate(function (error) {
-            String(error).should.equal('Error: Person (' + user.personGuid + ') not found')
-            done()
+          api.models.Person.find({where: {guid: user.personGuid}}).then(function (person) {
+            should.not.exist(person)
+            api.models.PersonData.count({where: {personGuid: user.personGuid}}).then(function (count) {
+              count.should.equal(0)
+              done()
+            })
           })
         })
       }).catch(done)

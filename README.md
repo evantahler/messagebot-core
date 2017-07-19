@@ -1,14 +1,13 @@
 # MessageBot.io
 *A modern customer relationship and analytics platform*
 
-[![Build Status](https://travis-ci.org/messagebot/messagebot-core.svg?branch=master)](https://travis-ci.org/messagebot/messagebot-core)
+[![CircleCI](https://circleci.com/gh/messagebot/messagebot-core.svg?style=svg)](https://circleci.com/gh/messagebot/messagebot-core)
 
 ## Requirements
 
 | Software          | Version   |
 |-------------------|-----------|
 | Node.JS           | >=4.0.0   |
-| ElasticSearch     | >=5.0.0   |
 | Redis             | >=2.0.0   |
 | MySQL or Postgres | "modern"  |
 
@@ -45,7 +44,6 @@
 ## Configuration and Running
 
 - Start `redis`
-- Start `elasticsearch`
 - Start your relational database, IE: `mySQL`
   - be sure to create the database you need for development, IE:
     - (mysql) `mysql -u root -e "crete database messagebot_development"`
@@ -58,14 +56,13 @@
   - ensure that the databases you listed exist and that the user(s) you have configured can reach & access them
 - Source your environment, ie: `source .env`
 - Create the First Team from the CLI:
-  - `./bin/messagebot team create --name MessageBot --trackingDomainRegexp "^.*$" --trackingDomain "http://tracking.myapp.com" --email="me@myapp.com"`
+  - `./node_modules/.bin/actionhero messagebot team create --name MessageBot --trackingDomainRegexp "^.*$" --trackingDomain "http://tracking.myapp.com" --email="me@myapp.com"`
   - This will also create the first admin user for this team.  Take note of this user's email and password.
 - Start the App: `npm start`
 
 ## Migration Options
 
-Run `npm run migrate` to migrate all databases (relational and ElasticSearch).
-`npm run migrate` is a composition of `npm run migrate:sequelize` and `npm run migrate:elasticsearh`, which you can also run separately if desired.
+Run `npm run migrate` to migrate the database.
 
 ElasticSearch migrations can be effected via a few environment variables, available for inspection at `db/ElasticSearch/indexes`:
 

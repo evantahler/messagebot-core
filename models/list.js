@@ -6,17 +6,6 @@ var loader = function (api) {
 
   var validTypes = ['dynamic', 'static']
 
-  var extractor = function (arr) {
-    var guids = []
-    if (!arr || arr.length === 0) { return guids }
-
-    arr.forEach(function (e) {
-      if (e.personGuid) { guids = guids.concat(e.personGuid) } else if (e.guid) { guids = guids.concat(e.guid) }
-    })
-
-    return guids
-  }
-
   /* --- Public Model --- */
 
   return {
@@ -24,7 +13,7 @@ var loader = function (api) {
     model: api.sequelize.sequelize.define('list',
       {
         'teamId': {
-          type: Sequelize.INTEGER,
+          type: Sequelize.BIGINT,
           allowNull: false
         },
         'name': {
@@ -107,7 +96,7 @@ var loader = function (api) {
         },
 
         'peopleCount': {
-          type: Sequelize.INTEGER,
+          type: Sequelize.BIGINT,
           allowNull: false,
           defaultValue: 0
         },
@@ -123,13 +112,17 @@ var loader = function (api) {
             return validTypes
           },
 
+          escape: (k) => {
+            k = k.replace(/'/g, '')
+            k = k.replace(/"/g, '')
+            return k
+          },
+
           associateListPeople: function (callback) {
             var list = this
             var jobs = []
-            var count
-
-            // TODO: This is going to crash the node with large listPerson
-            // TODO: This is slow.
+            var wheres = []
+            var count = 0
 
             if (list.type === 'static') {
               jobs.push(function (done) {
@@ -139,53 +132,52 @@ var loader = function (api) {
                 }).catch(done)
               })
             } else {
-              var queryResults = {
-                people: false,
-                events: false,
-                messages: false,
-                final: []
-              }
-
-              var team = api.utils.determineActionsTeam({params: {teamId: list.teamId}});
-
               [
-                { alias: api.utils.buildAlias(team, 'people'), q: list.personQuery, set: 'people' },
-                { alias: api.utils.buildAlias(team, 'events'), q: list.eventQuery, set: 'events' },
-                { alias: api.utils.buildAlias(team, 'messages'), q: list.messageQuery, set: 'messages' }
-              ].forEach(function (collection) {
-                if (collection.q) {
-                  jobs.push(function (done) {
-                    api.elasticsearch.scroll(collection.alias, collection.q, ['guid', 'personGuid'], function (error, data, _count) {
-                      if (error) { return done(error) }
-                      queryResults[collection.set] = extractor(data)
-                      done()
-                    })
+                {q: 'personQuery', parentProps: ['source', 'device', 'lat', 'lng']},
+                {q: 'eventQuery', parentProps: ['ip', 'device', 'type', 'lat', 'lng']},
+                {q: 'messageQuery', parentProps: ['campaignId', 'transport', 'body']}
+              ].forEach((collection) => {
+                for (var k in this[collection.q]) {
+                  this[collection.q][k].forEach((v) => {
+                    let matcher = '='
+                    if (v.indexOf('%') >= 0) { matcher = 'LIKE' }
+
+                    k = list.escape(k)
+                    v = list.escape(v)
+
+                    if (collection.q === 'personQuery') {
+                      if (collection.parentProps.indexOf(k) >= 0) {
+                        wheres.push({ $in: api.sequelize.sequelize.literal(
+                          `(select guid from people where people.${k} ${matcher} "${v}")`
+                        )})
+                      } else {
+                        wheres.push({ $in: api.sequelize.sequelize.literal(
+                          `(select personGuid from personData where personData.key = "${k}" and personData.value ${matcher} "${v}")`
+                        )})
+                      }
+                    } else if (collection.q === 'eventQuery') {
+                      if (collection.parentProps.indexOf(k) >= 0) {
+                        wheres.push({ $in: api.sequelize.sequelize.literal(
+                          `(select personGuid from events where events.${k} ${matcher} "${v}")`
+                        )})
+                      } else {
+                        wheres.push({ $in: api.sequelize.sequelize.literal(
+                          `(select events.personGuid from events join eventData on eventData.eventGuid = events.guid where eventData.key = "${k}" and eventData.value ${matcher} "${v}")`
+                        )})
+                      }
+                    } else if (collection.q === 'messageQuery') {
+                      if (collection.parentProps.indexOf(k) >= 0) {
+                        wheres.push({ $in: api.sequelize.sequelize.literal(
+                          `(select personGuid from messages where messages.${k} ${matcher} "${v}")`
+                        )})
+                      } else {
+                        wheres.push({ $in: api.sequelize.sequelize.literal(
+                          `(select messages.personGuid from messages join messageData on messageData.messageGuid = messages.guid where messageData.key = "${k}" and messageData.value ${matcher} "${v}")`
+                        )})
+                      }
+                    }
                   })
                 }
-              })
-
-              jobs.push(function (done) {
-                var o = {}
-                var needed = 0
-                queryResults.final = [];
-
-                ['people', 'events', 'messages'].forEach(function (type) {
-                  if (queryResults[type] !== false) {
-                    needed++
-                    queryResults[type].forEach(function (guid) {
-                      if (!o[guid]) { o[guid] = 0 }
-                      o[guid] = o[guid] + 1
-                    })
-                  }
-                })
-
-                Object.keys(o).forEach(function (guid) {
-                  if (o[guid] === needed) { queryResults.final.push(guid) }
-                })
-
-                count = queryResults.final.length
-
-                done()
               })
 
               jobs.push(function (done) {
@@ -196,20 +188,23 @@ var loader = function (api) {
                 }).catch(done)
               })
 
-              jobs.push(function (done) {
-                var bulk = []
+              jobs.push((done) => {
+                let query = {
+                  where: {
+                    guid: {
+                      $and: wheres
+                    }
+                  }
+                }
 
-                queryResults.final.forEach(function (personGuid) {
-                  bulk.push({
-                    personGuid: personGuid,
+                api.utils.findInBatches(api.models.Person, query, (person, next) => {
+                  count++
+                  api.models.ListPerson.create({
+                    personGuid: person.guid,
                     teamId: list.teamId,
                     listId: list.id
-                  })
-                })
-
-                api.models.ListPerson.bulkCreate(bulk, {validate: true}).then(function () {
-                  done()
-                }).catch(done)
+                  }).then(() => { next() }).catch(done)
+                }, done)
               })
             }
 

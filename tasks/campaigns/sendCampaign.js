@@ -1,4 +1,3 @@
-'use strict'
 
 exports.task = {
   name: 'campaigns:sendCampaign',

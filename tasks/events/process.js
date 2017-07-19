@@ -1,5 +1,3 @@
-'use strict'
-
 var async = require('async')
 
 exports.task = {
@@ -17,34 +15,33 @@ exports.task = {
 
     var team = api.utils.determineActionsTeam({params: params})
 
-    params.events.forEach(function (eventGuid) {
-      loadJobs.push(function (done) {
-        var event = new api.models.Event(team, eventGuid)
-        event.hydrate(function (error) {
-          if (error) { return done(error) }
-          events.push(event)
-          done()
-        })
+    params.events.forEach((eventGuid) => {
+      loadJobs.push((done) => {
+        api.models.Event.findOne({where: {guid: eventGuid}}).then((event) => {
+          if (!event) { return done(new Error(`Message (${eventGuid}) not found`)) }
+          event.hydrate((error) => {
+            if (error) { return done(error) }
+            events.push(event)
+            done()
+          })
+        }).catch(done)
       })
     })
 
-    loadJobs.push(function (done) {
-      events.forEach(function (event) {
-        workJobs.push(function (workDone) {
+    loadJobs.push((done) => {
+      events.forEach((event) => {
+        workJobs.push((workDone) => {
           api.events.triggerCampaign(team, event, workDone)
         })
 
-        workJobs.push(function (workDone) {
+        workJobs.push((workDone) => {
           api.events.propigateLocationToPerson(team, event, workDone)
         })
       })
       done()
     })
 
-    loadJobs.push(function (done) {
-      async.series(workJobs, done)
-    })
-
-    async.series(loadJobs, function (error) { next(error) })
+    loadJobs.push((done) => { async.series(workJobs, done) })
+    async.series(loadJobs, (error) => { next(error) })
   }
 }

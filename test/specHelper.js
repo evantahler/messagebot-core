@@ -58,17 +58,6 @@ var specHelper = {
     }
   },
 
-  doElasticSearchBash: function (verb, pattern, callback, silent) {
-    var self = this
-
-    var command = 'curl'
-    command += ' -s '
-    command += ' -X ' + verb
-    command += ' ' + self.api.config.elasticsearch.urls[0]
-    command += '/' + pattern
-    self.api.utils.doShell(command, callback, silent)
-  },
-
   migrate: function (callback) {
     var self = this
     var jobs = []
@@ -85,17 +74,13 @@ var specHelper = {
     })
 
     jobs.push(function (done) {
-      self.api.utils.doShell('NODE_ENV=test npm run migrate:sequelize', function (error) {
+      self.api.utils.doShell('NODE_ENV=test npm run migrate', function (error) {
         if (error && !error.toString().match(/graceful-fs/)) {
           done(error)
         } else {
           done()
         }
       })
-    })
-
-    jobs.push(function (done) {
-      self.api.utils.doShell('NODE_ENV=test NUMBER_OF_SHARDS=1 npm run migrate:elasticsearch', done)
     })
 
     jobs.push(function (done) {
@@ -122,10 +107,6 @@ var specHelper = {
     })
 
     jobs.push(function (done) {
-      self.doElasticSearchBash('DELETE', '*-test-*', done)
-    })
-
-    jobs.push(function (done) {
       console.log('\r\n----- TEST DATABASES CLEARED-----\r\n')
       done()
     })
@@ -146,18 +127,17 @@ var specHelper = {
     var self = this
     var command = ''
     command += ' NODE_ENV=test'
-    command += ' NUMBER_OF_SHARDS=1'
-    command += ' ./bin/messagebot team create'
+    command += ' ./node_modules/.bin/actionhero messagebot team create'
     command += ' --name TestTeam'
     command += ' --trackingDomainRegexp "^.*$"'
     command += ' --trackingDomain "http://tracking.site.com"'
     command += ' --email "admin@localhost.com"'
     command += ' --password "password"'
 
-    console.log('\r\n----- Creating Test Team -----\r\n')
+    console.log('\r\n----- CREATING TEST TEAM -----\r\n')
     self.api.utils.doShell(command, function (error) {
       if (error) { console.log('error', error); return callback(error) }
-      console.log('\r\n----- Test Team Created -----\r\n')
+      console.log('\r\n----- TEST TEAM CREATED -----\r\n')
       return callback()
     }, false)
   },
@@ -190,6 +170,13 @@ var specHelper = {
     })
   },
 
+  dateCompare: function (a, b) {
+    // hack to compare that dates are within 24h of eachother
+    if (!b) { b = new Date() }
+    let diff = Math.abs(a.getTime() - b.getTime())
+    return diff < (1000 * 60 * 60 * 24)
+  },
+
   login: function (connection, email, password, callback) {
     var self = this
     connection.params = {
@@ -219,7 +206,7 @@ var specHelper = {
       jar: j,
       form: {email: email, password: password}
     }, function (error, response, body) {
-      if (error) { return callback({error: error}) }
+      if (error) { return callback({error: error}) } //eslint-disable-line
       body = JSON.parse(body)
       if (body.error) { return callback(body) }
 
@@ -233,7 +220,7 @@ var specHelper = {
         jar: j,
         form: params
       }, function (error, response, body) {
-        if (error) { return callback({error: error}) }
+        if (error) { return callback({error: error}) } //eslint-disable-line
         try {
           body = JSON.parse(body)
         } catch (e) { }

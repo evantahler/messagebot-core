@@ -3,11 +3,19 @@ var path = require('path')
 var specHelper = require(path.join(__dirname, '/../specHelper'))
 var email = 'admin@localhost.com'
 var password = 'password'
-var api // eslint-disable-line 
+var api
+var team
 var campaignId
 
 describe('actions:campaign', function () {
-  beforeEach(function () { api = specHelper.api })
+  before(function () { api = specHelper.api })
+
+  before(function (done) {
+    api.models.Team.findOne().then(function (_team) {
+      team = _team
+      done()
+    })
+  })
 
   before(function (done) { specHelper.truncate('campaigns', done) })
   after(function (done) { specHelper.truncate('campaigns', done) })
@@ -138,15 +146,76 @@ describe('actions:campaign', function () {
   })
 
   describe('campaign:stats', function () {
+    before((done) => {
+      api.specHelper.runAction('message:create', {
+        teamId: team.id,
+        personGuid: 'xxx',
+        transport: 'smtp',
+        campaignId: campaignId,
+        body: 'hello',
+        view: {},
+        sentAt: new Date()
+      }, function (response) {
+        done()
+      })
+    })
+
+    before((done) => {
+      api.specHelper.runAction('message:create', {
+        teamId: team.id,
+        personGuid: 'yyy',
+        transport: 'smtp',
+        campaignId: campaignId,
+        body: 'hello',
+        view: {},
+        sentAt: new Date(),
+        readAt: new Date()
+      }, function (response) {
+        done()
+      })
+    })
+
+    before((done) => {
+      api.specHelper.runAction('message:create', {
+        teamId: team.id,
+        personGuid: 'zzz',
+        transport: 'smtp',
+        campaignId: campaignId,
+        body: 'hello',
+        view: {},
+        sentAt: new Date(),
+        readAt: new Date(),
+        actedAt: new Date()
+      }, function (response) {
+        done()
+      })
+    })
+
     it('succeeds', function (done) {
       specHelper.requestWithLogin(email, password, 'campaign:stats', {
         campaignId: campaignId
       }, function (response) {
         should.not.exist(response.error)
-        should.exist(response.totals)
-        should.exist(response.sentAt)
-        should.exist(response.readAt)
-        should.exist(response.actedAt)
+        response.totals.should.deepEqual({sentAt: 3, readAt: 2, actedAt: 1})
+
+        var key
+        var date
+
+        key = Object.keys(response.sentAt[0])[0]
+        date = new Date(key)
+        specHelper.dateCompare(date).should.equal(true)
+        response.sentAt[0][key].should.deepEqual({smtp: 3})
+
+        key = Object.keys(response.readAt[0])[0]
+        date = new Date(key)
+        specHelper.dateCompare(date).should.equal(true)
+        response.readAt[0][key].should.deepEqual({smtp: 2})
+
+        key = Object.keys(response.actedAt[0])[0]
+        date = new Date(key)
+        specHelper.dateCompare(date).should.equal(true)
+        response.actedAt[0][key].should.deepEqual({smtp: 1})
+
         done()
       })
     })

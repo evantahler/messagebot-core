@@ -1,6 +1,7 @@
 var path = require('path')
 var fs = require('fs')
 var Sequelize = require('sequelize')
+var async = require('async')
 
 module.exports = {
   loadPriority: 100,
@@ -41,6 +42,7 @@ module.exports = {
         // List Person
         api.models.ListPerson.belongsTo(api.models.List)
         api.models.ListPerson.belongsTo(api.models.Team)
+        api.models.ListPerson.belongsTo(api.models.Person)
 
         // Team
         api.models.Team.hasMany(api.models.Campaign)
@@ -55,6 +57,18 @@ module.exports = {
 
         // User
         api.models.User.belongsTo(api.models.Team)
+
+        // Event
+        api.models.EventData.belongsTo(api.models.Event, {foreignKey: 'eventGuid'})
+        api.models.Event.hasMany(api.models.EventData, {foreignKey: 'eventGuid'})
+
+        // Message
+        api.models.MessageData.belongsTo(api.models.Message, {foreignKey: 'messageGuid'})
+        api.models.Message.hasMany(api.models.MessageData, {foreignKey: 'messageGuid'})
+
+        // Person
+        api.models.PersonData.belongsTo(api.models.Person, {foreignKey: 'personGuid'})
+        api.models.Person.hasMany(api.models.PersonData, {foreignKey: 'personGuid'})
 
         callback()
       },
@@ -74,9 +88,76 @@ module.exports = {
         if (typeof type === 'function') { callback = type; type = null }
         if (!type) { type = api.sequelize.sequelize.QueryTypes.SELECT }
 
-        api.sequelize.sequelize.query(q, {type: type}).then(function (users) {
-          callback(null, users)
+        api.sequelize.sequelize.query(q, {type: type}).then(function (rows) {
+          callback(null, rows)
         }).catch(callback)
+      },
+
+      updatateData: function (self, model, remoteKey, uniqueDataKeys) {
+        return new Promise(function (resolve, reject) {
+          var jobs = []
+          if (!self.data) { self.data = {} }
+          var remainingKeys = Object.keys(self.data)
+          var consumedKeys = []
+          if (!uniqueDataKeys) { uniqueDataKeys = [] }
+
+          remainingKeys.forEach(function (k) {
+            if (uniqueDataKeys.indexOf(k) >= 0) {
+              jobs.push(function (done) {
+                var where = {
+                  teamId: self.teamId,
+                  key: k,
+                  value: self.data[k]
+                }
+                where[remoteKey] = {$not: self.guid}
+
+                model.findOne({where: where}).then(function (item) {
+                  if (item) { return done(new Error(`${remoteKey} ${item[remoteKey]} already exists with ${k} of ${self.data[k]}`)) }
+                  done()
+                }).catch(done)
+              })
+            }
+          })
+
+          var where = {}
+          where[remoteKey] = self.guid
+          model.findAll({where: where}).then(function (datas) {
+            remainingKeys.forEach(function (k) {
+              datas.forEach(function (d) {
+                if (k === d.key) {
+                  consumedKeys.push(k)
+                  jobs.push(function (done) {
+                    d.updateAttributes({value: self.data[k]}).then(function () {
+                      done()
+                    }).catch(done)
+                  })
+                }
+              })
+            })
+
+            remainingKeys.forEach(function (k) {
+              if (consumedKeys.indexOf(k) < 0) {
+                jobs.push(function (done) {
+                  var o = {
+                    teamId: self.teamId,
+                    key: k,
+                    value: self.data[k]
+                  }
+                  o[remoteKey] = self.guid
+
+                  model.create(o).then(function () {
+                    done()
+                  }).catch(done)
+                })
+              }
+            })
+
+            async.series(jobs, function (error) {
+              if (error) { return reject(error) }
+              return resolve()
+            })
+          }).catch(reject)
+        })
       }
 
     }

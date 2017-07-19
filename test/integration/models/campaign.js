@@ -1,5 +1,4 @@
 var should = require('should')
-var dateformat = require('dateformat')
 var async = require('async')
 var path = require('path')
 var specHelper = require(path.join(__dirname, '/../../specHelper'))
@@ -7,7 +6,6 @@ var api
 var team
 
 describe('integartion:campaigns', function () {
-  this.timeout(10 * 1000)
   before(function () { api = specHelper.api })
 
   before(function (done) {
@@ -41,64 +39,87 @@ describe('integartion:campaigns', function () {
 
       [0, 1, 2, 3, 4, 5, 6, 7, 8, 9].forEach(function (i) {
         jobs.push(function (next) {
-          var message = new api.models.Message(team)
+          var message = api.models.Message.build({
+            transport: 'smtp',
+            teamId: 1,
+            personGuid: `${i}-${Math.random()}`,
+            campaignId: campaign.id,
+            body: 'hello',
+            view: {},
+            sentAt: new Date()
+          })
 
-          message.data.personGuid = Math.random()
-          message.data.transport = 'smtp'
-          message.data.campaignId = campaign.id
-          message.data.body = 'hello'
-          message.data.view = {}
-          message.data.sentAt = new Date()
-
-          messages.push(message)
-          message.create(next)
+          message.save().then(() => {
+            messages.push(message)
+            next()
+          }).catch(next)
         })
       });
 
       [0, 1, 2, 3, 4].forEach(function (i) {
         jobs.push(function (next) {
           var message = messages[i]
-          message.data.readAt = new Date()
-          message.edit(next)
+          message.reload().then(() => {
+            message.readAt = new Date()
+            message.save().then(() => { next() }).catch(next)
+          }).catch(next)
         })
       });
 
       [0, 1].forEach(function (i) {
         jobs.push(function (next) {
           var message = messages[i]
-          message.data.actedAt = new Date()
-          message.edit(next)
+          message.reload().then(() => {
+            message.actedAt = new Date()
+            message.save().then(() => { next() }).catch(next)
+          }).catch(next)
         })
       })
 
       async.series(jobs, done)
     })
 
-    after(function (done) { campaign.destroy().then(function () { done() }) })
+    after(function (done) { campaign.destroy().then(function () { done() }).catch(done) })
+
     after(function (done) {
       var jobs = []
       messages.forEach(function (message) {
-        jobs.push(function (next) { message.del(next) })
+        jobs.push(function (next) { message.destroy().then(() => { next() }).catch(next) })
       })
 
       async.parallel(jobs, done)
     })
 
+    it('has messages', function (done) {
+      api.models.Message.count({where: {
+        campaignId: campaign.id
+      }}).then((count) => {
+        count.should.equal(10)
+        done()
+      }).catch(done)
+    })
+
     it('returns valid stats', function (done) {
-      campaign.stats(new Date(0), new Date(), 'year', function (error, terms, buckets) {
+      campaign.stats(new Date(0), new Date(), 'YEAR', function (error, terms, buckets) {
         should.not.exist(error)
+
         buckets.sentAt.should.equal(10)
         buckets.readAt.should.equal(5)
         buckets.actedAt.should.equal(2)
 
         var now = new Date()
-        terms.sentAt[0].key_as_string.should.equal(dateformat(now, 'yyyy'))
-        terms.readAt[0].key_as_string.should.equal(dateformat(now, 'yyyy'))
-        terms.actedAt[0].key_as_string.should.equal(dateformat(now, 'yyyy'))
+        var year = now.getFullYear().toString()
 
-        terms.sentAt[0].doc_count.should.equal(10)
-        terms.readAt[0].doc_count.should.equal(5)
-        terms.actedAt[0].doc_count.should.equal(2)
+        Object.keys(terms.sentAt[0]).length.should.equal(1)
+        Object.keys(terms.sentAt[0])[0].should.equal(year)
+        Object.keys(terms.readAt[0]).length.should.equal(1)
+        Object.keys(terms.readAt[0])[0].should.equal(year)
+        Object.keys(terms.actedAt[0]).length.should.equal(1)
+        Object.keys(terms.actedAt[0])[0].should.equal(year)
+
+        terms.sentAt[0][year].should.deepEqual({smtp: 10})
+        terms.readAt[0][year].should.deepEqual({smtp: 5})
+        terms.actedAt[0][year].should.deepEqual({smtp: 2})
 
         done()
       })
@@ -113,18 +134,21 @@ describe('integartion:campaigns', function () {
     var template
 
     before(function (done) {
-      person = new api.models.Person(team)
-      person.data.source = 'tester'
-      person.data.device = 'phone'
-      person.data.listOptOuts = []
-      person.data.globalOptOut = false
-      person.data.data = {
+      person = api.models.Person.build({
+        teamId: 1,
+        source: 'tester',
+        device: 'phone',
+        listOptOuts: [],
+        globalOptOut: false
+      })
+
+      person.data = {
         firstName: 'fname',
         lastName: 'lame',
         email: 'fake@faker.fake'
       }
 
-      person.create(done)
+      person.save().then(() => { done() }).catch(done)
     })
 
     before(function (done) {
@@ -155,10 +179,10 @@ describe('integartion:campaigns', function () {
       listPerson = api.models.ListPerson.build({
         teamId: 1,
         listId: list.id,
-        personGuid: person.data.guid
+        personGuid: person.guid
       })
 
-      listPerson.save().then(function () { done() })
+      listPerson.save().then(() => { done() }).catch(done)
     })
 
     before(function (done) {
@@ -182,7 +206,7 @@ describe('integartion:campaigns', function () {
       api.resque.stopMultiWorker(done)
     })
 
-    after(function (done) { person.del(done) })
+    after(function (done) { person.destroy().then(() => { done() }) })
     after(function (done) { template.destroy().then(function () { done() }) })
     after(function (done) { list.destroy().then(function () { done() }) })
     after(function (done) { listPerson.destroy().then(function () { done() }) })
@@ -212,17 +236,20 @@ describe('integartion:campaigns', function () {
           campaign.send(next)
         })
 
-        jobs.push(function (next) { setTimeout(next, 1000 * 2) })
+        jobs.push(function (next) {
+          setTimeout(next, 3000 + 1) // to allow the sendMessage job to work
+        })
 
         async.series(jobs, function (error) {
           should.not.exist(error)
-          var alias = api.utils.buildAlias(team, 'messages')
-          api.elasticsearch.search(alias, ['campaignId'], [campaign.id], 0, 10, null, 1, function (error, results, total) {
-            should.not.exist(error)
-            results.length.should.equal(1)
-            results[0].body.should.equal('Hello there, fname')
+
+          api.models.Message.findAll({where: {
+            campaignId: campaign.id
+          }}).then((messages) => {
+            messages.length.should.equal(1)
+            messages[0].body.should.equal('Hello there, fname')
             done()
-          })
+          }).catch(done)
         })
       })
 
@@ -254,10 +281,10 @@ describe('integartion:campaigns', function () {
           templateId: template.id
         })
 
-        campaign.save().then(function () { done() })
+        campaign.save().then(function () { done() }).catch(done)
       })
 
-      after(function (done) { campaign.destroy().then(function () { done() }) })
+      after(function (done) { campaign.destroy().then(function () { done() }).catch(done) })
 
       it('sends (success; first time)', function (done) {
         var jobs = []
@@ -266,17 +293,17 @@ describe('integartion:campaigns', function () {
           campaign.send(next)
         })
 
-        jobs.push(function (next) { setTimeout(next, 1000 * 5) })
+        jobs.push(function (next) { setTimeout(next, 3000 + 1) })
 
         async.series(jobs, function (error) {
           should.not.exist(error)
-          var alias = api.utils.buildAlias(team, 'messages')
-          api.elasticsearch.search(alias, ['campaignId'], [campaign.id], 0, 10, null, 1, function (error, results, total) {
-            should.not.exist(error)
-            results.length.should.equal(1)
-            results[0].body.should.equal('Hello there, fname')
+          api.models.Message.findAll({where: {
+            campaignId: campaign.id
+          }}).then((messages) => {
+            messages.length.should.equal(1)
+            messages[0].body.should.equal('Hello there, fname')
             done()
-          })
+          }).catch(done)
         })
       })
 
@@ -285,6 +312,7 @@ describe('integartion:campaigns', function () {
       })
 
       it('sends (success; second time)', function (done) {
+        this.timeout(10 * 1000)
         var jobs = []
 
         jobs.push(function (next) {
@@ -295,15 +323,16 @@ describe('integartion:campaigns', function () {
 
         async.series(jobs, function (error) {
           should.not.exist(error)
-          var alias = api.utils.buildAlias(team, 'messages')
-          api.elasticsearch.search(alias, ['campaignId'], [campaign.id], 0, 10, null, 1, function (error, results, total) {
-            should.not.exist(error)
-            results[0].body.should.equal('Hello there, fname')
-            results[1].body.should.equal('Hello there, fname')
-            results[0].guid.should.not.equal(results[1].guid)
-            results[0].personGuid.should.equal(results[1].personGuid)
+          api.models.Message.findAll({where: {
+            campaignId: campaign.id
+          }}).then((messages) => {
+            messages.length.should.equal(2)
+            messages[0].body.should.equal('Hello there, fname')
+            messages[1].body.should.equal('Hello there, fname')
+            messages[0].guid.should.not.equal(messages[1].guid)
+            messages[0].personGuid.should.equal(messages[1].personGuid)
             done()
-          })
+          }).catch(done)
         })
       })
 
@@ -342,10 +371,10 @@ describe('integartion:campaigns', function () {
           triggerEventMatch: {'type': 'person_created'}
         })
 
-        campaign.save().then(function () { done() })
+        campaign.save().then(function () { done() }).catch(done)
       })
 
-      after(function (done) { campaign.destroy().then(function () { done() }) })
+      after(function (done) { campaign.destroy().then(function () { done() }).catch(done) })
 
       it('sends (failure; not how it is done)', function (done) {
         var jobs = []
@@ -376,12 +405,13 @@ describe('integartion:campaigns', function () {
           triggerEventMatch: {'type': 'pageView', data: {'page': 'myPage'}}
         })
 
-        campaign.save().then(function () { done() })
+        campaign.save().then(function () { done() }).catch(done)
       })
 
-      after(function (done) { campaign.destroy().then(function () { done() }) })
+      after(function (done) { campaign.destroy().then(function () { done() }).catch(done) })
 
       it('sends (success)', function (done) {
+        this.timeout(10 * 1000)
         var jobs = []
 
         jobs.push(function (next) {
@@ -391,7 +421,7 @@ describe('integartion:campaigns', function () {
             device: 'tester',
             type: 'pageView',
             page: 'myPage',
-            personGuid: person.data.guid,
+            personGuid: person.guid,
             data: {page: 'myPage'}
           }, function (result) {
             should.not.exist(result.error)
@@ -404,17 +434,18 @@ describe('integartion:campaigns', function () {
 
         async.series(jobs, function (error) {
           should.not.exist(error)
-          var alias = api.utils.buildAlias(team, 'messages')
-          api.elasticsearch.search(alias, ['campaignId'], [campaign.id], 0, 10, null, 1, function (error, results, total) {
-            should.not.exist(error)
-            results.length.should.equal(1)
-            results[0].body.should.equal('Hello there, fname')
+          api.models.Message.findAll({where: {
+            campaignId: campaign.id
+          }}).then((messages) => {
+            messages.length.should.equal(1)
+            messages[0].body.should.equal('Hello there, fname')
             done()
-          })
+          }).catch(done)
         })
       })
 
       it('will not send for other events', function (done) {
+        this.timeout(10 * 1000)
         var jobs = []
 
         jobs.push(function (next) {
@@ -424,7 +455,7 @@ describe('integartion:campaigns', function () {
             device: 'tester',
             type: 'pageView',
             page: 'myPage',
-            personGuid: person.data.guid,
+            personGuid: person.guid,
             data: {page: 'otherPage'}
           }, function (result) {
             should.not.exist(result.error)
@@ -437,13 +468,13 @@ describe('integartion:campaigns', function () {
 
         async.series(jobs, function (error) {
           should.not.exist(error)
-          var alias = api.utils.buildAlias(team, 'messages')
-          api.elasticsearch.search(alias, ['campaignId'], [campaign.id], 0, 10, null, 1, function (error, results, total) {
-            should.not.exist(error)
-            results.length.should.equal(1)
-            results[0].body.should.equal('Hello there, fname')
+          api.models.Message.findAll({where: {
+            campaignId: campaign.id
+          }}).then((messages) => {
+            messages.length.should.equal(1)
+            messages[0].body.should.equal('Hello there, fname')
             done()
-          })
+          }).catch(done)
         })
       })
     })

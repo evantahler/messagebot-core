@@ -23,7 +23,7 @@ var loader = function (api) {
     model: api.sequelize.sequelize.define('user',
       {
         'teamId': {
-          type: Sequelize.INTEGER,
+          type: Sequelize.BIGINT,
           allowNull: false
         },
         'email': {

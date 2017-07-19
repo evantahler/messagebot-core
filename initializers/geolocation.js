@@ -13,10 +13,10 @@ module.exports = {
 
     api.geolocation = {
       build: function (params, ip) {
-        if (params.lat && params.lon) {
+        if (params.lat && params.lng) {
           return {
             lat: params.lat,
-            lon: params.location
+            lng: params.location
           }
         } else if (ip) {
           try {
@@ -29,7 +29,7 @@ module.exports = {
             ) {
               return {
                 lat: geoDetails.location.latitude,
-                lon: geoDetails.location.longitude
+                lng: geoDetails.location.longitude
               }
             }
           } catch (e) {

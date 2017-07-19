@@ -22,18 +22,22 @@ describe('action:person', function () {
   })
 
   before(function (done) {
-    otherPerson = new api.models.Person(team)
-    otherPerson.data.source = 'tester'
-    otherPerson.data.device = 'phone'
-    otherPerson.data.listOptOuts = []
-    otherPerson.data.globalOptOut = false
-    otherPerson.data.data = {
+    otherPerson = api.models.Person.build({
+      teamId: team.id,
+      source: 'tester',
+      device: 'phone',
+      listOptOuts: [],
+      globalOptOut: false
+    })
+    otherPerson.data = {
       firstName: 'fname',
-      lastName: 'lame',
+      lastName: 'lname',
       email: 'otherPerson@faker.fake'
     }
 
-    otherPerson.create(done)
+    otherPerson.save().then(function () {
+      done()
+    }).catch(done)
   })
 
   before(function (done) {
@@ -49,13 +53,12 @@ describe('action:person', function () {
   })
 
   after(function (done) { list.destroy().then(function () { done() }) })
-  after(function (done) { otherPerson.del(done) })
+  after(function (done) { otherPerson.destroy().then(function () { done() }) })
 
   describe('person:create', function () {
     it('succeeds', function (done) {
       api.specHelper.runAction('person:create', {
         teamId: team.id,
-        sync: true,
         source: 'tester',
         data: {
           firstName: 'fname',
@@ -64,8 +67,10 @@ describe('action:person', function () {
         }
       }, function (response) {
         should.not.exist(response.error)
-        should.exist(response.guid)
-        personGuid = response.guid
+        should.exist(response.person.guid)
+        personGuid = response.person.guid
+        response.person.source.should.equal('tester')
+        response.person.data.email.should.equal('fake@faker.fake')
         done()
       })
     })
@@ -107,7 +112,6 @@ describe('action:person', function () {
     it('fails (uniqueness failure)', function (done) {
       api.specHelper.runAction('person:create', {
         teamId: team.id,
-        sync: true,
         source: 'tester',
         data: {
           firstName: 'fname',
@@ -115,7 +119,7 @@ describe('action:person', function () {
           email: 'fake@faker.fake'
         }
       }, function (response) {
-        response.error.should.equal('Error: uniqueFields:data.email uniqueness violated via #' + personGuid)
+        response.error.should.equal(`Error: personGuid ${personGuid} already exists with email of fake@faker.fake`)
         done()
       })
     })
@@ -123,7 +127,6 @@ describe('action:person', function () {
     it('fails (missing param)', function (done) {
       api.specHelper.runAction('person:create', {
         teamId: team.id,
-        sync: true,
         data: {}
       }, function (response) {
         response.error.should.equal('Error: source is a required parameter for this action')
@@ -192,7 +195,7 @@ describe('action:person', function () {
         guid: personGuid,
         data: {email: 'otherPerson@faker.fake'}
       }, function (response) {
-        response.error.should.equal('Error: uniqueFields:data.email uniqueness violated via #' + otherPerson.data.guid)
+        response.error.should.equal(`Error: personGuid ${otherPerson.guid} already exists with email of otherPerson@faker.fake`)
         done()
       })
     })
@@ -304,7 +307,7 @@ describe('action:person', function () {
     it('succeeds', function (done) {
       specHelper.requestWithLogin(email, password, 'people:search', {
         searchKeys: ['data.email'],
-        searchValues: ['*@faker.fake'],
+        searchValues: ['%@faker.fake'],
         from: 1,
         size: 1
       }, function (response) {
@@ -318,7 +321,7 @@ describe('action:person', function () {
     it('fails (not logged in)', function (done) {
       api.specHelper.runAction('people:search', {
         searchKeys: ['data.email'],
-        searchValues: ['*@faker.fake']
+        searchValues: ['%@faker.fake']
       }, function (response) {
         response.error.should.equal('Error: Please log in to continue')
         done()
@@ -330,14 +333,14 @@ describe('action:person', function () {
     it('succeeds', function (done) {
       specHelper.requestWithLogin(email, password, 'people:aggregation', {
         searchKeys: ['data.email'],
-        searchValues: ['*@faker.fake'],
-        interval: 'day'
+        searchValues: ['%@faker.fake']
       }, function (response) {
         should.not.exist(response.error)
-        Object.keys(response.aggregations).length.should.equal(2)
-        response.aggregations.tester[0].doc_count.should.equal(2)
-        response.selections.should.deepEqual(['tester'])
-        response.selectionsName.should.equal('sources')
+        Object.keys(response.aggregations).length.should.equal(1)
+        var key = Object.keys(response.aggregations)[0]
+        var date = new Date(key)
+        specHelper.dateCompare(date).should.equal(true)
+        response.aggregations[key].should.deepEqual({tester: 2})
         done()
       })
     })
@@ -345,8 +348,7 @@ describe('action:person', function () {
     it('fails (not logged in)', function (done) {
       api.specHelper.runAction('people:aggregation', {
         searchKeys: ['data.email'],
-        searchValues: ['*@faker.fake'],
-        interval: 'day'
+        searchValues: ['%@faker.fake']
       }, function (response) {
         response.error.should.equal('Error: Please log in to continue')
         done()
@@ -359,24 +361,34 @@ describe('action:person', function () {
     var message
 
     before(function (done) {
-      event = new api.models.Event(team)
-      event.data.messageGuid = Math.random()
-      event.data.personGuid = personGuid
-      event.data.type = 'boughtTheThing'
-      event.data.ip = '0.0.0.0'
-      event.data.device = 'phone'
-      event.create(done)
+      event = api.models.Event.build({
+        messageGuid: Math.random(),
+        teamId: team.id,
+        personGuid: personGuid,
+        ip: '0.0.0.0',
+        device: 'phone',
+        type: 'boughtTheThing'
+      })
+
+      event.save().then(() => {
+        done()
+      }).catch(done)
     })
 
     before(function (done) {
-      message = new api.models.Message(team)
-      message.data.personGuid = personGuid
-      message.data.transport = 'smtp'
-      message.data.campaignId = '1'
-      message.data.body = ''
-      message.data.view = {}
-      message.data.sentAt = new Date()
-      message.create(done)
+      message = api.models.Message.build({
+        teamId: team.id,
+        transport: 'smtp',
+        personGuid: personGuid,
+        campaignId: 1,
+        body: '',
+        view: {},
+        sentAt: new Date()
+      })
+
+      message.save().then(() => {
+        done()
+      }).catch(done)
     })
 
     it('succeeds', function (done) {
@@ -389,30 +401,49 @@ describe('action:person', function () {
       })
     })
 
-    it('succeeds (deletes related listPeople, messages, and events)', function (done) {
+    it('succeeds (deletes related personData, listPeople, messages, and events)', function (done) {
       var jobs = []
 
       jobs.push(function (next) {
-        var checkMessage = new api.models.Message(team, message.data.guid)
-        checkMessage.hydrate(function (error) {
-          String(error).should.equal('Error: Message (' + message.data.guid + ') not found')
+        api.models.PersonData.count({where: {personGuid: personGuid}}).then((count) => {
+          count.should.equal(0)
           next()
-        })
+        }).catch(next)
       })
 
       jobs.push(function (next) {
-        var checkEvent = new api.models.Event(team, event.data.guid)
-        checkEvent.hydrate(function (error) {
-          String(error).should.equal('Error: Event (' + event.data.guid + ') not found')
+        api.models.Message.count({where: {personGuid: personGuid}}).then((count) => {
+          count.should.equal(0)
           next()
-        })
+        }).catch(next)
       })
 
-      jobs.push(function (done) {
+      jobs.push(function (next) {
+        api.models.MessageData.count({where: {messageGuid: message.guid}}).then((count) => {
+          count.should.equal(0)
+          next()
+        }).catch(next)
+      })
+
+      jobs.push(function (next) {
+        api.models.Event.count({where: {personGuid: personGuid}}).then((count) => {
+          count.should.equal(0)
+          next()
+        }).catch(next)
+      })
+
+      jobs.push(function (next) {
+        api.models.EventData.count({where: {eventGuid: event.guid}}).then((count) => {
+          count.should.equal(0)
+          next()
+        }).catch(next)
+      })
+
+      jobs.push(function (next) {
         api.models.ListPerson.count({ where: { teamId: team.id, personGuid: personGuid } }).then(function (count) {
           count.should.equal(0)
-          done()
-        })
+          next()
+        }).catch(next)
       })
 
       async.series(jobs, function (error) {

@@ -7,7 +7,6 @@ exports.eventCreate = {
 
   inputs: {
     teamId: { required: false, formatter: function (p) { return parseInt(p) } },
-    sync: { required: true, default: false },
     ip: { required: false },
     device: { required: true },
     guid: { required: false },
@@ -19,7 +18,7 @@ exports.eventCreate = {
       required: false,
       formatter: function (p) { return parseFloat(p) }
     },
-    lon: {
+    lng: {
       required: false,
       formatter: function (p) { return parseFloat(p) }
     },
@@ -32,37 +31,23 @@ exports.eventCreate = {
   },
 
   run: function (api, data, next) {
-    var event = new api.models.Event(data.team)
-    event.data = data.params
+    var event = api.models.Event.build(data.params)
+    event.data = data.params.data
 
-    if (!event.data.ip) { event.data.ip = data.connection.remoteIP }
-    event.data.location = api.geolocation.build(data.params, event.data.ip)
+    if (!event.ip) { event.ip = data.connection.remoteIP }
+    var location = api.geolocation.build(data.params, event.ip)
+    if (location) { event.lat = location.lat; event.lng = location.lng }
 
-    // return without waiting for the crete callback; log errors
-    // this effectivley allows the tracking request to 'buffer' in RAM & returning to the client quickly
-    // guid will be hydrated syncrhonusly before the save operation
-    if (data.params.sync === false) {
-      event.create(function (error) {
-        if (error) {
-          api.log('event creation error: ' + error, 'error', data.params)
-        } else {
-          api.tasks.enqueueIn(api.config.elasticsearch.cacheTime * 1, 'events:process', {teamId: data.team.id, events: [event.data.guid]}, 'messagebot:events')
-        }
-      })
-      data.response.guid = event.data.guid
-      next()
-    } else {
-      event.create(function (error) {
-        if (error) { return next(error) }
-        data.response.guid = event.data.guid
-        if (data.connection.extension === 'gif') {
-          data.toRender = false
-          data.connection.rawConnection.responseHttpCode = 200
-          data.connection.sendFile('tracking/tracking.gif')
-        }
-        api.tasks.enqueueIn(api.config.elasticsearch.cacheTime * 1, 'events:process', {teamId: data.team.id, events: [event.data.guid]}, 'messagebot:events', next)
-      })
-    }
+    event.save().then(() => {
+      data.response.event = event.apiData()
+      if (data.connection.extension === 'gif') {
+        data.toRender = false
+        data.connection.rawConnection.responseHttpCode = 200
+        data.connection.sendFile('tracking/tracking.gif')
+      }
+
+      api.tasks.enqueueIn(1, 'events:process', {teamId: data.team.id, events: [event.guid]}, 'messagebot:events', next)
+    }).catch(next)
   }
 }
 
@@ -85,24 +70,37 @@ exports.eventEdit = {
       required: false,
       formatter: function (p) { return parseFloat(p) }
     },
-    lon: {
+    lng: {
       required: false,
       formatter: function (p) { return parseFloat(p) }
     }
   },
 
   run: function (api, data, next) {
-    var event = new api.models.Event(data.team, data.params.guid)
-    event.data = data.params
+    api.models.Event.findOne({where: {
+      teamId: data.team.id,
+      guid: data.params.guid
+    }}).then((event) => {
+      if (!event) { return next(new Error(`Event (${data.params.guid}) not found`)) }
+      event.hydrate(function (error) {
+        if (error) { return next(error) }
 
-    var newLocation = api.geolocation.build(data.params, event.data.ip)
-    if (newLocation) { event.data.location = newLocation }
+        ['ip', 'device', 'personGuid', 'messageGuid', 'type', 'lat', 'lng'].forEach((k) => {
+          if (data.params[k]) { event[k] = data.params[k] }
+        })
 
-    event.edit(function (error) {
-      if (error) { return next(error) }
-      data.response.event = event.data
-      api.tasks.enqueueIn(api.config.elasticsearch.cacheTime * 1, 'events:process', {teamId: data.team.id, events: [event.data.guid]}, 'messagebot:events', next)
-    })
+        if (data.params.data) {
+          Object.keys(data.params.data).forEach(function (k) {
+            event.data[k] = data.params.data[k]
+          })
+        }
+
+        event.save().then(() => {
+          data.response.event = event.apiData()
+          api.tasks.enqueueIn(1, 'events:process', {teamId: data.team.id, events: [event.guid]}, 'messagebot:events', next)
+        }).catch(next)
+      })
+    }).catch(next)
   }
 }
 
@@ -118,13 +116,17 @@ exports.eventView = {
   },
 
   run: function (api, data, next) {
-    var event = new api.models.Event(data.team, data.params.guid)
-
-    event.hydrate(function (error) {
-      if (error) { return next(error) }
-      data.response.event = event.data
-      next()
-    })
+    api.models.Event.findOne({where: {
+      teamId: data.team.id,
+      guid: data.params.guid
+    }}).then((event) => {
+      if (!event) { return next(new Error(`Event (${data.params.guid}) not found`)) }
+      event.hydrate(function (error) {
+        if (error) { return next(error) }
+        data.response.event = event.apiData()
+        next()
+      })
+    }).catch(next)
   }
 }
 
@@ -140,14 +142,12 @@ exports.eventDelete = {
   },
 
   run: function (api, data, next) {
-    var event = new api.models.Event(data.team, data.params.guid)
-
-    event.hydrate(function (error) {
-      if (error) { return next(error) }
-      event.del(function (error) {
-        if (error) { return next(error) }
-        next()
-      })
-    })
+    api.models.Event.findOne({where: {
+      teamId: data.team.id,
+      guid: data.params.guid
+    }}).then((event) => {
+      if (!event) { return next(new Error(`Event (${data.params.guid}) not found`)) }
+      event.destroy().then(() => { next() }).catch(next)
+    }).catch(next)
   }
 }
