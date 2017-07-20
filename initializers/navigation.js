@@ -18,6 +18,16 @@ module.exports = {
       ]
     })
 
+    api.navigation.navigation.push({
+      title: 'App',
+      align: 'right',
+      glyphicon: 'user',
+      loggedIn: false,
+      elements: [
+        {route: '/sign-in', title: 'Sign In', glyphicon: 'user', highlights: ['^/sign-in$']}
+      ]
+    })
+
     /* Base Navigation */
 
     api.navigation.navigation.push({
@@ -66,7 +76,7 @@ module.exports = {
         {divider: true},
         {route: '/user/edit', title: 'Account', glyphicon: 'user', highlights: ['^/account$']},
         {route: '/users/list', title: 'Users', glyphicon: 'th', highlights: ['^/users$']},
-        {route: '/logout', title: 'Log Out', glyphicon: 'off', highlights: ['^/logout$']}
+        {route: '/sign-out', title: 'Sign Out', glyphicon: 'off', highlights: ['^/sign-out$']}
       ]
     })
 
