@@ -3,13 +3,6 @@ var async = require('async')
 
 var loader = function (api) {
   /* --- Private Methods --- */
-
-  var reloadCampaigns = function () {
-    api.redis.doCluster('api.campaigns.loadTriggered', null, null, function (error) {
-      if (error) { throw (error) }
-    })
-  }
-
   var validTypes = ['simple', 'recurring', 'trigger']
 
   var sendSimple = function (campaign, list, callback) {
@@ -151,14 +144,9 @@ var loader = function (api) {
 
       {
         hooks: {
-          afterCreate: function () { reloadCampaigns() },
-          afterUpdate: function () { reloadCampaigns() },
-          afterSave: function () { reloadCampaigns() },
-          afterUpsert: function () { reloadCampaigns() },
           beforeDestroy: function (self) {
             return new Promise((resolve, reject) => {
               api.models.Message.destroy({where: {campaignId: self.id}}).then(() => {
-                reloadCampaigns()
                 resolve()
               }).catch(reject)
             })
