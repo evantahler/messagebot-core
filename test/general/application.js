@@ -25,28 +25,42 @@ describe('general:applicaiton', function () {
       })
     })
 
-    it('api.utils.determineActionsTeam', function (done) {
-      var team
-      api.teams.teams.length.should.equal(1)
+    describe('api.utils.determineActionsTeam', () => {
+      it('works for id (success)', (done) => {
+        api.utils.determineActionsTeam({params: {teamId: 1}}, (error, team) => {
+          should.not.exist(error)
+          should.exist(team)
+          done()
+        })
+      })
 
-      // via ID
-      team = api.utils.determineActionsTeam({params: {teamId: 1}})
-      should.exist(team)
+      it('works for id (failure)', (done) => {
+        api.utils.determineActionsTeam({params: {teamId: 99}}, (error, team) => {
+          should.not.exist(error)
+          should.not.exist(team)
+          done()
+        })
+      })
 
-      team = api.utils.determineActionsTeam({params: {teamId: 99}})
-      should.not.exist(team)
+      it('works for session (success)', (done) => {
+        api.utils.determineActionsTeam({session: {teamId: 1}}, (error, team) => {
+          should.not.exist(error)
+          should.exist(team)
+          done()
+        })
+      })
 
-      // via session
-      team = api.utils.determineActionsTeam({session: {teamId: 1}})
-      should.exist(team)
+      it('works for session (failure)', (done) => {
+        api.utils.determineActionsTeam({session: {teamId: 99}}, (error, team) => {
+          should.not.exist(error)
+          should.not.exist(team)
+          done()
+        })
+      })
 
-      team = api.utils.determineActionsTeam({session: {teamId: 99}})
-      should.not.exist(team)
-
-      // via url
       // TODO
-
-      done()
+      it('works for URL (success)')
+      it('works for URL (failure)')
     })
   })
 })

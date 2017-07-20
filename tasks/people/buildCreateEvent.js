@@ -16,8 +16,10 @@ exports.task = {
     var event
 
     jobs.push(function (done) {
-      team = api.utils.determineActionsTeam({params: params})
-      done()
+      api.utils.determineActionsTeam({params: params}, (error, _team) => {
+        team = _team
+        done(error)
+      })
     })
 
     jobs.push(function (done) {

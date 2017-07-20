@@ -164,39 +164,41 @@ var loader = function (api) {
             var terms = {sentAt: [], readAt: [], actedAt: []}
             var totals = {sentAt: 0, readAt: 0, actedAt: 0}
 
-            var team = api.utils.determineActionsTeam({params: {teamId: campaign.teamId}})
+            api.utils.determineActionsTeam({params: {teamId: campaign.teamId}}, (error, team) => {
+              if (error) { return callback(error) }
 
-            Object.keys(totals).forEach(function (term) {
-              jobs.push(function (done) {
-                var where = {
-                  teamId: team.id,
-                  campaignId: campaign.id,
-                  createdAt: { $lte: end, $gte: start }
-                }
-                where[term] = { $not: null }
-                api.models.Message.findAll({
-                  attributes: [
-                    [`${interval}(createdAt)`, 'DATE'],
-                    'transport',
-                    [api.sequelize.sequelize.fn('count', api.sequelize.sequelize.col('guid')), 'TOTAL']
-                  ],
-                  where: where,
-                  group: [api.sequelize.sequelize.literal(`${interval}(createdAt)`), 'transport']
-                }).then((rows) => {
-                  rows.forEach((row) => {
-                    totals[term] = totals[term] + row.dataValues.TOTAL
-                    var d = {}
-                    d[row.dataValues.DATE] = {}
-                    d[row.dataValues.DATE][row.dataValues.transport] = row.dataValues.TOTAL
-                    terms[term].push(d)
-                  })
-                  done()
-                }).catch(done)
+              Object.keys(totals).forEach(function (term) {
+                jobs.push(function (done) {
+                  var where = {
+                    teamId: team.id,
+                    campaignId: campaign.id,
+                    createdAt: { $lte: end, $gte: start }
+                  }
+                  where[term] = { $not: null }
+                  api.models.Message.findAll({
+                    attributes: [
+                      [`${interval}(createdAt)`, 'DATE'],
+                      'transport',
+                      [api.sequelize.sequelize.fn('count', api.sequelize.sequelize.col('guid')), 'TOTAL']
+                    ],
+                    where: where,
+                    group: [api.sequelize.sequelize.literal(`${interval}(createdAt)`), 'transport']
+                  }).then((rows) => {
+                    rows.forEach((row) => {
+                      totals[term] = totals[term] + row.dataValues.TOTAL
+                      var d = {}
+                      d[row.dataValues.DATE] = {}
+                      d[row.dataValues.DATE][row.dataValues.transport] = row.dataValues.TOTAL
+                      terms[term].push(d)
+                    })
+                    done()
+                  }).catch(done)
+                })
               })
-            })
 
-            async.series(jobs, function (error) {
-              callback(error, terms, totals)
+              async.series(jobs, function (error) {
+                callback(error, terms, totals)
+              })
             })
           },
 

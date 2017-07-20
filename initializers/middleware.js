@@ -54,9 +54,12 @@ module.exports = {
         name: 'require-team',
         global: false,
         preProcessor: function (data, callback) {
-          data.team = api.utils.determineActionsTeam(data)
-          if (!data.team) { return callback(new Error('Team not found for this request')) }
-          return callback()
+          api.utils.determineActionsTeam(data, (error, team) => {
+            if (error) { return callback(error) }
+            if (!team) { return callback(new Error('Team not found for this request')) }
+            data.team = team
+            return callback()
+          })
         }
       }
     }

@@ -13,35 +13,37 @@ exports.task = {
     var workJobs = []
     var events = []
 
-    var team = api.utils.determineActionsTeam({params: params})
+    api.utils.determineActionsTeam({params: params}, (error, team) => {
+      if (error) { return next(error) }
 
-    params.events.forEach((eventGuid) => {
+      params.events.forEach((eventGuid) => {
+        loadJobs.push((done) => {
+          api.models.Event.findOne({where: {guid: eventGuid}}).then((event) => {
+            if (!event) { return done(new Error(`Message (${eventGuid}) not found`)) }
+            event.hydrate((error) => {
+              if (error) { return done(error) }
+              events.push(event)
+              done()
+            })
+          }).catch(done)
+        })
+      })
+
       loadJobs.push((done) => {
-        api.models.Event.findOne({where: {guid: eventGuid}}).then((event) => {
-          if (!event) { return done(new Error(`Message (${eventGuid}) not found`)) }
-          event.hydrate((error) => {
-            if (error) { return done(error) }
-            events.push(event)
-            done()
+        events.forEach((event) => {
+          workJobs.push((workDone) => {
+            api.events.triggerCampaign(team, event, workDone)
           })
-        }).catch(done)
-      })
-    })
 
-    loadJobs.push((done) => {
-      events.forEach((event) => {
-        workJobs.push((workDone) => {
-          api.events.triggerCampaign(team, event, workDone)
+          workJobs.push((workDone) => {
+            api.events.propigateLocationToPerson(team, event, workDone)
+          })
         })
-
-        workJobs.push((workDone) => {
-          api.events.propigateLocationToPerson(team, event, workDone)
-        })
+        done()
       })
-      done()
-    })
 
-    loadJobs.push((done) => { async.series(workJobs, done) })
-    async.series(loadJobs, (error) => { next(error) })
+      loadJobs.push((done) => { async.series(workJobs, done) })
+      async.series(loadJobs, (error) => { next(error) })
+    })
   }
 }

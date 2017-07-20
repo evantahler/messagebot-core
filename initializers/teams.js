@@ -6,33 +6,7 @@ module.exports = {
 
   initialize: function (api, next) {
     api.teams = {
-      teams: [],
       settings: [],
-
-      load: function (callback) {
-        var jobs = []
-        if (api.running) {
-          api.models.Team.findAll().then(function (teams) {
-            api.teams.teams = teams
-
-            teams.forEach(function (team) {
-              jobs.push(function (done) {
-                api.teams.ensureSettings(team, done)
-              })
-            })
-
-            async.series(jobs, function (error) {
-              process.nextTick(function () {
-                if (error) { return callback(error) }
-                api.log('loaded ' + teams.length + ' teams into memory')
-                return callback()
-              })
-            })
-          })
-        } else {
-          return callback()
-        }
-      },
 
       ensureSettings: function (team, callback) {
         var jobs = []
@@ -67,13 +41,18 @@ module.exports = {
 
           async.series(jobs, callback)
         }).catch(callback)
+      },
+
+      ensureSettingsPrommise: function (team) {
+        return new Promise((resolve, reject) => {
+          api.teams.ensureSettings(team, (error) => {
+            if (error) { return reject(error) }
+            resolve()
+          })
+        })
       }
     }
 
     next()
-  },
-
-  start: function (api, next) {
-    api.teams.load(next)
   }
 }

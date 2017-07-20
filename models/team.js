@@ -3,16 +3,8 @@ var Sequelize = require('sequelize')
 var loader = function (api) {
   /* --- Priave Methods --- */
 
-  // This will signal all nodes in the cluster to reload thier teams cache
-  //  and rebuild the client JS files
-  var reloadTeams = function () {
-    api.redis.doCluster('api.teams.load', null, null, function (error) {
-      if (error) { throw (error) }
-    })
-  }
-
   var destorySettings = function (team) {
-    api.models.Setting.destroy({
+    return api.models.Setting.destroy({
       where: { teamId: team.id }
     })
   }
@@ -47,16 +39,11 @@ var loader = function (api) {
 
       {
         hooks: {
-          afterCreate: function () { reloadTeams() },
-          afterUpdate: function () { reloadTeams() },
-          afterSave: function () { reloadTeams() },
-          afterUpsert: function () { reloadTeams() },
-          afterDestroy: function () {
-            var team = this
-            reloadTeams()
-            destorySettings(team)
-          }
-
+          afterCreate: (self) => { api.teams.ensureSettingsPrommise(self) },
+          afterUpdate: (self) => { api.teams.ensureSettingsPrommise(self) },
+          afterSave: (self) => { api.teams.ensureSettingsPrommise(self) },
+          afterUpsert: (self) => { api.teams.ensureSettingsPrommise(self) },
+          afterDestroy: (self) => { destorySettings(self) }
         },
 
         instanceMethods: {
