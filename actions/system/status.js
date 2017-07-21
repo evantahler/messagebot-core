@@ -14,7 +14,6 @@ exports.status = {
     var team
 
     data.response.database = {}
-    data.response.elasticsearch = {}
     data.response.redis = {}
     data.response.node = {}
 
