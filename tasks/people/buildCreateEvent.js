@@ -56,6 +56,8 @@ exports.task = {
       }, 'messagebot:events', done)
     })
 
-    async.series(jobs, next)
+    async.series(jobs, (error) => {
+      next(error)
+    })
   }
 }
