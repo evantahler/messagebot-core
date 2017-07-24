@@ -16,7 +16,13 @@ var buildWhere = function (api, data) {
 
   for (var j in data.params.searchKeys) {
     if (data.params.searchKeys[j].indexOf('data.') !== 0) {
-      where[data.params.searchKeys[j]] = data.params.searchValues[j]
+      if (data.params.searchValues[j] === '%') {
+        where[data.params.searchKeys[j]] = {$ne: null}
+      } else if (data.params.searchValues[j].indexOf('%') >= 0) {
+        where[data.params.searchKeys[j]] = { $like: data.params.searchValues[j] }
+      } else {
+        where[data.params.searchKeys[j]] = data.params.searchValues[j]
+      }
     }
   }
 

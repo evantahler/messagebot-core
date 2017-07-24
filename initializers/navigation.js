@@ -72,7 +72,7 @@ module.exports = {
         {divider: true},
         {route: '/system/settings', title: 'Settings', glyphicon: 'cog', highlights: ['^/settings$']},
         // {route: '/swagger', title: 'API', glyphicon: 'cloud', highlights: null},
-        {route: '/system/resque/overview', title: 'Resque', glyphicon: 'road', highlights: null},
+        {route: '/system/resque', title: 'Resque', glyphicon: 'road', highlights: null},
         {divider: true},
         {route: '/user/edit', title: 'Account', glyphicon: 'user', highlights: ['^/account$']},
         {route: '/users/list', title: 'Users', glyphicon: 'th', highlights: ['^/users$']},
