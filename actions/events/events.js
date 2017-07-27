@@ -52,14 +52,13 @@ exports.eventsSearch = {
       required: false,
       formatter: function (p) { return parseInt(p) },
       default: function (p) { return 100 }
-    },
-    sort: { required: false }
+    }
   },
 
   run: function (api, data, next) {
     api.models.Event.findAndCountAll({
       where: buildWhere(api, data),
-      order: data.params.sort,
+      order: [['createdAt', 'DESC']],
       limit: data.params.size,
       offset: data.params.from
     }).then(function (result) {
@@ -93,8 +92,7 @@ exports.eventsAggregation = {
       required: false,
       formatter: function (p) { return parseInt(p) },
       default: function (p) { return new Date().getTime() }
-    },
-    sort: { required: false }
+    }
   },
 
   run: function (api, data, next) {
@@ -105,7 +103,6 @@ exports.eventsAggregation = {
         [api.sequelize.sequelize.fn('count', api.sequelize.sequelize.col('guid')), 'TOTAL']
       ],
       where: buildWhere(api, data),
-      order: data.params.sort,
       limit: data.params.size,
       offset: data.params.from,
       group: [api.sequelize.sequelize.literal(`${data.params.interval}(createdAt)`), data.params.aggregation]
