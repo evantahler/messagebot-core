@@ -1,6 +1,11 @@
 var buildWhere = function (api, data) {
-  var where = {
-    teamId: data.team.id
+  var where = { teamId: data.team.id }
+
+  if (data.params.start && data.params.end) {
+    where.createdAt = {
+      $gte: new Date(data.params.start),
+      $lte: new Date(data.params.end)
+    }
   }
 
   for (var i in data.params.searchKeys) {
@@ -79,15 +84,15 @@ exports.eventsAggregation = {
       required: true,
       default: 'DATE'
     },
-    from: {
+    start: {
       required: false,
       formatter: function (p) { return parseInt(p) },
       default: function (p) { return 0 }
     },
-    size: {
+    end: {
       required: false,
       formatter: function (p) { return parseInt(p) },
-      default: function (p) { return 100 }
+      default: function (p) { return new Date().getTime() }
     },
     sort: { required: false }
   },
