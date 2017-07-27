@@ -189,6 +189,44 @@ describe('action:person', function () {
       })
     })
 
+    it('can add arbitrary data', (done) => {
+      api.specHelper.runAction('person:edit', {
+        teamId: team.id,
+        guid: personGuid,
+        data: {thing: 'stuff'}
+      }, function (response) {
+        should.not.exist(response.error)
+        api.specHelper.runAction('person:view', {
+          teamId: team.id,
+          guid: personGuid
+        }, function (response) {
+          should.not.exist(response.error)
+          response.person.data.thing.should.equal('stuff')
+          response.person.data.email.should.equal('newEmail@faker.fake')
+          done()
+        })
+      })
+    })
+
+    it('can remove arbitrary data', (done) => {
+      api.specHelper.runAction('person:edit', {
+        teamId: team.id,
+        guid: personGuid,
+        data: {thing: '_delete'}
+      }, function (response) {
+        should.not.exist(response.error)
+        api.specHelper.runAction('person:view', {
+          teamId: team.id,
+          guid: personGuid
+        }, function (response) {
+          should.not.exist(response.error)
+          should.not.exist(response.person.data.thing)
+          response.person.data.email.should.equal('newEmail@faker.fake')
+          done()
+        })
+      })
+    })
+
     it('fails (uniqueness failure)', function (done) {
       api.specHelper.runAction('person:edit', {
         teamId: team.id,

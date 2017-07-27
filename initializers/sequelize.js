@@ -127,9 +127,13 @@ module.exports = {
                 if (k === d.key) {
                   consumedKeys.push(k)
                   jobs.push(function (done) {
-                    d.updateAttributes({value: self.data[k]}).then(function () {
-                      done()
-                    }).catch(done)
+                    if (self.data[k] === '_delete') {
+                      d.destroy().then(() => { done() }).catch(done)
+                    } else {
+                      d.updateAttributes({value: self.data[k]}).then(function () {
+                        done()
+                      }).catch(done)
+                    }
                   })
                 }
               })
