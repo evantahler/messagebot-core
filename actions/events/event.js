@@ -6,10 +6,10 @@ exports.eventCreate = {
   middleware: ['require-team'],
 
   inputs: {
+    guid: { required: false },
     teamId: { required: false, formatter: function (p) { return parseInt(p) } },
     ip: { required: false },
     device: { required: true },
-    guid: { required: false },
     personGuid: { required: true },
     messageGuid: { required: false },
     type: { required: true },

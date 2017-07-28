@@ -1,4 +1,5 @@
 var Sequelize = require('sequelize')
+var uuid = require('uuid')
 
 var loader = function (api) {
   /* --- Priave Methods --- */
@@ -13,7 +14,7 @@ var loader = function (api) {
         guid: {
           type: Sequelize.UUID,
           primaryKey: true,
-          defaultValue: Sequelize.UUIDV4
+          defaultValue: () => { return uuid.v4() }
         },
         teamId: {
           allowNull: false,

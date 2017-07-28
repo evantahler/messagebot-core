@@ -130,9 +130,7 @@ module.exports = {
                     if (self.data[k] === '_delete') {
                       d.destroy().then(() => { done() }).catch(done)
                     } else {
-                      d.updateAttributes({value: self.data[k]}).then(function () {
-                        done()
-                      }).catch(done)
+                      d.updateAttributes({value: self.data[k]}).then(() => { done() }).catch(done)
                     }
                   })
                 }
