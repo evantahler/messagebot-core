@@ -1,3 +1,5 @@
+const async = require('async')
+
 var buildWhere = function (api, data) {
   var where = { teamId: data.team.id }
 
@@ -63,8 +65,19 @@ exports.eventsSearch = {
       offset: data.params.from
     }).then(function (result) {
       data.response.total = result.count
-      data.response.events = result.rows.map(function (row) { return row.apiData() })
-      next()
+      data.response.events = []
+      let jobs = []
+      data.response.total = result.count
+      result.rows.forEach((row) => {
+        jobs.push((done) => {
+          row.hydrate((error) => {
+            data.response.events.push(row.apiData())
+            done(error)
+          })
+        })
+      })
+
+      async.parallel(jobs, next)
     }).catch(next)
   }
 }
