@@ -14,9 +14,11 @@ var buildWhere = function (api, data) {
     if (data.params.searchKeys[i].indexOf('data.') === 0) {
       var key = data.params.searchKeys[i].split('.')[1]
       var value = data.params.searchValues[i]
-      if (!where.guid) { where.guid = [] }
-      where.guid.push(
-        api.sequelize.sequelize.literal(`SELECT personGuid FROM personData WHERE \`key\` = "${key}" and \`value\` LIKE "${value}"`)
+      if (!where.$and) { where.$and = [] }
+      where.$and.push(
+        { guid: {
+          $in: api.sequelize.sequelize.literal(`(SELECT personGuid FROM personData WHERE \`key\` = "${key}" and \`value\` LIKE "${value}")`)
+        }}
       )
     }
   }
