@@ -93,6 +93,46 @@ module.exports = {
         }).catch(callback)
       },
 
+      buildCompoundWhere: function (data, leaderFK, FKTAble) {
+        let where = { teamId: data.team.id }
+
+        if (data.params.start && data.params.end) {
+          where.createdAt = {
+            $gte: new Date(data.params.start),
+            $lte: new Date(data.params.end)
+          }
+        }
+
+        for (let i in data.params.searchKeys) {
+          if (data.params.searchKeys[i].indexOf('data.') === 0) {
+            let key = data.params.searchKeys[i].split('.')[1]
+            let value = data.params.searchValues[i]
+            if (!where.$and) { where.$and = [] }
+            where.$and.push(
+              { guid: {
+                $in: api.sequelize.sequelize.literal(
+                  `(SELECT ${leaderFK} FROM ${FKTAble} WHERE \`key\` = "${key}" and \`value\` LIKE "${value}")`
+                )
+              }}
+            )
+          }
+        }
+
+        for (let j in data.params.searchKeys) {
+          if (data.params.searchKeys[j].indexOf('data.') !== 0) {
+            if (data.params.searchValues[j] === '%') {
+              where[data.params.searchKeys[j]] = {$ne: null}
+            } else if (data.params.searchValues[j].indexOf('%') >= 0) {
+              where[data.params.searchKeys[j]] = { $like: data.params.searchValues[j] }
+            } else {
+              where[data.params.searchKeys[j]] = data.params.searchValues[j]
+            }
+          }
+        }
+
+        return where
+      },
+
       updatateData: function (self, model, remoteKey, uniqueDataKeys) {
         return new Promise(function (resolve, reject) {
           var jobs = []

@@ -125,7 +125,6 @@ var loader = function (api) {
           apiData: function () {
             return {
               guid: this.guid,
-              teamId: this.teamId,
               listOptOuts: this.listOptOuts,
               globalOptOut: this.globalOptOut,
               source: this.source,

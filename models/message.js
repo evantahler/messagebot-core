@@ -70,7 +70,6 @@ var loader = function (api) {
           apiData: function () {
             return {
               guid: this.guid,
-              teamId: this.teamId,
               personGuid: this.personGuid,
               campaignId: this.campaignId,
               transport: this.transport,

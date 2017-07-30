@@ -1,43 +1,5 @@
 const async = require('async')
 
-var buildWhere = function (api, data) {
-  var where = { teamId: data.team.id }
-
-  if (data.params.start && data.params.end) {
-    where.createdAt = {
-      $gte: new Date(data.params.start),
-      $lte: new Date(data.params.end)
-    }
-  }
-
-  for (var i in data.params.searchKeys) {
-    if (data.params.searchKeys[i].indexOf('data.') === 0) {
-      var key = data.params.searchKeys[i].split('.')[1]
-      var value = data.params.searchValues[i]
-      if (!where.$and) { where.$and = [] }
-      where.$and.push(
-        { guid: {
-          $in: api.sequelize.sequelize.literal(`(SELECT messageGuid FROM messageData WHERE \`key\` = "${key}" and \`value\` LIKE "${value}")`)
-        }}
-      )
-    }
-  }
-
-  for (var j in data.params.searchKeys) {
-    if (data.params.searchKeys[j].indexOf('data.') !== 0) {
-      if (data.params.searchValues[j] === '%') {
-        where[data.params.searchKeys[j]] = {$ne: null}
-      } else if (data.params.searchValues[j].indexOf('%') >= 0) {
-        where[data.params.searchKeys[j]] = { $like: data.params.searchValues[j] }
-      } else {
-        where[data.params.searchKeys[j]] = data.params.searchValues[j]
-      }
-    }
-  }
-
-  return where
-}
-
 exports.messagesSearch = {
   name: 'messages:search',
   description: 'messages:search',
@@ -61,7 +23,7 @@ exports.messagesSearch = {
 
   run: function (api, data, next) {
     api.models.Message.findAndCountAll({
-      where: buildWhere(api, data),
+      where: api.sequelize.buildCompoundWhere(data, 'messageGuid', 'messageData'),
       order: [['createdAt', 'DESC']],
       limit: data.params.size,
       offset: data.params.from
@@ -117,7 +79,7 @@ exports.messagesAggregation = {
         data.params.aggregation,
         [api.sequelize.sequelize.fn('count', api.sequelize.sequelize.col('guid')), 'TOTAL']
       ],
-      where: buildWhere(api, data),
+      where: api.sequelize.buildCompoundWhere(data, 'messageGuid', 'messageData'),
       limit: data.params.size,
       offset: data.params.from,
       group: [api.sequelize.sequelize.literal(`${data.params.interval}(createdAt)`), data.params.aggregation]

@@ -70,7 +70,6 @@ var loader = function (api) {
           apiData: function () {
             return {
               guid: this.guid,
-              teamId: this.teamId,
               ip: this.ip,
               device: this.device,
               personGuid: this.personGuid,

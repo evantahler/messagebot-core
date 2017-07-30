@@ -28,7 +28,6 @@ var loader = function (api) {
           apiData: function () {
             return {
               id: this.id,
-              teamId: this.teamId,
               listId: this.listId,
               personGuid: this.personGuid,
               createdAt: this.createdAt,
