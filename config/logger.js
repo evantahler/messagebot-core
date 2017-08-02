@@ -57,3 +57,19 @@ exports.test = {
     }
   }
 }
+
+exports.production = {
+  logger: function (api) {
+    return {
+      transports: [
+        function (api, winston) {
+          return new (winston.transports.Console)({
+            colorize: true,
+            level: 'info',
+            timestamp: false
+          })
+        }
+      ]
+    }
+  }
+}
