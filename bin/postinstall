@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+cd "$(dirname "$0")"
+cd ..
+
+# Always download the MaxMind database
+./bin/maxmind
+
+# If this is production, run migrations
+if [ "$NODE_ENV" == "production" ] ; then
+  npm run migrate
+else
+  echo "skipping automatic migration in this environment"
+fi
