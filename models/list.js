@@ -140,7 +140,15 @@ var loader = function (api) {
                 for (var k in this[collection.q]) {
                   this[collection.q][k].forEach((v) => {
                     let matcher = '='
-                    if (v.indexOf('%') >= 0) { matcher = 'LIKE' }
+                    if (v.indexOf('!') === 0 && v.indexOf('%') < 0) {
+                      matcher = '!='
+                      v = v.substr(1)
+                    } else if (v.indexOf('!') === 0 && v.indexOf('%') >= 0) {
+                      matcher = 'NOT LIKE'
+                      v = v.substr(1)
+                    } else if (v.indexOf('%') >= 0) {
+                      matcher = 'LIKE'
+                    }
 
                     k = list.escape(k)
                     v = list.escape(v)
@@ -219,7 +227,7 @@ var loader = function (api) {
 
             async.series(jobs, function (error) {
               process.nextTick(function () {
-                if (!error) { api.log(['counted %s people in list #%s, %s (team #%s)', count, list.id, list.name, list.teamId]) }
+                if (!error) { api.log(`counted ${count} people in list #${list.id}, ${list.name} (team #${list.teamId})`) }
                 callback(error, count)
               })
             })

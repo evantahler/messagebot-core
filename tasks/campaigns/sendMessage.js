@@ -128,12 +128,12 @@ exports.task = {
       }
 
       if (toSend && person.data.globalOptOut === true) {
-        api.log(['person #%s is globally opted-out', person.guid])
+        api.log(`person #${person.guid} is globally opted-out`)
         toSend = false
       }
 
       if (toSend && person.data.listOptOuts.indexOf(list.id) >= 0) {
-        api.log(['person #%s is opted-out of this list (#%s)', person.guid, list.id])
+        api.log(`person #${person.guid} is opted-out of this list (#${list.id})`)
         toSend = false
       }
 

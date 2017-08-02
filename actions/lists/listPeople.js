@@ -280,13 +280,19 @@ exports.listPeopleView = {
         limit: data.params.size
       }).then(function (response) {
         data.response.total = response.count
-
         data.response.people = []
-        response.rows.forEach(function (listPerson) {
-          data.response.people.push(listPerson.person.apiData())
+        let jobs = []
+
+        response.rows.forEach((listPerson) => {
+          jobs.push((done) => {
+            listPerson.person.hydrate((error) => {
+              data.response.people.push(listPerson.person.apiData())
+              return done(error)
+            })
+          })
         })
 
-        next()
+        async.series(jobs, next)
       }).catch(next)
     }).catch(next)
   }

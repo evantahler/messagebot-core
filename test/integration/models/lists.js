@@ -115,6 +115,19 @@ describe('integartion:lists', function () {
       })
     })
 
+    it('#associateListPeople (dyanamic, with negation)', function (done) {
+      list.type = 'dynamic'
+      list.personQuery = {firstName: ['!b%'], device: ['phone']}
+      list.associateListPeople(function (error, count) {
+        should.not.exist(error)
+        count.should.equal(4)
+        api.models.ListPerson.findAll({where: {listId: list.id}}).then(function (listPeople) {
+          listPeople.length.should.equal(4)
+          done()
+        })
+      })
+    })
+
     it('#associateListPeople (dyanamic, with exlusion)', function (done) {
       list.type = 'dynamic'
       list.personQuery = {firstName: ['%']}
