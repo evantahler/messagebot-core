@@ -63,7 +63,7 @@
     "console": "actionhero console",
     "test": "NODE_ENV=test mocha --reporter dot",
     "pretest": "standard",
-    "postinstall": "npm run postinstall:maxmind",
+    "postinstall": "npm run postinstall:maxmind && npm run migrate",
     "migrate": "sequelize db:migrate",
     "postinstall:maxmind": "./bin/maxmind",
     "faker:run": "node db/faker/run.js",
