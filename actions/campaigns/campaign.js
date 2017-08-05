@@ -1,3 +1,5 @@
+const async = require('async')
+
 var transportValidator = function (p) {
   var api = this
   var transportNames = []
@@ -85,14 +87,31 @@ exports.campaignView = {
   },
 
   run: function (api, data, next) {
-    api.models.Campaign.findOne({where: {
-      id: data.params.campaignId,
-      teamId: data.session.teamId
-    }}).then(function (campaign) {
-      if (!campaign) { return next(new Error('campaign not found')) }
-      data.response.campaign = campaign.apiData()
-      next()
-    }).catch(next)
+    let jobs = []
+
+    jobs.push((done) => {
+      api.models.Campaign.findOne({where: {
+        id: data.params.campaignId,
+        teamId: data.session.teamId
+      }}).then((campaign) => {
+        if (!campaign) { return done(new Error('campaign not found')) }
+        data.response.campaign = campaign.apiData()
+        done()
+      }).catch(done)
+    })
+
+    jobs.push((done) => {
+      api.models.Message.findOne({where: {
+        campaignId: data.params.campaignId
+      }}).then((message) => {
+        if (message) {
+          data.response.sampleMessage = message.apiData()
+        }
+        done()
+      }).catch(done)
+    })
+
+    async.series(jobs, next)
   }
 }
 

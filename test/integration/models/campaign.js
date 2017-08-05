@@ -5,6 +5,9 @@ var specHelper = require(path.join(__dirname, '/../../specHelper'))
 var api
 var team
 
+var email = 'admin@localhost.com'
+var password = 'password'
+
 describe('integartion:campaigns', function () {
   before(function () { api = specHelper.api })
 
@@ -97,6 +100,17 @@ describe('integartion:campaigns', function () {
         count.should.equal(10)
         done()
       }).catch(done)
+    })
+
+    it('will return a sample message when viewing the campaign', (done) => {
+      specHelper.requestWithLogin(email, password, 'campaign:view', {
+        campaignId: campaign.id
+      }, function (response) {
+        should.not.exist(response.error)
+        response.campaign.id.should.equal(campaign.id)
+        response.sampleMessage.body.should.equal('hello')
+        done()
+      })
     })
 
     it('returns valid stats', function (done) {
