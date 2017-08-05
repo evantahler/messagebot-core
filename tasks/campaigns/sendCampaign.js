@@ -9,7 +9,7 @@ exports.task = {
 
   run: function (api, params, next) {
     api.models.Campaign.find({where: {id: params.campaignId}}).then(function (campaign) {
-      campaign.send(next)
+      campaign.send((error) => { next(error) })
     }).catch(next)
   }
 }

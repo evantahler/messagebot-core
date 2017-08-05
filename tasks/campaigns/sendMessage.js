@@ -78,7 +78,7 @@ exports.task = {
           body = _body
           done()
         })
-      })
+      }).catch(done)
     })
 
     jobs.push(function (done) {
@@ -117,7 +117,9 @@ exports.task = {
       message.body = body
       message.sentAt = new Date()
 
-      message.save().then(() => { done() }).catch(done)
+      message.save().then(() => {
+        done()
+      }).catch(done)
     })
 
     jobs.push(function (done) {
@@ -127,12 +129,12 @@ exports.task = {
         toSend = false
       }
 
-      if (toSend && person.data.globalOptOut === true) {
+      if (toSend && person.globalOptOut === true) {
         api.log(`person #${person.guid} is globally opted-out`)
         toSend = false
       }
 
-      if (toSend && person.data.listOptOuts.indexOf(list.id) >= 0) {
+      if (toSend && person.listOptOuts.indexOf(list.id) >= 0) {
         api.log(`person #${person.guid} is opted-out of this list (#${list.id})`)
         toSend = false
       }
@@ -145,12 +147,10 @@ exports.task = {
 
         transport.deliver(sendParams, person, done)
       } else {
-        done()
+        return done()
       }
     })
 
-    async.series(jobs, function (error) {
-      process.nextTick(function () { return next(error) })
-    })
+    async.series(jobs, (error) => { next(error) })
   }
 }
