@@ -13,5 +13,6 @@ npm-debug.log
 .DS_Store
 .env
 dump.rdb
+cockroach-data
 
 public/js/app.bundle.js
