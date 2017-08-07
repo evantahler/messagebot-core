@@ -48,13 +48,11 @@ exports.listPeopleAdd = {
         if (jobs.length === 0) { return next(new Error('nothing to edit')) }
 
         async.series(jobs, function (error) {
-          process.nextTick(function () {
-            if (!error) {
-              api.tasks.enqueue('lists:peopleCount', {listId: list.id}, 'messagebot:lists', next)
-            } else {
-              return next(error)
-            }
-          })
+          if (!error) {
+            api.tasks.enqueue('lists:peopleCount', {listId: list.id}, 'messagebot:lists', next)
+          } else {
+            return next(error)
+          }
         })
       }
 
@@ -232,9 +230,13 @@ exports.listPeopleCount = {
       teamId: data.session.teamId
     }}).then(function (list) {
       if (!list) { return next(new Error('list not found')) }
-
-      data.response.list = list.apiData()
-      api.tasks.enqueue('lists:peopleCount', {listId: list.id}, 'messagebot:lists', next)
+      list.associateListPeople((error) => {
+        if (error) { return next(error) }
+        list.reload().then(() => {
+          data.response.list = list.apiData()
+          next()
+        }).catch(error)
+      })
     }).catch(next)
   }
 }
