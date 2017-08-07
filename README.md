@@ -192,14 +192,6 @@ api.navigation.navigation.push({
 
 ---
 
-# Front-End UI
-
-## Developing
-
-You will need to set `ALLOWED_ORIGIN="https://site.com"` to configure the CORS headers for the front-end application, `messagebot-ui` properly.
-
----
-
 # Client-Side Tracking
 
 ## Image Link Tracking
@@ -273,27 +265,3 @@ TODO
 TODO
 
 ---
-
-# Docker Compose
-
-This project comes complete with everything you need to create a high-availability Docker service for Messagebot.  The `Dockerfile` contained in this project is built automatically from the master branch of this project, and is available via `messagebot/messagebot-core` from Docker Hub.
-
-- `docker-compose up -d`
-- `docker-compose start` (this will start all containers)
-
-At this point, the MessageBot container will crash, as none of the required migrations have been run.  To run those migrations:
-
-- `docker-compose run messagebot-worker npm run migrate`
-
-Now, you'll need to create your first team:
-
-- `docker-compose run messagebot-worker ./bin/messagebot team create --name MessageBot --trackingDomainRegexp "^.*$" --trackingDomain "http://tracking.myapp.com" --email="me@myapp.com"`
-
-From here, you should be good to go! Restart the containers:
-
-- `docker-compose start`
-
-The load balancer will proxy all of your MessageBot web servers through one server as you scale.
-
-## Misc Docker:
-- Full Cleanup: `docker rm $(docker ps -a -q) && docker rmi $(docker images -q)`

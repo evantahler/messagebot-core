@@ -1,8 +1,6 @@
-
-
-var MESSAGEBOT = MESSAGEBOT || {};
-
 (function () {
+  if (!window.MESSAGEBOT) { window.MESSAGEBOT = {} }
+  var MESSAGEBOT = window.MESSAGEBOT
   /* -- UTILS -- */
 
   MESSAGEBOT.getTrackingParams = function () {
@@ -63,7 +61,7 @@ var MESSAGEBOT = MESSAGEBOT || {};
   }
 
   MESSAGEBOT.action = function (route, method, params, callback) {
-    var xmlhttp = new XMLHttpRequest()
+    var xmlhttp = new XMLHttpRequest() // eslint-disable-line
     xmlhttp.onreadystatechange = function () {
       var response
       if (xmlhttp.readyState === 4) {
@@ -136,7 +134,7 @@ var MESSAGEBOT = MESSAGEBOT || {};
   MESSAGEBOT.teamId = '%%TEAMID%%'
   MESSAGEBOT.cookieName = '%%CLIENT:TRACKING:WEB:COOKIENAME%%'
   MESSAGEBOT.initialized = false
-  MESSAGEBOT.cookieExpiry = %%CLIENT:TRACKING:WEB:COOKIEEXPIRY%%;
+  MESSAGEBOT.cookieExpiry = parseInt('%%CLIENT:TRACKING:WEB:COOKIEEXPIRY%%')
   MESSAGEBOT.pollDelay = 500
 
   MESSAGEBOT.data = {
