@@ -7,7 +7,10 @@ module.exports = {
         var jobs = []
 
         api.models.Campaign.findAll({
-          where: { teamId: team.id }
+          where: {
+            teamId: team.id,
+            type: 'trigger'
+          }
         }).then((campaigns) => {
           campaigns.forEach(function (campaign) {
             var matched = true
