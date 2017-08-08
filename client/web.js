@@ -148,8 +148,11 @@
 
     if (!guid) {
       MESSAGEBOT.person.create(function (error) {
-        if (!error) { MESSAGEBOT.initialized = true }
-        callback(error)
+        if (error) { return callback(error) }
+        MESSAGEBOT.person.hydrate(function (error) {
+          if (!error) { MESSAGEBOT.initialized = true }
+          callback(error)
+        })
       })
     } else {
       MESSAGEBOT.data.person = {guid: guid}
@@ -172,6 +175,7 @@
   MESSAGEBOT.person = {
     create: function (callback) {
       if (!callback) { callback = MESSAGEBOT.loggerCallback }
+      if (MESSAGEBOT.data.person.guid) { return callback() }
 
       var params = {}
       if (MESSAGEBOT.data.person) {
@@ -179,12 +183,14 @@
           params[k] = MESSAGEBOT.data.person[k]
         })
       } else {
-        params.source = 'web'
+        var trackingParams = MESSAGEBOT.getTrackingParams()
+        params.source = trackingParams.source
+        params.device = trackingParams.device
       }
 
       MESSAGEBOT.action('/person', 'POST', params, function (response) {
         if (response.error) { return callback(response.error) };
-        MESSAGEBOT.data.person = {guid: response.guid}
+        MESSAGEBOT.data.person = {guid: response.person.guid}
         MESSAGEBOT.cookies.create(MESSAGEBOT.cookieName, MESSAGEBOT.data.person.guid)
         return callback(null, MESSAGEBOT.person)
       })

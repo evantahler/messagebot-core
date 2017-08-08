@@ -15,14 +15,14 @@ exports.task = {
     var person
     var event
 
-    jobs.push(function (done) {
+    jobs.push((done) => {
       api.utils.determineActionsTeam({params: params}, (error, _team) => {
         team = _team
         done(error)
       })
     })
 
-    jobs.push(function (done) {
+    jobs.push((done) => {
       api.models.Person.findOne({where: {
         teamId: team.id,
         guid: params.guid
@@ -33,23 +33,25 @@ exports.task = {
       }).catch(done)
     })
 
-    jobs.push(function (done) {
+    jobs.push((done) => {
       person.hydrate(done)
     })
 
-    jobs.push(function (done) {
-      event = api.models.Event.create({
+    jobs.push((done) => {
+      event = api.models.Event.build({
         teamId: team.id,
         personGuid: person.guid,
         type: 'person_created',
         ip: 'internal',
         device: person.device
-      }).then(function () {
+      })
+
+      event.save().then(() => {
         done()
       }).catch(done)
     })
 
-    jobs.push(function (done) {
+    jobs.push((done) => {
       api.tasks.enqueueIn(1, 'events:process', {
         teamId: team.id,
         events: [event.guid]

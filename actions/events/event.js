@@ -32,6 +32,7 @@ exports.eventCreate = {
 
   run: function (api, data, next) {
     var event = api.models.Event.build(data.params)
+    if (!event.teamId) { event.teamId = data.team.id }
     event.data = data.params.data
 
     if (!event.ip) { event.ip = data.connection.remoteIP }

@@ -178,15 +178,16 @@ module.exports = {
             })
 
             remainingKeys.forEach(function (k) {
-              if (consumedKeys.indexOf(k) < 0) {
+              let v = self.data[k]
+              if (consumedKeys.indexOf(k) < 0 && v !== null && v !== undefined) {
+                if (typeof v === 'object') { v = JSON.stringify(v) }
                 jobs.push(function (done) {
                   var o = {
                     teamId: self.teamId,
                     key: k,
-                    value: self.data[k]
+                    value: v
                   }
                   o[remoteKey] = self.guid
-
                   model.create(o).then(function () {
                     done()
                   }).catch(done)
