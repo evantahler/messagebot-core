@@ -416,7 +416,8 @@ describe('integartion:campaigns', function () {
           listId: list.id,
           templateId: template.id,
           triggerDelay: 1,
-          triggerEventMatch: {'type': 'pageView', data: {'page': 'myPage'}}
+          sendAt: new Date(),
+          triggerEventMatch: {'type': '^pageView$', 'page': '^/some/page/.*$'}
         })
 
         campaign.save().then(function () { done() }).catch(done)
@@ -431,12 +432,11 @@ describe('integartion:campaigns', function () {
         jobs.push(function (next) {
           api.specHelper.runAction('event:create', {
             teamId: team.id,
-            sync: true,
             device: 'tester',
             type: 'pageView',
             page: 'myPage',
             personGuid: person.guid,
-            data: {page: 'myPage'}
+            data: {page: '/some/page/like/this'}
           }, function (result) {
             should.not.exist(result.error)
             next()
@@ -465,7 +465,6 @@ describe('integartion:campaigns', function () {
         jobs.push(function (next) {
           api.specHelper.runAction('event:create', {
             teamId: team.id,
-            sync: true,
             device: 'tester',
             type: 'pageView',
             page: 'myPage',

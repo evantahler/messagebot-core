@@ -243,7 +243,7 @@ var loader = function (api) {
                 if (error) { return callback(error) }
                 var logData = {}
                 if (message) { logData = {messageGuid: message.guid} }
-                api.log('rendered template #' + template.id + ' for person #' + person.guid, 'info', logData)
+                api.log('rendered template #' + template.id + ' for person #' + person.guid, 'debug', logData)
                 return callback(null, html, view)
               })
             })

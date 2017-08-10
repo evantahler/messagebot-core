@@ -44,7 +44,6 @@ describe('actions:event', function () {
     it('succeeds', function (done) {
       api.specHelper.runAction('event:create', {
         teamId: team.id,
-        sync: true,
         device: 'tester',
         type: 'tester',
         personGuid: person.guid,
@@ -61,7 +60,6 @@ describe('actions:event', function () {
     it('succeeds (GIF)', function (done) {
       specHelper.WebRequestWithLogin(email, password, 'get', '/api/event/create.gif', {
         teamId: team.id,
-        sync: true,
         device: 'tester',
         type: 'tester',
         personGuid: person.guid
@@ -77,7 +75,6 @@ describe('actions:event', function () {
     it('succeeds (geocoding)', function (done) {
       api.specHelper.runAction('event:create', {
         teamId: team.id,
-        sync: true,
         device: 'tester',
         type: 'tester',
         personGuid: person.guid,
@@ -129,7 +126,6 @@ describe('actions:event', function () {
     it('fails (missing param)', function (done) {
       api.specHelper.runAction('event:create', {
         teamId: team.id,
-        sync: true,
         type: 'tester',
         personGuid: person.guid,
         data: {thing: 'stuff'}

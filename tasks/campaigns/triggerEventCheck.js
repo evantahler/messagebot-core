@@ -18,7 +18,7 @@ exports.task = {
       api.models.List.findOne({
         where: {id: params.listId}
       }).then(function (_list) {
-        if (!_list) { return done(new Error('list not found')) }
+        if (!_list) { return done(new Error(`List (${params.listId}) not found`)) }
         list = _list
         done()
       }).catch(done)
@@ -53,8 +53,6 @@ exports.task = {
       } else { done() }
     })
 
-    async.series(jobs, function (error) {
-      process.nextTick(function () { return next(error) })
-    })
+    async.series(jobs, next)
   }
 }

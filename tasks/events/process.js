@@ -32,7 +32,7 @@ exports.task = {
       loadJobs.push((done) => {
         events.forEach((event) => {
           workJobs.push((workDone) => {
-            api.events.triggerCampaign(team, event, workDone)
+            api.events.triggerCampaigns(team, event, workDone)
           })
 
           workJobs.push((workDone) => {

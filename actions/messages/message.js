@@ -152,7 +152,6 @@ exports.messageTrack = {
     guid: { required: true },
     ip: { required: false },
     link: { required: false },
-    sync: { required: true, default: false },
     device: { required: false, default: 'message' },
     verb: {
       required: true,
