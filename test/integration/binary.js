@@ -1,17 +1,17 @@
-// var should = require('should')
-// var path = require('path')
-// var specHelper = require(path.join(__dirname, '/../specHelper'))
-// var api
+// const should = require('should')
+// const path = require('path')
+// const specHelper = require(path.join(__dirname, '/../specHelper'))
+// let api
 //
 // describe('integartion:binary', () => {
-//   var team
-//   var user
+//   let team
+//   let user
 //
 //   before(() => { api = specHelper.api })
 //
 //   it('overrides actionheros help with only messagebot help', (done) => {
 //     this.timeout(10 * 1000)
-//     var command = './node_modules/.bin/actionhero help'
+//     let command = './node_modules/.bin/actionhero help'
 //     api.utils.doShell(command, (error, data) => {
 //       should.not.exist(error)
 //       data.should.containEql('messagebot help')
@@ -27,7 +27,7 @@
 //   describe('#help', () => {
 //     it('returns the messagebot help', (done) => {
 //       this.timeout(10 * 1000)
-//       var command = './node_modules/.bin/actionhero messagebot help'
+//       let command = './node_modules/.bin/actionhero messagebot help'
 //       api.utils.doShell(command, (error, data) => {
 //         should.not.exist(error)
 //         data.should.containEql('This method will also create the first user for this team.')
@@ -40,8 +40,8 @@
 //   describe('#version', () => {
 //     it('returns the version', (done) => {
 //       this.timeout(10 * 1000)
-//       var pkg = require(path.join(__dirname, '/../../package.json'))
-//       var command = './node_modules/.bin/actionhero messagebot version'
+//       const pkg = require(path.join(__dirname, '/../../package.json'))
+//       let command = './node_modules/.bin/actionhero messagebot version'
 //       api.utils.doShell(command, (error, data) => {
 //         should.not.exist(error)
 //         data.should.containEql(pkg.version)
@@ -53,7 +53,7 @@
 //   describe('#teamCreate', () => {
 //     it('succeeds', (done) => {
 //       this.timeout(15 * 1000)
-//       var command = ''
+//       let command = ''
 //       command += ' NODE_ENV=test'
 //       command += ' ./node_modules/.bin/actionhero messagebot team create'
 //       command += ' --name AnotherTestTeam'
@@ -100,7 +100,7 @@
 //
 //     it('fails (missing params)', (done) => {
 //       this.timeout(10 * 1000)
-//       var command = ''
+//       let command = ''
 //       command += ' NODE_ENV=test'
 //       command += ' ./node_modules/.bin/actionhero messagebot team create'
 //       command += ' --name AnotherTestTeam'
@@ -118,7 +118,7 @@
 //
 //     it('fails (uniqueness)', (done) => {
 //       this.timeout(10 * 1000)
-//       var command = ''
+//       let command = ''
 //       command += ' NODE_ENV=test'
 //       command += ' ./node_modules/.bin/actionhero messagebot team create'
 //       command += ' --name AnotherTestTeam'
@@ -140,7 +140,7 @@
 //   describe('#teamEdit', () => {
 //     it('succeeds', (done) => {
 //       this.timeout(10 * 1000)
-//       var command = ''
+//       let command = ''
 //       command += ' NODE_ENV=test'
 //       command += ' ./node_modules/.bin/actionhero messagebot team edit'
 //       command += ' --id ' + team.id
@@ -156,7 +156,7 @@
 //
 //     it('fails (uniqueness)', (done) => {
 //       this.timeout(10 * 1000)
-//       var command = ''
+//       let command = ''
 //       command += ' NODE_ENV=test'
 //       command += ' ./node_modules/.bin/actionhero messagebot team edit'
 //       command += ' --id ' + team.id
@@ -172,7 +172,7 @@
 //   describe('#teamsView', () => {
 //     it('succeeds', (done) => {
 //       this.timeout(10 * 1000)
-//       var command = ''
+//       let command = ''
 //       command += ' NODE_ENV=test'
 //       command += ' ./node_modules/.bin/actionhero messagebot teams list'
 //
@@ -189,7 +189,7 @@
 //   describe('#teamDelete', () => {
 //     it('succeeds', (done) => {
 //       this.timeout(10 * 1000)
-//       var command = ''
+//       let command = ''
 //       command += ' NODE_ENV=test'
 //       command += ' ./node_modules/.bin/actionhero messagebot team delete'
 //       command += ' --id ' + team.id
@@ -225,7 +225,7 @@
 //
 //     it('fails (missing team)', (done) => {
 //       this.timeout(10 * 1000)
-//       var command = ''
+//       let command = ''
 //       command += ' NODE_ENV=test'
 //       command += ' ./node_modules/.bin/actionhero messagebot team delete'
 //       command += ' --id ' + team.id

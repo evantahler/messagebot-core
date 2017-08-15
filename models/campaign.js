@@ -1,11 +1,11 @@
-var Sequelize = require('sequelize')
-var async = require('async')
+const Sequelize = require('sequelize')
+const async = require('async')
 
-var loader = function (api) {
+let loader = function (api) {
   /* --- Private Methods --- */
-  var validTypes = ['simple', 'recurring', 'trigger']
+  let validTypes = ['simple', 'recurring', 'trigger']
 
-  var sendSimple = function (campaign, list, callback) {
+  let sendSimple = function (campaign, list, callback) {
     if (campaign.sentAt) { return callback(new Error('campaign already sent')) }
     if (campaign.sendAt - new Date().getTime() >= 0) { return callback(new Error('campaign should not be sent yet')) }
 
@@ -18,8 +18,8 @@ var loader = function (api) {
     }, callback)
   }
 
-  var sendRecurring = function (campaign, list, callback) {
-    var lastSendAt = (campaign.sentAt ? campaign.sentAt.getTime() : 0)
+  let sendRecurring = function (campaign, list, callback) {
+    let lastSendAt = (campaign.sentAt ? campaign.sentAt.getTime() : 0)
     if ((lastSendAt + (1000 * campaign.reSendDelay)) - new Date().getTime() >= 0) {
       return callback(new Error('campaign should not be sent yet'))
     }
@@ -33,7 +33,7 @@ var loader = function (api) {
     }, callback)
   }
 
-  var sendTrigger = function (campaign, list, callback) {
+  let sendTrigger = function (campaign, list, callback) {
     callback(new Error('Triggered Campaigns are not sent via this method'))
   }
 
@@ -87,7 +87,7 @@ var loader = function (api) {
           type: Sequelize.TEXT,
           allowNull: true,
           get: function () {
-            var q = this.getDataValue('campaignVariables')
+            let q = this.getDataValue('campaignVariables')
             if (q && q.length > 0) {
               return JSON.parse(q)
             } else {
@@ -105,7 +105,7 @@ var loader = function (api) {
           type: Sequelize.TEXT,
           allowNull: true,
           get: function () {
-            var q = this.getDataValue('triggerEventMatch')
+            let q = this.getDataValue('triggerEventMatch')
             if (q && q.length > 0) {
               return JSON.parse(q)
             } else {
@@ -159,17 +159,17 @@ var loader = function (api) {
           },
 
           stats: function (start, end, interval, callback) {
-            var campaign = this
-            var jobs = []
-            var terms = {sentAt: [], readAt: [], actedAt: []}
-            var totals = {sentAt: 0, readAt: 0, actedAt: 0}
+            let campaign = this
+            let jobs = []
+            let terms = {sentAt: [], readAt: [], actedAt: []}
+            let totals = {sentAt: 0, readAt: 0, actedAt: 0}
 
             api.utils.determineActionsTeam({params: {teamId: campaign.teamId}}, (error, team) => {
               if (error) { return callback(error) }
 
               Object.keys(totals).forEach((term) => {
                 jobs.push((done) => {
-                  var where = {
+                  let where = {
                     teamId: team.id,
                     campaignId: campaign.id,
                     createdAt: { $lte: end, $gte: start }
@@ -186,7 +186,7 @@ var loader = function (api) {
                   }).then((rows) => {
                     rows.forEach((row) => {
                       totals[term] = totals[term] + row.dataValues.TOTAL
-                      var d = {}
+                      let d = {}
                       d[row.dataValues.DATE] = {}
                       d[row.dataValues.DATE][row.dataValues.transport] = row.dataValues.TOTAL
                       terms[term].push(d)
@@ -203,9 +203,9 @@ var loader = function (api) {
           },
 
           send: function (callback) {
-            var campaign = this
-            var jobs = []
-            var list
+            let campaign = this
+            let jobs = []
+            let list
 
             jobs.push((done) => {
               campaign.getList().then((l) => {

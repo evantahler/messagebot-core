@@ -1,11 +1,11 @@
-var path   = require('path');
-var config = require(__dirname + '/config/sequelize');
+const path = require('path')
+let config = require(path.join(__dirname, 'config', 'sequelize'))
 
-var env = 'default';
-if(config[process.env.NODE_ENV]){ env = process.env.NODE_ENV; }
-config = config[env].sequelize();
+let env = 'default'
+if (config[process.env.NODE_ENV]) { env = process.env.NODE_ENV }
+config = config[env].sequelize()
 
-config.config = __filename;
-config['migrations-path'] = path.resolve('db', 'migrations');
+config.config = __filename
+config['migrations-path'] = path.resolve('db', 'migrations')
 
-module.exports = config;
+module.exports = config

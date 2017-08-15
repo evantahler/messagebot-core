@@ -1,12 +1,12 @@
-var Sequelize = require('sequelize')
-var sanitizeHtml = require('sanitize-html')
-var mustache = require('mustache')
-var async = require('async')
+const Sequelize = require('sequelize')
+const sanitizeHtml = require('sanitize-html')
+const mustache = require('mustache')
+const async = require('async')
 
-var loader = function (api) {
+let loader = function (api) {
   /* --- Priave Methods --- */
 
-  var allowedTags = [
+  let allowedTags = [
     'html', 'body',
     'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
     'blockquote', 'pre',
@@ -15,8 +15,8 @@ var loader = function (api) {
     'hr', 'br', 'div', 'span', 'table', 'thead', 'caption', 'tbody', 'tr', 'th', 'td'
   ]
 
-  var expandDate = function (d) {
-    var monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+  let expandDate = function (d) {
+    let monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
 
     return {
       string: d.toString(),
@@ -43,8 +43,8 @@ var loader = function (api) {
     }
   }
 
-  var buildView = function (team, person, events, campaign, list, template, trackBeacon) {
-    var view = {}
+  let buildView = function (team, person, events, campaign, list, template, trackBeacon) {
+    let view = {}
 
     view.campaign = {}
     view.list = {}
@@ -66,7 +66,7 @@ var loader = function (api) {
 
     view.track = function () {
       return function (val, render) {
-        var url = ''
+        let url = ''
         url += team.trackingDomain + '/api/message/track.gif?'
         url += 'verb=act&'
         url += 'guid=%%MESSAGEGUID%%&'
@@ -77,10 +77,10 @@ var loader = function (api) {
 
     view.optOutLink = function () {
       return function (val) {
-        var page = team.trackingDomain + '/tracking/' + team.id + '/optOut.html'
+        let page = team.trackingDomain + '/tracking/' + team.id + '/optOut.html'
         if (val) { page = val }
 
-        var url = ''
+        let url = ''
         url += page + '?'
         url += 'personGuid=' + person.guid + '&'
         url += 'messageGuid=%%MESSAGEGUID%%&' + '&'
@@ -160,12 +160,12 @@ var loader = function (api) {
         instanceMethods: {
 
           render: function (person, message, campaign, list, trackBeacon, callback, includedIds) {
-            var template = this
-            var jobs = []
-            var events = [] // TODO: Do we load in the events?  How many?
-            var team
-            var view
-            var html
+            let template = this
+            let jobs = []
+            let events = [] // TODO: Do we load in the events?  How many?
+            let team
+            let view
+            let html
 
             if (!template.template || template.template.length === 0) { return callback(new Error('template empty')) }
 
@@ -204,15 +204,15 @@ var loader = function (api) {
             })
 
             jobs.push((done) => {
-              var includeJobs = []
-              var matches = html.match(/%%TEMPLATEINCLUDE:.*%%/g)
+              let includeJobs = []
+              let matches = html.match(/%%TEMPLATEINCLUDE:.*%%/g)
               if (!matches || matches.length === 0) { return done() }
               matches.forEach((match) => {
-                var matcher = match.replace(/%%/g, '').split(':')[1]
-                var includedTemplate
+                let matcher = match.replace(/%%/g, '').split(':')[1]
+                let includedTemplate
 
                 includeJobs.push((includeDone) => {
-                  var or = {name: matcher}
+                  let or = {name: matcher}
                   if (parseInt(matcher, 10)) { or.id = parseInt(matcher, 10) }
                   api.models.Template.findOne({where: {
                     teamId: team.id,
@@ -240,7 +240,7 @@ var loader = function (api) {
 
             async.series(jobs, (error) => {
               if (error) { return callback(error) }
-              var logData = {}
+              let logData = {}
               if (message) { logData = {messageGuid: message.guid} }
               api.log('rendered template #' + template.id + ' for person #' + person.guid, 'debug', logData)
               return callback(null, html, view)

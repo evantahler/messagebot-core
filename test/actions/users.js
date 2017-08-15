@@ -1,18 +1,18 @@
-var should = require('should')
-var async = require('async')
-var path = require('path')
-var specHelper = require(path.join(__dirname, '/../specHelper'))
-var email = 'admin@localhost.com'
-var password = 'password'
-var api
-var userId
-var otherUserId
+const should = require('should')
+const async = require('async')
+const path = require('path')
+const specHelper = require(path.join(__dirname, '/../specHelper'))
+let email = 'admin@localhost.com'
+let password = 'password'
+let api
+let userId
+let otherUserId
 
 describe('actions:user', () => {
   before(() => { api = specHelper.api })
 
-  var cleanUsersTable = function (callback) {
-    var jobs = []
+  let cleanUsersTable = function (callback) {
+    let jobs = []
     api.models.User.findAll().then((users) => {
       users.forEach((user) => {
         if (user.email !== 'admin@localhost.com') {

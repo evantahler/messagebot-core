@@ -1,4 +1,4 @@
-var enabled = (process.env.ENABLE_WEB_SERVER === 'true' || process.env.ENABLE_WEB_SERVER === true)
+const enabled = (process.env.ENABLE_WEB_SERVER === 'true' || process.env.ENABLE_WEB_SERVER === true)
 
 exports.default = {
   servers: {

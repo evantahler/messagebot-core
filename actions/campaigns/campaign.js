@@ -1,8 +1,8 @@
 const async = require('async')
 
-var transportValidator = function (p) {
-  var api = this
-  var transportNames = []
+let transportValidator = function (p) {
+  let api = this
+  let transportNames = []
 
   api.transports.forEach((t) => { transportNames.push(t.name) })
   if (transportNames.indexOf(p) < 0) {
@@ -61,7 +61,7 @@ exports.campaignCreate = {
   },
 
   run: function (api, data, next) {
-    var campaign = api.models.Campaign.build(data.params)
+    let campaign = api.models.Campaign.build(data.params)
     campaign.teamId = data.session.teamId
 
     campaign.save().then(() => {
@@ -135,7 +135,7 @@ exports.campaignCopy = {
       teamId: data.session.teamId
     }}).then((campaign) => {
       if (!campaign) { return next(new Error('campaign not found')) }
-      var newCampaign = api.models.Campaign.build({
+      let newCampaign = api.models.Campaign.build({
         name: data.params.name,
         description: campaign.description,
         folder: campaign.folder,

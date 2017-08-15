@@ -1,4 +1,4 @@
-var async = require('async')
+const async = require('async')
 
 exports.personCreate = {
   name: 'person:create',
@@ -20,7 +20,7 @@ exports.personCreate = {
   },
 
   run: function (api, data, next) {
-    var person = api.models.Person.build(data.params)
+    let person = api.models.Person.build(data.params)
     person.data = data.params.data
     person.teamId = data.team.id
 
@@ -113,7 +113,7 @@ exports.personView = {
           include: [api.models.List]
         }).then((listPeople) => {
           listPeople.forEach((listPerson) => {
-            var d = listPerson.list.apiData()
+            let d = listPerson.list.apiData()
             d.joinedAt = listPerson.createdAt
             data.response.lists.push(d)
           })
@@ -156,8 +156,8 @@ exports.personOpt = {
   },
 
   run: function (api, data, next) {
-    var jobs = []
-    var person
+    let jobs = []
+    let person
 
     jobs.push((done) => {
       api.models.Person.findOne({where: {
@@ -186,7 +186,7 @@ exports.personOpt = {
 
     if (data.params.global === true) {
       jobs.push((done) => {
-        var val = false
+        let val = false
         if (data.params.direction === 'out') { val = true }
         person.globalOptOut = val
         process.nextTick(done)
@@ -195,7 +195,7 @@ exports.personOpt = {
 
     if (data.params.global === false) {
       jobs.push((done) => {
-        var listOptOuts = Object.assign([], person.listOptOuts)
+        let listOptOuts = Object.assign([], person.listOptOuts)
         if (data.params.direction === 'out') {
           if (listOptOuts.indexOf(data.params.listId) < 0) {
             listOptOuts.push(data.params.listId)
@@ -204,7 +204,7 @@ exports.personOpt = {
 
         if (data.params.direction === 'in') {
           if (listOptOuts.indexOf(data.params.listId) >= 0) {
-            var idx = listOptOuts.indexOf(data.params.listId)
+            let idx = listOptOuts.indexOf(data.params.listId)
             listOptOuts.splice(idx, 1)
           }
         }
@@ -234,8 +234,8 @@ exports.personDelete = {
   },
 
   run: function (api, data, next) {
-    var jobs = []
-    var person
+    let jobs = []
+    let person
 
     jobs.push((done) => {
       api.models.Person.findOne({where: {

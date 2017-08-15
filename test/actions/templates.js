@@ -1,10 +1,10 @@
-var should = require('should')
-var path = require('path')
-var specHelper = require(path.join(__dirname, '/../specHelper'))
-var email = 'admin@localhost.com'
-var password = 'password'
-var api
-var templateId
+const should = require('should')
+const path = require('path')
+const specHelper = require(path.join(__dirname, '/../specHelper'))
+let email = 'admin@localhost.com'
+let password = 'password'
+let api
+let templateId
 
 describe('actions:template', () => {
   beforeEach(() => { api = specHelper.api })
@@ -129,8 +129,8 @@ describe('actions:template', () => {
   })
 
   describe('template:render', (done) => {
-    var person
-    var team
+    let person
+    let team
 
     before((done) => {
       api.models.Team.findOne().then((_team) => {
@@ -147,7 +147,7 @@ describe('actions:template', () => {
       person.listOptOuts = []
       person.globalOptOut = false
       person.save().then(() => {
-        var collection = [
+        let collection = [
           {personGuid: person.guid, teamId: team.id, key: 'firstName', value: 'fname'},
           {personGuid: person.guid, teamId: team.id, key: 'lastName', value: 'lame'},
           {personGuid: person.guid, teamId: team.id, key: 'email', value: 'fake@faker.fake'}

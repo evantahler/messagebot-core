@@ -1,5 +1,4 @@
-
-var async = require('async')
+const async = require('async')
 
 exports.task = {
   name: 'campaigns:checkCampaignsToSend',
@@ -10,9 +9,9 @@ exports.task = {
   pluginOptions: {},
 
   run: function (api, params, next) {
-    var searchJobs = []
-    var campaignJobs = []
-    var campaigns = []
+    let searchJobs = []
+    let campaignJobs = []
+    let campaigns = []
 
     searchJobs.push((done) => {
       api.models.Campaign.findAll({
@@ -37,7 +36,7 @@ exports.task = {
         }
       }).then((_campaigns) => {
         _campaigns.forEach((campaign) => {
-          var now = new Date().getTime()
+          let now = new Date().getTime()
           if (!campaign.sentAt || (campaign.sentAt.getTime() + (1000 * campaign.reSendDelay)) < now) {
             campaigns.push(campaign)
           }
@@ -60,7 +59,7 @@ exports.task = {
     })
 
     async.series(searchJobs, (error) => {
-      var campaignIds = []
+      let campaignIds = []
       campaigns.forEach((campaign) => { campaignIds.push(campaign.id) })
       return next(error, campaignIds)
     })

@@ -1,12 +1,12 @@
-var async = require('async')
-var Table = require('easy-table')
+const async = require('async')
+const Table = require('easy-table')
 
 module.exports = {
   name: 'messagebot teams list',
   description: 'list messagebot teams',
 
   run: function (api, data, next) {
-    var jobs = []
+    let jobs = []
 
     jobs.push((done) => {
       api.sequelize.connect(done)
@@ -14,7 +14,7 @@ module.exports = {
 
     jobs.push((done) => {
       api.models.Team.findAll({oder: ['id', 'asc']}).then((teams) => {
-        var tableData = []
+        let tableData = []
         teams.forEach((team) => { tableData.push(team.apiData()) })
 
         api.log(teams.length + ' Total Teams\r\n')

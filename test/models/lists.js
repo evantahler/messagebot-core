@@ -1,8 +1,8 @@
-var should = require('should') // eslint-disable-line
-var path = require('path')
-var specHelper = require(path.join(__dirname, '/../specHelper'))
-var api
-var list
+const should = require('should') // eslint-disable-line
+const path = require('path')
+const specHelper = require(path.join(__dirname, '/../specHelper'))
+let api
+let list
 
 describe('models:lists', () => {
   beforeEach(() => { api = specHelper.api })
@@ -59,7 +59,7 @@ describe('models:lists', () => {
     })
 
     list.save().then(() => {
-      var otherList = api.models.List.build({
+      let otherList = api.models.List.build({
         teamId: 1,
         name: 'my list',
         description: 'my list',

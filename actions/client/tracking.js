@@ -1,11 +1,11 @@
-var async = require('async')
-var fs = require('fs')
-var path = require('path')
+const async = require('async')
+const fs = require('fs')
+const path = require('path')
 
-var prepareFile = function (api, data, file, mime, next) {
-  var jobs = []
-  var settings = {}
-  var source = ''
+let prepareFile = function (api, data, file, mime, next) {
+  let jobs = []
+  let settings = {}
+  let source = ''
 
   jobs.push((done) => {
     api.models.Setting.findAll({where: {teamId: data.team.id}}).then((_settings) => {
@@ -30,11 +30,11 @@ var prepareFile = function (api, data, file, mime, next) {
   })
 
   jobs.push((done) => {
-    var settingJobs = []
+    let settingJobs = []
     settings.forEach((setting) => {
       settingJobs.push((settingsDone) => {
-        var key = setting.key.toUpperCase()
-        var regexp = new RegExp('%%' + key + '%%', 'g')
+        let key = setting.key.toUpperCase()
+        let regexp = new RegExp('%%' + key + '%%', 'g')
         source = source.replace(regexp, setting.value)
         settingsDone()
       })
@@ -62,7 +62,7 @@ exports.client = {
   },
 
   run: function (api, data, next) {
-    var file = path.join(__dirname, '/../../client/web.js')
+    let file = path.join(__dirname, '/../../client/web.js')
     prepareFile(api, data, file, 'application/javascript', next)
   }
 }
@@ -78,7 +78,7 @@ exports.subscriptions = {
   },
 
   run: function (api, data, next) {
-    var file = path.join(__dirname, '/../../client/subscriptions.html')
+    let file = path.join(__dirname, '/../../client/subscriptions.html')
     prepareFile(api, data, file, 'text/html', next)
   }
 }

@@ -1,8 +1,8 @@
-var should = require('should') // eslint-disable-line
-var path = require('path')
-var specHelper = require(path.join(__dirname, '/../specHelper'))
-var api
-var team
+const should = require('should') // eslint-disable-line
+const path = require('path')
+const specHelper = require(path.join(__dirname, '/../specHelper'))
+let api
+let team
 
 describe('models:team', () => {
   beforeEach(() => { api = specHelper.api })
@@ -54,7 +54,7 @@ describe('models:team', () => {
     })
 
     team.save().then(() => {
-      var otherTeam = api.models.Team.build({
+      let otherTeam = api.models.Team.build({
         name: 'my team',
         trackingDomainRegexp: '^.*.site.com$',
         trackingDomain: 'https://www.site.com'

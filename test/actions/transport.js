@@ -1,9 +1,9 @@
-var should = require('should') // eslint-disable-line
-var path = require('path')
-var specHelper = require(path.join(__dirname, '/../specHelper'))
-var email = 'admin@localhost.com'
-var password = 'password'
-var api
+const should = require('should') // eslint-disable-line
+const path = require('path')
+const specHelper = require(path.join(__dirname, '/../specHelper'))
+let email = 'admin@localhost.com'
+let password = 'password'
+let api
 
 describe('system:transports', () => {
   beforeEach(() => { api = specHelper.api })

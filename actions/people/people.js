@@ -87,7 +87,7 @@ exports.peopleAggregation = {
       data.response.aggregations = {}
       results.forEach((r) => {
         if (!data.response.aggregations[r.dataValues[data.params.interval]]) {
-          var d = {}
+          let d = {}
           d[r[data.params.aggregation]] = r.dataValues.TOTAL
           data.response.aggregations[r.dataValues[data.params.interval]] = d
         } else {

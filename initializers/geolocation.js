@@ -1,4 +1,4 @@
-var MaxMind = require('maxmind')
+const MaxMind = require('maxmind')
 
 module.exports = {
   loadPriority: 1000,
@@ -20,7 +20,7 @@ module.exports = {
           }
         } else if (ip) {
           try {
-            var geoDetails = api.maxmind.get(ip)
+            let geoDetails = api.maxmind.get(ip)
             if (
               geoDetails &&
               geoDetails.location &&

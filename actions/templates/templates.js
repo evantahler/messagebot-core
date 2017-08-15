@@ -19,7 +19,7 @@ exports.templatesList = {
   },
 
   run: function (api, data, next) {
-    var query = {
+    let query = {
       where: { teamId: data.session.teamId },
       order: [
         ['folder', 'asc'],

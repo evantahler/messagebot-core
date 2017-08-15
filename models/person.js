@@ -1,10 +1,10 @@
-var Sequelize = require('sequelize')
-var uuid = require('uuid')
-var async = require('async')
+const Sequelize = require('sequelize')
+const uuid = require('uuid')
+const async = require('async')
 
-var loader = function (api) {
+let loader = function (api) {
   /* --- Priave Methods --- */
-  var uniqueDataKeys = [
+  let uniqueDataKeys = [
     'email',
     'phoneNumber',
     'token',
@@ -32,7 +32,7 @@ var loader = function (api) {
           type: Sequelize.TEXT,
           allowNull: true,
           get: function () {
-            var q = this.getDataValue('listOptOuts')
+            let q = this.getDataValue('listOptOuts')
             if (q && q.length > 0) {
               return JSON.parse(q)
             } else {
@@ -73,7 +73,7 @@ var loader = function (api) {
           beforeUpdate: (self) => { return api.sequelize.updatateData(self, api.models.PersonData, 'personGuid', uniqueDataKeys) },
           beforeDestroy: (self) => {
             return new Promise((resolve, reject) => {
-              var jobs = []
+              let jobs = []
 
               jobs.push((done) => {
                 api.models.ListPerson.destroy({
@@ -115,7 +115,7 @@ var loader = function (api) {
         instanceMethods: {
           hydrate: function (callback) {
             this.data = {}
-            var self = this
+            let self = this
             api.models.PersonData.findAll({where: {personGuid: this.guid}}).then((datas) => {
               datas.forEach((d) => { self.data[d.key] = d.value })
               callback(null, datas)

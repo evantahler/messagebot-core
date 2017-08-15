@@ -1,4 +1,4 @@
-var async = require('async')
+const async = require('async')
 
 exports.task = {
   name: 'campaigns:sendMessage',
@@ -9,15 +9,15 @@ exports.task = {
   pluginOptions: {},
 
   run: function (api, params, next) {
-    var jobs = []
-    var campaign
-    var list
-    var listPerson
-    var person
-    var body
-    var transport
-    var message
-    var team
+    let jobs = []
+    let campaign
+    let list
+    let listPerson
+    let person
+    let body
+    let transport
+    let message
+    let team
 
     jobs.push((done) => {
       api.models.Campaign.findOne({where: {id: params.campaignId}}).then((c) => {
@@ -82,8 +82,8 @@ exports.task = {
     })
 
     jobs.push((done) => {
-      var missingType
-      var missingKey
+      let missingType
+      let missingKey
 
       api.transports.forEach((t) => {
         if (t.name === campaign.transport) { transport = t }
@@ -123,7 +123,7 @@ exports.task = {
     })
 
     jobs.push((done) => {
-      var toSend = true
+      let toSend = true
       if (api.env === 'test') {
         api.log('not sending messages when NODE_ENV=test')
         toSend = false
@@ -140,7 +140,7 @@ exports.task = {
       }
 
       if (toSend === true) {
-        var sendParams = {body: body}
+        let sendParams = {body: body}
         transport.campaignVariables.forEach((v) => {
           sendParams[v] = campaign.campaignVariables[v]
         })

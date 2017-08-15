@@ -1,12 +1,12 @@
-var faker = require('faker')
-var request = require('request')
-var async = require('async')
-var path = require('path')
-var ActionHeroPrototype = require(path.join(__dirname, '/../../node_modules/actionhero/actionhero.js'))
+const faker = require('faker')
+const request = require('request')
+const async = require('async')
+const path = require('path')
+const ActionHeroPrototype = require(path.join(__dirname, '/../../node_modules/actionhero/actionhero.js'))
 
 exports.connect = function (callback) {
-  var actionhero = new ActionHeroPrototype()
-  var configChanges = {
+  let actionhero = new ActionHeroPrototype()
+  let configChanges = {
     logger: { transports: null },
     general: { developmentMode: false }
   }
@@ -26,19 +26,19 @@ exports.funnel = [
 exports.sources = ['web', 'iphone', 'android', 'referral']
 
 exports.buildPerson = function (start, end, routeBase, callback) {
-  var time = faker.date.between(start, end)
-  var firstName = faker.name.firstName()
-  var lastName = faker.name.lastName()
-  var source = this.sources[Math.floor(Math.random() * this.sources.length)]
-  var person = {}
+  let time = faker.date.between(start, end)
+  let firstName = faker.name.firstName()
+  let lastName = faker.name.lastName()
+  let source = this.sources[Math.floor(Math.random() * this.sources.length)]
+  let person = {}
 
-  var payloadData = {
+  let payloadData = {
     firstName: firstName,
     lastName: lastName,
     email: firstName + '.' + lastName + '@fake.com'
   }
 
-  var payload = {
+  let payload = {
     source: source,
     createdAt: time.getTime(),
     data: JSON.stringify(payloadData)
@@ -57,15 +57,15 @@ exports.buildPerson = function (start, end, routeBase, callback) {
 }
 
 exports.buildFunnel = function (person, routeBase, callback) {
-  var counter = 0
-  var ip = faker.internet.ip()
-  var progress = true
-  var jobs = []
+  let counter = 0
+  let ip = faker.internet.ip()
+  let progress = true
+  let jobs = []
 
-  var payload
-  var event
+  let payload
+  let event
 
-  var pushEvent = function (event, payload) {
+  let pushEvent = function (event, payload) {
     jobs.push((next) => {
       request.post(routeBase + '/api/event', {form: payload}, (error, data, response) => {
         response = JSON.parse(response)

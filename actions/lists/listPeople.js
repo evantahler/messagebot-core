@@ -1,9 +1,9 @@
-var async = require('async')
-var fs = require('fs')
-var csv = require('fast-csv')
+const async = require('async')
+const fs = require('fs')
+const csv = require('fast-csv')
 
-var guidListFormatter = function (p) {
-  var arr = []
+let guidListFormatter = function (p) {
+  let arr = []
   if (Array.isArray(p)) { return p }
   p = p.replace(/\s/g, '')
   p.split(',').forEach((guid) => {
@@ -34,7 +34,7 @@ exports.listPeopleAdd = {
   },
 
   run: function (api, data, next) {
-    var jobs = []
+    let jobs = []
     data.response.personGuids = []
 
     api.models.List.findOne({where: {
@@ -44,7 +44,7 @@ exports.listPeopleAdd = {
       if (!list) { return next(new Error('list not found')) }
       if (list.type !== 'static') { return next(new Error('you cannot modify static list membership via this method')) }
 
-      var complete = function () {
+      let complete = function () {
         if (jobs.length === 0) { return next(new Error('nothing to edit')) }
 
         async.series(jobs, (error) => {
@@ -78,15 +78,15 @@ exports.listPeopleAdd = {
 
         complete()
       } else if (data.params.file && data.params.file.path) {
-        var file = data.params.file.path
-        var fileStream = fs.createReadStream(file).on('error', next)
-        var csvStream = csv({
+        let file = data.params.file.path
+        let fileStream = fs.createReadStream(file).on('error', next)
+        let csvStream = csv({
           headers: true,
           ignoreEmpty: true,
           trim: true
         }).on('data', (d) => {
           jobs.push((done) => {
-            var person = api.models.Person.build({
+            let person = api.models.Person.build({
               teamId: data.team.id,
               device: d.device || 'unknown',
               listOptOuts: [],
@@ -98,7 +98,7 @@ exports.listPeopleAdd = {
             if (d.guid) { person.guid = d.guid }
             if (d.createdAt) { person.createdAt = d.createdAt }
 
-            for (var i in d) {
+            for (let i in d) {
               if (person[i] === null || person[i] === undefined) { person.data[i] = d[i] }
             }
 
@@ -115,14 +115,14 @@ exports.listPeopleAdd = {
               // TODO: this is brittle as it relies on string parsing
               if (!error.toString().match(/^Error: personGuid .* already exists with/)) { return done(error) }
 
-              var personGuid = error.toString().split(' ')[2]
+              let personGuid = error.toString().split(' ')[2]
               api.models.Person.findOne({where: {guid: personGuid}}).then((person) => {
                 if (!person) { return done(new Error(`Person (${personGuid}) not found`)) }
                 person.hydrate((error) => {
                   if (error) { return done(error) }
                   if (d.device) { person.device = d.device }
                   if (d.source) { person.source = d.source }
-                  for (var i in d) {
+                  for (let i in d) {
                     if (person[i] === null || person[i] === undefined) { person.data[i] = d[i] }
                   }
 
@@ -175,7 +175,7 @@ exports.listPeopleDelete = {
       id: data.params.listId,
       teamId: data.session.teamId
     }}).then((list) => {
-      var jobs = []
+      let jobs = []
       if (!list) { return next(new Error('list not found')) }
       if (list.type !== 'static') { return next(new Error('you can only modify static list membership via this method')) }
 

@@ -1,10 +1,10 @@
-var Sequelize = require('sequelize')
-var async = require('async')
+const Sequelize = require('sequelize')
+const async = require('async')
 
-var loader = function (api) {
+let loader = function (api) {
   /* --- Priave Methods --- */
 
-  var validTypes = ['dynamic', 'static']
+  let validTypes = ['dynamic', 'static']
 
   /* --- Public Model --- */
 
@@ -44,7 +44,7 @@ var loader = function (api) {
           type: Sequelize.TEXT,
           allowNull: true,
           get: function () {
-            var q = this.getDataValue('personQuery')
+            let q = this.getDataValue('personQuery')
             if (q && q.length > 0) {
               return JSON.parse(q)
             } else {
@@ -62,7 +62,7 @@ var loader = function (api) {
           type: Sequelize.TEXT,
           allowNull: true,
           get: function () {
-            var q = this.getDataValue('eventQuery')
+            let q = this.getDataValue('eventQuery')
             if (q && q.length > 0) {
               return JSON.parse(q)
             } else {
@@ -80,7 +80,7 @@ var loader = function (api) {
           type: Sequelize.TEXT,
           allowNull: true,
           get: function () {
-            var q = this.getDataValue('messageQuery')
+            let q = this.getDataValue('messageQuery')
             if (q && q.length > 0) {
               return JSON.parse(q)
             } else {
@@ -119,10 +119,10 @@ var loader = function (api) {
           },
 
           associateListPeople: function (callback) {
-            var list = this
-            var jobs = []
-            var wheres = []
-            var count = 0
+            let list = this
+            let jobs = []
+            let wheres = []
+            let count = 0
 
             if (list.type === 'static') {
               jobs.push((done) => {
@@ -137,7 +137,7 @@ var loader = function (api) {
                 {q: 'eventQuery', parentProps: ['ip', 'device', 'type', 'lat', 'lng']},
                 {q: 'messageQuery', parentProps: ['campaignId', 'transport', 'body']}
               ].forEach((collection) => {
-                for (var k in this[collection.q]) {
+                for (let k in this[collection.q]) {
                   this[collection.q][k].forEach((v) => {
                     let matcher = '='
                     if (v.indexOf('!') === 0 && v.indexOf('%') < 0) {

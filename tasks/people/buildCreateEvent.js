@@ -1,5 +1,4 @@
-
-var async = require('async')
+const async = require('async')
 
 exports.task = {
   name: 'people:buildCreateEvent',
@@ -10,10 +9,10 @@ exports.task = {
   pluginOptions: {},
 
   run: function (api, params, next) {
-    var jobs = []
-    var team
-    var person
-    var event
+    let jobs = []
+    let team
+    let person
+    let event
 
     jobs.push((done) => {
       api.utils.determineActionsTeam({params: params}, (error, _team) => {

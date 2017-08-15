@@ -1,7 +1,7 @@
-var should = require('should')
-var path = require('path')
-var specHelper = require(path.join(__dirname, '/../specHelper'))
-var api
+const should = require('should')
+const path = require('path')
+const specHelper = require(path.join(__dirname, '/../specHelper'))
+let api
 
 describe('general:applicaiton', () => {
   beforeEach(() => { api = specHelper.api })
@@ -14,7 +14,7 @@ describe('general:applicaiton', () => {
 
   describe('utils', () => {
     it('api.utils.findInBatches', (done) => {
-      var totalUsers = 0
+      let totalUsers = 0
       api.utils.findInBatches(api.models.User, {}, (user, next) => {
         totalUsers++
         next()

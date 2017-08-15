@@ -1,4 +1,4 @@
-var enabled = (process.env.ENABLE_SOCKET_SERVER === 'true' || process.env.ENABLE_SOCKET_SERVER === true)
+const enabled = (process.env.ENABLE_SOCKET_SERVER === 'true' || process.env.ENABLE_SOCKET_SERVER === true)
 
 exports.default = {
   servers: {

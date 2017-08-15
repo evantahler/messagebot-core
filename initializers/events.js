@@ -13,7 +13,7 @@ module.exports = {
   initialize: function (api, next) {
     api.events = {
       triggerCampaigns: function (team, event, callback) {
-        var jobs = []
+        let jobs = []
 
         api.models.Campaign.findAll({
           where: {
@@ -22,7 +22,7 @@ module.exports = {
           }
         }).then((campaigns) => {
           campaigns.forEach((campaign) => {
-            var matched = true
+            let matched = true
 
             if (!campaign.triggerEventMatch || Object.keys(campaign.triggerEventMatch) === 0) { matched = false }
             if (!campaign.sendAt) { matched = false }
@@ -38,7 +38,7 @@ module.exports = {
 
             if (matched === true) {
               jobs.push((done) => {
-                var delay = 1
+                let delay = 1
                 if (campaign.triggerDelay) { delay = campaign.triggerDelay * 1000 }
                 api.tasks.enqueueIn(delay, 'campaigns:triggerEventCheck', {
                   teamId: team.id,

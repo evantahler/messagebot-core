@@ -15,7 +15,7 @@ exports.settingsView = {
     }).then((settings) => {
       data.response.settings = {}
       settings.forEach((setting) => {
-        var d = setting.apiData()
+        let d = setting.apiData()
         data.response.settings[d.key] = d
       })
 

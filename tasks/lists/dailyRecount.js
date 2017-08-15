@@ -1,5 +1,4 @@
-
-var async = require('async')
+const async = require('async')
 
 exports.task = {
   name: 'lists:dailyRecount',
@@ -10,7 +9,7 @@ exports.task = {
   pluginOptions: {},
 
   run: function (api, params, next) {
-    var jobs = []
+    let jobs = []
 
     api.models.List.findAll().then((lists) => {
       lists.forEach((list) => {

@@ -31,12 +31,12 @@ exports.eventCreate = {
   },
 
   run: function (api, data, next) {
-    var event = api.models.Event.build(data.params)
+    let event = api.models.Event.build(data.params)
     if (!event.teamId) { event.teamId = data.team.id }
     event.data = data.params.data
 
     if (!event.ip) { event.ip = data.connection.remoteIP }
-    var location = api.geolocation.build(data.params, event.ip)
+    let location = api.geolocation.build(data.params, event.ip)
     if (location) { event.lat = location.lat; event.lng = location.lng }
 
     event.save().then(() => {

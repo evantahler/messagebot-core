@@ -1,7 +1,7 @@
-var JSONValidator = function (p) {
+let JSONValidator = function (p) {
   if (p === null) { return true }
   try {
-    var o = JSON.parse(p)
+    let o = JSON.parse(p)
     if (o && typeof o === 'object' && o !== null) {
       return true
     } else {
@@ -12,7 +12,7 @@ var JSONValidator = function (p) {
   }
 }
 
-var JSONFormatter = function (p) {
+let JSONFormatter = function (p) {
   if (p === '' || p === null) { return null } else { return p }
 }
 
@@ -48,7 +48,7 @@ exports.listCreate = {
   },
 
   run: function (api, data, next) {
-    var list = api.models.List.build(data.params)
+    let list = api.models.List.build(data.params)
     list.teamId = data.session.teamId
 
     list.save().then(
@@ -111,7 +111,7 @@ exports.listCopy = {
       teamId: data.session.teamId
     }}).then((list) => {
       if (!list) { return next(new Error('list not found')) }
-      var newList = api.models.List.build({
+      let newList = api.models.List.build({
         name: data.params.name,
         description: list.description,
         teamId: list.teamId,
@@ -125,7 +125,7 @@ exports.listCopy = {
         data.response.list = newList.apiData()
 
         api.utils.findInBatches(api.models.ListPerson, {where: {listId: list.id}}, (listPerson, done) => {
-          var newListPerson = api.models.ListPerson.build({
+          let newListPerson = api.models.ListPerson.build({
             personGuid: listPerson.personGuid,
             listId: newList.id
           })

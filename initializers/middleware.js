@@ -1,12 +1,11 @@
-
-var qs = require('qs')
+const qs = require('qs')
 
 module.exports = {
   loadPriority: 900,
 
   initialize: function (api, next) {
     /* --- Params Middleware --- */
-    var middleware = {
+    let middleware = {
       'data-preperation': {
         name: 'data-preperation',
         global: true,
@@ -34,12 +33,12 @@ module.exports = {
 
           // Allow for sloppy parsing of the data object in forms
           // IE: `curl -X POST -d 'personGuid=evan&type=pageView&data[page]=index.html' http://localhost:8080/api/event`
-          var d
-          for (var key in data.params) {
+          let d
+          for (let key in data.params) {
             if (key.indexOf('data[') === 0) {
               if (!data.params.data) { data.params.data = {} }
               d = qs.parse(key + '=' + data.params[key], api.config.servers.web.queryParseOptions)
-              for (var newKey in d.data) {
+              for (let newKey in d.data) {
                 data.params.data[newKey] = d.data[newKey]
               }
               delete data.params[key]

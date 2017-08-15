@@ -1,6 +1,6 @@
-var async = require('async')
-var Table = require('easy-table')
-var faker = require('faker')
+const async = require('async')
+const Table = require('easy-table')
+const faker = require('faker')
 
 module.exports = {
   name: 'messagebot team create',
@@ -15,10 +15,10 @@ module.exports = {
   },
 
   run: function (api, data, next) {
-    var jobs = []
-    var team
-    var user
-    var person
+    let jobs = []
+    let team
+    let user
+    let person
 
     jobs.push((done) => {
       api.sequelize.connect(done)
@@ -27,7 +27,7 @@ module.exports = {
     jobs.push((done) => {
       team = api.models.Team.build(data.params)
       team.save().then(() => {
-        var tableData = [team.apiData()]
+        let tableData = [team.apiData()]
 
         api.log('New Team\r\n')
         api.log(Table.print(tableData))
@@ -75,7 +75,7 @@ module.exports = {
     jobs.push((done) => {
       user.personGuid = person.guid
       user.save().then(() => {
-        var tableData = [user.apiData()]
+        let tableData = [user.apiData()]
 
         api.log('New User')
         api.log('Email: ' + data.params.email)

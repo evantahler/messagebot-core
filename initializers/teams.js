@@ -1,5 +1,4 @@
-
-var async = require('async')
+const async = require('async')
 
 module.exports = {
   loadPriority: 1000,
@@ -9,10 +8,10 @@ module.exports = {
       settings: [],
 
       ensureSettings: function (team, callback) {
-        var jobs = []
+        let jobs = []
         api.models.Setting.findAll({where: {teamId: team.id}}).then((settings) => {
           api.teams.settings.forEach((settingParent) => {
-            var found = false
+            let found = false
             settings.forEach((s) => {
               if (s.key === settingParent.key) { found = true }
             })

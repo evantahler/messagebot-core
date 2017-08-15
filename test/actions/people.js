@@ -1,14 +1,14 @@
-var should = require('should')
-var async = require('async')
-var path = require('path')
-var specHelper = require(path.join(__dirname, '/../specHelper'))
-var email = 'admin@localhost.com'
-var password = 'password'
-var personGuid
-var team
-var list
-var api
-var otherPerson
+const should = require('should')
+const async = require('async')
+const path = require('path')
+const specHelper = require(path.join(__dirname, '/../specHelper'))
+let email = 'admin@localhost.com'
+let password = 'password'
+let personGuid
+let team
+let list
+let api
+let otherPerson
 
 describe('action:person', () => {
   before(() => { api = specHelper.api })
@@ -78,10 +78,10 @@ describe('action:person', () => {
     it('succeeds (enqueues a person_created event)', (done) => {
       api.resque.queue.timestamps((error, timestamps) => {
         should.not.exist(error)
-        var latestTimetamp = timestamps[0]
+        let latestTimetamp = timestamps[0]
         api.tasks.delayedAt(latestTimetamp, (error, queued) => {
           should.not.exist(error)
-          var job = queued[0]
+          let job = queued[0]
           job.args[0].guid.should.equal(personGuid)
           done()
         })
@@ -375,8 +375,8 @@ describe('action:person', () => {
       }, (response) => {
         should.not.exist(response.error)
         Object.keys(response.aggregations).length.should.equal(1)
-        var key = Object.keys(response.aggregations)[0]
-        var date = new Date(key)
+        let key = Object.keys(response.aggregations)[0]
+        let date = new Date(key)
         specHelper.dateCompare(date).should.equal(true)
         response.aggregations[key].should.deepEqual({tester: 2})
         done()
@@ -395,8 +395,8 @@ describe('action:person', () => {
   })
 
   describe('person:delete', () => {
-    var event
-    var message
+    let event
+    let message
 
     before((done) => {
       event = api.models.Event.build({
@@ -440,7 +440,7 @@ describe('action:person', () => {
     })
 
     it('succeeds (deletes related personData, listPeople, messages, and events)', (done) => {
-      var jobs = []
+      let jobs = []
 
       jobs.push((next) => {
         api.models.PersonData.count({where: {personGuid: personGuid}}).then((count) => {

@@ -1,13 +1,13 @@
 module.exports = {
   initialize: function (api, next) {
-    var redis = api.redis.clients.client
+    let redis = api.redis.clients.client
 
     api.session = {
       prefix: 'session:',
       ttl: 60 * 60 * 24, // 1 day
 
       load: function (connection, callback) {
-        var key = api.session.prefix + connection.fingerprint
+        let key = api.session.prefix + connection.fingerprint
         redis.get(key, (error, data) => {
           if (error) {
             return callback(error)
@@ -20,9 +20,9 @@ module.exports = {
       },
 
       create: function (connection, user, callback) {
-        var key = api.session.prefix + connection.fingerprint
+        let key = api.session.prefix + connection.fingerprint
 
-        var sessionData = {
+        let sessionData = {
           userId: user.id,
           teamId: user.teamId,
           role: user.role,
@@ -40,7 +40,7 @@ module.exports = {
       },
 
       destroy: function (connection, callback) {
-        var key = api.session.prefix + connection.fingerprint
+        let key = api.session.prefix + connection.fingerprint
         redis.del(key, callback)
       },
 
@@ -57,7 +57,7 @@ module.exports = {
                 return callback(new Error('Please log in to continue'))
               } else {
                 data.session = sessionData
-                var key = api.session.prefix + data.connection.fingerprint
+                let key = api.session.prefix + data.connection.fingerprint
                 redis.expire(key, api.session.ttl, callback)
               }
             })

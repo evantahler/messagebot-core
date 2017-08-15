@@ -1,12 +1,12 @@
-var Sequelize = require('sequelize')
-var bcrypt = require('bcrypt')
+const Sequelize = require('sequelize')
+const bcrypt = require('bcrypt')
 
-var loader = function (api) {
+let loader = function (api) {
   /* --- Priave Methods --- */
 
-  var bcryptComplexity = 10
+  let bcryptComplexity = 10
 
-  var validRoles = [
+  let validRoles = [
     'new',
     'disabled',
     'admin',
@@ -76,7 +76,7 @@ var loader = function (api) {
           },
 
           updatePassword: function (pw, callback) {
-            var self = this
+            let self = this
             bcrypt.hash(pw, bcryptComplexity, (error, hash) => {
               if (error) { return callback(error) }
               self.passwordHash = hash
@@ -85,7 +85,7 @@ var loader = function (api) {
           },
 
           checkPassword: function (pw, callback) {
-            var self = this
+            let self = this
             bcrypt.compare(pw, self.passwordHash, callback)
           },
 

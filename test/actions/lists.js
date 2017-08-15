@@ -1,12 +1,12 @@
-var should = require('should')
-var async = require('async')
-var path = require('path')
-var specHelper = require(path.join(__dirname, '/../specHelper'))
-var email = 'admin@localhost.com'
-var password = 'password'
-var api
-var listId
-var team
+const should = require('should')
+const async = require('async')
+const path = require('path')
+const specHelper = require(path.join(__dirname, '/../specHelper'))
+let email = 'admin@localhost.com'
+let password = 'password'
+let api
+let listId
+let team
 
 describe('actions:lists', () => {
   beforeEach(() => { api = specHelper.api })
@@ -173,9 +173,9 @@ describe('actions:lists', () => {
   })
 
   describe('list:people', () => {
-    var dynamicListId
-    var person
-    var csvPeople = []
+    let dynamicListId
+    let person
+    let csvPeople = []
 
     before((done) => {
       specHelper.requestWithLogin(email, password, 'list:create', {
@@ -210,7 +210,7 @@ describe('actions:lists', () => {
 
     after((done) => { person.destroy().then(() => { done() }) })
     after((done) => {
-      var jobs = []
+      let jobs = []
       csvPeople.forEach((guid) => {
         jobs.push((next) => {
           api.models.Person.destroy({where: {
@@ -253,7 +253,7 @@ describe('actions:lists', () => {
           listId: listId,
           file: { path: path.join(__dirname, '/../../samples/email-upload.csv') }
         }, (response) => {
-          var jobs = []
+          let jobs = []
           should.not.exist(response.error)
           response.personGuids.length.should.equal(4)
           csvPeople = response.personGuids
@@ -265,7 +265,7 @@ describe('actions:lists', () => {
                   should.not.exist(error)
                   person.source.should.equal('form_upload')
                   person.device.should.equal('phone')
-                  var keys = Object.keys(person.data)
+                  let keys = Object.keys(person.data)
                   keys.should.not.containEql('source')
                   keys.should.not.containEql('device')
                   keys.should.containEql('email')
@@ -293,7 +293,7 @@ describe('actions:lists', () => {
               should.not.exist(error)
               person.source.should.equal('other_source')
               person.device.should.equal('phone')
-              var keys = Object.keys(person.data)
+              let keys = Object.keys(person.data)
               keys.should.not.containEql('source')
               keys.should.not.containEql('device')
               keys.should.containEql('email') // the conflicting key is email which should trigger the merge

@@ -1,8 +1,8 @@
-var should = require('should') // eslint-disable-line
-var path = require('path')
-var specHelper = require(path.join(__dirname, '/../specHelper'))
-var api
-var setting
+const should = require('should') // eslint-disable-line
+const path = require('path')
+const specHelper = require(path.join(__dirname, '/../specHelper'))
+let api
+let setting
 
 describe('models:settings', () => {
   beforeEach(() => { api = specHelper.api })
@@ -56,7 +56,7 @@ describe('models:settings', () => {
     })
 
     setting.save().then(() => {
-      var otherSetting = api.models.Setting.build({
+      let otherSetting = api.models.Setting.build({
         teamId: 1,
         key: 'some:key',
         value: 'abc123',

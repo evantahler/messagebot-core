@@ -1,6 +1,6 @@
-var Sequelize = require('sequelize')
+const Sequelize = require('sequelize')
 
-var loader = function (api) {
+let loader = function (api) {
   /* --- Priave Methods --- */
 
   /* --- Public Model --- */

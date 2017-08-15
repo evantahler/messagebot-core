@@ -15,7 +15,7 @@ exports.templateCreate = {
   },
 
   run: function (api, data, next) {
-    var template = api.models.Template.build(data.params)
+    let template = api.models.Template.build(data.params)
     template.teamId = data.session.teamId
 
     template.save().then(() => {
@@ -93,7 +93,7 @@ exports.templateRender = {
             if (error) { return next(error) }
             if (data.connection.extension === 'html') {
               data.toRender = false
-              for (var i in data.connection.rawConnection.responseHeaders) {
+              for (let i in data.connection.rawConnection.responseHeaders) {
                 if (data.connection.rawConnection.responseHeaders[i][0] === 'Content-Type') {
                   data.connection.rawConnection.responseHeaders.splice(i, 1)
                 }
@@ -136,7 +136,7 @@ exports.templateCopy = {
       teamId: data.session.teamId
     }}).then((template) => {
       if (!template) { return next(new Error('template not found')) }
-      var newTemplate = api.models.Template.build({
+      let newTemplate = api.models.Template.build({
         name: data.params.name,
         teamId: template.teamId,
         description: template.description,

@@ -1,6 +1,6 @@
-var minTaskProcessors = parseInt(process.env.MIN_TASK_PROCESSORS || 1)
-var maxTaskProcessors = parseInt(process.env.MAX_TASK_PROCESSORS || 1)
-var toScheduler = process.env.SCHEDULER ? (process.env.SCHEDULER === 'true') : true
+const minTaskProcessors = parseInt(process.env.MIN_TASK_PROCESSORS || 1)
+const maxTaskProcessors = parseInt(process.env.MAX_TASK_PROCESSORS || 1)
+const toScheduler = process.env.SCHEDULER ? (process.env.SCHEDULER === 'true') : true
 
 exports.default = {
   tasks: function (api) {

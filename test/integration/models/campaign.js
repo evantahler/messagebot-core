@@ -1,12 +1,12 @@
-var should = require('should')
-var async = require('async')
-var path = require('path')
-var specHelper = require(path.join(__dirname, '/../../specHelper'))
-var api
-var team
+const should = require('should')
+const async = require('async')
+const path = require('path')
+const specHelper = require(path.join(__dirname, '/../../specHelper'))
+let api
+let team
 
-var email = 'admin@localhost.com'
-var password = 'password'
+let email = 'admin@localhost.com'
+let password = 'password'
 
 describe('integartion:campaigns', () => {
   before(() => { api = specHelper.api })
@@ -19,8 +19,8 @@ describe('integartion:campaigns', () => {
   })
 
   describe('#stats', () => {
-    var campaign
-    var messages = []
+    let campaign
+    let messages = []
 
     before((done) => {
       campaign = api.models.Campaign.build({
@@ -38,11 +38,11 @@ describe('integartion:campaigns', () => {
     })
 
     before((done) => {
-      var jobs = [];
+      let jobs = [];
 
       [0, 1, 2, 3, 4, 5, 6, 7, 8, 9].forEach((i) => {
         jobs.push((next) => {
-          var message = api.models.Message.build({
+          let message = api.models.Message.build({
             transport: 'smtp',
             teamId: 1,
             personGuid: `${i}-${Math.random()}`,
@@ -61,7 +61,7 @@ describe('integartion:campaigns', () => {
 
       [0, 1, 2, 3, 4].forEach((i) => {
         jobs.push((next) => {
-          var message = messages[i]
+          let message = messages[i]
           message.reload().then(() => {
             message.readAt = new Date()
             message.save().then(() => { next() }).catch(next)
@@ -71,7 +71,7 @@ describe('integartion:campaigns', () => {
 
       [0, 1].forEach((i) => {
         jobs.push((next) => {
-          var message = messages[i]
+          let message = messages[i]
           message.reload().then(() => {
             message.actedAt = new Date()
             message.save().then(() => { next() }).catch(next)
@@ -85,7 +85,7 @@ describe('integartion:campaigns', () => {
     after((done) => { campaign.destroy().then(() => { done() }).catch(done) })
 
     after((done) => {
-      var jobs = []
+      let jobs = []
       messages.forEach((message) => {
         jobs.push((next) => { message.destroy().then(() => { next() }).catch(next) })
       })
@@ -121,8 +121,8 @@ describe('integartion:campaigns', () => {
         buckets.readAt.should.equal(5)
         buckets.actedAt.should.equal(2)
 
-        var now = new Date()
-        var year = now.getFullYear().toString()
+        let now = new Date()
+        let year = now.getFullYear().toString()
 
         Object.keys(terms.sentAt[0]).length.should.equal(1)
         Object.keys(terms.sentAt[0])[0].should.equal(year)
@@ -141,11 +141,11 @@ describe('integartion:campaigns', () => {
   })
 
   describe('#send', () => {
-    var campaign
-    var person
-    var list
-    var listPerson
-    var template
+    let campaign
+    let person
+    let list
+    let listPerson
+    let template
 
     before((done) => {
       person = api.models.Person.build({
@@ -244,7 +244,7 @@ describe('integartion:campaigns', () => {
       after((done) => { campaign.destroy().then(() => { done() }) })
 
       it('sends (success)', (done) => {
-        var jobs = []
+        let jobs = []
 
         jobs.push((next) => {
           campaign.send(next)
@@ -268,7 +268,7 @@ describe('integartion:campaigns', () => {
       })
 
       it('sends (failure; double-send)', (done) => {
-        var jobs = []
+        let jobs = []
 
         jobs.push((next) => {
           campaign.send(next)
@@ -301,7 +301,7 @@ describe('integartion:campaigns', () => {
       after((done) => { campaign.destroy().then(() => { done() }).catch(done) })
 
       it('sends (success; first time)', (done) => {
-        var jobs = []
+        let jobs = []
 
         jobs.push((next) => {
           campaign.send(next)
@@ -326,7 +326,7 @@ describe('integartion:campaigns', () => {
       })
 
       it('sends (success; second time)', (done) => {
-        var jobs = []
+        let jobs = []
 
         jobs.push((next) => {
           campaign.send(next)
@@ -350,7 +350,7 @@ describe('integartion:campaigns', () => {
       }).timeout(10 * 1000)
 
       it('sends (failure; sending too soon)', (done) => {
-        var jobs = []
+        let jobs = []
 
         jobs.push((next) => {
           campaign.updateAttributes({reSendDelay: 9999}).then(() => {
@@ -390,7 +390,7 @@ describe('integartion:campaigns', () => {
       after((done) => { campaign.destroy().then(() => { done() }).catch(done) })
 
       it('sends (failure; not how it is done)', (done) => {
-        var jobs = []
+        let jobs = []
 
         jobs.push((next) => {
           campaign.send(next)
@@ -425,7 +425,7 @@ describe('integartion:campaigns', () => {
       after((done) => { campaign.destroy().then(() => { done() }).catch(done) })
 
       it('sends (success)', (done) => {
-        var jobs = []
+        let jobs = []
 
         jobs.push((next) => {
           api.specHelper.runAction('event:create', {
@@ -457,7 +457,7 @@ describe('integartion:campaigns', () => {
       }).timeout(10 * 1000)
 
       it('will not send for other events', (done) => {
-        var jobs = []
+        let jobs = []
 
         jobs.push((next) => {
           api.specHelper.runAction('event:create', {

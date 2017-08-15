@@ -1,6 +1,6 @@
 // Note that to use the websocket server, you also need the web server enabled
 
-var enabled = (process.env.ENABLE_WEB_SOCKET_SERVER === 'true' || process.env.ENABLE_WEB_SOCKET_SERVER === true)
+const enabled = (process.env.ENABLE_WEB_SOCKET_SERVER === 'true' || process.env.ENABLE_WEB_SOCKET_SERVER === true)
 
 exports.default = {
   servers: {

@@ -38,7 +38,7 @@ exports.listsList = {
   },
 
   run: function (api, data, next) {
-    var query = {
+    let query = {
       where: { teamId: data.session.teamId },
       order: data.params.order,
       offset: data.params.from,

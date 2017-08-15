@@ -1,7 +1,7 @@
-var Sequelize = require('sequelize')
-var uuid = require('uuid')
+const Sequelize = require('sequelize')
+const uuid = require('uuid')
 
-var loader = function (api) {
+let loader = function (api) {
   /* --- Priave Methods --- */
 
   /* --- Public Model --- */
@@ -60,7 +60,7 @@ var loader = function (api) {
         instanceMethods: {
           hydrate: function (callback) {
             this.data = {}
-            var self = this
+            let self = this
             api.models.MessageData.findAll({where: {messageGuid: self.guid}}).then((datas) => {
               datas.forEach((d) => { self.data[d.key] = d.value })
               callback(null, datas)

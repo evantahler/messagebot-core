@@ -1,15 +1,15 @@
-var async = require('async')
-var path = require('path')
-var common = require(path.join(__dirname, 'common.js'))
-var sleep = parseInt(process.env.SLEEP) || (1000 * 2.2)
+const async = require('async')
+const path = require('path')
+const common = require(path.join(__dirname, 'common.js'))
+const sleep = parseInt(process.env.SLEEP) || (1000 * 2.2)
 
-var run = function (api) {
-  var routeBase = process.env.PUBLIC_URL || 'http://' + api.config.servers.web.bindIP + ':' + api.config.servers.web.port
-  var jobs = []
-  var person
-  var message = ''
-  var end = new Date()
-  var start = new Date(end.getTime() + 1)
+const run = function (api) {
+  let routeBase = process.env.PUBLIC_URL || 'http://' + api.config.servers.web.bindIP + ':' + api.config.servers.web.port
+  let jobs = []
+  let person
+  let message = ''
+  let end = new Date()
+  let start = new Date(end.getTime() + 1)
 
   message += '[' + end.toString() + '] '
 

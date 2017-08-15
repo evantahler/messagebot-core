@@ -1,7 +1,7 @@
-var should = require('should')
-var path = require('path')
-var specHelper = require(path.join(__dirname, '/../specHelper'))
-var api
+const should = require('should')
+const path = require('path')
+const specHelper = require(path.join(__dirname, '/../specHelper'))
+let api
 
 describe('general:seeds', () => {
   beforeEach(() => { api = specHelper.api })

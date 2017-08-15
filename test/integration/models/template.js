@@ -1,15 +1,15 @@
-var should = require('should')
-var async = require('async')
-var path = require('path')
-var specHelper = require(path.join(__dirname, '/../../specHelper'))
-var api
+const should = require('should')
+const async = require('async')
+const path = require('path')
+const specHelper = require(path.join(__dirname, '/../../specHelper'))
+let api
 
 describe('integartion:template', () => {
   describe('#render', () => {
-    var person
-    var message
-    var template
-    var footerTemplate
+    let person
+    let message
+    let template
+    let footerTemplate
 
     before(() => { api = specHelper.api })
 
@@ -112,9 +112,9 @@ describe('integartion:template', () => {
     })
 
     it('expands dates properly', (done) => {
-      var now = new Date()
-      var monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
-      var month = monthNames[now.getMonth()]
+      let now = new Date()
+      let monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+      let month = monthNames[now.getMonth()]
 
       template.template = 'Hello there, {{ person.data.firstName }} @ {{person.updatedAt.monthName}}'
       template.render(person, message, null, null, null, (error, html, view) => {
@@ -143,10 +143,10 @@ describe('integartion:template', () => {
     })
 
     describe('includes sub-templates', (done) => {
-      var year = new Date().getFullYear()
+      let year = new Date().getFullYear()
 
       it('(happy, by id)', (done) => {
-        var jobs = []
+        let jobs = []
 
         jobs.push((next) => {
           template.updateAttributes({
@@ -168,7 +168,7 @@ describe('integartion:template', () => {
       })
 
       it('(happy, by name)', (done) => {
-        var jobs = []
+        let jobs = []
 
         jobs.push((next) => {
           template.updateAttributes({
@@ -190,7 +190,7 @@ describe('integartion:template', () => {
       })
 
       it('(failure; missing)', (done) => {
-        var jobs = []
+        let jobs = []
 
         jobs.push((next) => {
           template.updateAttributes({
@@ -211,7 +211,7 @@ describe('integartion:template', () => {
       })
 
       it('(failure; self-include)', (done) => {
-        var jobs = []
+        let jobs = []
 
         jobs.push((next) => {
           template.updateAttributes({

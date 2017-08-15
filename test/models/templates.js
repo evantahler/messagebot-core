@@ -1,8 +1,8 @@
-var should = require('should') //eslint-disable-line
-var path = require('path')
-var specHelper = require(path.join(__dirname, '/../specHelper'))
-var api
-var template
+const should = require('should') //eslint-disable-line
+const path = require('path')
+const specHelper = require(path.join(__dirname, '/../specHelper'))
+let api
+let template
 
 describe('models:templates', () => {
   beforeEach(() => { api = specHelper.api })
@@ -59,7 +59,7 @@ describe('models:templates', () => {
     })
 
     template.save().then(() => {
-      var otherTemplate = api.models.Template.build({
+      let otherTemplate = api.models.Template.build({
         teamId: 1,
         name: 'my template',
         description: 'my template',

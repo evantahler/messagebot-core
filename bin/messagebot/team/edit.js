@@ -1,5 +1,5 @@
-var async = require('async')
-var Table = require('easy-table')
+const async = require('async')
+const Table = require('easy-table')
 
 module.exports = {
   name: 'messagebot team edit',
@@ -13,8 +13,8 @@ module.exports = {
   },
 
   run: function (api, data, next) {
-    var jobs = []
-    var team
+    let jobs = []
+    let team
 
     jobs.push((done) => {
       api.sequelize.connect(done)
@@ -38,7 +38,7 @@ module.exports = {
 
     jobs.push((done) => {
       api.log('Updated Team\r\n')
-      var tableData = [team.apiData()]
+      let tableData = [team.apiData()]
       api.log(Table.print(tableData))
       done()
     })

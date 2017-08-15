@@ -1,8 +1,7 @@
-
-var fs = require('fs')
-var path = require('path')
-var content = fs.readFileSync(path.join(__dirname, '/../support/help.txt')).toString()
-var pkg = require(path.join(__dirname, '/../../package.json'))
+const fs = require('fs')
+const path = require('path')
+const content = fs.readFileSync(path.join(__dirname, '/../support/help.txt')).toString()
+const pkg = require(path.join(__dirname, '/../../package.json'))
 
 module.exports = {
   name: 'messagebot help',

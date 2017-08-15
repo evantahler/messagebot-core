@@ -1,8 +1,8 @@
-var should = require('should')
-var async = require('async')
-var path = require('path')
-var specHelper = require(path.join(__dirname, '/../specHelper'))
-var api
+const should = require('should')
+const async = require('async')
+const path = require('path')
+const specHelper = require(path.join(__dirname, '/../specHelper'))
+let api
 
 describe('actions:session', () => {
   beforeEach(() => { api = specHelper.api })
@@ -37,7 +37,7 @@ describe('actions:session', () => {
       password: 'password'
     }, (response) => {
       should.not.exist(response.error)
-      var key = api.session.prefix + response.requesterInformation.id
+      let key = api.session.prefix + response.requesterInformation.id
       api.redis.clients.client.get(key, (error, data) => {
         should.not.exist(error)
         data = JSON.parse(data)
@@ -74,8 +74,8 @@ describe('actions:session', () => {
   })
 
   it('logging out will delete the seession', (done) => {
-    var jobs = []
-    var connection = new api.specHelper.Connection()
+    let jobs = []
+    let connection = new api.specHelper.Connection()
 
     jobs.push((next) => {
       connection.params = {email: 'admin@localhost.com', password: 'password'}

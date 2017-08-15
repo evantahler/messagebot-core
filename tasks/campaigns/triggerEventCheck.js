@@ -1,5 +1,4 @@
-
-var async = require('async')
+const async = require('async')
 
 exports.task = {
   name: 'campaigns:triggerEventCheck',
@@ -10,9 +9,9 @@ exports.task = {
   pluginOptions: {},
 
   run: function (api, params, next) {
-    var jobs = []
-    var toSend = false
-    var list
+    let jobs = []
+    let toSend = false
+    let list
 
     jobs.push((done) => {
       api.models.List.findOne({

@@ -1,12 +1,12 @@
-var should = require('should')
-var async = require('async')
-var path = require('path')
-var specHelper = require(path.join(__dirname, '/../specHelper'))
-var email = 'admin@localhost.com'
-var password = 'password'
-var api
-var messageGuid
-var team
+const should = require('should')
+const async = require('async')
+const path = require('path')
+const specHelper = require(path.join(__dirname, '/../specHelper'))
+let email = 'admin@localhost.com'
+let password = 'password'
+let api
+let messageGuid
+let team
 
 describe('actions:message', () => {
   before(() => { api = specHelper.api })
@@ -114,10 +114,10 @@ describe('actions:message', () => {
   })
 
   describe('message:track', () => {
-    var eventGuids = []
+    let eventGuids = []
 
     after((done) => {
-      var jobs = []
+      let jobs = []
       eventGuids.forEach((e) => {
         jobs.push((next) => {
           api.models.Event.destroy({where: {guid: e}}).then(() => {
@@ -281,8 +281,8 @@ describe('actions:message', () => {
       }, (response) => {
         should.not.exist(response.error)
         Object.keys(response.aggregations).length.should.equal(1)
-        var key = Object.keys(response.aggregations)[0]
-        var date = new Date(key)
+        let key = Object.keys(response.aggregations)[0]
+        let date = new Date(key)
         specHelper.dateCompare(date).should.equal(true)
         response.aggregations[key].should.deepEqual({smtp: 1})
         done()

@@ -1,8 +1,8 @@
-var should = require('should') // eslint-disable-line
-var path = require('path')
-var specHelper = require(path.join(__dirname, '/../specHelper'))
-var campaign
-var api
+const should = require('should') // eslint-disable-line
+const path = require('path')
+const specHelper = require(path.join(__dirname, '/../specHelper'))
+let campaign
+let api
 
 describe('models:campaigns', () => {
   beforeEach(() => { api = specHelper.api })
@@ -68,7 +68,7 @@ describe('models:campaigns', () => {
     })
 
     campaign.save().then(() => {
-      var otherCampaign = api.models.Campaign.build({
+      let otherCampaign = api.models.Campaign.build({
         teamId: 1,
         name: 'my campaign',
         description: 'my campaign',

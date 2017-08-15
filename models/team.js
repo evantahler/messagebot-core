@@ -1,9 +1,9 @@
-var Sequelize = require('sequelize')
+const Sequelize = require('sequelize')
 
-var loader = function (api) {
+let loader = function (api) {
   /* --- Priave Methods --- */
 
-  var destorySettings = function (team) {
+  let destorySettings = function (team) {
     return api.models.Setting.destroy({
       where: { teamId: team.id }
     })
@@ -27,7 +27,7 @@ var loader = function (api) {
           //   this.setDataValue('trackingDomainRegexp', value.toString());
           // },
           // get: function(){
-          //   var value = this.getDataValue('trackingDomainRegexp');
+          //   let value = this.getDataValue('trackingDomainRegexp');
           //   return new RegExp(value);
           // }
         },

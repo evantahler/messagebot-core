@@ -1,23 +1,23 @@
-var async = require('async')
-var path = require('path')
-var common = require(path.join(__dirname, 'common.js'))
+const async = require('async')
+const path = require('path')
+const common = require(path.join(__dirname, 'common.js'))
 
-var seed = function (api, callback) {
-  var routeBase = process.env.PUBLIC_URL || 'http://' + api.config.servers.web.bindIP + ':' + api.config.servers.web.port
-  var usersCount = process.env.USERS_COUNT || 1000
-  var jobs = []
+let seed = function (api, callback) {
+  let routeBase = process.env.PUBLIC_URL || 'http://' + api.config.servers.web.bindIP + ':' + api.config.servers.web.port
+  let usersCount = process.env.USERS_COUNT || 1000
+  let jobs = []
 
   // only create entries within a 1-month window
-  var start = new Date()
+  let start = new Date()
   start.setMonth(start.getMonth() - 1)
-  var end = new Date()
+  let end = new Date()
 
-  var i = 0
+  let i = 0
   while (i < usersCount) {
     jobs.push((done) => {
-      var localJobs = []
-      var person
-      var message = ''
+      let localJobs = []
+      let person
+      let message = ''
 
       // create the person
       localJobs.push((next) => {

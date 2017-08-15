@@ -137,7 +137,7 @@ The simplest transport, `logger` (which just logs the message to MessageBot's lo
 
 ```js
 // in an initializer
-var transport = {
+let transport = {
   name: 'logger',
   description: 'for testing messages by sending them to a log file',
 
@@ -151,7 +151,7 @@ var transport = {
   ],
 
   deliver: function(payload, person, callback){
-    var message = '';
+    let message = '';
     message += '[' + payload.logPrefix + ' | to ' + person.data.data.firstName + ' ' + person.data.data.firstName + '] ';
     message += payload.body;
 

@@ -1,4 +1,4 @@
-var async = require('async')
+const async = require('async')
 
 exports.messageCreate = {
   name: 'message:create',
@@ -28,7 +28,7 @@ exports.messageCreate = {
   },
 
   run: function (api, data, next) {
-    var message = api.models.Message.build(data.params)
+    let message = api.models.Message.build(data.params)
     message.data = data.params.data
     message.teamId = data.team.id
 
@@ -173,11 +173,11 @@ exports.messageTrack = {
   },
 
   run: function (api, data, next) {
-    var jobs = []
-    var ip = data.params.ip
-    var eventType
-    var event
-    var message
+    let jobs = []
+    let ip = data.params.ip
+    let eventType
+    let event
+    let message
 
     // testing GUID or verb
     if (data.params.guid === '%%MESSAGEGUID%%' || data.params.verb === 'test') {
@@ -239,7 +239,7 @@ exports.messageTrack = {
 
       event.data = {}
       if (data.params.link) { event.data.link = data.params.link }
-      var location = api.geolocation.build(data.params, event.ip)
+      let location = api.geolocation.build(data.params, event.ip)
       if (location) { event.lat = location.lat; event.lng = location.lng }
 
       event.save().then(() => {

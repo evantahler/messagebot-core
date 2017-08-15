@@ -1,14 +1,14 @@
-var should = require('should')
-var async = require('async')
-var path = require('path')
-var specHelper = require(path.join(__dirname, '/../../specHelper'))
-var api
+const should = require('should')
+const async = require('async')
+const path = require('path')
+const specHelper = require(path.join(__dirname, '/../../specHelper'))
+let api
 
-var people = []
-var event
-var person
-var list
-var team
+let people = []
+let event
+let person
+let list
+let team
 
 describe('integartion:lists', () => {
   before(() => { api = specHelper.api })
@@ -82,7 +82,7 @@ describe('integartion:lists', () => {
 
     after((done) => { event.destroy().then(() => { done() }).catch(done) })
     after((done) => {
-      var jobs = []
+      let jobs = []
 
       people.forEach((person) => {
         jobs.push((next) => {
@@ -146,7 +146,7 @@ describe('integartion:lists', () => {
     it('#associateListPeople (static)', (done) => {
       list.type = 'static'
 
-      var listPerson = api.models.ListPerson.build({
+      let listPerson = api.models.ListPerson.build({
         teamId: team.id,
         listId: list.id,
         personGuid: people[3].guid

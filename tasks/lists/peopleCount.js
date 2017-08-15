@@ -1,4 +1,3 @@
-
 exports.task = {
   name: 'lists:peopleCount',
   description: 'lists:peopleCount',

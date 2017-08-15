@@ -1,4 +1,4 @@
-var async = require('async')
+const async = require('async')
 
 exports.task = {
   name: 'events:process',
@@ -9,9 +9,9 @@ exports.task = {
   pluginOptions: {},
 
   run: function (api, params, next) {
-    var loadJobs = []
-    var workJobs = []
-    var events = []
+    let loadJobs = []
+    let workJobs = []
+    let events = []
 
     api.utils.determineActionsTeam({params: params}, (error, team) => {
       if (error) { return next(error) }

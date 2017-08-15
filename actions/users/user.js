@@ -1,4 +1,4 @@
-var async = require('async')
+const async = require('async')
 
 exports.userCreate = {
   name: 'user:create',
@@ -15,9 +15,9 @@ exports.userCreate = {
   },
 
   run: function (api, data, next) {
-    var jobs = []
-    var user
-    var person
+    let jobs = []
+    let user
+    let person
 
     jobs.push((done) => {
       user = api.models.User.build(data.params)
@@ -73,7 +73,7 @@ exports.userView = {
   },
 
   run: function (api, data, next) {
-    var userId = data.session.userId
+    let userId = data.session.userId
     if (data.params.userId && data.session.role === 'admin') {
       userId = data.params.userId
     }
@@ -108,10 +108,10 @@ exports.userEdit = {
   },
 
   run: function (api, data, next) {
-    var jobs = []
-    var userId = data.session.userId
-    var user
-    var person
+    let jobs = []
+    let userId = data.session.userId
+    let user
+    let person
 
     if (data.params.userId && data.session.role === 'admin') {
       userId = data.params.userId
@@ -194,9 +194,9 @@ exports.userDelete = {
   },
 
   run: function (api, data, next) {
-    var jobs = []
-    var user
-    var person
+    let jobs = []
+    let user
+    let person
 
     jobs.push((done) => {
       api.models.User.findOne({where: {

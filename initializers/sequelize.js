@@ -1,7 +1,7 @@
-var path = require('path')
-var fs = require('fs')
-var Sequelize = require('sequelize')
-var async = require('async')
+const path = require('path')
+const fs = require('fs')
+const Sequelize = require('sequelize')
+const async = require('async')
 
 module.exports = {
   loadPriority: 100,
@@ -10,7 +10,7 @@ module.exports = {
   initialize: function (api, next) {
     api.models = api.models || {}
 
-    var sequelizeInstance = new Sequelize(
+    let sequelizeInstance = new Sequelize(
       api.config.sequelize.database,
       api.config.sequelize.username,
       api.config.sequelize.password,
@@ -22,9 +22,9 @@ module.exports = {
       sequelize: sequelizeInstance,
 
       connect: function (callback) {
-        var dir = path.normalize(api.projectRoot + '/models')
+        let dir = path.normalize(api.projectRoot + '/models')
         fs.readdirSync(dir).forEach((file) => {
-          var loader = require(dir + path.sep + file)(api)
+          const loader = require(dir + path.sep + file)(api)
           api.models[loader.name] = loader.model
         })
 
@@ -135,16 +135,16 @@ module.exports = {
 
       updatateData: function (self, model, remoteKey, uniqueDataKeys) {
         return new Promise((resolve, reject) => {
-          var jobs = []
+          let jobs = []
           if (!self.data) { self.data = {} }
-          var remainingKeys = Object.keys(self.data)
-          var consumedKeys = []
+          let remainingKeys = Object.keys(self.data)
+          let consumedKeys = []
           if (!uniqueDataKeys) { uniqueDataKeys = [] }
 
           remainingKeys.forEach((k) => {
             if (uniqueDataKeys.indexOf(k) >= 0) {
               jobs.push((done) => {
-                var where = {
+                let where = {
                   teamId: self.teamId,
                   key: k,
                   value: self.data[k]
@@ -159,7 +159,7 @@ module.exports = {
             }
           })
 
-          var where = {}
+          let where = {}
           where[remoteKey] = self.guid
           model.findAll({where: where}).then((datas) => {
             remainingKeys.forEach((k) => {
@@ -182,7 +182,7 @@ module.exports = {
               if (consumedKeys.indexOf(k) < 0 && v !== null && v !== undefined) {
                 if (typeof v === 'object') { v = JSON.stringify(v) }
                 jobs.push((done) => {
-                  var o = {
+                  let o = {
                     teamId: self.teamId,
                     key: k,
                     value: v

@@ -1,6 +1,6 @@
-var async = require('async')
-var path = require('path')
-var packageJSON = require(path.normalize(path.join(__dirname, '..', '..', 'package.json')))
+const async = require('async')
+const path = require('path')
+const packageJSON = require(path.normalize(path.join(__dirname, '..', '..', 'package.json')))
 
 exports.status = {
   name: 'system:status',
@@ -10,8 +10,8 @@ exports.status = {
   outputExample: {},
 
   run: function (api, data, next) {
-    var jobs = []
-    var team
+    let jobs = []
+    let team
 
     data.response.database = {}
     data.response.redis = {}
@@ -39,16 +39,16 @@ exports.status = {
     })
 
     jobs.push((done) => {
-      var intervalJobs = []
-      var intervalTimes = []
+      let intervalJobs = []
+      let intervalTimes = []
 
-      var i = 0
+      let i = 0
       while (i < 10000) {
         intervalJobs.push((intervalDone) => {
-          var start = process.hrtime()
+          let start = process.hrtime()
           process.nextTick(() => {
-            var delta = process.hrtime(start)
-            var ms = (delta[0] * 1000) + (delta[1] / 1000000)
+            let delta = process.hrtime(start)
+            let ms = (delta[0] * 1000) + (delta[1] / 1000000)
             intervalTimes.push(ms)
             intervalDone()
           })
@@ -57,7 +57,7 @@ exports.status = {
       }
 
       async.series(intervalJobs, () => {
-        var sum = 0
+        let sum = 0
         intervalTimes.forEach((t) => { sum += t })
         data.response.node.avgEventLoopDelay = Math.round(sum / intervalTimes.length * 10000) / 1000
         if (data.response.node.avgEventLoopDelay > 2) { data.response.node.healthy = false }
@@ -90,18 +90,18 @@ exports.status = {
 
     ['tasks', 'client'].forEach((redisName) => {
       jobs.push((done) => {
-        var redis = api.redis.clients[redisName]
+        let redis = api.redis.clients[redisName]
         if (typeof redis.info === 'function') {
           redis.info((error, lines) => {
             if (error) { return done(new Error(`Redis Error (${redisName}): ${error}`)) }
 
             try {
               lines = lines.split('\n')
-              var info = {}
+              let info = {}
               lines.forEach((line) => {
                 line = line.replace('\r', '')
                 if (line[0] !== '#' && line.length > 0) {
-                  var parts = line.split(':')
+                  let parts = line.split(':')
                   info[parts[0]] = parts[1]
                 }
               })

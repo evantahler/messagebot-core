@@ -43,7 +43,7 @@ exports.campaignsList = {
   },
 
   run: function (api, data, next) {
-    var query = {
+    let query = {
       offset: data.params.from,
       limit: data.params.size,
       order: data.params.order

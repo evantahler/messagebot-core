@@ -1,6 +1,5 @@
-
-var async = require('async')
-var exec = require('child_process').exec
+const async = require('async')
+const exec = require('child_process').exec
 
 module.exports = {
   initialize: function (api, next) {
@@ -11,7 +10,7 @@ module.exports = {
       query.limit = limit
       query.offset = offset
       model.findAll(query).then((records) => {
-        var jobs = []
+        let jobs = []
         if (!records || records.length === 0) { return callback() }
         records.forEach((r) => {
           jobs.push((done) => { recordResponder(r, done) })
@@ -25,7 +24,7 @@ module.exports = {
     }
 
     api.utils.determineActionsTeam = function (data, callback) {
-      var team
+      let team
 
       api.models.Team.findAll().then((teams) => {
         // leave this as an option for explicit tasks/internal use
@@ -44,7 +43,7 @@ module.exports = {
 
         if (!team && data.connection && data.connection.type === 'web') {
           teams.forEach((_team) => {
-            var regexp = new RegExp(_team.trackingDomainRegexp)
+            let regexp = new RegExp(_team.trackingDomainRegexp)
             if (data.connection.rawConnection.req.headers.host.match(regexp)) { team = _team }
           })
         }
@@ -56,8 +55,8 @@ module.exports = {
     api.utils.doShell = function (commands, callback, silent) {
       if (!silent) { silent = false }
       if (!Array.isArray(commands)) { commands = [commands] }
-      // var fullCommand = '/bin/sh -c \'' + commands.join(' && ') + '\''
-      var fullCommand = commands.join(' && ')
+      // let fullCommand = '/bin/sh -c \'' + commands.join(' && ') + '\''
+      let fullCommand = commands.join(' && ')
       if (!silent) { console.log('>> ' + fullCommand) }
       exec(fullCommand, (error, stdout, stderr) => {
         if (stderr) { error = stderr }

@@ -1,11 +1,11 @@
-var should = require('should')
-var path = require('path')
-var specHelper = require(path.join(__dirname, '/../specHelper'))
-var email = 'admin@localhost.com'
-var password = 'password'
-var api
-var team
-var campaignId
+const should = require('should')
+const path = require('path')
+const specHelper = require(path.join(__dirname, '/../specHelper'))
+let email = 'admin@localhost.com'
+let password = 'password'
+let api
+let team
+let campaignId
 
 describe('actions:campaign', () => {
   before(() => { api = specHelper.api })
@@ -198,8 +198,8 @@ describe('actions:campaign', () => {
         should.not.exist(response.error)
         response.totals.should.deepEqual({sentAt: 3, readAt: 2, actedAt: 1})
 
-        var key
-        var date
+        let key
+        let date
 
         key = Object.keys(response.sentAt[0])[0]
         date = new Date(key)

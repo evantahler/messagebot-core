@@ -1,12 +1,12 @@
-var should = require('should')
-var path = require('path')
-var specHelper = require(path.join(__dirname, '/../specHelper'))
-var email = 'admin@localhost.com'
-var password = 'password'
-var api
-var eventGuid
-var team
-var person
+const should = require('should')
+const path = require('path')
+const specHelper = require(path.join(__dirname, '/../specHelper'))
+let email = 'admin@localhost.com'
+let password = 'password'
+let api
+let eventGuid
+let team
+let person
 
 describe('actions:event', () => {
   before(() => { api = specHelper.api })
@@ -92,10 +92,10 @@ describe('actions:event', () => {
     it('succeeds (enqueues a events:process event in the future)', (done) => {
       api.resque.queue.timestamps((error, timestamps) => {
         should.not.exist(error)
-        var latestTimetamp = timestamps[0]
+        let latestTimetamp = timestamps[0]
         api.tasks.delayedAt(latestTimetamp, (error, queued) => {
           should.not.exist(error)
-          var job = queued[0]
+          let job = queued[0]
           job.args[0].events.should.deepEqual([eventGuid])
           done()
         })
@@ -224,8 +224,8 @@ describe('actions:event', () => {
       }, (response) => {
         should.not.exist(response.error)
         Object.keys(response.aggregations).length.should.equal(1)
-        var key = Object.keys(response.aggregations)[0]
-        var date = new Date(key)
+        let key = Object.keys(response.aggregations)[0]
+        let date = new Date(key)
         specHelper.dateCompare(date).should.equal(true)
         response.aggregations[key].should.deepEqual({tester: 1})
         done()

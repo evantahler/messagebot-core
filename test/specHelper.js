@@ -1,16 +1,16 @@
-var ActionheroPrototype = require('actionhero')
-var async = require('async')
-var request = require('request')
-var should = require('should') // eslint-disable-line
+const ActionheroPrototype = require('actionhero')
+const async = require('async')
+const request = require('request')
+const should = require('should') // eslint-disable-line
 process.env.NODE_ENV = 'test' // just to be safe
 
-var specHelper = {
+let specHelper = {
   actionhero: new ActionheroPrototype(),
   api: null,
 
   doDatabaseBash: function (cmd, callback, silent) {
-    var self = this
-    var command = ''
+    let self = this
+    let command = ''
 
     if (self.api.config.sequelize.dialect === 'mysql') {
       command = 'mysql'
@@ -35,7 +35,7 @@ var specHelper = {
   },
 
   createDatabase: function (callback, silent) {
-    var self = this
+    let self = this
     if (self.api.config.sequelize.dialect === 'postgres') {
       self.api.utils.doShell(['createdb ' + self.api.config.sequelize.database], callback, silent)
     } else {
@@ -44,7 +44,7 @@ var specHelper = {
   },
 
   dropDatabase: function (callback, silent) {
-    var self = this
+    let self = this
 
     if (self.api.config.sequelize.dialect === 'postgres') {
       self.api.utils.doShell(['dropdb --if-exists ' + self.api.config.sequelize.database], (error) => {
@@ -59,8 +59,8 @@ var specHelper = {
   },
 
   migrate: function (callback) {
-    var self = this
-    var jobs = []
+    let self = this
+    let jobs = []
 
     console.log('\r\n----- MIGRATIING TEST DATABASES -----\r\n')
 
@@ -92,8 +92,8 @@ var specHelper = {
   },
 
   clear: function (callback) {
-    var self = this
-    var jobs = []
+    let self = this
+    let jobs = []
 
     console.log('\r\n----- CLEARING TEST DATABASES -----\r\n')
 
@@ -115,7 +115,7 @@ var specHelper = {
   },
 
   truncate: function (table, callback) {
-    var self = this
+    let self = this
     if (self.api.config.sequelize.dialect === 'postgres') { table = '"' + table + '"' }
     if (self.api.config.sequelize.dialect === 'mysql') { table = '`' + table + '`' }
     self.api.sequelize.sequelize.query('truncate table ' + table).then(() => {
@@ -124,8 +124,8 @@ var specHelper = {
   },
 
   createTeam: function (callback) {
-    var self = this
-    var command = ''
+    let self = this
+    let command = ''
     command += ' NODE_ENV=test'
     command += ' ./node_modules/.bin/actionhero messagebot team create'
     command += ' --name TestTeam'
@@ -143,12 +143,12 @@ var specHelper = {
   },
 
   flushRedis: function (callback) {
-    var self = this
+    let self = this
     self.api.redis.clients.tasks.flushdb(callback)
   },
 
   initialize: function (callback) {
-    var self = this
+    let self = this
     self.actionhero.initialize((error, a) => {
       self.api = a
       callback(error)
@@ -156,7 +156,7 @@ var specHelper = {
   },
 
   start: function (callback) {
-    var self = this
+    let self = this
     self.actionhero.start((error, a) => {
       self.api = a
       callback(error, self.api)
@@ -164,7 +164,7 @@ var specHelper = {
   },
 
   stop: function (callback) {
-    var self = this
+    let self = this
     self.actionhero.stop((error) => {
       callback(error)
     })
@@ -178,7 +178,7 @@ var specHelper = {
   },
 
   login: function (connection, email, password, callback) {
-    var self = this
+    let self = this
     connection.params = {
       email: email,
       password: password
@@ -188,8 +188,8 @@ var specHelper = {
   },
 
   requestWithLogin: function (email, password, action, params, callback) {
-    var self = this
-    var connection = new self.api.specHelper.Connection()
+    let self = this
+    let connection = new self.api.specHelper.Connection()
     self.login(connection, email, password, (loginResponse) => {
       if (loginResponse.error) { return callback(loginResponse) }
       connection.params = params
@@ -198,9 +198,9 @@ var specHelper = {
   },
 
   WebRequestWithLogin: function (email, password, verb, route, params, callback) {
-    var self = this
-    var j = request.jar()
-    var baseUrl = 'http://' + self.api.config.servers.web.bindIP + ':' + self.api.config.servers.web.port
+    let self = this
+    let j = request.jar()
+    let baseUrl = 'http://' + self.api.config.servers.web.bindIP + ':' + self.api.config.servers.web.port
     request.post({
       url: baseUrl + '/api/session',
       jar: j,
@@ -210,9 +210,9 @@ var specHelper = {
       body = JSON.parse(body)
       if (body.error) { return callback(body) }
 
-      var actionUrl = baseUrl + route + '?'
+      let actionUrl = baseUrl + route + '?'
       if (verb === 'get') {
-        for (var key in params) { actionUrl += key + '=' + params[key] + '&' }
+        for (let key in params) { actionUrl += key + '=' + params[key] + '&' }
       }
 
       request[verb]({
