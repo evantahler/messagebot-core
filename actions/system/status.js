@@ -79,6 +79,7 @@ exports.status = {
           data.response.database[model] = count
           done()
         }).catch((error) => {
+          console.error(error)
           data.response.database.health = false
           done(error)
         })
