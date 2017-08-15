@@ -29,7 +29,7 @@ exports.personCreate = {
     person.listOptOuts = []
     person.globalOptOut = false
 
-    person.save().then(function () {
+    person.save().then(() => {
       api.tasks.enqueueIn(1, 'people:buildCreateEvent', {guid: person.guid, teamId: data.team.id}, 'messagebot:people', function (error) {
         if (error) { return api.log('person creation error: ' + error, 'error', data.params) }
         data.response.person = person.apiData()
@@ -58,20 +58,20 @@ exports.personEdit = {
         teamId: data.team.id,
         guid: data.params.guid
       }
-    }).then(function (person) {
+    }).then((person) => {
       if (!person) { return next(new Error(`Person (${data.params.guid}) not found`)) }
-      person.hydrate(function (error) {
+      person.hydrate((error) => {
         if (error) { return next(error) }
 
         if (data.params.source) { person.source = data.params.source }
 
         if (data.params.data) {
-          Object.keys(data.params.data).forEach(function (k) {
+          Object.keys(data.params.data).forEach((k) => {
             person.data[k] = data.params.data[k]
           })
         }
 
-        person.save().then(function () {
+        person.save().then(() => {
           data.response.person = person.apiData()
           next()
         }).catch(next)
@@ -99,10 +99,10 @@ exports.personView = {
         teamId: data.team.id,
         guid: data.params.guid
       }
-    }).then(function (person) {
+    }).then((person) => {
       if (!person) { return next(new Error(`Person (${data.params.guid}) not found`)) }
 
-      person.hydrate(function (error) {
+      person.hydrate((error) => {
         if (error) { return next(error) }
         data.response.person = person.apiData()
         data.response.lists = []
@@ -111,8 +111,8 @@ exports.personView = {
           personGuid: person.guid
         },
           include: [api.models.List]
-        }).then(function (listPeople) {
-          listPeople.forEach(function (listPerson) {
+        }).then((listPeople) => {
+          listPeople.forEach((listPerson) => {
             var d = listPerson.list.apiData()
             d.joinedAt = listPerson.createdAt
             data.response.lists.push(d)
@@ -159,11 +159,11 @@ exports.personOpt = {
     var jobs = []
     var person
 
-    jobs.push(function (done) {
+    jobs.push((done) => {
       api.models.Person.findOne({where: {
         teamId: data.team.id,
         guid: data.params.guid
-      }}).then(function (p) {
+      }}).then((p) => {
         person = p
         if (!person) { return done(new Error(`Person (${data.params.guid}) not found`)) }
         done()
@@ -171,13 +171,13 @@ exports.personOpt = {
     })
 
     if (data.params.global === false) {
-      jobs.push(function (done) {
+      jobs.push((done) => {
         api.models.List.findOne({
           where: {
             id: data.params.listId,
             teamId: data.team.id
           }
-        }).then(function (list) {
+        }).then((list) => {
           if (!list) { return done(new Error('List not found')) }
           done()
         }).catch(done)
@@ -185,7 +185,7 @@ exports.personOpt = {
     }
 
     if (data.params.global === true) {
-      jobs.push(function (done) {
+      jobs.push((done) => {
         var val = false
         if (data.params.direction === 'out') { val = true }
         person.globalOptOut = val
@@ -194,7 +194,7 @@ exports.personOpt = {
     }
 
     if (data.params.global === false) {
-      jobs.push(function (done) {
+      jobs.push((done) => {
         var listOptOuts = Object.assign([], person.listOptOuts)
         if (data.params.direction === 'out') {
           if (listOptOuts.indexOf(data.params.listId) < 0) {
@@ -214,8 +214,8 @@ exports.personOpt = {
       })
     }
 
-    jobs.push(function (done) {
-      person.save().then(function () { done() }).catch(done)
+    jobs.push((done) => {
+      person.save().then(() => { done() }).catch(done)
     })
 
     async.series(jobs, next)
@@ -237,18 +237,18 @@ exports.personDelete = {
     var jobs = []
     var person
 
-    jobs.push(function (done) {
+    jobs.push((done) => {
       api.models.Person.findOne({where: {
         teamId: data.team.id,
         guid: data.params.guid
-      }}).then(function (p) {
+      }}).then((p) => {
         person = p
         if (!person) { return done(new Error(`Person (${data.params.guid}) not found`)) }
         done()
       }).catch(done)
     })
 
-    jobs.push(function (done) {
+    jobs.push((done) => {
       person.destroy().then(() => { done() }).catch(done)
     })
 

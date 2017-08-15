@@ -53,10 +53,10 @@ exports.listCreate = {
 
     list.save().then(
       api.models.List.findOne({where: {name: data.params.name}})
-    ).then(function (listObj) {
+    ).then((listObj) => {
       data.response.list = listObj.apiData()
       api.tasks.enqueue('lists:peopleCount', {listId: listObj.id}, 'messagebot:lists', next)
-    }).catch(function (errors) {
+    }).catch((errors) => {
       next(errors.errors[0].message)
     })
   }
@@ -83,7 +83,7 @@ exports.listView = {
     api.models.List.findOne({where: {
       id: data.params.listId,
       teamId: data.session.teamId
-    }}).then(function (list) {
+    }}).then((list) => {
       if (!list) { return next(new Error('list not found')) }
       data.response.list = list.apiData()
       next()
@@ -109,7 +109,7 @@ exports.listCopy = {
     api.models.List.findOne({where: {
       id: data.params.listId,
       teamId: data.session.teamId
-    }}).then(function (list) {
+    }}).then((list) => {
       if (!list) { return next(new Error('list not found')) }
       var newList = api.models.List.build({
         name: data.params.name,
@@ -121,23 +121,23 @@ exports.listCopy = {
         eventQuery: list.eventQuery,
         messageQuery: list.messageQuery
       })
-      newList.save().then(function () {
+      newList.save().then(() => {
         data.response.list = newList.apiData()
 
-        api.utils.findInBatches(api.models.ListPerson, {where: {listId: list.id}}, function (listPerson, done) {
+        api.utils.findInBatches(api.models.ListPerson, {where: {listId: list.id}}, (listPerson, done) => {
           var newListPerson = api.models.ListPerson.build({
             personGuid: listPerson.personGuid,
             listId: newList.id
           })
-          newListPerson.save().then(function () {
+          newListPerson.save().then(() => {
             done()
-          }).catch(function (errors) {
+          }).catch((errors) => {
             done(errors.errors[0].message)
           })
-        }, function () {
+        }, () => {
           api.tasks.enqueue('lists:peopleCount', {listId: newList.id}, 'messagebot:lists', next)
         })
-      }).catch(function (errors) {
+      }).catch((errors) => {
         next(errors.errors[0].message)
       })
     }).catch(next)
@@ -181,10 +181,10 @@ exports.listEdit = {
     api.models.List.findOne({where: {
       id: data.params.listId,
       teamId: data.session.teamId
-    }}).then(function (list) {
+    }}).then((list) => {
       if (!list) { return next(new Error('list not found')) }
 
-      list.updateAttributes(data.params).then(function () {
+      list.updateAttributes(data.params).then(() => {
         data.response.list = list.apiData()
         api.tasks.enqueue('lists:peopleCount', {listId: list.id}, 'messagebot:lists', next)
       }).catch(next)
@@ -209,10 +209,10 @@ exports.listDelete = {
     api.models.List.findOne({where: {
       id: data.params.listId,
       teamId: data.session.teamId
-    }}).then(function (list) {
+    }}).then((list) => {
       if (!list) { return next(new Error('list not found')) }
-      api.models.ListPerson.destroy({where: {listId: list.id}}).then(function () {
-        list.destroy().then(function () {
+      api.models.ListPerson.destroy({where: {listId: list.id}}).then(() => {
+        list.destroy().then(() => {
           next()
         }).catch(next)
       }).catch(next)

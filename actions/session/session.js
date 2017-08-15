@@ -10,15 +10,15 @@ exports.sessionCreate = {
 
   run: function (api, data, next) {
     data.response.success = false
-    api.models.User.findOne({where: {email: data.params.email}}).then(function (user) {
+    api.models.User.findOne({where: {email: data.params.email}}).then((user) => {
       if (!user) { return next(new Error('user not found')) }
-      user.checkPassword(data.params.password, function (error, match) {
+      user.checkPassword(data.params.password, (error, match) => {
         if (error) {
           return next(error)
         } else if (!match) {
           return next(new Error('password does not match'))
         } else {
-          api.session.create(data.connection, user, function (error, sessionData) {
+          api.session.create(data.connection, user, (error, sessionData) => {
             if (error) { return next(error) }
             data.response.user = user.apiData()
             data.response.success = true
@@ -50,13 +50,13 @@ exports.sessionCheck = {
   inputs: {},
 
   run: function (api, data, next) {
-    api.session.load(data.connection, function (error, sessionData) {
+    api.session.load(data.connection, (error, sessionData) => {
       if (error) {
         return next(error)
       } else if (!sessionData) {
         return next(new Error('Please log in to continue'))
       } else {
-        api.models.User.findOne({where: {id: sessionData.userId}}).then(function (user) {
+        api.models.User.findOne({where: {id: sessionData.userId}}).then((user) => {
           if (!user) { return next(new Error('user not found')) }
           data.response.user = user.apiData()
           data.response.success = true

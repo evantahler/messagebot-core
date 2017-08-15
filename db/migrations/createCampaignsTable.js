@@ -80,10 +80,10 @@ module.exports = {
         }
 
       }
-    ).then(function () {
+    ).then(() => {
       return queryInterface.addIndex(
         'campaigns', ['teamId']
-      ).then(function () {
+      ).then(() => {
         return queryInterface.addIndex(
           'campaigns', ['teamId', 'name'], {
             indicesType: 'UNIQUE'

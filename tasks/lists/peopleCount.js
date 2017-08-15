@@ -10,7 +10,7 @@ exports.task = {
   run: function (api, params, next) {
     api.models.List.findOne({
       where: {id: params.listId}
-    }).then(function (list) {
+    }).then((list) => {
       if (!list) { return next(new Error('list not found')) }
       list.associateListPeople(next)
     }).catch(next)

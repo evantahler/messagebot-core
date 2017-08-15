@@ -8,7 +8,7 @@ module.exports = {
 
       load: function (connection, callback) {
         var key = api.session.prefix + connection.fingerprint
-        redis.get(key, function (error, data) {
+        redis.get(key, (error, data) => {
           if (error) {
             return callback(error)
           } else if (data) {
@@ -29,10 +29,10 @@ module.exports = {
           sesionCreatedAt: new Date().getTime()
         }
 
-        user.updateAttributes({lastLoginAt: new Date()}).then(function () {
-          redis.set(key, JSON.stringify(sessionData), function (error, data) {
+        user.updateAttributes({lastLoginAt: new Date()}).then(() => {
+          redis.set(key, JSON.stringify(sessionData), (error, data) => {
             if (error) { return callback(error) }
-            redis.expire(key, api.session.ttl, function (error) {
+            redis.expire(key, api.session.ttl, (error) => {
               callback(error, sessionData)
             })
           })
@@ -50,7 +50,7 @@ module.exports = {
           global: false,
           priority: 1000,
           preProcessor: function (data, callback) {
-            api.session.load(data.connection, function (error, sessionData) {
+            api.session.load(data.connection, (error, sessionData) => {
               if (error) {
                 return callback(error)
               } else if (!sessionData) {

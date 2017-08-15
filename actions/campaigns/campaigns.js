@@ -61,7 +61,7 @@ exports.campaignsList = {
       query.where.sentAt = {$ne: null}
     }
 
-    api.models.Campaign.findAndCountAll(query).then(function (response) {
+    api.models.Campaign.findAndCountAll(query).then((response) => {
       data.response.total = response.count
       data.response.campaigns = []
 
@@ -83,9 +83,9 @@ exports.campaignsFolders = {
   inputs: {},
 
   run: function (api, data, next) {
-    api.models.Campaign.aggregate('folder', 'DISTINCT', {plain: false, where: {teamId: data.session.teamId}}).then(function (response) {
+    api.models.Campaign.aggregate('folder', 'DISTINCT', {plain: false, where: {teamId: data.session.teamId}}).then((response) => {
       data.response.folders = []
-      response.forEach(function (r) { data.response.folders.push(r.DISTINCT) })
+      response.forEach((r) => { data.response.folders.push(r.DISTINCT) })
       data.response.folders.sort()
       next()
     }).catch(next)

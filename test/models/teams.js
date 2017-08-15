@@ -4,26 +4,26 @@ var specHelper = require(path.join(__dirname, '/../specHelper'))
 var api
 var team
 
-describe('models:team', function () {
-  beforeEach(function () { api = specHelper.api })
+describe('models:team', () => {
+  beforeEach(() => { api = specHelper.api })
 
-  afterEach(function (done) {
+  afterEach((done) => {
     if (team.isNewRecord === false) {
-      team.destroy().then(function () { done() })
+      team.destroy().then(() => { done() })
     } else {
       done()
     }
   })
 
-  it('can create a new team with valid params', function (done) {
+  it('can create a new team with valid params', (done) => {
     team = api.models.Team.build({
       name: 'my team',
       trackingDomainRegexp: '^.*.site.com$',
       trackingDomain: 'https://www.site.com'
     })
 
-    team.save().then(function () {
-      api.models.Team.findOne({where: {trackingDomain: 'https://www.site.com'}}).then(function (team) {
+    team.save().then(() => {
+      api.models.Team.findOne({where: {trackingDomain: 'https://www.site.com'}}).then((team) => {
         team.name.should.equal('my team')
         team.trackingDomainRegexp.should.equal('^.*.site.com$')
         done()
@@ -31,14 +31,14 @@ describe('models:team', function () {
     })
   })
 
-  it('will not create a new team with invalid params (missing requirement)', function (done) {
+  it('will not create a new team with invalid params (missing requirement)', (done) => {
     team = api.models.Team.build({
       name: 'my team'
     })
 
-    team.save().then(function () {
+    team.save().then(() => {
       throw new Error('should not get here')
-    }).catch(function (errors) {
+    }).catch((errors) => {
       errors.errors.length.should.be.above(1)
       errors.errors[0].message.should.equal('trackingDomainRegexp cannot be null')
       errors.errors[1].message.should.equal('trackingDomain cannot be null')
@@ -46,23 +46,23 @@ describe('models:team', function () {
     })
   })
 
-  it('will not create a new team with invalid params (duplicate key)', function (done) {
+  it('will not create a new team with invalid params (duplicate key)', (done) => {
     team = api.models.Team.build({
       name: 'my team',
       trackingDomainRegexp: '^.*.site.com$',
       trackingDomain: 'https://www.site.com'
     })
 
-    team.save().then(function () {
+    team.save().then(() => {
       var otherTeam = api.models.Team.build({
         name: 'my team',
         trackingDomainRegexp: '^.*.site.com$',
         trackingDomain: 'https://www.site.com'
       })
 
-      otherTeam.save().then(function () {
+      otherTeam.save().then(() => {
         throw new Error('should not get here')
-      }).catch(function (errors) {
+      }).catch((errors) => {
         errors.errors.length.should.be.above(0)
         errors.errors[0].message.should.match(/must be unique/)
         done()

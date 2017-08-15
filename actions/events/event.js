@@ -83,7 +83,7 @@ exports.eventEdit = {
       guid: data.params.guid
     }}).then((event) => {
       if (!event) { return next(new Error(`Event (${data.params.guid}) not found`)) }
-      event.hydrate(function (error) {
+      event.hydrate((error) => {
         if (error) { return next(error) }
 
         ['ip', 'device', 'personGuid', 'messageGuid', 'type', 'lat', 'lng'].forEach((k) => {
@@ -91,7 +91,7 @@ exports.eventEdit = {
         })
 
         if (data.params.data) {
-          Object.keys(data.params.data).forEach(function (k) {
+          Object.keys(data.params.data).forEach((k) => {
             event.data[k] = data.params.data[k]
           })
         }
@@ -122,7 +122,7 @@ exports.eventView = {
       guid: data.params.guid
     }}).then((event) => {
       if (!event) { return next(new Error(`Event (${data.params.guid}) not found`)) }
-      event.hydrate(function (error) {
+      event.hydrate((error) => {
         if (error) { return next(error) }
         data.response.event = event.apiData()
         next()

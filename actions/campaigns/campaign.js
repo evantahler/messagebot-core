@@ -4,7 +4,7 @@ var transportValidator = function (p) {
   var api = this
   var transportNames = []
 
-  api.transports.forEach(function (t) { transportNames.push(t.name) })
+  api.transports.forEach((t) => { transportNames.push(t.name) })
   if (transportNames.indexOf(p) < 0) {
     return new Error(p + ' is not a valid transport')
   } else {
@@ -64,10 +64,10 @@ exports.campaignCreate = {
     var campaign = api.models.Campaign.build(data.params)
     campaign.teamId = data.session.teamId
 
-    campaign.save().then(function () {
+    campaign.save().then(() => {
       data.response.campaign = campaign.apiData()
       next()
-    }).catch(function (errors) {
+    }).catch((errors) => {
       next(errors.errors[0].message)
     })
   }
@@ -133,7 +133,7 @@ exports.campaignCopy = {
     api.models.Campaign.findOne({where: {
       id: data.params.campaignId,
       teamId: data.session.teamId
-    }}).then(function (campaign) {
+    }}).then((campaign) => {
       if (!campaign) { return next(new Error('campaign not found')) }
       var newCampaign = api.models.Campaign.build({
         name: data.params.name,
@@ -151,10 +151,10 @@ exports.campaignCopy = {
         // reSendDelay:       campaign.reSendDelay,
 
       })
-      newCampaign.save().then(function () {
+      newCampaign.save().then(() => {
         data.response.campaign = newCampaign.apiData()
         next()
-      }).catch(function (errors) {
+      }).catch((errors) => {
         next(errors.errors[0].message)
       })
     }).catch(next)
@@ -217,10 +217,10 @@ exports.campaignEdit = {
     api.models.Campaign.findOne({where: {
       id: data.params.campaignId,
       teamId: data.session.teamId
-    }}).then(function (campaign) {
+    }}).then((campaign) => {
       if (!campaign) { return next(new Error('campaign not found')) }
 
-      campaign.updateAttributes(data.params).then(function () {
+      campaign.updateAttributes(data.params).then(() => {
         data.response.campaign = campaign.apiData()
         next()
       }).catch(next)
@@ -258,13 +258,13 @@ exports.campaignStats = {
     api.models.Campaign.findOne({where: {
       id: data.params.campaignId,
       teamId: data.team.id
-    }}).then(function (campaign) {
+    }}).then((campaign) => {
       if (!campaign) { return next(new Error('campaign not found')) }
 
-      campaign.stats(data.params.start, data.params.end, data.params.interval, function (error, terms, totals) {
+      campaign.stats(data.params.start, data.params.end, data.params.interval, (error, terms, totals) => {
         if (error) { return next(error) }
         data.response.totals = totals
-        Object.keys(terms).forEach(function (term) {
+        Object.keys(terms).forEach((term) => {
           data.response[term] = terms[term]
         })
         next(error)
@@ -290,9 +290,9 @@ exports.campaignDelete = {
     api.models.Campaign.findOne({where: {
       id: data.params.campaignId,
       teamId: data.session.teamId
-    }}).then(function (campaign) {
+    }}).then((campaign) => {
       if (!campaign) { return next(new Error('campaign not found')) }
-      campaign.destroy().then(function () {
+      campaign.destroy().then(() => {
         next()
       })
     }).catch(next)

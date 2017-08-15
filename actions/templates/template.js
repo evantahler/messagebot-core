@@ -18,10 +18,10 @@ exports.templateCreate = {
     var template = api.models.Template.build(data.params)
     template.teamId = data.session.teamId
 
-    template.save().then(function () {
+    template.save().then(() => {
       data.response.template = template.apiData()
       next()
-    }).catch(function (errors) {
+    }).catch((errors) => {
       next(errors.errors[0].message)
     })
   }
@@ -44,7 +44,7 @@ exports.templateView = {
     api.models.Template.findOne({where: {
       id: data.params.templateId,
       teamId: data.session.teamId
-    }}).then(function (template) {
+    }}).then((template) => {
       if (!template) { return next(new Error('template not found')) }
       data.response.template = template.apiData()
       next()
@@ -80,16 +80,16 @@ exports.templateRender = {
     api.models.Template.findOne({where: {
       id: data.params.templateId,
       teamId: data.session.teamId
-    }}).then(function (template) {
+    }}).then((template) => {
       api.models.Person.findOne({
         where: {guid: data.params.personGuid}
-      }).then(function (person) {
+      }).then((person) => {
         if (!person) { return next(new Error('person not found')) }
-        person.hydrate(function (error) {
+        person.hydrate((error) => {
           if (error) { return next(error) }
           if (data.params.temporaryTemplate) { template.template = data.params.temporaryTemplate }
 
-          template.render(person, null, null, null, data.params.trackBeacon, function (error, html, view) {
+          template.render(person, null, null, null, data.params.trackBeacon, (error, html, view) => {
             if (error) { return next(error) }
             if (data.connection.extension === 'html') {
               data.toRender = false
@@ -134,7 +134,7 @@ exports.templateCopy = {
     api.models.Template.findOne({where: {
       id: data.params.templateId,
       teamId: data.session.teamId
-    }}).then(function (template) {
+    }}).then((template) => {
       if (!template) { return next(new Error('template not found')) }
       var newTemplate = api.models.Template.build({
         name: data.params.name,
@@ -143,10 +143,10 @@ exports.templateCopy = {
         folder: template.folder,
         template: template.template
       })
-      newTemplate.save().then(function () {
+      newTemplate.save().then(() => {
         data.response.template = newTemplate.apiData()
         next()
-      }).catch(function (errors) {
+      }).catch((errors) => {
         next(errors.errors[0].message)
       })
     }).catch(next)
@@ -174,9 +174,9 @@ exports.templateEdit = {
     api.models.Template.findOne({where: {
       id: data.params.templateId,
       teamId: data.session.teamId
-    }}).then(function (template) {
+    }}).then((template) => {
       if (!template) { return next(new Error('template not found')) }
-      template.updateAttributes(data.params).then(function () {
+      template.updateAttributes(data.params).then(() => {
         data.response.template = template.apiData()
         next()
       }).catch(next)
@@ -201,9 +201,9 @@ exports.templateDelete = {
     api.models.Template.findOne({where: {
       id: data.params.templateId,
       teamId: data.session.teamId
-    }}).then(function (template) {
+    }}).then((template) => {
       if (!template) { return next(new Error('template not found')) }
-      template.destroy().then(function () { next() }).catch(next)
+      template.destroy().then(() => { next() }).catch(next)
     }).catch(next)
   }
 }

@@ -28,7 +28,7 @@ exports.peopleSearch = {
       order: [['createdAt', 'DESC']],
       limit: data.params.size,
       offset: data.params.from
-    }).then(function (result) {
+    }).then((result) => {
       data.response.people = []
       let jobs = []
       data.response.total = result.count
@@ -83,9 +83,9 @@ exports.peopleAggregation = {
       limit: data.params.size,
       offset: data.params.from,
       group: [api.sequelize.sequelize.literal(`${data.params.interval}(createdAt)`), data.params.aggregation]
-    }).then(function (results) {
+    }).then((results) => {
       data.response.aggregations = {}
-      results.forEach(function (r) {
+      results.forEach((r) => {
         if (!data.response.aggregations[r.dataValues[data.params.interval]]) {
           var d = {}
           d[r[data.params.aggregation]] = r.dataValues.TOTAL

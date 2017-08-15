@@ -32,7 +32,7 @@ exports.messageCreate = {
     message.data = data.params.data
     message.teamId = data.team.id
 
-    message.save().then(function () {
+    message.save().then(() => {
       data.response.message = message.apiData()
       next()
     }).catch(next)
@@ -66,7 +66,7 @@ exports.messageEdit = {
         teamId: data.team.id,
         guid: data.params.guid
       }
-    }).then(function (message) {
+    }).then((message) => {
       if (!message) { return next(new Error(`Message (${data.params.guid}) not found`)) }
       message.hydrate((error) => {
         if (error) { return next(error) }
@@ -76,12 +76,12 @@ exports.messageEdit = {
         })
 
         if (data.params.data) {
-          Object.keys(data.params.data).forEach(function (k) {
+          Object.keys(data.params.data).forEach((k) => {
             message.data[k] = data.params.data[k]
           })
         }
 
-        message.save().then(function () {
+        message.save().then(() => {
           data.response.message = message.apiData()
           next()
         }).catch(next)
@@ -107,7 +107,7 @@ exports.messageView = {
         teamId: data.team.id,
         guid: data.params.guid
       }
-    }).then(function (message) {
+    }).then((message) => {
       if (!message) { return next(new Error(`Message (${data.params.guid}) not found`)) }
       message.hydrate((error) => {
         if (error) { return next(error) }
@@ -134,7 +134,7 @@ exports.messageDelete = {
         teamId: data.team.id,
         guid: data.params.guid
       }
-    }).then(function (message) {
+    }).then((message) => {
       if (!message) { return next(new Error(`Message (${data.params.guid}) not found`)) }
       message.destroy().then(() => { next() }).catch(next)
     }).catch(next)
@@ -194,24 +194,24 @@ exports.messageTrack = {
 
     if (!ip) { ip = data.connection.remoteIP }
 
-    jobs.push(function (done) {
+    jobs.push((done) => {
       api.models.Message.findOne({
         where: {
           teamId: data.team.id,
           guid: data.params.guid
         }
-      }).then(function (m) {
+      }).then((m) => {
         message = m
         if (!message) { return done(new Error(`Message (${data.params.guid}) not found`)) }
         done()
       }).catch(done)
     })
 
-    jobs.push(function (done) {
+    jobs.push((done) => {
       message.hydrate(done)
     })
 
-    jobs.push(function (done) {
+    jobs.push((done) => {
       if (data.params.verb === 'read') {
         message.readAt = new Date()
         eventType = 'message_read'
@@ -223,11 +223,11 @@ exports.messageTrack = {
       done()
     })
 
-    jobs.push(function (done) {
+    jobs.push((done) => {
       message.save().then(() => { done() }).catch(done)
     })
 
-    jobs.push(function (done) {
+    jobs.push((done) => {
       event = api.models.Event.build({
         messageGuid: message.guid,
         personGuid: message.personGuid,
@@ -242,13 +242,13 @@ exports.messageTrack = {
       var location = api.geolocation.build(data.params, event.ip)
       if (location) { event.lat = location.lat; event.lng = location.lng }
 
-      event.save().then(function () {
+      event.save().then(() => {
         data.response.event = event.apiData()
         done()
       }).catch(done)
     })
 
-    async.series(jobs, function (error) {
+    async.series(jobs, (error) => {
       if (error) { return next(error) }
 
       if (data.params.link) {

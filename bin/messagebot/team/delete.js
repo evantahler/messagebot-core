@@ -13,12 +13,12 @@ module.exports = {
     var jobs = []
     var team
 
-    jobs.push(function (done) {
+    jobs.push((done) => {
       api.sequelize.connect(done)
     })
 
-    jobs.push(function (done) {
-      api.models.Team.findOne({where: {id: data.params.id}}).then(function (_team) {
+    jobs.push((done) => {
+      api.models.Team.findOne({where: {id: data.params.id}}).then((_team) => {
         if (!_team) { return done(new Error('Team not found')) }
         team = _team
 
@@ -30,23 +30,23 @@ module.exports = {
       }).catch(done)
     });
 
-    ['Event', 'EventData', 'Person', 'PersonData', 'Message', 'MessageData', 'User', 'ListPerson', 'List', 'Campaign', 'Template'].forEach(function (model) {
-      jobs.push(function (done) {
-        api.models[model].count({where: {teamId: team.id}}).then(function (count) {
+    ['Event', 'EventData', 'Person', 'PersonData', 'Message', 'MessageData', 'User', 'ListPerson', 'List', 'Campaign', 'Template'].forEach((model) => {
+      jobs.push((done) => {
+        api.models[model].count({where: {teamId: team.id}}).then((count) => {
           api.log('Delting all (' + count + ') objects for team from table `' + model + '`')
-          api.models[model].destroy({where: {teamId: team.id}}).then(function () {
+          api.models[model].destroy({where: {teamId: team.id}}).then(() => {
             done()
           }).catch(done)
         }).catch(done)
       })
     })
 
-    jobs.push(function (done) {
+    jobs.push((done) => {
       api.log('Deleting team')
-      team.destroy().then(function () { done() }).catch(done)
+      team.destroy().then(() => { done() }).catch(done)
     })
 
-    async.series(jobs, function (error) {
+    async.series(jobs, (error) => {
       if (error) api.log(error.toString(), 'error')
       next()
     })

@@ -12,15 +12,15 @@ exports.task = {
   run: function (api, params, next) {
     var jobs = []
 
-    api.models.List.findAll().then(function (lists) {
-      lists.forEach(function (list) {
-        jobs.push(function (done) {
+    api.models.List.findAll().then((lists) => {
+      lists.forEach((list) => {
+        jobs.push((done) => {
           api.tasks.enqueue('lists:peopleCount', {listId: list.id}, 'messagebot:lists', done)
         })
       })
 
-      async.series(jobs, function (error) {
-        process.nextTick(function () { return next(error) })
+      async.series(jobs, (error) => {
+        return next(error)
       })
     }).catch(next)
   }

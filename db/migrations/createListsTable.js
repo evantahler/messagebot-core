@@ -60,10 +60,10 @@ module.exports = {
           type: Sequelize.DATE
         }
       }
-    ).then(function () {
+    ).then(() => {
       return queryInterface.addIndex(
         'lists', ['teamId']
-      ).then(function () {
+      ).then(() => {
         return queryInterface.addIndex(
           'lists', ['teamId', 'name'], {
             indicesType: 'UNIQUE'

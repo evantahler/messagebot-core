@@ -101,7 +101,7 @@ var loader = function (api) {
     view.person.data = Object.assign({}, person.data)
     view.person.createdAt = expandDate(view.person.createdAt)
     view.person.updatedAt = expandDate(view.person.updatedAt)
-    Object.keys(view.person.data).forEach(function (k) {
+    Object.keys(view.person.data).forEach((k) => {
       if (view.person.data[k] instanceof Date) {
         view.person.data[k] = expandDate(view.person.data[k])
       }
@@ -174,22 +174,22 @@ var loader = function (api) {
             if (includedIds.indexOf(template.id) >= 0) { return callback(new Error('Cannot include template into itself')) }
             includedIds.push(template.id)
 
-            jobs.push(function (done) {
-              api.models.Team.findOne({where: {id: template.teamId}}).then(function (t) {
+            jobs.push((done) => {
+              api.models.Team.findOne({where: {id: template.teamId}}).then((t) => {
                 team = t
                 if (!team) { return done(new Error('team not found')) }
                 return done()
               }).catch(done)
             })
 
-            jobs.push(function (done) {
+            jobs.push((done) => {
               try {
                 view = buildView(team, person, events, campaign, list, template, trackBeacon)
                 done()
               } catch (e) { done(e) }
             })
 
-            jobs.push(function (done) {
+            jobs.push((done) => {
               try {
                 html = mustache.render(template.template, view)
                 if (message) {
@@ -203,29 +203,29 @@ var loader = function (api) {
               }
             })
 
-            jobs.push(function (done) {
+            jobs.push((done) => {
               var includeJobs = []
               var matches = html.match(/%%TEMPLATEINCLUDE:.*%%/g)
               if (!matches || matches.length === 0) { return done() }
-              matches.forEach(function (match) {
+              matches.forEach((match) => {
                 var matcher = match.replace(/%%/g, '').split(':')[1]
                 var includedTemplate
 
-                includeJobs.push(function (includeDone) {
+                includeJobs.push((includeDone) => {
                   var or = {name: matcher}
                   if (parseInt(matcher, 10)) { or.id = parseInt(matcher, 10) }
                   api.models.Template.findOne({where: {
                     teamId: team.id,
                     $or: or
-                  }}).then(function (_includedTemplate) {
+                  }}).then((_includedTemplate) => {
                     if (!_includedTemplate) { return includeDone(new Error('Cannot find template to include (' + matcher + ')')) }
                     includedTemplate = _includedTemplate
                     includeDone()
                   }).catch(includeDone)
                 })
 
-                includeJobs.push(function (includeDone) {
-                  includedTemplate.render(person, message, campaign, list, trackBeacon, function (error, includedHtml) {
+                includeJobs.push((includeDone) => {
+                  includedTemplate.render(person, message, campaign, list, trackBeacon, (error, includedHtml) => {
                     if (error) { return includeDone(error) }
                     html = html.replace(match, includedHtml)
                     includeDone()
@@ -233,19 +233,17 @@ var loader = function (api) {
                 })
               })
 
-              async.series(includeJobs, function (error) {
-                process.nextTick(function () { return done(error) })
+              async.series(includeJobs, (error) => {
+                return done(error)
               })
             })
 
-            async.series(jobs, function (error) {
-              process.nextTick(function () {
-                if (error) { return callback(error) }
-                var logData = {}
-                if (message) { logData = {messageGuid: message.guid} }
-                api.log('rendered template #' + template.id + ' for person #' + person.guid, 'debug', logData)
-                return callback(null, html, view)
-              })
+            async.series(jobs, (error) => {
+              if (error) { return callback(error) }
+              var logData = {}
+              if (message) { logData = {messageGuid: message.guid} }
+              api.log('rendered template #' + template.id + ' for person #' + person.guid, 'debug', logData)
+              return callback(null, html, view)
             })
           },
 

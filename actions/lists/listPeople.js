@@ -6,7 +6,7 @@ var guidListFormatter = function (p) {
   var arr = []
   if (Array.isArray(p)) { return p }
   p = p.replace(/\s/g, '')
-  p.split(',').forEach(function (guid) {
+  p.split(',').forEach((guid) => {
     if (guid && guid.length > 0) { arr.push(guid) }
   })
 
@@ -40,14 +40,14 @@ exports.listPeopleAdd = {
     api.models.List.findOne({where: {
       id: data.params.listId,
       teamId: data.session.teamId
-    }}).then(function (list) {
+    }}).then((list) => {
       if (!list) { return next(new Error('list not found')) }
       if (list.type !== 'static') { return next(new Error('you cannot modify static list membership via this method')) }
 
       var complete = function () {
         if (jobs.length === 0) { return next(new Error('nothing to edit')) }
 
-        async.series(jobs, function (error) {
+        async.series(jobs, (error) => {
           if (!error) {
             api.tasks.enqueue('lists:peopleCount', {listId: list.id}, 'messagebot:lists', next)
           } else {
@@ -57,8 +57,8 @@ exports.listPeopleAdd = {
       }
 
       if (data.params.personGuids && data.params.personGuids.length > 0) {
-        data.params.personGuids.forEach(function (personGuid) {
-          jobs.push(function (done) {
+        data.params.personGuids.forEach((personGuid) => {
+          jobs.push((done) => {
             api.models.Person.find({where: {
               teamId: data.team.id,
               guid: personGuid
@@ -68,7 +68,7 @@ exports.listPeopleAdd = {
                 personGuid: person.guid,
                 listId: list.id,
                 teamId: list.teamId
-              }}).then(function (listPerson) {
+              }}).then((listPerson) => {
                 data.response.personGuids.push(person.guid)
                 done()
               }).catch(done)
@@ -84,8 +84,8 @@ exports.listPeopleAdd = {
           headers: true,
           ignoreEmpty: true,
           trim: true
-        }).on('data', function (d) {
-          jobs.push(function (done) {
+        }).on('data', (d) => {
+          jobs.push((done) => {
             var person = api.models.Person.build({
               teamId: data.team.id,
               device: d.device || 'unknown',
@@ -107,7 +107,7 @@ exports.listPeopleAdd = {
                 personGuid: person.guid,
                 listId: list.id,
                 teamId: list.teamId
-              }}).then(function () {
+              }}).then(() => {
                 data.response.personGuids.push(person.guid)
                 api.tasks.enqueueIn(1, 'people:buildCreateEvent', {guid: person.guid, teamId: data.team.id}, 'messagebot:people', done)
               }).catch(done)
@@ -131,7 +131,7 @@ exports.listPeopleAdd = {
                       personGuid: person.guid,
                       listId: list.id,
                       teamId: list.teamId
-                    }}).then(function () {
+                    }}).then(() => {
                       data.response.personGuids.push(person.guid)
                       done()
                     }).catch(done)
@@ -174,38 +174,36 @@ exports.listPeopleDelete = {
     api.models.List.findOne({where: {
       id: data.params.listId,
       teamId: data.session.teamId
-    }}).then(function (list) {
+    }}).then((list) => {
       var jobs = []
       if (!list) { return next(new Error('list not found')) }
       if (list.type !== 'static') { return next(new Error('you can only modify static list membership via this method')) }
 
       data.response.deletedListPeople = []
-      data.params.personGuids.forEach(function (personGuid) {
-        jobs.push(function (done) {
+      data.params.personGuids.forEach((personGuid) => {
+        jobs.push((done) => {
           api.models.ListPerson.find({
             where: {
               personGuid: personGuid,
               listId: list.id,
               teamId: list.teamId
             }
-          }).then(function (listPerson) {
+          }).then((listPerson) => {
             if (!listPerson) { return done(new Error('List Person (guid ' + personGuid + ') not found in this list')) }
             data.response.deletedListPeople.push(listPerson.apiData())
-            listPerson.destroy().then(function () {
+            listPerson.destroy().then(() => {
               return done()
             }).catch(done)
           }).catch(done)
         })
       })
 
-      async.series(jobs, function (error) {
-        process.nextTick(function () {
-          if (!error) {
-            api.tasks.enqueue('lists:peopleCount', {listId: list.id}, 'messagebot:lists', next)
-          } else {
-            return next(error)
-          }
-        })
+      async.series(jobs, (error) => {
+        if (!error) {
+          return api.tasks.enqueue('lists:peopleCount', {listId: list.id}, 'messagebot:lists', next)
+        } else {
+          return next(error)
+        }
       })
     }).catch(next)
   }
@@ -228,7 +226,7 @@ exports.listPeopleCount = {
     api.models.List.findOne({where: {
       id: data.params.listId,
       teamId: data.session.teamId
-    }}).then(function (list) {
+    }}).then((list) => {
       if (!list) { return next(new Error('list not found')) }
       list.associateListPeople((error) => {
         if (error) { return next(error) }
@@ -268,7 +266,7 @@ exports.listPeopleView = {
     api.models.List.findOne({where: {
       id: data.params.listId,
       teamId: data.session.teamId
-    }}).then(function (list) {
+    }}).then((list) => {
       if (!list) { return next(new Error('list not found')) }
 
       api.models.ListPerson.findAndCountAll({
@@ -280,7 +278,7 @@ exports.listPeopleView = {
         order: [['personGuid', 'asc']],
         offset: data.params.from,
         limit: data.params.size
-      }).then(function (response) {
+      }).then((response) => {
         data.response.total = response.count
         data.response.people = []
         let jobs = []

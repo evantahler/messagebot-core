@@ -20,13 +20,13 @@ module.exports = {
     var user
     var person
 
-    jobs.push(function (done) {
+    jobs.push((done) => {
       api.sequelize.connect(done)
     })
 
-    jobs.push(function (done) {
+    jobs.push((done) => {
       team = api.models.Team.build(data.params)
-      team.save().then(function () {
+      team.save().then(() => {
         var tableData = [team.apiData()]
 
         api.log('New Team\r\n')
@@ -36,7 +36,7 @@ module.exports = {
       }).catch(done)
     })
 
-    jobs.push(function (done) {
+    jobs.push((done) => {
       user = api.models.User.build({
         email: data.params.email,
         teamId: team.id,
@@ -48,7 +48,7 @@ module.exports = {
       user.updatePassword(data.params.password, done)
     })
 
-    jobs.push(function (done) {
+    jobs.push((done) => {
       person = api.models.Person.build({
         email: user.email,
         firstName: user.firstName,
@@ -67,14 +67,14 @@ module.exports = {
         role: user.role
       }
 
-      person.save().then(function () {
+      person.save().then(() => {
         done()
       }).catch(done)
     })
 
-    jobs.push(function (done) {
+    jobs.push((done) => {
       user.personGuid = person.guid
-      user.save().then(function () {
+      user.save().then(() => {
         var tableData = [user.apiData()]
 
         api.log('New User')
@@ -86,7 +86,7 @@ module.exports = {
       }).catch(done)
     })
 
-    async.series(jobs, function (error) {
+    async.series(jobs, (error) => {
       if (error) api.log(error.toString(), 'error')
       next()
     })

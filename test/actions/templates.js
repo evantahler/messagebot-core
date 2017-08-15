@@ -6,19 +6,19 @@ var password = 'password'
 var api
 var templateId
 
-describe('actions:template', function () {
-  beforeEach(function () { api = specHelper.api })
+describe('actions:template', () => {
+  beforeEach(() => { api = specHelper.api })
 
-  before(function (done) { specHelper.truncate('templates', done) })
-  after(function (done) { specHelper.truncate('templates', done) })
+  before((done) => { specHelper.truncate('templates', done) })
+  after((done) => { specHelper.truncate('templates', done) })
 
-  describe('template:create', function () {
-    it('succeeds', function (done) {
+  describe('template:create', () => {
+    it('succeeds', (done) => {
       specHelper.requestWithLogin(email, password, 'template:create', {
         name: 'test template',
         description: 'test template',
         template: '<h1>Hello, {{ person.data.firstName }}</h1>'
-      }, function (response) {
+      }, (response) => {
         should.not.exist(response.error)
         response.template.folder.should.equal('default')
         response.template.name.should.equal('test template')
@@ -27,33 +27,33 @@ describe('actions:template', function () {
       })
     })
 
-    it('fails (uniqueness failure)', function (done) {
+    it('fails (uniqueness failure)', (done) => {
       specHelper.requestWithLogin(email, password, 'template:create', {
         name: 'test template',
         description: 'test template',
         template: '<h1>Hello, {{ data.firstName }}</h1>'
-      }, function (response) {
+      }, (response) => {
         response.error.should.match(/must be unique/)
         done()
       })
     })
 
-    it('fails (missing param)', function (done) {
+    it('fails (missing param)', (done) => {
       specHelper.requestWithLogin(email, password, 'template:create', {
         name: 'test template',
         template: '<h1>Hello, {{ data.firstName }}</h1>'
-      }, function (response) {
+      }, (response) => {
         response.error.should.equal('Error: description is a required parameter for this action')
         done()
       })
     })
   })
 
-  describe('template:view', function () {
-    it('succeeds', function (done) {
+  describe('template:view', () => {
+    it('succeeds', (done) => {
       specHelper.requestWithLogin(email, password, 'template:view', {
         templateId: templateId
-      }, function (response) {
+      }, (response) => {
         should.not.exist(response.error)
         response.template.folder.should.equal('default')
         response.template.name.should.equal('test template')
@@ -61,22 +61,22 @@ describe('actions:template', function () {
       })
     })
 
-    it('fails (not found)', function (done) {
+    it('fails (not found)', (done) => {
       specHelper.requestWithLogin(email, password, 'template:view', {
         templateId: 999
-      }, function (response) {
+      }, (response) => {
         response.error.should.equal('Error: template not found')
         done()
       })
     })
   })
 
-  describe('template:copy', function () {
-    it('succeeds', function (done) {
+  describe('template:copy', () => {
+    it('succeeds', (done) => {
       specHelper.requestWithLogin(email, password, 'template:copy', {
         templateId: templateId,
         name: 'new template'
-      }, function (response) {
+      }, (response) => {
         should.not.exist(response.error)
         response.template.id.should.not.equal(templateId)
         response.template.folder.should.equal('default')
@@ -85,91 +85,91 @@ describe('actions:template', function () {
       })
     })
 
-    it('fails (uniqueness param)', function (done) {
+    it('fails (uniqueness param)', (done) => {
       specHelper.requestWithLogin(email, password, 'template:copy', {
         templateId: templateId,
         name: 'test template'
-      }, function (response) {
+      }, (response) => {
         response.error.should.match(/must be unique/)
         done()
       })
     })
 
-    it('fails (missing param)', function (done) {
+    it('fails (missing param)', (done) => {
       specHelper.requestWithLogin(email, password, 'template:copy', {
         templateId: templateId
-      }, function (response) {
+      }, (response) => {
         response.error.should.equal('Error: name is a required parameter for this action')
         done()
       })
     })
   })
 
-  describe('template:edit', function () {
-    it('succeeds', function (done) {
+  describe('template:edit', () => {
+    it('succeeds', (done) => {
       specHelper.requestWithLogin(email, password, 'template:edit', {
         templateId: templateId,
         name: 'a better template name'
-      }, function (response) {
+      }, (response) => {
         should.not.exist(response.error)
         response.template.name.should.equal('a better template name')
         done()
       })
     })
 
-    it('fails (uniqueness failure)', function (done) {
+    it('fails (uniqueness failure)', (done) => {
       specHelper.requestWithLogin(email, password, 'template:edit', {
         templateId: templateId,
         name: 'new template'
-      }, function (response) {
+      }, (response) => {
         response.error.should.equal('Error: Validation error')
         done()
       })
     })
   })
 
-  describe('template:render', function (done) {
+  describe('template:render', (done) => {
     var person
     var team
 
-    before(function (done) {
-      api.models.Team.findOne().then(function (_team) {
+    before((done) => {
+      api.models.Team.findOne().then((_team) => {
         team = _team
         done()
       }).catch(done)
     })
 
-    before(function (done) {
+    before((done) => {
       person = api.models.Person.build()
       person.source = 'tester'
       person.teamId = team.id
       person.device = 'phone'
       person.listOptOuts = []
       person.globalOptOut = false
-      person.save().then(function () {
+      person.save().then(() => {
         var collection = [
           {personGuid: person.guid, teamId: team.id, key: 'firstName', value: 'fname'},
           {personGuid: person.guid, teamId: team.id, key: 'lastName', value: 'lame'},
           {personGuid: person.guid, teamId: team.id, key: 'email', value: 'fake@faker.fake'}
         ]
 
-        api.models.PersonData.bulkCreate(collection).then(function () {
+        api.models.PersonData.bulkCreate(collection).then(() => {
           done()
         }).catch(done)
       }).catch(done)
     })
 
-    after(function (done) {
-      person.destroy().then(function () {
+    after((done) => {
+      person.destroy().then(() => {
         done()
       }).catch(done)
     })
 
-    it('succeeds (view; specHelper)', function (done) {
+    it('succeeds (view; specHelper)', (done) => {
       specHelper.requestWithLogin(email, password, 'template:render', {
         templateId: templateId,
         personGuid: person.guid
-      }, function (response) {
+      }, (response) => {
         should.not.exist(response.error)
         response.html.should.equal('<h1>Hello, fname</h1>')
         response.view.person.data.firstName.should.equal('fname')
@@ -178,11 +178,11 @@ describe('actions:template', function () {
       })
     })
 
-    it('succeeds (view; web request)', function (done) {
+    it('succeeds (view; web request)', (done) => {
       specHelper.WebRequestWithLogin(email, password, 'get', '/api/template/render', {
         templateId: templateId,
         personGuid: person.guid
-      }, function (response, res) {
+      }, (response, res) => {
         should.not.exist(response.error)
         response.html.should.equal('<h1>Hello, fname</h1>')
         response.view.person.data.firstName.should.equal('fname')
@@ -191,11 +191,11 @@ describe('actions:template', function () {
       })
     })
 
-    it('succeeds (rendered HTML; web request)', function (done) {
+    it('succeeds (rendered HTML; web request)', (done) => {
       specHelper.WebRequestWithLogin(email, password, 'get', '/api/template/render.html', {
         templateId: templateId,
         personGuid: person.guid
-      }, function (response, res) {
+      }, (response, res) => {
         response.should.equal('<h1>Hello, fname</h1>')
         res.statusCode.should.equal(200)
         res.headers['x-powered-by'].should.equal('MessageBot')
@@ -205,9 +205,9 @@ describe('actions:template', function () {
     })
   })
 
-  describe('templates:list', function () {
-    it('succeeds', function (done) {
-      specHelper.requestWithLogin(email, password, 'templates:list', {}, function (response) {
+  describe('templates:list', () => {
+    it('succeeds', (done) => {
+      specHelper.requestWithLogin(email, password, 'templates:list', {}, (response) => {
         should.not.exist(response.error)
         response.templates.length.should.equal(2)
         response.templates[0].name.should.equal('a better template name')
@@ -217,9 +217,9 @@ describe('actions:template', function () {
     })
   })
 
-  describe('templates:folders', function () {
-    it('succeeds', function (done) {
-      specHelper.requestWithLogin(email, password, 'templates:folders', {}, function (response) {
+  describe('templates:folders', () => {
+    it('succeeds', (done) => {
+      specHelper.requestWithLogin(email, password, 'templates:folders', {}, (response) => {
         should.not.exist(response.error)
         response.folders.length.should.equal(1)
         response.folders.should.deepEqual(['default'])
@@ -228,20 +228,20 @@ describe('actions:template', function () {
     })
   })
 
-  describe('template:delete', function () {
-    it('succeeds', function (done) {
+  describe('template:delete', () => {
+    it('succeeds', (done) => {
       specHelper.requestWithLogin(email, password, 'template:delete', {
         templateId: templateId
-      }, function (response) {
+      }, (response) => {
         should.not.exist(response.error)
         done()
       })
     })
 
-    it('fails (not found)', function (done) {
+    it('fails (not found)', (done) => {
       specHelper.requestWithLogin(email, password, 'template:delete', {
         templateId: templateId
-      }, function (response) {
+      }, (response) => {
         response.error.should.equal('Error: template not found')
         done()
       })

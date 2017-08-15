@@ -77,7 +77,7 @@ var loader = function (api) {
 
           updatePassword: function (pw, callback) {
             var self = this
-            bcrypt.hash(pw, bcryptComplexity, function (error, hash) {
+            bcrypt.hash(pw, bcryptComplexity, (error, hash) => {
               if (error) { return callback(error) }
               self.passwordHash = hash
               callback(null, self)

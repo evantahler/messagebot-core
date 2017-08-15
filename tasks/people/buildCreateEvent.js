@@ -26,7 +26,7 @@ exports.task = {
       api.models.Person.findOne({where: {
         teamId: team.id,
         guid: params.guid
-      }}).then(function (p) {
+      }}).then((p) => {
         person = p
         if (!person) { return done(new Error('Person not found')) }
         done()

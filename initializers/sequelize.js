@@ -23,7 +23,7 @@ module.exports = {
 
       connect: function (callback) {
         var dir = path.normalize(api.projectRoot + '/models')
-        fs.readdirSync(dir).forEach(function (file) {
+        fs.readdirSync(dir).forEach((file) => {
           var loader = require(dir + path.sep + file)(api)
           api.models[loader.name] = loader.model
         })
@@ -74,10 +74,10 @@ module.exports = {
       },
 
       test: function (callback) {
-        api.models.User.count().then(function (data) {
+        api.models.User.count().then((data) => {
           api.log('connected to sequelize')
           callback()
-        }).catch(function (error) {
+        }).catch((error) => {
           api.log('cannot connect to sequelize:', 'crit')
           api.log(error, 'crit')
           callback(error)
@@ -88,7 +88,7 @@ module.exports = {
         if (typeof type === 'function') { callback = type; type = null }
         if (!type) { type = api.sequelize.sequelize.QueryTypes.SELECT }
 
-        api.sequelize.sequelize.query(q, {type: type}).then(function (rows) {
+        api.sequelize.sequelize.query(q, {type: type}).then((rows) => {
           callback(null, rows)
         }).catch(callback)
       },
@@ -134,16 +134,16 @@ module.exports = {
       },
 
       updatateData: function (self, model, remoteKey, uniqueDataKeys) {
-        return new Promise(function (resolve, reject) {
+        return new Promise((resolve, reject) => {
           var jobs = []
           if (!self.data) { self.data = {} }
           var remainingKeys = Object.keys(self.data)
           var consumedKeys = []
           if (!uniqueDataKeys) { uniqueDataKeys = [] }
 
-          remainingKeys.forEach(function (k) {
+          remainingKeys.forEach((k) => {
             if (uniqueDataKeys.indexOf(k) >= 0) {
-              jobs.push(function (done) {
+              jobs.push((done) => {
                 var where = {
                   teamId: self.teamId,
                   key: k,
@@ -151,7 +151,7 @@ module.exports = {
                 }
                 where[remoteKey] = {$not: self.guid}
 
-                model.findOne({where: where}).then(function (item) {
+                model.findOne({where: where}).then((item) => {
                   if (item) { return done(new Error(`${remoteKey} ${item[remoteKey]} already exists with ${k} of ${self.data[k]}`)) }
                   done()
                 }).catch(done)
@@ -161,12 +161,12 @@ module.exports = {
 
           var where = {}
           where[remoteKey] = self.guid
-          model.findAll({where: where}).then(function (datas) {
-            remainingKeys.forEach(function (k) {
-              datas.forEach(function (d) {
+          model.findAll({where: where}).then((datas) => {
+            remainingKeys.forEach((k) => {
+              datas.forEach((d) => {
                 if (k === d.key) {
                   consumedKeys.push(k)
-                  jobs.push(function (done) {
+                  jobs.push((done) => {
                     if (self.data[k] === '_delete') {
                       d.destroy().then(() => { done() }).catch(done)
                     } else {
@@ -177,25 +177,25 @@ module.exports = {
               })
             })
 
-            remainingKeys.forEach(function (k) {
+            remainingKeys.forEach((k) => {
               let v = self.data[k]
               if (consumedKeys.indexOf(k) < 0 && v !== null && v !== undefined) {
                 if (typeof v === 'object') { v = JSON.stringify(v) }
-                jobs.push(function (done) {
+                jobs.push((done) => {
                   var o = {
                     teamId: self.teamId,
                     key: k,
                     value: v
                   }
                   o[remoteKey] = self.guid
-                  model.create(o).then(function () {
+                  model.create(o).then(() => {
                     done()
                   }).catch(done)
                 })
               }
             })
 
-            async.series(jobs, function (error) {
+            async.series(jobs, (error) => {
               if (error) { return reject(error) }
               return resolve()
             })
@@ -209,7 +209,7 @@ module.exports = {
   },
 
   start: function (api, next) {
-    api.sequelize.connect(function (error) {
+    api.sequelize.connect((error) => {
       if (error) { return next(error) }
       api.sequelize.test(next)
     })

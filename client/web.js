@@ -202,7 +202,7 @@
 
       MESSAGEBOT.action('/person', 'GET', {
         guid: MESSAGEBOT.data.person.guid
-      }, function (response) {
+      }, (response) => {
         if (response.error) { return callback(response.error) };
         MESSAGEBOT.data.person = response.person
         MESSAGEBOT.cookies.create(MESSAGEBOT.cookieName, MESSAGEBOT.data.person.guid)
@@ -217,7 +217,7 @@
       MESSAGEBOT.action('/person', 'PUT', {
         guid: MESSAGEBOT.data.person.guid,
         data: data
-      }, function (response) {
+      }, (response) => {
         return callback(response.error, response.person)
       })
     },
@@ -241,7 +241,7 @@
 
       MESSAGEBOT.action('/person', 'DELETE', {
         guid: MESSAGEBOT.data.person.guid
-      }, function (response) {
+      }, (response) => {
         if (response.error) { return callback(response.error) }
         MESSAGEBOT.cookies.delete(MESSAGEBOT.cookieName)
         return callback(null)

@@ -38,10 +38,10 @@ module.exports = {
           allowNull: true
         }
       }
-    ).then(function () {
+    ).then(() => {
       return queryInterface.addIndex(
         'templates', ['teamId']
-      ).then(function () {
+      ).then(() => {
         return queryInterface.addIndex(
           'templates', ['teamId', 'name'], {
             indicesType: 'UNIQUE'

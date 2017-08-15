@@ -5,20 +5,20 @@ var email = 'admin@localhost.com'
 var password = 'password'
 var api
 
-describe('system:status', function () {
-  beforeEach(function () { api = specHelper.api })
+describe('system:status', () => {
+  beforeEach(() => { api = specHelper.api })
 
-  it('falis (not logged in)', function (done) {
-    api.specHelper.runAction('system:status', function (response) {
+  it('falis (not logged in)', (done) => {
+    api.specHelper.runAction('system:status', (response) => {
       response.error.should.equal('Error: Please log in to continue')
       done()
     })
   })
 
-  it('returns node status', function (done) {
-    specHelper.requestWithLogin(email, password, 'system:status', {}, function (response) {
+  it('returns node status', (done) => {
+    specHelper.requestWithLogin(email, password, 'system:status', {}, (response) => {
       response.database.healthy.should.equal(true);
-      ['Campaign', 'List', 'ListPerson', 'Template', 'User'].forEach(function (table) {
+      ['Campaign', 'List', 'ListPerson', 'Template', 'User'].forEach((table) => {
         should.exist(response.database[table])
       })
 

@@ -4,18 +4,18 @@ var specHelper = require(path.join(__dirname, '/../../specHelper'))
 var api
 var team
 
-describe('integartion:settings', function () {
-  before(function () { api = specHelper.api })
+describe('integartion:settings', () => {
+  before(() => { api = specHelper.api })
 
-  before(function (done) {
-    api.models.Team.findOne().then(function (_team) {
+  before((done) => {
+    api.models.Team.findOne().then((_team) => {
       team = _team
       done()
     })
   })
 
-  it('seeded the settings for the team at boot', function (done) {
-    api.models.Setting.findAll({where: {teamId: team.id}}).then(function (settings) {
+  it('seeded the settings for the team at boot', (done) => {
+    api.models.Setting.findAll({where: {teamId: team.id}}).then((settings) => {
       settings.length.should.be.above(0)
       done()
     })

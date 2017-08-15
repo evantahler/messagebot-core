@@ -7,32 +7,32 @@ var prepareFile = function (api, data, file, mime, next) {
   var settings = {}
   var source = ''
 
-  jobs.push(function (done) {
-    api.models.Setting.findAll({where: {teamId: data.team.id}}).then(function (_settings) {
+  jobs.push((done) => {
+    api.models.Setting.findAll({where: {teamId: data.team.id}}).then((_settings) => {
       settings = _settings
       done()
     }).catch(done)
   })
 
-  jobs.push(function (done) {
-    fs.readFile(file, function (error, _source) {
+  jobs.push((done) => {
+    fs.readFile(file, (error, _source) => {
       if (error) { return done(error) }
       source = _source.toString()
       done()
     })
   })
 
-  jobs.push(function (done) {
+  jobs.push((done) => {
     source = source.replace(/%%TRACKINGDOMAIN%%/g, data.team.trackingDomain)
     source = source.replace(/%%TEAMID%%/g, data.team.id)
     source = source.replace(/%%APIROUTE%%/g, api.config.servers.web.urlPathForActions)
     done()
   })
 
-  jobs.push(function (done) {
+  jobs.push((done) => {
     var settingJobs = []
-    settings.forEach(function (setting) {
-      settingJobs.push(function (settingsDone) {
+    settings.forEach((setting) => {
+      settingJobs.push((settingsDone) => {
         var key = setting.key.toUpperCase()
         var regexp = new RegExp('%%' + key + '%%', 'g')
         source = source.replace(regexp, setting.value)
@@ -42,7 +42,7 @@ var prepareFile = function (api, data, file, mime, next) {
     async.series(settingJobs, done)
   })
 
-  jobs.push(function (done) {
+  jobs.push((done) => {
     data.response = source
     data.connection.rawConnection.responseHeaders.push(['Content-type', mime])
     done()

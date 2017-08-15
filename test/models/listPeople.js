@@ -4,40 +4,40 @@ var specHelper = require(path.join(__dirname, '/../specHelper'))
 var api
 var listPerson
 
-describe('models:listPeople', function () {
-  beforeEach(function () { api = specHelper.api })
+describe('models:listPeople', () => {
+  beforeEach(() => { api = specHelper.api })
 
-  afterEach(function (done) {
+  afterEach((done) => {
     if (listPerson.isNewRecord === false) {
-      listPerson.destroy().then(function () { done() })
+      listPerson.destroy().then(() => { done() })
     } else {
       done()
     }
   })
 
-  it('can create a new listPerson with valid params', function (done) {
+  it('can create a new listPerson with valid params', (done) => {
     listPerson = api.models.ListPerson.build({
       teamId: 1,
       listId: 1,
       personGuid: 'abc123'
     })
 
-    listPerson.save().then(function () {
-      api.models.ListPerson.findOne({where: {personGuid: 'abc123'}}).then(function (listPerson) {
+    listPerson.save().then(() => {
+      api.models.ListPerson.findOne({where: {personGuid: 'abc123'}}).then((listPerson) => {
         listPerson.teamId.should.equal(1)
         done()
       })
     })
   })
 
-  it('will not create a new listPerson with invalid params (missing requirement)', function (done) {
+  it('will not create a new listPerson with invalid params (missing requirement)', (done) => {
     listPerson = api.models.ListPerson.build({
       teamId: 1
     })
 
-    listPerson.save().then(function () {
+    listPerson.save().then(() => {
       throw new Error('should not get here')
-    }).catch(function (errors) {
+    }).catch((errors) => {
       errors.errors.length.should.be.above(1)
       errors.errors[0].message.should.equal('listId cannot be null')
       errors.errors[1].message.should.equal('personGuid cannot be null')
@@ -45,23 +45,23 @@ describe('models:listPeople', function () {
     })
   })
 
-  it('will not create a new listPerson with invalid params (duplicate key)', function (done) {
+  it('will not create a new listPerson with invalid params (duplicate key)', (done) => {
     listPerson = api.models.ListPerson.build({
       teamId: 1,
       listId: 1,
       personGuid: 'abc123'
     })
 
-    listPerson.save().then(function () {
+    listPerson.save().then(() => {
       var otherlistPerson = api.models.ListPerson.build({
         teamId: 1,
         listId: 1,
         personGuid: 'abc123'
       })
 
-      otherlistPerson.save().then(function () {
+      otherlistPerson.save().then(() => {
         throw new Error('should not get here')
-      }).catch(function (errors) {
+      }).catch((errors) => {
         errors.errors.length.should.be.above(0)
         errors.errors[0].message.should.match(/must be unique/)
         done()

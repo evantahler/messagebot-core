@@ -8,28 +8,28 @@ var api
 var listId
 var team
 
-describe('actions:lists', function () {
-  beforeEach(function () { api = specHelper.api })
+describe('actions:lists', () => {
+  beforeEach(() => { api = specHelper.api })
 
-  beforeEach(function (done) {
-    api.models.Team.findOne().then(function (_team) {
+  beforeEach((done) => {
+    api.models.Team.findOne().then((_team) => {
       team = _team
       done()
     })
   })
 
-  before(function (done) { specHelper.truncate('lists', done) })
-  before(function (done) { specHelper.truncate('listPeople', done) })
-  after(function (done) { specHelper.truncate('lists', done) })
-  after(function (done) { specHelper.truncate('listPeople', done) })
+  before((done) => { specHelper.truncate('lists', done) })
+  before((done) => { specHelper.truncate('listPeople', done) })
+  after((done) => { specHelper.truncate('lists', done) })
+  after((done) => { specHelper.truncate('listPeople', done) })
 
-  describe('list:create', function () {
-    it('succeeds', function (done) {
+  describe('list:create', () => {
+    it('succeeds', (done) => {
       specHelper.requestWithLogin(email, password, 'list:create', {
         name: 'test list',
         description: 'test list',
         type: 'static'
-      }, function (response) {
+      }, (response) => {
         should.not.exist(response.error)
         response.list.folder.should.equal('default')
         response.list.name.should.equal('test list')
@@ -38,33 +38,33 @@ describe('actions:lists', function () {
       })
     })
 
-    it('fails (uniqueness failure)', function (done) {
+    it('fails (uniqueness failure)', (done) => {
       specHelper.requestWithLogin(email, password, 'list:create', {
         name: 'test list',
         description: 'test list',
         type: 'static'
-      }, function (response) {
+      }, (response) => {
         response.error.should.match(/must be unique/)
         done()
       })
     })
 
-    it('fails (missing param)', function (done) {
+    it('fails (missing param)', (done) => {
       specHelper.requestWithLogin(email, password, 'list:create', {
         description: 'test list',
         type: 'static'
-      }, function (response) {
+      }, (response) => {
         response.error.should.equal('Error: name is a required parameter for this action')
         done()
       })
     })
   })
 
-  describe('list:view', function () {
-    it('succeeds', function (done) {
+  describe('list:view', () => {
+    it('succeeds', (done) => {
       specHelper.requestWithLogin(email, password, 'list:view', {
         listId: listId
-      }, function (response) {
+      }, (response) => {
         should.not.exist(response.error)
         response.list.folder.should.equal('default')
         response.list.name.should.equal('test list')
@@ -72,22 +72,22 @@ describe('actions:lists', function () {
       })
     })
 
-    it('fails (not found)', function (done) {
+    it('fails (not found)', (done) => {
       specHelper.requestWithLogin(email, password, 'list:view', {
         listId: 999
-      }, function (response) {
+      }, (response) => {
         response.error.should.equal('Error: list not found')
         done()
       })
     })
   })
 
-  describe('list:copy', function () {
-    it('succeeds', function (done) {
+  describe('list:copy', () => {
+    it('succeeds', (done) => {
       specHelper.requestWithLogin(email, password, 'list:copy', {
         listId: listId,
         name: 'new list'
-      }, function (response) {
+      }, (response) => {
         should.not.exist(response.error)
         response.list.id.should.not.equal(listId)
         response.list.folder.should.equal('default')
@@ -96,52 +96,52 @@ describe('actions:lists', function () {
       })
     })
 
-    it('fails (uniqueness param)', function (done) {
+    it('fails (uniqueness param)', (done) => {
       specHelper.requestWithLogin(email, password, 'list:copy', {
         listId: listId,
         name: 'test list'
-      }, function (response) {
+      }, (response) => {
         response.error.should.match(/must be unique/)
         done()
       })
     })
 
-    it('fails (missing param)', function (done) {
+    it('fails (missing param)', (done) => {
       specHelper.requestWithLogin(email, password, 'list:copy', {
         listId: listId
-      }, function (response) {
+      }, (response) => {
         response.error.should.equal('Error: name is a required parameter for this action')
         done()
       })
     })
   })
 
-  describe('list:edit', function () {
-    it('succeeds', function (done) {
+  describe('list:edit', () => {
+    it('succeeds', (done) => {
       specHelper.requestWithLogin(email, password, 'list:edit', {
         listId: listId,
         name: 'a better list name'
-      }, function (response) {
+      }, (response) => {
         should.not.exist(response.error)
         response.list.name.should.equal('a better list name')
         done()
       })
     })
 
-    it('fails (uniqueness failure)', function (done) {
+    it('fails (uniqueness failure)', (done) => {
       specHelper.requestWithLogin(email, password, 'list:edit', {
         listId: listId,
         name: 'new list'
-      }, function (response) {
+      }, (response) => {
         response.error.should.equal('Error: Validation error')
         done()
       })
     })
   })
 
-  describe('lists:types', function () {
-    it('succeeds', function (done) {
-      specHelper.requestWithLogin(email, password, 'lists:types', {}, function (response) {
+  describe('lists:types', () => {
+    it('succeeds', (done) => {
+      specHelper.requestWithLogin(email, password, 'lists:types', {}, (response) => {
         should.not.exist(response.error)
         response.validTypes.should.deepEqual(['dynamic', 'static'])
         done()
@@ -149,9 +149,9 @@ describe('actions:lists', function () {
     })
   })
 
-  describe('lists:list', function () {
-    it('succeeds', function (done) {
-      specHelper.requestWithLogin(email, password, 'lists:list', {}, function (response) {
+  describe('lists:list', () => {
+    it('succeeds', (done) => {
+      specHelper.requestWithLogin(email, password, 'lists:list', {}, (response) => {
         should.not.exist(response.error)
         response.lists.length.should.equal(2)
         response.lists[0].name.should.equal('a better list name')
@@ -161,9 +161,9 @@ describe('actions:lists', function () {
     })
   })
 
-  describe('lists:folders', function () {
-    it('succeeds', function (done) {
-      specHelper.requestWithLogin(email, password, 'lists:folders', {}, function (response) {
+  describe('lists:folders', () => {
+    it('succeeds', (done) => {
+      specHelper.requestWithLogin(email, password, 'lists:folders', {}, (response) => {
         should.not.exist(response.error)
         response.folders.length.should.equal(1)
         response.folders.should.deepEqual(['default'])
@@ -172,24 +172,24 @@ describe('actions:lists', function () {
     })
   })
 
-  describe('list:people', function () {
+  describe('list:people', () => {
     var dynamicListId
     var person
     var csvPeople = []
 
-    before(function (done) {
+    before((done) => {
       specHelper.requestWithLogin(email, password, 'list:create', {
         name: 'dynamic list',
         description: 'dynamic list',
         type: 'dynamic'
-      }, function (response) {
+      }, (response) => {
         should.not.exist(response.error)
         dynamicListId = response.list.id
         done()
       })
     })
 
-    before(function (done) {
+    before((done) => {
       person = api.models.Person.build({
         teamId: team.id,
         source: 'tester',
@@ -211,8 +211,8 @@ describe('actions:lists', function () {
     after((done) => { person.destroy().then(() => { done() }) })
     after((done) => {
       var jobs = []
-      csvPeople.forEach(function (guid) {
-        jobs.push(function (next) {
+      csvPeople.forEach((guid) => {
+        jobs.push((next) => {
           api.models.Person.destroy({where: {
             teamId: team.id,
             guid: guid
@@ -225,34 +225,34 @@ describe('actions:lists', function () {
       async.parallel(jobs, done)
     })
 
-    describe('list:people:add', function () {
-      it('succeeds with personGuids via Form', function (done) {
+    describe('list:people:add', () => {
+      it('succeeds with personGuids via Form', (done) => {
         specHelper.requestWithLogin(email, password, 'list:people:add', {
           listId: listId,
           personGuids: person.guid
-        }, function (response) {
+        }, (response) => {
           should.not.exist(response.error)
           response.personGuids.length.should.equal(1)
           done()
         })
       })
 
-      it('fails (re-adding an existing person)', function (done) {
+      it('fails (re-adding an existing person)', (done) => {
         specHelper.requestWithLogin(email, password, 'list:people:add', {
           listId: listId,
           personGuids: person.guid
-        }, function (response) {
+        }, (response) => {
           should.not.exist(response.error)
           response.personGuids.length.should.equal(1)
           done()
         })
       })
 
-      it('succeeds with people via CSV Upload', function (done) {
+      it('succeeds with people via CSV Upload', (done) => {
         specHelper.requestWithLogin(email, password, 'list:people:add', {
           listId: listId,
           file: { path: path.join(__dirname, '/../../samples/email-upload.csv') }
-        }, function (response) {
+        }, (response) => {
           var jobs = []
           should.not.exist(response.error)
           response.personGuids.length.should.equal(4)
@@ -281,11 +281,11 @@ describe('actions:lists', function () {
         })
       })
 
-      it('succeeds will update people with CSV upload', function (done) {
+      it('succeeds will update people with CSV upload', (done) => {
         specHelper.requestWithLogin(email, password, 'list:people:add', {
           listId: listId,
           file: { path: path.join(__dirname, '/../../samples/email-upload2.csv') }
-        }, function (response) {
+        }, (response) => {
           should.not.exist(response.error)
           response.personGuids.length.should.equal(1)
           api.models.Person.findOne({where: {guid: response.personGuids[0]}}).then((person) => {
@@ -308,43 +308,43 @@ describe('actions:lists', function () {
         })
       })
 
-      it('fails (list is not found)', function (done) {
+      it('fails (list is not found)', (done) => {
         specHelper.requestWithLogin(email, password, 'list:people:add', {
           listId: 999,
           personGuids: person.guid
-        }, function (response) {
+        }, (response) => {
           response.error.should.equal('Error: list not found')
           done()
         })
       })
 
-      it('fails (no people provided)', function (done) {
+      it('fails (no people provided)', (done) => {
         specHelper.requestWithLogin(email, password, 'list:people:add', {
           listId: listId,
           personGuids: ''
-        }, function (response) {
+        }, (response) => {
           response.error.should.equal('Error: No people are provided via CSV')
           done()
         })
       })
 
-      it('fails (list is not static)', function (done) {
+      it('fails (list is not static)', (done) => {
         specHelper.requestWithLogin(email, password, 'list:people:add', {
           listId: dynamicListId,
           personGuids: person.guid
-        }, function (response) {
+        }, (response) => {
           response.error.should.equal('Error: you cannot modify static list membership via this method')
           done()
         })
       })
     })
 
-    describe('list:people:delete', function () {
-      it('succeeds with personGuids', function (done) {
+    describe('list:people:delete', () => {
+      it('succeeds with personGuids', (done) => {
         specHelper.requestWithLogin(email, password, 'list:people:delete', {
           listId: listId,
           personGuids: person.guid
-        }, function (response) {
+        }, (response) => {
           should.not.exist(response.error)
           response.deletedListPeople.length.should.equal(1)
           response.deletedListPeople[0].personGuid.should.equal(person.guid)
@@ -352,62 +352,62 @@ describe('actions:lists', function () {
         })
       })
 
-      it('fails (person not in list)', function (done) {
+      it('fails (person not in list)', (done) => {
         specHelper.requestWithLogin(email, password, 'list:people:delete', {
           listId: listId,
           personGuids: 'abc123'
-        }, function (response) {
+        }, (response) => {
           response.error.should.equal('Error: List Person (guid abc123) not found in this list')
           done()
         })
       })
 
-      it('fails (list is not found)', function (done) {
+      it('fails (list is not found)', (done) => {
         specHelper.requestWithLogin(email, password, 'list:people:delete', {
           listId: 999,
           personGuids: person.guid
-        }, function (response) {
+        }, (response) => {
           response.error.should.equal('Error: list not found')
           done()
         })
       })
 
-      it('fails (list is not static)', function (done) {
+      it('fails (list is not static)', (done) => {
         specHelper.requestWithLogin(email, password, 'list:people:add', {
           listId: dynamicListId,
           personGuids: person.guid
-        }, function (response) {
+        }, (response) => {
           response.error.should.equal('Error: you cannot modify static list membership via this method')
           done()
         })
       })
     })
 
-    describe('list:people:count', function () {
-      it('succeeds with personGuids', function (done) {
+    describe('list:people:count', () => {
+      it('succeeds with personGuids', (done) => {
         specHelper.requestWithLogin(email, password, 'list:people:count', {
           listId: listId
-        }, function (response) {
+        }, (response) => {
           should.not.exist(response.error)
           done()
         })
       })
 
-      it('fails (list is not found)', function (done) {
+      it('fails (list is not found)', (done) => {
         specHelper.requestWithLogin(email, password, 'list:people:count', {
           listId: 999
-        }, function (response) {
+        }, (response) => {
           response.error.should.equal('Error: list not found')
           done()
         })
       })
     })
 
-    describe('list:people:view', function () {
-      it('succeeds with all', function (done) {
+    describe('list:people:view', () => {
+      it('succeeds with all', (done) => {
         specHelper.requestWithLogin(email, password, 'list:people:view', {
           listId: listId
-        }, function (response) {
+        }, (response) => {
           should.not.exist(response.error)
           response.total.should.equal(4)
           response.people.length.should.equal(4)
@@ -419,12 +419,12 @@ describe('actions:lists', function () {
         })
       })
 
-      it('succeeds with from/size', function (done) {
+      it('succeeds with from/size', (done) => {
         specHelper.requestWithLogin(email, password, 'list:people:view', {
           listId: listId,
           from: 1,
           size: 1
-        }, function (response) {
+        }, (response) => {
           should.not.exist(response.error)
           response.total.should.equal(4)
           response.people.length.should.equal(1)
@@ -433,10 +433,10 @@ describe('actions:lists', function () {
         })
       })
 
-      it('fails (list is not found)', function (done) {
+      it('fails (list is not found)', (done) => {
         specHelper.requestWithLogin(email, password, 'list:people:view', {
           listId: 999
-        }, function (response) {
+        }, (response) => {
           response.error.should.equal('Error: list not found')
           done()
         })
@@ -444,20 +444,20 @@ describe('actions:lists', function () {
     })
   })
 
-  describe('list:delete', function () {
-    it('succeeds', function (done) {
+  describe('list:delete', () => {
+    it('succeeds', (done) => {
       specHelper.requestWithLogin(email, password, 'list:delete', {
         listId: listId
-      }, function (response) {
+      }, (response) => {
         should.not.exist(response.error)
         done()
       })
     })
 
-    it('fails (not found)', function (done) {
+    it('fails (not found)', (done) => {
       specHelper.requestWithLogin(email, password, 'list:delete', {
         listId: listId
-      }, function (response) {
+      }, (response) => {
         response.error.should.equal('Error: list not found')
         done()
       })

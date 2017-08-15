@@ -6,7 +6,7 @@ exports.status = {
 
   run: function (api, data, next) {
     data.response.transports = {}
-    api.transports.forEach(function (transport) {
+    api.transports.forEach((transport) => {
       data.response.transports[transport.name] = {
         name: transport.name,
         description: transport.description,

@@ -44,7 +44,7 @@ module.exports = {
           allowNull: true
         }
       }
-    ).then(function () {
+    ).then(() => {
       return queryInterface.addIndex(
         'people', ['teamId', 'guid'], {
           indicesType: 'UNIQUE'

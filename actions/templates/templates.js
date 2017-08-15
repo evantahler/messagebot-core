@@ -33,11 +33,11 @@ exports.templatesList = {
       query.where.folder = data.params.folder
     }
 
-    api.models.Template.findAndCountAll(query).then(function (response) {
+    api.models.Template.findAndCountAll(query).then((response) => {
       data.response.total = response.count
       data.response.templates = []
 
-      response.rows.forEach(function (template) {
+      response.rows.forEach((template) => {
         data.response.templates.push(template.apiData())
       })
 
@@ -55,9 +55,9 @@ exports.campaignsFolders = {
   inputs: {},
 
   run: function (api, data, next) {
-    api.models.Template.aggregate('folder', 'DISTINCT', {where: {teamId: data.session.teamId}, plain: false}).then(function (response) {
+    api.models.Template.aggregate('folder', 'DISTINCT', {where: {teamId: data.session.teamId}, plain: false}).then((response) => {
       data.response.folders = []
-      response.forEach(function (r) { data.response.folders.push(r.DISTINCT) })
+      response.forEach((r) => { data.response.folders.push(r.DISTINCT) })
       data.response.folders.sort()
       next()
     }).catch(next)

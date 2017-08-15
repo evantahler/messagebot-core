@@ -19,17 +19,17 @@ exports.userCreate = {
     var user
     var person
 
-    jobs.push(function (done) {
+    jobs.push((done) => {
       user = api.models.User.build(data.params)
       user.teamId = data.session.teamId
       done()
     })
 
-    jobs.push(function (done) {
+    jobs.push((done) => {
       user.updatePassword(data.params.password, done)
     })
 
-    jobs.push(function (done) {
+    jobs.push((done) => {
       person = api.models.Person.build({teamId: user.teamId})
       person.source = 'admin'
       person.device = 'unknown'
@@ -42,14 +42,14 @@ exports.userCreate = {
         role: user.role
       }
 
-      person.save().then(function () {
+      person.save().then(() => {
         done()
       }).catch(done)
     })
 
-    jobs.push(function (done) {
+    jobs.push((done) => {
       user.personGuid = person.guid
-      user.save().then(function () {
+      user.save().then(() => {
         data.response.user = user.apiData()
         api.tasks.enqueueIn(1, 'people:buildCreateEvent', {guid: person.guid, teamId: data.team.id}, 'messagebot:people', done)
       }).catch(done)
@@ -81,7 +81,7 @@ exports.userView = {
     api.models.User.findOne({where: {
       id: userId,
       teamId: data.session.teamId
-    }}).then(function (user) {
+    }}).then((user) => {
       if (!user) { return next(new Error('user not found')) }
       data.response.user = user.apiData()
       next()
@@ -117,11 +117,11 @@ exports.userEdit = {
       userId = data.params.userId
     }
 
-    jobs.push(function (done) {
+    jobs.push((done) => {
       api.models.User.findOne({where: {
         id: userId,
         teamId: data.session.teamId
-      }}).then(function (u) {
+      }}).then((u) => {
         user = u
 
         if (!user) { return done(new Error('user not found')) }
@@ -138,15 +138,15 @@ exports.userEdit = {
       }).catch(done)
     })
 
-    jobs.push(function (done) {
-      user.updateAttributes(data.params).then(function () {
+    jobs.push((done) => {
+      user.updateAttributes(data.params).then(() => {
         data.response.user = user.apiData()
         done()
       }).catch(done)
     })
 
-    jobs.push(function (done) {
-      api.models.Person.findOne({where: {guid: user.personGuid}}).then(function (p) {
+    jobs.push((done) => {
+      api.models.Person.findOne({where: {guid: user.personGuid}}).then((p) => {
         person = p
 
         if (!person) { return done(new Error('related person not found')) }
@@ -154,20 +154,20 @@ exports.userEdit = {
       }).catch(done)
     })
 
-    jobs.push(function (done) {
+    jobs.push((done) => {
       person.data.email = user.email
       person.data.firstName = user.firstName
       person.data.lastName = user.lastName
       person.data.role = user.role
 
-      person.save().then(function () { done() }).catch(done)
+      person.save().then(() => { done() }).catch(done)
     })
 
-    jobs.push(function (done) {
+    jobs.push((done) => {
       if (data.params.password) {
-        user.updatePassword(data.params.password, function (error) {
+        user.updatePassword(data.params.password, (error) => {
           if (error) { return done(error) }
-          user.save().then(function () {
+          user.save().then(() => {
             done()
           }).catch(done)
         })
@@ -198,11 +198,11 @@ exports.userDelete = {
     var user
     var person
 
-    jobs.push(function (done) {
+    jobs.push((done) => {
       api.models.User.findOne({where: {
         id: data.params.userId,
         teamId: data.session.teamId
-      }}).then(function (u) {
+      }}).then((u) => {
         user = u
         if (!user) { return done(new Error('user not found')) }
         if (data.session.userId === user.id) { return done(new Error('you cannot delete yourself')) }
@@ -210,21 +210,21 @@ exports.userDelete = {
       }).catch(done)
     })
 
-    jobs.push(function (done) {
-      api.models.Person.findOne({where: {guid: user.personGuid}}).then(function (p) {
+    jobs.push((done) => {
+      api.models.Person.findOne({where: {guid: user.personGuid}}).then((p) => {
         person = p
         done()
       }).catch(done)
     })
 
-    jobs.push(function (done) {
-      user.destroy().then(function () {
+    jobs.push((done) => {
+      user.destroy().then(() => {
         done()
       }).catch(done)
     })
 
-    jobs.push(function (done) {
-      person.destroy().then(function () {
+    jobs.push((done) => {
+      person.destroy().then(() => {
         done()
       }).catch(done)
     })

@@ -66,8 +66,8 @@ exports.buildFunnel = function (person, routeBase, callback) {
   var event
 
   var pushEvent = function (event, payload) {
-    jobs.push(function (next) {
-      request.post(routeBase + '/api/event', {form: payload}, function (error, data, response) {
+    jobs.push((next) => {
+      request.post(routeBase + '/api/event', {form: payload}, (error, data, response) => {
         response = JSON.parse(response)
         if (response.error && !error) { error = data.error }
         next(error, event)
@@ -113,7 +113,7 @@ exports.buildFunnel = function (person, routeBase, callback) {
     counter++
   }
 
-  async.series(jobs, function (error, events) {
+  async.series(jobs, (error, events) => {
     if (error) { return callback(error) }
     if (!Array.isArray(events)) { events = [events] }
     return callback(error, events)

@@ -50,16 +50,16 @@ module.exports = {
           allowNull: true
         }
       }
-    ).then(function () {
+    ).then(() => {
       return queryInterface.addIndex(
         'users', ['teamId']
-      ).then(function () {
+      ).then(() => {
         return queryInterface.addIndex(
           'users', ['email'], {
             indexName: 'emailUniqueIndex',
             indicesType: 'UNIQUE'
           }
-        ).then(function () {
+        ).then(() => {
           return queryInterface.addIndex(
             'users', ['personGuid'], {
               indexName: 'personGuidUniqueIndex',

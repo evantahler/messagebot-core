@@ -125,8 +125,8 @@ var loader = function (api) {
             var count = 0
 
             if (list.type === 'static') {
-              jobs.push(function (done) {
-                api.models.ListPerson.count({where: {listId: list.id}}).then(function (_count) {
+              jobs.push((done) => {
+                api.models.ListPerson.count({where: {listId: list.id}}).then((_count) => {
                   count = _count
                   done()
                 }).catch(done)
@@ -188,10 +188,10 @@ var loader = function (api) {
                 }
               })
 
-              jobs.push(function (done) {
+              jobs.push((done) => {
                 api.models.ListPerson.destroy({
                   where: {listId: list.id}
-                }).then(function () {
+                }).then(() => {
                   done()
                 }).catch(done)
               })
@@ -216,20 +216,18 @@ var loader = function (api) {
               })
             }
 
-            jobs.push(function (done) {
+            jobs.push((done) => {
               list.updateAttributes({
                 peopleCount: count,
                 peopleCountedAt: (new Date())
-              }).then(function () {
+              }).then(() => {
                 done()
               }).catch(done)
             })
 
-            async.series(jobs, function (error) {
-              process.nextTick(function () {
-                if (!error) { api.log(`counted ${count} people in list #${list.id}, ${list.name} (team #${list.teamId})`) }
-                callback(error, count)
-              })
+            async.series(jobs, (error) => {
+              if (!error) { api.log(`counted ${count} people in list #${list.id}, ${list.name} (team #${list.teamId})`) }
+              callback(error, count)
             })
           },
 

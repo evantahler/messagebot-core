@@ -67,19 +67,6 @@ module.exports = {
     api.actions.addMiddleware(middleware['data-preperation'])
     api.actions.addMiddleware(middleware['require-team'])
 
-    /* --- Inject team into Elasticsaerch models --- */
-    api.models.orignalElasticSearch = {};
-    ['Event', 'Person', 'Message'].forEach(function (key) {
-      api.models.orignalElasticSearch[key] = api.models[key]
-
-      api.models[key] = function (team, guid, index, alias) {
-        var instance = new api.models.orignalElasticSearch[key](guid, index, alias)
-        if (!index) { instance.index = team.id + '-' + instance.index }
-        if (!alias) { instance.alias = team.id + '-' + instance.alias }
-        return instance
-      }
-    })
-
     next()
   }
 }

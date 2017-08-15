@@ -29,17 +29,17 @@ module.exports = {
         }
 
       }
-    ).then(function () {
+    ).then(() => {
       return queryInterface.addIndex(
         'teams', ['name'], {
           indicesType: 'UNIQUE'
         }
-      ).then(function () {
+      ).then(() => {
         return queryInterface.addIndex(
           'teams', ['trackingDomainRegexp'], {
             indicesType: 'UNIQUE'
           }
-        ).then(function () {
+        ).then(() => {
           return queryInterface.addIndex(
             'teams', ['trackingDomain'], {
               indicesType: 'UNIQUE'

@@ -10,18 +10,16 @@ module.exports = {
 
       query.limit = limit
       query.offset = offset
-      model.findAll(query).then(function (records) {
+      model.findAll(query).then((records) => {
         var jobs = []
         if (!records || records.length === 0) { return callback() }
-        records.forEach(function (r) {
-          jobs.push(function (done) { recordResponder(r, done) })
+        records.forEach((r) => {
+          jobs.push((done) => { recordResponder(r, done) })
         })
 
-        async.series(jobs, function (error) {
-          process.nextTick(function () {
-            if (error) { return callback(error) }
-            api.utils.findInBatches(model, query, recordResponder, callback, limit, (offset + limit))
-          })
+        async.series(jobs, (error) => {
+          if (error) { return callback(error) }
+          api.utils.findInBatches(model, query, recordResponder, callback, limit, (offset + limit))
         })
       }).catch(callback)
     }
@@ -33,19 +31,19 @@ module.exports = {
         // leave this as an option for explicit tasks/internal use
         // no action should have this allowed as a param
         if (!team && data.params && data.params.teamId) {
-          teams.forEach(function (_team) {
+          teams.forEach((_team) => {
             if (_team.id === data.params.teamId) { team = _team }
           })
         }
 
         if (!team && data.session && data.session.teamId) {
-          teams.forEach(function (_team) {
+          teams.forEach((_team) => {
             if (_team.id === data.session.teamId) { team = _team }
           })
         }
 
         if (!team && data.connection && data.connection.type === 'web') {
-          teams.forEach(function (_team) {
+          teams.forEach((_team) => {
             var regexp = new RegExp(_team.trackingDomainRegexp)
             if (data.connection.rawConnection.req.headers.host.match(regexp)) { team = _team }
           })
@@ -61,7 +59,7 @@ module.exports = {
       // var fullCommand = '/bin/sh -c \'' + commands.join(' && ') + '\''
       var fullCommand = commands.join(' && ')
       if (!silent) { console.log('>> ' + fullCommand) }
-      exec(fullCommand, function (error, stdout, stderr) {
+      exec(fullCommand, (error, stdout, stderr) => {
         if (stderr) { error = stderr }
         callback(error, stdout, stderr)
       })

@@ -49,11 +49,11 @@ exports.listsList = {
       query.where.folder = data.params.folder
     }
 
-    api.models.List.findAndCountAll(query).then(function (response) {
+    api.models.List.findAndCountAll(query).then((response) => {
       data.response.total = response.count
       data.response.lists = []
 
-      response.rows.forEach(function (list) {
+      response.rows.forEach((list) => {
         data.response.lists.push(list.apiData())
       })
 
@@ -71,9 +71,9 @@ exports.listsFolders = {
   inputs: {},
 
   run: function (api, data, next) {
-    api.models.List.aggregate('folder', 'DISTINCT', {where: {teamId: data.session.teamId}, plain: false}).then(function (response) {
+    api.models.List.aggregate('folder', 'DISTINCT', {where: {teamId: data.session.teamId}, plain: false}).then((response) => {
       data.response.folders = []
-      response.forEach(function (r) { data.response.folders.push(r.DISTINCT) })
+      response.forEach((r) => { data.response.folders.push(r.DISTINCT) })
       data.response.folders.sort()
       next()
     }).catch(next)

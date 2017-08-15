@@ -4,18 +4,18 @@ var specHelper = require(path.join(__dirname, '/../specHelper'))
 var api
 var template
 
-describe('models:templates', function () {
-  beforeEach(function () { api = specHelper.api })
+describe('models:templates', () => {
+  beforeEach(() => { api = specHelper.api })
 
-  afterEach(function (done) {
+  afterEach((done) => {
     if (template.isNewRecord === false) {
-      template.destroy().then(function () { done() })
+      template.destroy().then(() => { done() })
     } else {
       done()
     }
   })
 
-  it('can create new template with valid params', function (done) {
+  it('can create new template with valid params', (done) => {
     template = api.models.Template.build({
       teamId: 1,
       name: 'my template',
@@ -24,7 +24,7 @@ describe('models:templates', function () {
       folder: 'default'
     })
 
-    template.save().then(function () {
+    template.save().then(() => {
       api.models.Template.findOne({where: {name: 'my template'}}).then(function (template) {
         template.folder.should.equal('default')
         done()
@@ -32,14 +32,14 @@ describe('models:templates', function () {
     })
   })
 
-  it('will not create new template with invalid params (missing requirement)', function (done) {
+  it('will not create new template with invalid params (missing requirement)', (done) => {
     template = api.models.Template.build({
       teamId: 1,
       type: 'simple',
       folder: 'default'
     })
 
-    template.save().then(function () {
+    template.save().then(() => {
       throw new Error('should not get here')
     }).catch(function (errors) {
       errors.errors.length.should.be.above(1)
@@ -49,7 +49,7 @@ describe('models:templates', function () {
     })
   })
 
-  it('will not create new templates with invalid params (duplicate key)', function (done) {
+  it('will not create new templates with invalid params (duplicate key)', (done) => {
     template = api.models.Template.build({
       teamId: 1,
       name: 'my template',
@@ -58,7 +58,7 @@ describe('models:templates', function () {
       folder: 'default'
     })
 
-    template.save().then(function () {
+    template.save().then(() => {
       var otherTemplate = api.models.Template.build({
         teamId: 1,
         name: 'my template',
@@ -67,9 +67,9 @@ describe('models:templates', function () {
         folder: 'default'
       })
 
-      otherTemplate.save().then(function () {
+      otherTemplate.save().then(() => {
         throw new Error('should not get here')
-      }).catch(function (errors) {
+      }).catch((errors) => {
         errors.errors.length.should.be.above(0)
         errors.errors[0].message.should.match(/must be unique/)
         done()
@@ -77,7 +77,7 @@ describe('models:templates', function () {
     }).catch(done)
   })
 
-  describe('tempalte#render', function () {
+  describe('tempalte#render', () => {
     // See tests/integartion/template
   })
 })

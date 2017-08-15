@@ -47,7 +47,7 @@ var specHelper = {
     var self = this
 
     if (self.api.config.sequelize.dialect === 'postgres') {
-      self.api.utils.doShell(['dropdb --if-exists ' + self.api.config.sequelize.database], function (error) {
+      self.api.utils.doShell(['dropdb --if-exists ' + self.api.config.sequelize.database], (error) => {
         if (error && !String(error).match(/NOTICE/)) { return callback(error) }
         return callback()
       }, silent)
@@ -64,17 +64,17 @@ var specHelper = {
 
     console.log('\r\n----- MIGRATIING TEST DATABASES -----\r\n')
 
-    jobs.push(function (done) {
+    jobs.push((done) => {
       if (self.api) { return done() }
       self.initialize(done)
     })
 
-    jobs.push(function (done) {
+    jobs.push((done) => {
       self.createDatabase(done)
     })
 
-    jobs.push(function (done) {
-      self.api.utils.doShell('NODE_ENV=test npm run migrate', function (error) {
+    jobs.push((done) => {
+      self.api.utils.doShell('NODE_ENV=test npm run migrate', (error) => {
         if (error && !error.toString().match(/graceful-fs/)) {
           done(error)
         } else {
@@ -83,7 +83,7 @@ var specHelper = {
       })
     })
 
-    jobs.push(function (done) {
+    jobs.push((done) => {
       console.log('\r\n----- TEST DATABASES MIGRATED -----\r\n')
       done()
     })
@@ -97,16 +97,16 @@ var specHelper = {
 
     console.log('\r\n----- CLEARING TEST DATABASES -----\r\n')
 
-    jobs.push(function (done) {
+    jobs.push((done) => {
       if (self.api) { return done() }
       self.initialize(done)
     })
 
-    jobs.push(function (done) {
+    jobs.push((done) => {
       self.dropDatabase(done)
     })
 
-    jobs.push(function (done) {
+    jobs.push((done) => {
       console.log('\r\n----- TEST DATABASES CLEARED-----\r\n')
       done()
     })
@@ -118,7 +118,7 @@ var specHelper = {
     var self = this
     if (self.api.config.sequelize.dialect === 'postgres') { table = '"' + table + '"' }
     if (self.api.config.sequelize.dialect === 'mysql') { table = '`' + table + '`' }
-    self.api.sequelize.sequelize.query('truncate table ' + table).then(function () {
+    self.api.sequelize.sequelize.query('truncate table ' + table).then(() => {
       callback()
     }).catch(callback)
   },
@@ -135,7 +135,7 @@ var specHelper = {
     command += ' --password "password"'
 
     console.log('\r\n----- CREATING TEST TEAM -----\r\n')
-    self.api.utils.doShell(command, function (error) {
+    self.api.utils.doShell(command, (error) => {
       if (error) { console.log('error', error); return callback(error) }
       console.log('\r\n----- TEST TEAM CREATED -----\r\n')
       return callback()
@@ -149,7 +149,7 @@ var specHelper = {
 
   initialize: function (callback) {
     var self = this
-    self.actionhero.initialize(function (error, a) {
+    self.actionhero.initialize((error, a) => {
       self.api = a
       callback(error)
     })
@@ -157,7 +157,7 @@ var specHelper = {
 
   start: function (callback) {
     var self = this
-    self.actionhero.start(function (error, a) {
+    self.actionhero.start((error, a) => {
       self.api = a
       callback(error, self.api)
     })
@@ -165,7 +165,7 @@ var specHelper = {
 
   stop: function (callback) {
     var self = this
-    self.actionhero.stop(function (error) {
+    self.actionhero.stop((error) => {
       callback(error)
     })
   },
@@ -190,7 +190,7 @@ var specHelper = {
   requestWithLogin: function (email, password, action, params, callback) {
     var self = this
     var connection = new self.api.specHelper.Connection()
-    self.login(connection, email, password, function (loginResponse) {
+    self.login(connection, email, password, (loginResponse) => {
       if (loginResponse.error) { return callback(loginResponse) }
       connection.params = params
       self.api.specHelper.runAction(action, connection, callback)
@@ -205,7 +205,7 @@ var specHelper = {
       url: baseUrl + '/api/session',
       jar: j,
       form: {email: email, password: password}
-    }, function (error, response, body) {
+    }, (error, response, body) => {
       if (error) { return callback({error: error}) } //eslint-disable-line
       body = JSON.parse(body)
       if (body.error) { return callback(body) }
@@ -219,7 +219,7 @@ var specHelper = {
         url: actionUrl,
         jar: j,
         form: params
-      }, function (error, response, body) {
+      }, (error, response, body) => {
         if (error) { return callback({error: error}) } //eslint-disable-line
         try {
           body = JSON.parse(body)
@@ -231,7 +231,7 @@ var specHelper = {
 }
 
 /* --- Init the server --- */
-before(function (done) {
+before((done) => {
   specHelper.initialize(done)
 })
 
@@ -254,18 +254,18 @@ if (process.env.SKIP_MIGRATE !== 'true') {
     specHelper.createTeam(done)
   })
 
-  before(function (done) {
+  before((done) => {
     specHelper.flushRedis(done)
   })
 }
 
 /* --- Start up the server --- */
-before(function (done) {
+before((done) => {
   specHelper.start(done)
 })
 
 /* --- Stop the server --- */
-after(function (done) {
+after((done) => {
   specHelper.stop(done)
 })
 

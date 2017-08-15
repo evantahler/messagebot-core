@@ -54,15 +54,15 @@ var loader = function (api) {
         hooks: {
           beforeCreate: (self) => { return api.sequelize.updatateData(self, api.models.EventData, 'eventGuid') },
           beforeUpdate: (self) => { return api.sequelize.updatateData(self, api.models.EventData, 'eventGuid') },
-          beforeDestroy: function (self) { return api.models.EventData.destroy({where: {eventGuid: self.guid}}) }
+          beforeDestroy: (self) => { return api.models.EventData.destroy({where: {eventGuid: self.guid}}) }
         },
 
         instanceMethods: {
           hydrate: function (callback) {
             this.data = {}
             var self = this
-            api.models.EventData.findAll({where: {eventGuid: self.guid}}).then(function (datas) {
-              datas.forEach(function (d) { self.data[d.key] = d.value })
+            api.models.EventData.findAll({where: {eventGuid: self.guid}}).then((datas) => {
+              datas.forEach((d) => { self.data[d.key] = d.value })
               callback(null, datas)
             }).catch(callback)
           },

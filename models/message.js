@@ -54,15 +54,15 @@ var loader = function (api) {
         hooks: {
           beforeCreate: (self) => { return api.sequelize.updatateData(self, api.models.MessageData, 'messageGuid') },
           beforeUpdate: (self) => { return api.sequelize.updatateData(self, api.models.MessageData, 'messageGuid') },
-          beforeDestroy: function (self) { return api.models.MessageData.destroy({where: {messageGuid: self.guid}}) }
+          beforeDestroy: (self) => { return api.models.MessageData.destroy({where: {messageGuid: self.guid}}) }
         },
 
         instanceMethods: {
           hydrate: function (callback) {
             this.data = {}
             var self = this
-            api.models.MessageData.findAll({where: {messageGuid: self.guid}}).then(function (datas) {
-              datas.forEach(function (d) { self.data[d.key] = d.value })
+            api.models.MessageData.findAll({where: {messageGuid: self.guid}}).then((datas) => {
+              datas.forEach((d) => { self.data[d.key] = d.value })
               callback(null, datas)
             }).catch(callback)
           },

@@ -9,7 +9,7 @@ var loader = function (api) {
     if (campaign.sentAt) { return callback(new Error('campaign already sent')) }
     if (campaign.sendAt - new Date().getTime() >= 0) { return callback(new Error('campaign should not be sent yet')) }
 
-    api.utils.findInBatches(api.models.ListPerson, {where: {listId: list.id}}, function (listPerson, done) {
+    api.utils.findInBatches(api.models.ListPerson, {where: {listId: list.id}}, (listPerson, done) => {
       api.tasks.enqueue('campaigns:sendMessage', {
         listId: list.id,
         campaignId: campaign.id,
@@ -24,7 +24,7 @@ var loader = function (api) {
       return callback(new Error('campaign should not be sent yet'))
     }
 
-    api.utils.findInBatches(api.models.ListPerson, {where: {listId: list.id}}, function (listPerson, done) {
+    api.utils.findInBatches(api.models.ListPerson, {where: {listId: list.id}}, (listPerson, done) => {
       api.tasks.enqueue('campaigns:sendMessage', {
         listId: list.id,
         campaignId: campaign.id,
@@ -167,8 +167,8 @@ var loader = function (api) {
             api.utils.determineActionsTeam({params: {teamId: campaign.teamId}}, (error, team) => {
               if (error) { return callback(error) }
 
-              Object.keys(totals).forEach(function (term) {
-                jobs.push(function (done) {
+              Object.keys(totals).forEach((term) => {
+                jobs.push((done) => {
                   var where = {
                     teamId: team.id,
                     campaignId: campaign.id,
@@ -196,7 +196,7 @@ var loader = function (api) {
                 })
               })
 
-              async.series(jobs, function (error) {
+              async.series(jobs, (error) => {
                 callback(error, terms, totals)
               })
             })
@@ -207,27 +207,27 @@ var loader = function (api) {
             var jobs = []
             var list
 
-            jobs.push(function (done) {
-              campaign.getList().then(function (l) {
+            jobs.push((done) => {
+              campaign.getList().then((l) => {
                 list = l
                 if (!list) { return done(new Error('list not found')) }
                 done()
               }).catch(done)
             })
 
-            jobs.push(function (done) {
+            jobs.push((done) => {
               campaign.updateAttributes({
                 sendingAt: new Date()
-              }).then(function () {
+              }).then(() => {
                 return done()
               }).catch(done)
             })
 
-            jobs.push(function (done) {
+            jobs.push((done) => {
               list.associateListPeople(done)
             })
 
-            jobs.push(function (done) {
+            jobs.push((done) => {
               if (campaign.type === 'simple') {
                 sendSimple(campaign, list, done)
               } else if (campaign.type === 'recurring') {
@@ -239,10 +239,10 @@ var loader = function (api) {
               }
             })
 
-            jobs.push(function (done) {
+            jobs.push((done) => {
               campaign.updateAttributes({
                 sentAt: new Date()
-              }).then(function () {
+              }).then(() => {
                 return done()
               }).catch(done)
             })

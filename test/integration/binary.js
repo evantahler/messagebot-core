@@ -3,16 +3,16 @@
 // var specHelper = require(path.join(__dirname, '/../specHelper'))
 // var api
 //
-// describe('integartion:binary', function () {
+// describe('integartion:binary', () => {
 //   var team
 //   var user
 //
-//   before(function () { api = specHelper.api })
+//   before(() => { api = specHelper.api })
 //
-//   it('overrides actionheros help with only messagebot help', function (done) {
+//   it('overrides actionheros help with only messagebot help', (done) => {
 //     this.timeout(10 * 1000)
 //     var command = './node_modules/.bin/actionhero help'
-//     api.utils.doShell(command, function (error, data) {
+//     api.utils.doShell(command, (error, data) => {
 //       should.not.exist(error)
 //       data.should.containEql('messagebot help')
 //       data.should.containEql('messagebot team create')
@@ -24,11 +24,11 @@
 //     }, true)
 //   })
 //
-//   describe('#help', function () {
-//     it('returns the messagebot help', function (done) {
+//   describe('#help', () => {
+//     it('returns the messagebot help', (done) => {
 //       this.timeout(10 * 1000)
 //       var command = './node_modules/.bin/actionhero messagebot help'
-//       api.utils.doShell(command, function (error, data) {
+//       api.utils.doShell(command, (error, data) => {
 //         should.not.exist(error)
 //         data.should.containEql('This method will also create the first user for this team.')
 //         data.should.containEql('Deletes a team')
@@ -37,12 +37,12 @@
 //     })
 //   })
 //
-//   describe('#version', function () {
-//     it('returns the version', function (done) {
+//   describe('#version', () => {
+//     it('returns the version', (done) => {
 //       this.timeout(10 * 1000)
 //       var pkg = require(path.join(__dirname, '/../../package.json'))
 //       var command = './node_modules/.bin/actionhero messagebot version'
-//       api.utils.doShell(command, function (error, data) {
+//       api.utils.doShell(command, (error, data) => {
 //         should.not.exist(error)
 //         data.should.containEql(pkg.version)
 //         done()
@@ -50,8 +50,8 @@
 //     })
 //   })
 //
-//   describe('#teamCreate', function () {
-//     it('succeeds', function (done) {
+//   describe('#teamCreate', () => {
+//     it('succeeds', (done) => {
 //       this.timeout(15 * 1000)
 //       var command = ''
 //       command += ' NODE_ENV=test'
@@ -62,7 +62,7 @@
 //       command += ' --email "admin@app.com"'
 //       command += ' --password "password"'
 //
-//       api.utils.doShell(command, function (error, data) {
+//       api.utils.doShell(command, (error, data) => {
 //         should.not.exist(error)
 //         data.should.containEql('New Team')
 //         data.should.containEql('New User')
@@ -70,15 +70,15 @@
 //       }, true)
 //     })
 //
-//     it('succeeds (creating the team)', function (done) {
-//       api.models.Team.findOne({where: {name: 'AnotherTestTeam'}}).then(function (_team) {
+//     it('succeeds (creating the team)', (done) => {
+//       api.models.Team.findOne({where: {name: 'AnotherTestTeam'}}).then((_team) => {
 //         _team.trackingDomain.should.equal('http://tracking.app.com')
 //         team = _team
 //         done()
 //       })
 //     })
 //
-//     it('succeeds (creating the user)', function (done) {
+//     it('succeeds (creating the user)', (done) => {
 //       api.models.User.findOne({where: {teamId: team.id}}).then(function (_user) {
 //         _user.email.should.equal('admin@app.com')
 //         user = _user
@@ -86,11 +86,11 @@
 //       })
 //     })
 //
-//     it('succeeds (creating the person)', function (done) {
+//     it('succeeds (creating the person)', (done) => {
 //       api.models.Person.findOne({where: {
 //         guid: user.personGuid
 //       }}).then((person) => {
-//         person.hydrate(function (error) {
+//         person.hydrate((error) => {
 //           should.not.exist(error)
 //           person.data.email.should.equal('admin@app.com')
 //           done()
@@ -98,7 +98,7 @@
 //       })
 //     })
 //
-//     it('fails (missing params)', function (done) {
+//     it('fails (missing params)', (done) => {
 //       this.timeout(10 * 1000)
 //       var command = ''
 //       command += ' NODE_ENV=test'
@@ -108,7 +108,7 @@
 //       command += ' --email "admin@app.com"'
 //       command += ' --password "password"'
 //
-//       api.utils.doShell(command, function (error, data) {
+//       api.utils.doShell(command, (error, data) => {
 //         // TODO: We are not getting stderr returned?
 //         // error.message.should.containEql('Missing required arguments: trackingDomainRegexp')
 //         should.exist(error)
@@ -116,7 +116,7 @@
 //       }, true)
 //     })
 //
-//     it('fails (uniqueness)', function (done) {
+//     it('fails (uniqueness)', (done) => {
 //       this.timeout(10 * 1000)
 //       var command = ''
 //       command += ' NODE_ENV=test'
@@ -137,8 +137,8 @@
 //     })
 //   })
 //
-//   describe('#teamEdit', function () {
-//     it('succeeds', function (done) {
+//   describe('#teamEdit', () => {
+//     it('succeeds', (done) => {
 //       this.timeout(10 * 1000)
 //       var command = ''
 //       command += ' NODE_ENV=test'
@@ -146,7 +146,7 @@
 //       command += ' --id ' + team.id
 //       command += ' --name AnotherTestTeamNewName'
 //
-//       api.utils.doShell(command, function (error, data) {
+//       api.utils.doShell(command, (error, data) => {
 //         should.not.exist(error)
 //         data.should.containEql('AnotherTestTeamNewName')
 //         data.should.containEql('http://tracking.app.com')
@@ -154,7 +154,7 @@
 //       }, true)
 //     })
 //
-//     it('fails (uniqueness)', function (done) {
+//     it('fails (uniqueness)', (done) => {
 //       this.timeout(10 * 1000)
 //       var command = ''
 //       command += ' NODE_ENV=test'
@@ -162,21 +162,21 @@
 //       command += ' --id ' + team.id
 //       command += ' --name TestTeam'
 //
-//       api.utils.doShell(command, function (error, data) {
+//       api.utils.doShell(command, (error, data) => {
 //         error.message.should.containEql('Validation error')
 //         done()
 //       }, true)
 //     })
 //   })
 //
-//   describe('#teamsView', function () {
-//     it('succeeds', function (done) {
+//   describe('#teamsView', () => {
+//     it('succeeds', (done) => {
 //       this.timeout(10 * 1000)
 //       var command = ''
 //       command += ' NODE_ENV=test'
 //       command += ' ./node_modules/.bin/actionhero messagebot teams list'
 //
-//       api.utils.doShell(command, function (error, data) {
+//       api.utils.doShell(command, (error, data) => {
 //         should.not.exist(error)
 //         data.should.containEql('2 Total Teams')
 //         data.should.containEql('TestTeam')
@@ -186,51 +186,51 @@
 //     })
 //   })
 //
-//   describe('#teamDelete', function () {
-//     it('succeeds', function (done) {
+//   describe('#teamDelete', () => {
+//     it('succeeds', (done) => {
 //       this.timeout(10 * 1000)
 //       var command = ''
 //       command += ' NODE_ENV=test'
 //       command += ' ./node_modules/.bin/actionhero messagebot team delete'
 //       command += ' --id ' + team.id
 //
-//       api.utils.doShell(command, function (error, data) {
+//       api.utils.doShell(command, (error, data) => {
 //         should.not.exist(error)
 //         done()
 //       }, true)
 //     })
 //
-//     it('succeeds (deletes the team)', function (done) {
-//       api.models.Team.findOne({where: {id: team.id}}).then(function (_team) {
+//     it('succeeds (deletes the team)', (done) => {
+//       api.models.Team.findOne({where: {id: team.id}}).then((_team) => {
 //         should.not.exist(_team)
 //         done()
 //       }).catch(done)
 //     })
 //
-//     it('succeeds (deletes the user)', function (done) {
+//     it('succeeds (deletes the user)', (done) => {
 //       api.models.User.findOne({where: {teamId: team.id}}).then(function (_user) {
 //         should.not.exist(_user)
 //         done()
 //       }).catch(done)
 //     })
 //
-//     it('succeeds (deletes the person)', function (done) {
+//     it('succeeds (deletes the person)', (done) => {
 //       api.models.Person.findOne({}).then((person) => {
-//         person.hydrate(function (error) {
+//         person.hydrate((error) => {
 //           should.exist(error)
 //           done()
 //         })
 //       })
 //     })
 //
-//     it('fails (missing team)', function (done) {
+//     it('fails (missing team)', (done) => {
 //       this.timeout(10 * 1000)
 //       var command = ''
 //       command += ' NODE_ENV=test'
 //       command += ' ./node_modules/.bin/actionhero messagebot team delete'
 //       command += ' --id ' + team.id
 //
-//       api.utils.doShell(command, function (error, data) {
+//       api.utils.doShell(command, (error, data) => {
 //         error.message.should.containEql('Team not found')
 //         done()
 //       }, true)

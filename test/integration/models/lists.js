@@ -10,17 +10,17 @@ var person
 var list
 var team
 
-describe('integartion:lists', function () {
-  before(function () { api = specHelper.api })
+describe('integartion:lists', () => {
+  before(() => { api = specHelper.api })
 
-  before(function (done) {
-    api.models.Team.findOne().then(function (_team) {
+  before((done) => {
+    api.models.Team.findOne().then((_team) => {
       team = _team
       done()
     })
   })
 
-  before(function (done) {
+  before((done) => {
     list = api.models.List.build({
       teamId: team.id,
       name: 'my list',
@@ -29,10 +29,10 @@ describe('integartion:lists', function () {
       folder: 'default'
     })
 
-    list.save().then(function () { done() }).catch(done)
+    list.save().then(() => { done() }).catch(done)
   })
 
-  after(function (done) { list.destroy().then(() => { done() }).catch(done) })
+  after((done) => { list.destroy().then(() => { done() }).catch(done) })
 
   describe('#escape', () => {
     it('works', () => {
@@ -43,9 +43,9 @@ describe('integartion:lists', function () {
     })
   })
 
-  describe('#associateListPeople', function () {
-    ['aaron', 'brian', 'chuck', 'dave', 'evan'].forEach(function (fname) {
-      before(function (done) {
+  describe('#associateListPeople', () => {
+    ['aaron', 'brian', 'chuck', 'dave', 'evan'].forEach((fname) => {
+      before((done) => {
         person = api.models.Person.build({
           source: 'tester',
           teamId: team.id,
@@ -67,7 +67,7 @@ describe('integartion:lists', function () {
       })
     })
 
-    before(function (done) {
+    before((done) => {
       event = api.models.Event.build({
         teamId: team.id,
         messageGuid: Math.random(),
@@ -80,12 +80,12 @@ describe('integartion:lists', function () {
       event.save().then(() => { done() }).catch(done)
     })
 
-    after(function (done) { event.destroy().then(() => { done() }).catch(done) })
-    after(function (done) {
+    after((done) => { event.destroy().then(() => { done() }).catch(done) })
+    after((done) => {
       var jobs = []
 
-      people.forEach(function (person) {
-        jobs.push(function (next) {
+      people.forEach((person) => {
+        jobs.push((next) => {
           person.destroy().then(() => { next() }).catch(next)
         })
       })
@@ -93,21 +93,21 @@ describe('integartion:lists', function () {
       async.series(jobs, done)
     })
 
-    afterEach(function (done) {
+    afterEach((done) => {
       api.models.ListPerson.destroy({
         where: {listId: list.id}
-      }).then(function () {
+      }).then(() => {
         done()
       }).catch(done)
     })
 
-    it('#associateListPeople (dyanamic, no exlusion)', function (done) {
+    it('#associateListPeople (dyanamic, no exlusion)', (done) => {
       list.type = 'dynamic'
       list.personQuery = {firstName: ['e%'], lastName: ['%']}
-      list.associateListPeople(function (error, count) {
+      list.associateListPeople((error, count) => {
         should.not.exist(error)
         count.should.equal(1)
-        api.models.ListPerson.findAll({where: {listId: list.id}}).then(function (listPeople) {
+        api.models.ListPerson.findAll({where: {listId: list.id}}).then((listPeople) => {
           listPeople.length.should.equal(1)
           listPeople[0].personGuid.should.equal(people[4].guid)
           done()
@@ -115,27 +115,27 @@ describe('integartion:lists', function () {
       })
     })
 
-    it('#associateListPeople (dyanamic, with negation)', function (done) {
+    it('#associateListPeople (dyanamic, with negation)', (done) => {
       list.type = 'dynamic'
       list.personQuery = {firstName: ['!b%'], device: ['phone']}
-      list.associateListPeople(function (error, count) {
+      list.associateListPeople((error, count) => {
         should.not.exist(error)
         count.should.equal(4)
-        api.models.ListPerson.findAll({where: {listId: list.id}}).then(function (listPeople) {
+        api.models.ListPerson.findAll({where: {listId: list.id}}).then((listPeople) => {
           listPeople.length.should.equal(4)
           done()
         })
       })
     })
 
-    it('#associateListPeople (dyanamic, with exlusion)', function (done) {
+    it('#associateListPeople (dyanamic, with exlusion)', (done) => {
       list.type = 'dynamic'
       list.personQuery = {firstName: ['%']}
       list.eventQuery = {type: ['boughtTheThing']}
-      list.associateListPeople(function (error, count) {
+      list.associateListPeople((error, count) => {
         should.not.exist(error)
         count.should.equal(1)
-        api.models.ListPerson.findAll({where: {listId: list.id}}).then(function (listPeople) {
+        api.models.ListPerson.findAll({where: {listId: list.id}}).then((listPeople) => {
           listPeople.length.should.equal(1)
           listPeople[0].personGuid.should.equal(people[0].guid)
           done()
@@ -143,7 +143,7 @@ describe('integartion:lists', function () {
       })
     })
 
-    it('#associateListPeople (static)', function (done) {
+    it('#associateListPeople (static)', (done) => {
       list.type = 'static'
 
       var listPerson = api.models.ListPerson.build({
@@ -152,14 +152,14 @@ describe('integartion:lists', function () {
         personGuid: people[3].guid
       })
 
-      listPerson.save().then(function () {
-        list.associateListPeople(function (error, count) {
+      listPerson.save().then(() => {
+        list.associateListPeople((error, count) => {
           should.not.exist(error)
           count.should.equal(1)
-          api.models.ListPerson.findAll({where: {listId: list.id}}).then(function (listPeople) {
+          api.models.ListPerson.findAll({where: {listId: list.id}}).then((listPeople) => {
             listPeople.length.should.equal(1)
             listPeople[0].personGuid.should.equal(people[3].guid)
-            listPerson.destroy().then(function () { done() })
+            listPerson.destroy().then(() => { done() })
           })
         })
       }).catch(done)

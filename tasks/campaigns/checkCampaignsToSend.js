@@ -14,7 +14,7 @@ exports.task = {
     var campaignJobs = []
     var campaigns = []
 
-    searchJobs.push(function (done) {
+    searchJobs.push((done) => {
       api.models.Campaign.findAll({
         where: {
           type: 'simple',
@@ -22,21 +22,21 @@ exports.task = {
           sendingAt: {$eq: null},
           sentAt: {$eq: null}
         }
-      }).then(function (_campaigns) {
-        _campaigns.forEach(function (campaign) { campaigns.push(campaign) })
+      }).then((_campaigns) => {
+        _campaigns.forEach((campaign) => { campaigns.push(campaign) })
         done()
       }).catch(done)
     })
 
-    searchJobs.push(function (done) {
+    searchJobs.push((done) => {
       api.models.Campaign.findAll({
         where: {
           type: 'recurring',
           sendAt: { $lte: new Date() },
           reSendDelay: { $ne: null }
         }
-      }).then(function (_campaigns) {
-        _campaigns.forEach(function (campaign) {
+      }).then((_campaigns) => {
+        _campaigns.forEach((campaign) => {
           var now = new Date().getTime()
           if (!campaign.sentAt || (campaign.sentAt.getTime() + (1000 * campaign.reSendDelay)) < now) {
             campaigns.push(campaign)
@@ -47,9 +47,9 @@ exports.task = {
       }).catch(done)
     })
 
-    searchJobs.push(function (done) {
-      campaigns.forEach(function (campaign) {
-        campaignJobs.push(function (more) {
+    searchJobs.push((done) => {
+      campaigns.forEach((campaign) => {
+        campaignJobs.push((more) => {
           api.tasks.enqueue('campaigns:sendCampaign', {
             campaignId: campaign.id
           }, 'messagebot:campaigns', more)
@@ -59,12 +59,10 @@ exports.task = {
       async.series(campaignJobs, done)
     })
 
-    async.series(searchJobs, function (error) {
-      process.nextTick(function () {
-        var campaignIds = []
-        campaigns.forEach(function (campaign) { campaignIds.push(campaign.id) })
-        return next(error, campaignIds)
-      })
+    async.series(searchJobs, (error) => {
+      var campaignIds = []
+      campaigns.forEach((campaign) => { campaignIds.push(campaign.id) })
+      return next(error, campaignIds)
     })
   }
 }

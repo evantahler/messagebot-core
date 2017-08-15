@@ -16,34 +16,34 @@ module.exports = {
     var jobs = []
     var team
 
-    jobs.push(function (done) {
+    jobs.push((done) => {
       api.sequelize.connect(done)
     })
 
-    jobs.push(function (done) {
-      api.models.Team.findOne({where: {id: data.params.id}}).then(function (_team) {
+    jobs.push((done) => {
+      api.models.Team.findOne({where: {id: data.params.id}}).then((_team) => {
         if (!_team) { return done(new Error('Team not found')) }
         team = _team
         done()
       }).catch(done)
     })
 
-    jobs.push(function (done) {
-      ['trackingDomainRegexp', 'trackingDomain', 'name'].forEach(function (k) {
+    jobs.push((done) => {
+      ['trackingDomainRegexp', 'trackingDomain', 'name'].forEach((k) => {
         if (data.params[k]) { team[k] = data.params[k] }
       })
 
-      team.save().then(function () { done() }).catch(done)
+      team.save().then(() => { done() }).catch(done)
     })
 
-    jobs.push(function (done) {
+    jobs.push((done) => {
       api.log('Updated Team\r\n')
       var tableData = [team.apiData()]
       api.log(Table.print(tableData))
       done()
     })
 
-    async.series(jobs, function (error) {
+    async.series(jobs, (error) => {
       if (error) api.log(error.toString(), 'error')
       next()
     })

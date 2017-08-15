@@ -8,18 +8,18 @@ var eventGuid
 var team
 var person
 
-describe('actions:event', function () {
-  before(function () { api = specHelper.api })
-  before(function (done) { specHelper.flushRedis(done) })
+describe('actions:event', () => {
+  before(() => { api = specHelper.api })
+  before((done) => { specHelper.flushRedis(done) })
 
-  before(function (done) {
-    api.models.Team.findOne().then(function (_team) {
+  before((done) => {
+    api.models.Team.findOne().then((_team) => {
       team = _team
       done()
     })
   })
 
-  before(function (done) {
+  before((done) => {
     person = api.models.Person.build({
       teamId: team.id,
       source: 'someSource',
@@ -38,10 +38,10 @@ describe('actions:event', function () {
     }).catch(done)
   })
 
-  after(function (done) { person.destroy().then(() => { done() }) })
+  after((done) => { person.destroy().then(() => { done() }) })
 
-  describe('event:create', function () {
-    it('succeeds', function (done) {
+  describe('event:create', () => {
+    it('succeeds', (done) => {
       api.specHelper.runAction('event:create', {
         teamId: team.id,
         device: 'tester',
@@ -49,7 +49,7 @@ describe('actions:event', function () {
         personGuid: person.guid,
         data: {thing: 'stuff'},
         ip: '173.247.192.214'
-      }, function (response) {
+      }, (response) => {
         should.not.exist(response.error)
         should.exist(response.event.guid)
         eventGuid = response.event.guid
@@ -57,13 +57,13 @@ describe('actions:event', function () {
       })
     })
 
-    it('succeeds (GIF)', function (done) {
+    it('succeeds (GIF)', (done) => {
       specHelper.WebRequestWithLogin(email, password, 'get', '/api/event/create.gif', {
         teamId: team.id,
         device: 'tester',
         type: 'tester',
         personGuid: person.guid
-      }, function (response, res) {
+      }, (response, res) => {
         response.toString().indexOf('GIF').should.equal(0)
         res.statusCode.should.equal(200)
         res.headers['x-powered-by'].should.equal('MessageBot')
@@ -72,7 +72,7 @@ describe('actions:event', function () {
       })
     })
 
-    it('succeeds (geocoding)', function (done) {
+    it('succeeds (geocoding)', (done) => {
       api.specHelper.runAction('event:create', {
         teamId: team.id,
         device: 'tester',
@@ -80,7 +80,7 @@ describe('actions:event', function () {
         personGuid: person.guid,
         data: {thing: 'stuff'},
         ip: '8.8.8.8'
-      }, function (response) {
+      }, (response) => {
         should.not.exist(response.error)
         should.exist(response.event.guid)
         response.event.lat.should.be.within(0, 100)
@@ -89,11 +89,11 @@ describe('actions:event', function () {
       })
     })
 
-    it('succeeds (enqueues a events:process event in the future)', function (done) {
-      api.resque.queue.timestamps(function (error, timestamps) {
+    it('succeeds (enqueues a events:process event in the future)', (done) => {
+      api.resque.queue.timestamps((error, timestamps) => {
         should.not.exist(error)
         var latestTimetamp = timestamps[0]
-        api.tasks.delayedAt(latestTimetamp, function (error, queued) {
+        api.tasks.delayedAt(latestTimetamp, (error, queued) => {
           should.not.exist(error)
           var job = queued[0]
           job.args[0].events.should.deepEqual([eventGuid])
@@ -102,14 +102,14 @@ describe('actions:event', function () {
       })
     })
 
-    it('succeeds (can run events:process and update the user)', function (done) {
+    it('succeeds (can run events:process and update the user)', (done) => {
       person.device.should.equal('unknown')
       should.not.exist(person.location)
 
       api.specHelper.runTask('events:process', {
         teamId: team.id,
         events: [eventGuid]
-      }, function (error) {
+      }, (error) => {
         should.not.exist(error)
         person.reload().then(() => {
           person.hydrate((error) => {
@@ -123,28 +123,28 @@ describe('actions:event', function () {
       })
     })
 
-    it('fails (missing param)', function (done) {
+    it('fails (missing param)', (done) => {
       api.specHelper.runAction('event:create', {
         teamId: team.id,
         type: 'tester',
         personGuid: person.guid,
         data: {thing: 'stuff'}
-      }, function (response) {
+      }, (response) => {
         response.error.should.equal('Error: device is a required parameter for this action')
         done()
       })
     })
   })
 
-  describe('event:view', function () {
+  describe('event:view', () => {
     // we need to prevent resque delayed job collisiosn for the same timestamp
-    before(function (done) { setTimeout(done, 1001) })
+    before((done) => { setTimeout(done, 1001) })
 
-    it('succeeds', function (done) {
+    it('succeeds', (done) => {
       api.specHelper.runAction('event:view', {
         teamId: team.id,
         guid: eventGuid
-      }, function (response) {
+      }, (response) => {
         should.not.exist(response.error)
         response.event.data.thing.should.equal('stuff')
         response.event.personGuid.should.equal(person.guid)
@@ -154,49 +154,49 @@ describe('actions:event', function () {
       })
     })
 
-    it('fails (not found)', function (done) {
+    it('fails (not found)', (done) => {
       api.specHelper.runAction('event:view', {
         teamId: team.id,
         guid: '123abc'
-      }, function (response) {
+      }, (response) => {
         response.error.should.equal('Error: Event (123abc) not found')
         done()
       })
     })
   })
 
-  describe('event:edit', function () {
-    it('succeeds', function (done) {
+  describe('event:edit', () => {
+    it('succeeds', (done) => {
       api.specHelper.runAction('event:edit', {
         teamId: team.id,
         guid: eventGuid,
         device: 'new_device'
-      }, function (response) {
+      }, (response) => {
         should.not.exist(response.error)
         done()
       })
     })
 
-    it('fails (not found)', function (done) {
+    it('fails (not found)', (done) => {
       api.specHelper.runAction('event:edit', {
         teamId: team.id,
         guid: '123abc',
         device: 'new_device'
-      }, function (response) {
+      }, (response) => {
         response.error.should.equal('Error: Event (123abc) not found')
         done()
       })
     })
   })
 
-  describe('events:search', function () {
-    it('succeeds', function (done) {
+  describe('events:search', () => {
+    it('succeeds', (done) => {
       specHelper.requestWithLogin(email, password, 'events:search', {
         searchKeys: ['device'],
         searchValues: ['new_device'],
         from: 0,
         size: 99
-      }, function (response) {
+      }, (response) => {
         should.not.exist(response.error)
         response.total.should.equal(1)
         response.events.length.should.equal(1)
@@ -204,24 +204,24 @@ describe('actions:event', function () {
       })
     })
 
-    it('fails (not logged in)', function (done) {
+    it('fails (not logged in)', (done) => {
       api.specHelper.runAction('people:search', {
         searchKeys: ['device'],
         searchValues: ['new_device']
-      }, function (response) {
+      }, (response) => {
         response.error.should.equal('Error: Please log in to continue')
         done()
       })
     })
   })
 
-  describe('events:aggregation', function () {
-    it('succeeds', function (done) {
+  describe('events:aggregation', () => {
+    it('succeeds', (done) => {
       specHelper.requestWithLogin(email, password, 'events:aggregation', {
         searchKeys: ['device'],
         searchValues: ['new_device'],
         interval: 'date'
-      }, function (response) {
+      }, (response) => {
         should.not.exist(response.error)
         Object.keys(response.aggregations).length.should.equal(1)
         var key = Object.keys(response.aggregations)[0]
@@ -232,33 +232,33 @@ describe('actions:event', function () {
       })
     })
 
-    it('fails (not logged in)', function (done) {
+    it('fails (not logged in)', (done) => {
       api.specHelper.runAction('people:aggregation', {
         searchKeys: ['device'],
         searchValues: ['new_device']
-      }, function (response) {
+      }, (response) => {
         response.error.should.equal('Error: Please log in to continue')
         done()
       })
     })
   })
 
-  describe('event:delete', function () {
-    it('succeeds', function (done) {
+  describe('event:delete', () => {
+    it('succeeds', (done) => {
       api.specHelper.runAction('event:delete', {
         teamId: team.id,
         guid: eventGuid
-      }, function (response) {
+      }, (response) => {
         should.not.exist(response.error)
         done()
       })
     })
 
-    it('fails (not found)', function (done) {
+    it('fails (not found)', (done) => {
       api.specHelper.runAction('event:delete', {
         teamId: team.id,
         guid: eventGuid
-      }, function (response) {
+      }, (response) => {
         response.error.should.equal('Error: Event (' + eventGuid + ') not found')
         done()
       })

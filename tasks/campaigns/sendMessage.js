@@ -19,42 +19,42 @@ exports.task = {
     var message
     var team
 
-    jobs.push(function (done) {
-      api.models.Campaign.findOne({where: {id: params.campaignId}}).then(function (c) {
+    jobs.push((done) => {
+      api.models.Campaign.findOne({where: {id: params.campaignId}}).then((c) => {
         campaign = c
         if (!campaign) { return done(new Error('campaign not found')) }
         done()
       }).catch(done)
     })
 
-    jobs.push(function (done) {
-      api.models.List.findOne({where: {id: params.listId}}).then(function (l) {
+    jobs.push((done) => {
+      api.models.List.findOne({where: {id: params.listId}}).then((l) => {
         list = l
         if (!list) { return done(new Error('list not found')) }
         done()
       }).catch(done)
     })
 
-    jobs.push(function (done) {
+    jobs.push((done) => {
       api.models.ListPerson.findOne({where: {
         personGuid: params.personGuid,
         listId: list.id
-      }}).then(function (lp) {
+      }}).then((lp) => {
         listPerson = lp
         if (!listPerson) { return done(new Error('listPerson not found')) }
         done()
       }).catch(done)
     })
 
-    jobs.push(function (done) {
-      api.models.Team.findOne({where: {id: campaign.teamId}}).then(function (t) {
+    jobs.push((done) => {
+      api.models.Team.findOne({where: {id: campaign.teamId}}).then((t) => {
         team = t
         if (!team) { return done(new Error('team not found')) }
         done()
       }).catch(done)
     })
 
-    jobs.push(function (done) {
+    jobs.push((done) => {
       api.models.Person.findOne({where: {
         guid: listPerson.personGuid,
         teamId: team.id
@@ -65,15 +65,15 @@ exports.task = {
       }).catch(done)
     })
 
-    jobs.push(function (done) {
+    jobs.push((done) => {
       message = api.models.Message.build({})
       message.data = {}
       done()
     })
 
-    jobs.push(function (done) {
-      api.models.Template.find({where: {id: campaign.templateId}}).then(function (template) {
-        template.render(person, message, campaign, list, true, function (error, _body, _view) {
+    jobs.push((done) => {
+      api.models.Template.find({where: {id: campaign.templateId}}).then((template) => {
+        template.render(person, message, campaign, list, true, (error, _body, _view) => {
           if (error) { return done(error) }
           body = _body
           done()
@@ -81,17 +81,17 @@ exports.task = {
       }).catch(done)
     })
 
-    jobs.push(function (done) {
+    jobs.push((done) => {
       var missingType
       var missingKey
 
-      api.transports.forEach(function (t) {
+      api.transports.forEach((t) => {
         if (t.name === campaign.transport) { transport = t }
       })
 
       if (!transport) { return done(new Error('transport not found')) }
 
-      transport.requiredDataKeys.person.forEach(function (k) {
+      transport.requiredDataKeys.person.forEach((k) => {
         if (!person.data[k]) {
           missingType = 'person'
           missingKey = k
@@ -105,8 +105,8 @@ exports.task = {
       done()
     })
 
-    jobs.push(function (done) {
-      Object.keys(campaign.campaignVariables).forEach(function (k) {
+    jobs.push((done) => {
+      Object.keys(campaign.campaignVariables).forEach((k) => {
         message.data[k] = campaign.campaignVariables[k]
       })
 
@@ -122,7 +122,7 @@ exports.task = {
       }).catch(done)
     })
 
-    jobs.push(function (done) {
+    jobs.push((done) => {
       var toSend = true
       if (api.env === 'test') {
         api.log('not sending messages when NODE_ENV=test')
@@ -141,7 +141,7 @@ exports.task = {
 
       if (toSend === true) {
         var sendParams = {body: body}
-        transport.campaignVariables.forEach(function (v) {
+        transport.campaignVariables.forEach((v) => {
           sendParams[v] = campaign.campaignVariables[v]
         })
 

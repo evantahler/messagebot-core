@@ -48,7 +48,7 @@ module.exports = {
           allowNull: true
         }
       }
-    ).then(function () {
+    ).then(() => {
       return queryInterface.addIndex(
         'messages', ['teamId', 'guid'], {
           indicesType: 'UNIQUE'

@@ -32,7 +32,7 @@ module.exports = {
           allowNull: false
         }
       }
-    ).then(function () {
+    ).then(() => {
       return queryInterface.addIndex(
         'messageData', ['messageGuid', 'key'], {
           indicesType: 'UNIQUE'

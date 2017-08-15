@@ -14,8 +14,8 @@ var run = function (api) {
   message += '[' + end.toString() + '] '
 
   // create the person
-  jobs.push(function (next) {
-    common.buildPerson(start, end, routeBase, function (error, _person) {
+  jobs.push((next) => {
+    common.buildPerson(start, end, routeBase, (error, _person) => {
       if (error) { throw error }
       person = _person
       message += 'Created `' + person.data.firstName + ' ' + person.data.lastName + '` + ['
@@ -24,15 +24,15 @@ var run = function (api) {
   })
 
   // build events
-  jobs.push(function (next) {
-    common.buildFunnel(person, routeBase, function (error, events) {
+  jobs.push((next) => {
+    common.buildFunnel(person, routeBase, (error, events) => {
       if (error) { throw error }
       message += events.join(', ') + ']'
       return next()
     })
   })
 
-  async.series(jobs, function (error) {
+  async.series(jobs, (error) => {
     if (error) { throw (error) }
     console.log(message)
     setTimeout(run, sleep, api)
@@ -40,7 +40,7 @@ var run = function (api) {
 }
 
 if (require.main === module) {
-  common.connect(function (error, api) {
+  common.connect((error, api) => {
     if (error) { throw (error) }
     console.log('Running Faker: ' + api.env)
     run(api)

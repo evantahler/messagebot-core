@@ -3,22 +3,22 @@ var path = require('path')
 var specHelper = require(path.join(__dirname, '/../specHelper'))
 var api
 
-describe('general:applicaiton', function () {
-  beforeEach(function () { api = specHelper.api })
+describe('general:applicaiton', () => {
+  beforeEach(() => { api = specHelper.api })
 
-  it('can boot', function (done) {
+  it('can boot', (done) => {
     api.running.should.equal(true)
     api.transports.length.should.be.above(0)
     done()
   })
 
-  describe('utils', function () {
-    it('api.utils.findInBatches', function (done) {
+  describe('utils', () => {
+    it('api.utils.findInBatches', (done) => {
       var totalUsers = 0
-      api.utils.findInBatches(api.models.User, {}, function (user, next) {
+      api.utils.findInBatches(api.models.User, {}, (user, next) => {
         totalUsers++
         next()
-      }, function (error) {
+      }, (error) => {
         should.not.exist(error)
         totalUsers.should.be.above(0)
         done()

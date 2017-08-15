@@ -27,7 +27,7 @@ exports.messagesSearch = {
       order: [['createdAt', 'DESC']],
       limit: data.params.size,
       offset: data.params.from
-    }).then(function (result) {
+    }).then((result) => {
       data.response.total = result.count
       data.response.messages = []
       let jobs = []
@@ -83,9 +83,9 @@ exports.messagesAggregation = {
       limit: data.params.size,
       offset: data.params.from,
       group: [api.sequelize.sequelize.literal(`${data.params.interval}(createdAt)`), data.params.aggregation]
-    }).then(function (results) {
+    }).then((results) => {
       data.response.aggregations = {}
-      results.forEach(function (r) {
+      results.forEach((r) => {
         if (!data.response.aggregations[r.dataValues[data.params.interval]]) {
           var d = {}
           d[r[data.params.aggregation]] = r.dataValues.TOTAL

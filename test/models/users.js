@@ -4,18 +4,18 @@ var specHelper = require(path.join(__dirname, '/../specHelper'))
 var api
 var user
 
-describe('models:users', function () {
-  beforeEach(function () { api = specHelper.api })
+describe('models:users', () => {
+  beforeEach(() => { api = specHelper.api })
 
-  afterEach(function (done) {
+  afterEach((done) => {
     if (user.isNewRecord === false) {
-      user.destroy().then(function () { done() })
+      user.destroy().then(() => { done() })
     } else {
       done()
     }
   })
 
-  it('can create new users with valid params', function (done) {
+  it('can create new users with valid params', (done) => {
     user = api.models.User.build({
       teamId: 1,
       email: 'a@b.com',
@@ -26,24 +26,24 @@ describe('models:users', function () {
       role: 'admin'
     })
 
-    user.save().then(function () {
-      api.models.User.findOne({where: {email: 'a@b.com'}}).then(function (user) {
+    user.save().then(() => {
+      api.models.User.findOne({where: {email: 'a@b.com'}}).then((user) => {
         user.email.should.equal('a@b.com')
         done()
       })
     })
   })
 
-  it('will not create new users with invalid params (missing requirement)', function (done) {
+  it('will not create new users with invalid params (missing requirement)', (done) => {
     user = api.models.User.build({
       teamId: 1,
       passwordHash: 'xxx',
       lastName: 'lname'
     })
 
-    user.save().then(function () {
+    user.save().then(() => {
       throw new Error('should not get here')
-    }).catch(function (errors) {
+    }).catch((errors) => {
       errors.errors.length.should.equal(3)
       errors.errors[0].message.should.equal('email cannot be null')
       errors.errors[1].message.should.equal('personGuid cannot be null')
@@ -52,7 +52,7 @@ describe('models:users', function () {
     })
   })
 
-  it('will not create new users with invalid params (duplicate key)', function (done) {
+  it('will not create new users with invalid params (duplicate key)', (done) => {
     user = api.models.User.build({
       teamId: 1,
       email: 'admin@localhost.com',
@@ -63,16 +63,16 @@ describe('models:users', function () {
       role: 'admin'
     })
 
-    user.save().then(function () {
+    user.save().then(() => {
       throw new Error('should not get here')
-    }).catch(function (errors) {
+    }).catch((errors) => {
       errors.errors.length.should.equal(1)
       errors.errors[0].message.should.match(/must be unique/)
       done()
     })
   })
 
-  it('will not create new users with invalid params (bad role)', function (done) {
+  it('will not create new users with invalid params (bad role)', (done) => {
     user = api.models.User.build({
       teamId: 1,
       email: 'admin5@localhost.com',
@@ -83,16 +83,16 @@ describe('models:users', function () {
       role: 'bacon'
     })
 
-    user.save().then(function () {
+    user.save().then(() => {
       throw new Error('should not get here')
-    }).catch(function (errors) {
+    }).catch((errors) => {
       errors.errors.length.should.equal(1)
       errors.errors[0].message.should.equal('role is invalid')
       done()
     })
   })
 
-  it('passwords can be checked (success)', function (done) {
+  it('passwords can be checked (success)', (done) => {
     user = api.models.User.build({
       teamId: 1,
       personGuid: Math.random(),
@@ -102,10 +102,10 @@ describe('models:users', function () {
       role: 'admin'
     })
 
-    user.updatePassword('password', function (error) {
+    user.updatePassword('password', (error) => {
       should.not.exist(error)
-      user.save().then(function () {
-        user.checkPassword('password', function (error, match) {
+      user.save().then(() => {
+        user.checkPassword('password', (error, match) => {
           should.not.exist(error)
           match.should.equal(true)
           done()
@@ -114,7 +114,7 @@ describe('models:users', function () {
     })
   })
 
-  it('passwords can be checked (failure)', function (done) {
+  it('passwords can be checked (failure)', (done) => {
     user = api.models.User.build({
       teamId: 1,
       personGuid: Math.random(),
@@ -124,10 +124,10 @@ describe('models:users', function () {
       role: 'admin'
     })
 
-    user.updatePassword('password', function (error) {
+    user.updatePassword('password', (error) => {
       should.not.exist(error)
-      user.save().then(function () {
-        user.checkPassword('wrongPassword', function (error, match) {
+      user.save().then(() => {
+        user.checkPassword('wrongPassword', (error, match) => {
           should.not.exist(error)
           match.should.equal(false)
           done()

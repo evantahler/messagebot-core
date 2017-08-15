@@ -4,18 +4,18 @@ var specHelper = require(path.join(__dirname, '/../specHelper'))
 var api
 var setting
 
-describe('models:settings', function () {
-  beforeEach(function () { api = specHelper.api })
+describe('models:settings', () => {
+  beforeEach(() => { api = specHelper.api })
 
-  afterEach(function (done) {
+  afterEach((done) => {
     if (setting.isNewRecord === false) {
-      setting.destroy().then(function () { done() })
+      setting.destroy().then(() => { done() })
     } else {
       done()
     }
   })
 
-  it('can create a new setting with valid params', function (done) {
+  it('can create a new setting with valid params', (done) => {
     setting = api.models.Setting.build({
       teamId: 1,
       key: 'some:key',
@@ -23,22 +23,22 @@ describe('models:settings', function () {
       description: 'this is a test key'
     })
 
-    setting.save().then(function () {
-      api.models.Setting.findOne({where: {teamId: 1, key: 'some:key'}}).then(function (setting) {
+    setting.save().then(() => {
+      api.models.Setting.findOne({where: {teamId: 1, key: 'some:key'}}).then((setting) => {
         setting.value.should.equal('abc123')
         done()
       })
     })
   })
 
-  it('will not create a new setting with invalid params (missing requirement)', function (done) {
+  it('will not create a new setting with invalid params (missing requirement)', (done) => {
     setting = api.models.Setting.build({
       teamId: 1
     })
 
-    setting.save().then(function () {
+    setting.save().then(() => {
       throw new Error('should not get here')
-    }).catch(function (errors) {
+    }).catch((errors) => {
       errors.errors.length.should.be.above(2)
       errors.errors[0].message.should.equal('key cannot be null')
       errors.errors[1].message.should.equal('value cannot be null')
@@ -47,7 +47,7 @@ describe('models:settings', function () {
     })
   })
 
-  it('will not create a new setting with invalid params (duplicate key)', function (done) {
+  it('will not create a new setting with invalid params (duplicate key)', (done) => {
     setting = api.models.Setting.build({
       teamId: 1,
       key: 'some:key',
@@ -55,7 +55,7 @@ describe('models:settings', function () {
       description: 'this is a test key'
     })
 
-    setting.save().then(function () {
+    setting.save().then(() => {
       var otherSetting = api.models.Setting.build({
         teamId: 1,
         key: 'some:key',
@@ -63,9 +63,9 @@ describe('models:settings', function () {
         description: 'this is a test key'
       })
 
-      otherSetting.save().then(function () {
+      otherSetting.save().then(() => {
         throw new Error('should not get here')
-      }).catch(function (errors) {
+      }).catch((errors) => {
         errors.errors.length.should.be.above(0)
         errors.errors[0].message.should.match(/must be unique/)
         done()

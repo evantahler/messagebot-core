@@ -29,20 +29,20 @@ module.exports = {
           allowNull: false
         }
       }
-    ).then(function () {
+    ).then(() => {
       return queryInterface.addIndex(
         'listPeople', ['teamId']
-      ).then(function () {
+      ).then(() => {
         return queryInterface.addIndex(
           'listPeople', ['personGuid'], {
             indexName: 'personGuidIndex'
           }
-        ).then(function () {
+        ).then(() => {
           return queryInterface.addIndex(
             'listPeople', ['listId'], {
               indexName: 'listIdIndex'
             }
-          ).then(function () {
+          ).then(() => {
             return queryInterface.addIndex(
               'listPeople', ['listId', 'personGuid'], {
                 indicesType: 'UNIQUE'

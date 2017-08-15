@@ -14,17 +14,17 @@ exports.task = {
     var toSend = false
     var list
 
-    jobs.push(function (done) {
+    jobs.push((done) => {
       api.models.List.findOne({
         where: {id: params.listId}
-      }).then(function (_list) {
+      }).then((_list) => {
         if (!_list) { return done(new Error(`List (${params.listId}) not found`)) }
         list = _list
         done()
       }).catch(done)
     })
 
-    jobs.push(function (done) {
+    jobs.push((done) => {
       if (!list.peopleCountedAt || list.peopleCountedAt.getTime() < params.enqueuedAt) {
         list.associateListPeople(done)
       } else {
@@ -32,18 +32,18 @@ exports.task = {
       }
     })
 
-    jobs.push(function (done) {
+    jobs.push((done) => {
       api.models.ListPerson.findOne({where: {
         teamId: params.teamId,
         personGuid: params.personGuid,
         listId: params.listId
-      }}).then(function (listPerson) {
+      }}).then((listPerson) => {
         if (listPerson) { toSend = true }
         done()
       }).catch(done)
     })
 
-    jobs.push(function (done) {
+    jobs.push((done) => {
       if (toSend === true) {
         api.tasks.enqueue('campaigns:sendMessage', {
           listId: params.listId,

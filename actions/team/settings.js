@@ -12,9 +12,9 @@ exports.settingsView = {
     api.models.Setting.findAll({
       where: { teamId: data.team.id },
       order: [['key', 'desc']]
-    }).then(function (settings) {
+    }).then((settings) => {
       data.response.settings = {}
-      settings.forEach(function (setting) {
+      settings.forEach((setting) => {
         var d = setting.apiData()
         data.response.settings[d.key] = d
       })
@@ -41,11 +41,11 @@ exports.settingsEdit = {
         teamId: data.team.id,
         key: data.params.key
       }
-    }).then(function (setting) {
+    }).then((setting) => {
       if (!setting) { return next(new Error('Setting not found')) }
       setting.updateAttributes({
         value: data.params.value
-      }).then(function () {
+      }).then(() => {
         data.response.setting = setting.apiData()
         next()
       }).catch(next)

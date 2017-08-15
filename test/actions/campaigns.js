@@ -7,21 +7,21 @@ var api
 var team
 var campaignId
 
-describe('actions:campaign', function () {
-  before(function () { api = specHelper.api })
+describe('actions:campaign', () => {
+  before(() => { api = specHelper.api })
 
-  before(function (done) {
-    api.models.Team.findOne().then(function (_team) {
+  before((done) => {
+    api.models.Team.findOne().then((_team) => {
       team = _team
       done()
     })
   })
 
-  before(function (done) { specHelper.truncate('campaigns', done) })
-  after(function (done) { specHelper.truncate('campaigns', done) })
+  before((done) => { specHelper.truncate('campaigns', done) })
+  after((done) => { specHelper.truncate('campaigns', done) })
 
-  describe('campaign:create', function () {
-    it('succeeds', function (done) {
+  describe('campaign:create', () => {
+    it('succeeds', (done) => {
       specHelper.requestWithLogin(email, password, 'campaign:create', {
         name: 'test campaign',
         description: 'test campaign',
@@ -29,7 +29,7 @@ describe('actions:campaign', function () {
         templateId: 1,
         type: 'simple',
         transport: 'smtp'
-      }, function (response) {
+      }, (response) => {
         should.not.exist(response.error)
         response.campaign.folder.should.equal('default')
         response.campaign.name.should.equal('test campaign')
@@ -38,7 +38,7 @@ describe('actions:campaign', function () {
       })
     })
 
-    it('fails (uniqueness failure)', function (done) {
+    it('fails (uniqueness failure)', (done) => {
       specHelper.requestWithLogin(email, password, 'campaign:create', {
         name: 'test campaign',
         description: 'test campaign',
@@ -46,31 +46,31 @@ describe('actions:campaign', function () {
         templateId: 1,
         type: 'simple',
         transport: 'smtp'
-      }, function (response) {
+      }, (response) => {
         response.error.should.match(/must be unique/)
         done()
       })
     })
 
-    it('fails (missing param)', function (done) {
+    it('fails (missing param)', (done) => {
       specHelper.requestWithLogin(email, password, 'campaign:create', {
         name: 'test campaign',
         listId: 1,
         templateId: 1,
         type: 'simple',
         transport: 'smtp'
-      }, function (response) {
+      }, (response) => {
         response.error.should.equal('Error: description is a required parameter for this action')
         done()
       })
     })
   })
 
-  describe('campaign:view', function () {
-    it('succeeds', function (done) {
+  describe('campaign:view', () => {
+    it('succeeds', (done) => {
       specHelper.requestWithLogin(email, password, 'campaign:view', {
         campaignId: campaignId
-      }, function (response) {
+      }, (response) => {
         should.not.exist(response.error)
         response.campaign.folder.should.equal('default')
         response.campaign.name.should.equal('test campaign')
@@ -78,22 +78,22 @@ describe('actions:campaign', function () {
       })
     })
 
-    it('fails (not found)', function (done) {
+    it('fails (not found)', (done) => {
       specHelper.requestWithLogin(email, password, 'campaign:view', {
         campaignId: 999
-      }, function (response) {
+      }, (response) => {
         response.error.should.equal('Error: campaign not found')
         done()
       })
     })
   })
 
-  describe('campaign:copy', function () {
-    it('succeeds', function (done) {
+  describe('campaign:copy', () => {
+    it('succeeds', (done) => {
       specHelper.requestWithLogin(email, password, 'campaign:copy', {
         campaignId: campaignId,
         name: 'new campaign'
-      }, function (response) {
+      }, (response) => {
         should.not.exist(response.error)
         response.campaign.id.should.not.equal(campaignId)
         response.campaign.folder.should.equal('default')
@@ -102,50 +102,50 @@ describe('actions:campaign', function () {
       })
     })
 
-    it('fails (uniqueness param)', function (done) {
+    it('fails (uniqueness param)', (done) => {
       specHelper.requestWithLogin(email, password, 'campaign:copy', {
         campaignId: campaignId,
         name: 'test campaign'
-      }, function (response) {
+      }, (response) => {
         response.error.should.match(/must be unique/)
         done()
       })
     })
 
-    it('fails (missing param)', function (done) {
+    it('fails (missing param)', (done) => {
       specHelper.requestWithLogin(email, password, 'campaign:copy', {
         campaignId: campaignId
-      }, function (response) {
+      }, (response) => {
         response.error.should.equal('Error: name is a required parameter for this action')
         done()
       })
     })
   })
 
-  describe('campaign:edit', function () {
-    it('succeeds', function (done) {
+  describe('campaign:edit', () => {
+    it('succeeds', (done) => {
       specHelper.requestWithLogin(email, password, 'campaign:edit', {
         campaignId: campaignId,
         name: 'a better campaign name'
-      }, function (response) {
+      }, (response) => {
         should.not.exist(response.error)
         response.campaign.name.should.equal('a better campaign name')
         done()
       })
     })
 
-    it('fails (uniqueness failure)', function (done) {
+    it('fails (uniqueness failure)', (done) => {
       specHelper.requestWithLogin(email, password, 'campaign:edit', {
         campaignId: campaignId,
         name: 'new campaign'
-      }, function (response) {
+      }, (response) => {
         response.error.should.equal('Error: Validation error')
         done()
       })
     })
   })
 
-  describe('campaign:stats', function () {
+  describe('campaign:stats', () => {
     before((done) => {
       api.specHelper.runAction('message:create', {
         teamId: team.id,
@@ -155,7 +155,7 @@ describe('actions:campaign', function () {
         body: 'hello',
         view: {},
         sentAt: new Date()
-      }, function (response) {
+      }, (response) => {
         done()
       })
     })
@@ -170,7 +170,7 @@ describe('actions:campaign', function () {
         view: {},
         sentAt: new Date(),
         readAt: new Date()
-      }, function (response) {
+      }, (response) => {
         done()
       })
     })
@@ -186,15 +186,15 @@ describe('actions:campaign', function () {
         sentAt: new Date(),
         readAt: new Date(),
         actedAt: new Date()
-      }, function (response) {
+      }, (response) => {
         done()
       })
     })
 
-    it('succeeds', function (done) {
+    it('succeeds', (done) => {
       specHelper.requestWithLogin(email, password, 'campaign:stats', {
         campaignId: campaignId
-      }, function (response) {
+      }, (response) => {
         should.not.exist(response.error)
         response.totals.should.deepEqual({sentAt: 3, readAt: 2, actedAt: 1})
 
@@ -221,9 +221,9 @@ describe('actions:campaign', function () {
     })
   })
 
-  describe('campaigns:types', function () {
-    it('succeeds', function (done) {
-      specHelper.requestWithLogin(email, password, 'campaigns:types', {}, function (response) {
+  describe('campaigns:types', () => {
+    it('succeeds', (done) => {
+      specHelper.requestWithLogin(email, password, 'campaigns:types', {}, (response) => {
         should.not.exist(response.error)
         response.validTypes.should.deepEqual(['simple', 'recurring', 'trigger'])
         done()
@@ -231,9 +231,9 @@ describe('actions:campaign', function () {
     })
   })
 
-  describe('campaigns:list', function () {
-    it('succeeds', function (done) {
-      specHelper.requestWithLogin(email, password, 'campaigns:list', {}, function (response) {
+  describe('campaigns:list', () => {
+    it('succeeds', (done) => {
+      specHelper.requestWithLogin(email, password, 'campaigns:list', {}, (response) => {
         should.not.exist(response.error)
         response.campaigns.length.should.equal(2)
         response.campaigns[0].name.should.equal('a better campaign name')
@@ -243,9 +243,9 @@ describe('actions:campaign', function () {
     })
   })
 
-  describe('campaigns:folders', function () {
-    it('succeeds', function (done) {
-      specHelper.requestWithLogin(email, password, 'campaigns:folders', {}, function (response) {
+  describe('campaigns:folders', () => {
+    it('succeeds', (done) => {
+      specHelper.requestWithLogin(email, password, 'campaigns:folders', {}, (response) => {
         should.not.exist(response.error)
         response.folders.length.should.equal(1)
         response.folders.should.deepEqual(['default'])
@@ -254,20 +254,20 @@ describe('actions:campaign', function () {
     })
   })
 
-  describe('campaign:delete', function () {
-    it('succeeds', function (done) {
+  describe('campaign:delete', () => {
+    it('succeeds', (done) => {
       specHelper.requestWithLogin(email, password, 'campaign:delete', {
         campaignId: campaignId
-      }, function (response) {
+      }, (response) => {
         should.not.exist(response.error)
         done()
       })
     })
 
-    it('fails (not found)', function (done) {
+    it('fails (not found)', (done) => {
       specHelper.requestWithLogin(email, password, 'campaign:delete', {
         campaignId: campaignId
-      }, function (response) {
+      }, (response) => {
         response.error.should.equal('Error: campaign not found')
         done()
       })

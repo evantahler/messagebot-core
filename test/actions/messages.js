@@ -8,18 +8,18 @@ var api
 var messageGuid
 var team
 
-describe('actions:message', function () {
-  before(function () { api = specHelper.api })
+describe('actions:message', () => {
+  before(() => { api = specHelper.api })
 
-  before(function (done) {
-    api.models.Team.findOne().then(function (_team) {
+  before((done) => {
+    api.models.Team.findOne().then((_team) => {
       team = _team
       done()
     })
   })
 
-  describe('message:create', function () {
-    it('succeeds', function (done) {
+  describe('message:create', () => {
+    it('succeeds', (done) => {
       api.specHelper.runAction('message:create', {
         teamId: team.id,
         personGuid: 'messagesTestPersonGuid',
@@ -28,7 +28,7 @@ describe('actions:message', function () {
         body: 'hello',
         view: {},
         sentAt: new Date()
-      }, function (response) {
+      }, (response) => {
         should.not.exist(response.error)
         should.exist(response.message.guid)
         messageGuid = response.message.guid
@@ -36,7 +36,7 @@ describe('actions:message', function () {
       })
     })
 
-    it('fails (uniqueness failure)', function (done) {
+    it('fails (uniqueness failure)', (done) => {
       api.specHelper.runAction('message:create', {
         teamId: team.id,
         guid: messageGuid,
@@ -46,13 +46,13 @@ describe('actions:message', function () {
         body: 'hello',
         view: {},
         sentAt: new Date()
-      }, function (response) {
+      }, (response) => {
         response.error.should.equal('Error: Validation error')
         done()
       })
     })
 
-    it('fails (missing param)', function (done) {
+    it('fails (missing param)', (done) => {
       api.specHelper.runAction('message:create', {
         teamId: team.id,
         transport: 'smtp',
@@ -60,66 +60,66 @@ describe('actions:message', function () {
         body: 'hello',
         view: {},
         sentAt: new Date()
-      }, function (response) {
+      }, (response) => {
         response.error.should.equal('Error: personGuid is a required parameter for this action')
         done()
       })
     })
   })
 
-  describe('message:view', function () {
-    it('succeeds', function (done) {
+  describe('message:view', () => {
+    it('succeeds', (done) => {
       api.specHelper.runAction('message:view', {
         teamId: team.id,
         guid: messageGuid
-      }, function (response) {
+      }, (response) => {
         should.not.exist(response.error)
         response.message.guid.should.equal(messageGuid)
         done()
       })
     })
 
-    it('fails (not found)', function (done) {
+    it('fails (not found)', (done) => {
       api.specHelper.runAction('message:view', {
         teamId: team.id,
         guid: 'xxx'
-      }, function (response) {
+      }, (response) => {
         response.error.should.equal('Error: Message (xxx) not found')
         done()
       })
     })
   })
 
-  describe('message:edit', function () {
-    it('succeeds', function (done) {
+  describe('message:edit', () => {
+    it('succeeds', (done) => {
       api.specHelper.runAction('message:edit', {
         teamId: team.id,
         guid: messageGuid,
         body: 'hello again'
-      }, function (response) {
+      }, (response) => {
         should.not.exist(response.error)
         done()
       })
     })
 
-    it('fails (not found)', function (done) {
+    it('fails (not found)', (done) => {
       api.specHelper.runAction('message:edit', {
         teamId: team.id,
         guid: 'xxx'
-      }, function (response) {
+      }, (response) => {
         response.error.should.equal('Error: Message (xxx) not found')
         done()
       })
     })
   })
 
-  describe('message:track', function () {
+  describe('message:track', () => {
     var eventGuids = []
 
-    after(function (done) {
+    after((done) => {
       var jobs = []
-      eventGuids.forEach(function (e) {
-        jobs.push(function (next) {
+      eventGuids.forEach((e) => {
+        jobs.push((next) => {
           api.models.Event.destroy({where: {guid: e}}).then(() => {
             next()
           }).catch(next)
@@ -129,12 +129,12 @@ describe('actions:message', function () {
       async.series(jobs, done)
     })
 
-    it('succeeds (read, json)', function (done) {
+    it('succeeds (read, json)', (done) => {
       api.specHelper.runAction('message:track', {
         teamId: team.id,
         guid: messageGuid,
         verb: 'read'
-      }, function (response) {
+      }, (response) => {
         should.not.exist(response.error)
         should.exist(response.event.guid)
         eventGuids.push(response.event.guid)
@@ -142,12 +142,12 @@ describe('actions:message', function () {
       })
     })
 
-    it('succeeds (act, json)', function (done) {
+    it('succeeds (act, json)', (done) => {
       api.specHelper.runAction('message:track', {
         teamId: team.id,
         guid: messageGuid,
         verb: 'act'
-      }, function (response) {
+      }, (response) => {
         should.not.exist(response.error)
         should.exist(response.event.guid)
         eventGuids.push(response.event.guid)
@@ -155,12 +155,12 @@ describe('actions:message', function () {
       })
     })
 
-    it('succeeds (read, html)', function (done) {
+    it('succeeds (read, html)', (done) => {
       specHelper.WebRequestWithLogin(email, password, 'get', '/api/message/track', {
         teamId: team.id,
         guid: messageGuid,
         verb: 'read'
-      }, function (response, res) {
+      }, (response, res) => {
         should.not.exist(response.error)
         should.exist(response.event.guid)
         res.statusCode.should.equal(200)
@@ -169,12 +169,12 @@ describe('actions:message', function () {
       })
     })
 
-    it('succeeds (act, html)', function (done) {
+    it('succeeds (act, html)', (done) => {
       specHelper.WebRequestWithLogin(email, password, 'get', '/api/message/track', {
         teamId: team.id,
         guid: messageGuid,
         verb: 'act'
-      }, function (response, res) {
+      }, (response, res) => {
         should.not.exist(response.error)
         should.exist(response.event.guid)
         res.statusCode.should.equal(200)
@@ -183,12 +183,12 @@ describe('actions:message', function () {
       })
     })
 
-    it('succeeds (read, gif)', function (done) {
+    it('succeeds (read, gif)', (done) => {
       specHelper.WebRequestWithLogin(email, password, 'get', '/api/message/track.gif', {
         teamId: team.id,
         guid: messageGuid,
         verb: 'read'
-      }, function (response, res) {
+      }, (response, res) => {
         response.toString().indexOf('GIF').should.equal(0)
         res.statusCode.should.equal(200)
         res.headers['x-powered-by'].should.equal('MessageBot')
@@ -197,12 +197,12 @@ describe('actions:message', function () {
       })
     })
 
-    it('succeeds (act, gif)', function (done) {
+    it('succeeds (act, gif)', (done) => {
       specHelper.WebRequestWithLogin(email, password, 'get', '/api/message/track.gif', {
         teamId: team.id,
         guid: messageGuid,
         verb: 'act'
-      }, function (response, res) {
+      }, (response, res) => {
         response.toString().indexOf('GIF').should.equal(0)
         res.statusCode.should.equal(200)
         res.headers['x-powered-by'].should.equal('MessageBot')
@@ -211,11 +211,11 @@ describe('actions:message', function () {
       })
     })
 
-    it('succeeds (message timestamps updated)', function (done) {
+    it('succeeds (message timestamps updated)', (done) => {
       api.specHelper.runAction('message:view', {
         teamId: team.id,
         guid: messageGuid
-      }, function (response) {
+      }, (response) => {
         should.not.exist(response.error)
         response.message.guid.should.equal(messageGuid)
         should.exist(response.message.readAt)
@@ -224,37 +224,37 @@ describe('actions:message', function () {
       })
     })
 
-    it('fails (bad verb)', function (done) {
+    it('fails (bad verb)', (done) => {
       api.specHelper.runAction('message:track', {
         teamId: team.id,
         guid: messageGuid,
         verb: 'did-it'
-      }, function (response) {
+      }, (response) => {
         response.error.should.equal('Error: verb not allowed')
         done()
       })
     })
 
-    it('fails (not found)', function (done) {
+    it('fails (not found)', (done) => {
       api.specHelper.runAction('message:track', {
         teamId: team.id,
         guid: 'a-fake-guid',
         verb: 'act'
-      }, function (response) {
+      }, (response) => {
         response.error.should.equal('Error: Message (a-fake-guid) not found')
         done()
       })
     })
   })
 
-  describe('messages:search', function () {
-    it('succeeds', function (done) {
+  describe('messages:search', () => {
+    it('succeeds', (done) => {
       specHelper.requestWithLogin(email, password, 'messages:search', {
         searchKeys: ['personGuid'],
         searchValues: ['messagesTestPersonGuid'],
         from: 0,
         size: 1
-      }, function (response) {
+      }, (response) => {
         should.not.exist(response.error)
         response.total.should.equal(1)
         response.messages.length.should.equal(1)
@@ -262,23 +262,23 @@ describe('actions:message', function () {
       })
     })
 
-    it('fails (not logged in)', function (done) {
+    it('fails (not logged in)', (done) => {
       api.specHelper.runAction('people:search', {
         searchKeys: ['personGuid'],
         searchValues: ['messagesTestPersonGuid']
-      }, function (response) {
+      }, (response) => {
         response.error.should.equal('Error: Please log in to continue')
         done()
       })
     })
   })
 
-  describe('messages:aggregation', function () {
-    it('succeeds', function (done) {
+  describe('messages:aggregation', () => {
+    it('succeeds', (done) => {
       specHelper.requestWithLogin(email, password, 'messages:aggregation', {
         searchKeys: ['personGuid'],
         searchValues: ['messagesTestPersonGuid']
-      }, function (response) {
+      }, (response) => {
         should.not.exist(response.error)
         Object.keys(response.aggregations).length.should.equal(1)
         var key = Object.keys(response.aggregations)[0]
@@ -289,33 +289,33 @@ describe('actions:message', function () {
       })
     })
 
-    it('fails (not logged in)', function (done) {
+    it('fails (not logged in)', (done) => {
       api.specHelper.runAction('messages:aggregation', {
         searchKeys: ['personGuid'],
         searchValues: ['messagesTestPersonGuid']
-      }, function (response) {
+      }, (response) => {
         response.error.should.equal('Error: Please log in to continue')
         done()
       })
     })
   })
 
-  describe('message:delete', function () {
-    it('succeeds', function (done) {
+  describe('message:delete', () => {
+    it('succeeds', (done) => {
       api.specHelper.runAction('message:delete', {
         teamId: team.id,
         guid: messageGuid
-      }, function (response) {
+      }, (response) => {
         should.not.exist(response.error)
         done()
       })
     })
 
-    it('fails (not found)', function (done) {
+    it('fails (not found)', (done) => {
       api.specHelper.runAction('message:delete', {
         teamId: team.id,
         guid: messageGuid
-      }, function (response) {
+      }, (response) => {
         response.error.should.equal('Error: Message (' + messageGuid + ') not found')
         done()
       })

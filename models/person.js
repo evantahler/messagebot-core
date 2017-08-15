@@ -71,34 +71,34 @@ var loader = function (api) {
         hooks: {
           beforeCreate: (self) => { return api.sequelize.updatateData(self, api.models.PersonData, 'personGuid', uniqueDataKeys) },
           beforeUpdate: (self) => { return api.sequelize.updatateData(self, api.models.PersonData, 'personGuid', uniqueDataKeys) },
-          beforeDestroy: function (self) {
-            return new Promise(function (resolve, reject) {
+          beforeDestroy: (self) => {
+            return new Promise((resolve, reject) => {
               var jobs = []
 
-              jobs.push(function (done) {
+              jobs.push((done) => {
                 api.models.ListPerson.destroy({
                   where: {
                     personGuid: self.guid,
                     teamId: self.teamId
                   }
-                }).then(function () {
+                }).then(() => {
                   done()
                 }).catch(done)
               })
 
-              jobs.push(function (done) {
+              jobs.push((done) => {
                 api.models.Event.destroy({where: {personGuid: self.guid}}).then(() => {
                   done()
                 }).catch(done)
               })
 
-              jobs.push(function (done) {
+              jobs.push((done) => {
                 api.models.Message.destroy({where: {personGuid: self.guid}}).then(() => {
                   done()
                 }).catch(done)
               })
 
-              jobs.push(function (done) {
+              jobs.push((done) => {
                 api.models.PersonData.destroy({where: {personGuid: self.guid}}).then(() => {
                   done()
                 }).catch(done)
@@ -116,8 +116,8 @@ var loader = function (api) {
           hydrate: function (callback) {
             this.data = {}
             var self = this
-            api.models.PersonData.findAll({where: {personGuid: this.guid}}).then(function (datas) {
-              datas.forEach(function (d) { self.data[d.key] = d.value })
+            api.models.PersonData.findAll({where: {personGuid: this.guid}}).then((datas) => {
+              datas.forEach((d) => { self.data[d.key] = d.value })
               callback(null, datas)
             }).catch(callback)
           },

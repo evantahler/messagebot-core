@@ -14,14 +14,14 @@ var seed = function (api, callback) {
 
   var i = 0
   while (i < usersCount) {
-    jobs.push(function (done) {
+    jobs.push((done) => {
       var localJobs = []
       var person
       var message = ''
 
       // create the person
-      localJobs.push(function (next) {
-        common.buildPerson(start, end, routeBase, function (error, _person) {
+      localJobs.push((next) => {
+        common.buildPerson(start, end, routeBase, (error, _person) => {
           if (error) { throw error }
           person = _person
           message += 'Created `' + person.data.firstName + ' ' + person.data.lastName + '` + ['
@@ -30,15 +30,15 @@ var seed = function (api, callback) {
       })
 
       // build events
-      localJobs.push(function (next) {
-        common.buildFunnel(person, routeBase, function (error, events) {
+      localJobs.push((next) => {
+        common.buildFunnel(person, routeBase, (error, events) => {
           if (error) { throw error }
           message += events.join(', ') + ']'
           return next()
         })
       })
 
-      async.series(localJobs, function (error) {
+      async.series(localJobs, (error) => {
         if (!error) { console.log(message) }
         done(error)
       })
@@ -50,10 +50,10 @@ var seed = function (api, callback) {
 }
 
 if (require.main === module) {
-  common.connect(function (error, api) {
+  common.connect((error, api) => {
     if (error) { throw (error) }
     console.log('seeding env with fake data: ' + api.env)
-    seed(api, function (error) {
+    seed(api, (error) => {
       if (error) { throw error }
       process.exit()
     })

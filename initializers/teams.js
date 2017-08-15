@@ -10,24 +10,24 @@ module.exports = {
 
       ensureSettings: function (team, callback) {
         var jobs = []
-        api.models.Setting.findAll({where: {teamId: team.id}}).then(function (settings) {
-          api.teams.settings.forEach(function (settingParent) {
+        api.models.Setting.findAll({where: {teamId: team.id}}).then((settings) => {
+          api.teams.settings.forEach((settingParent) => {
             var found = false
-            settings.forEach(function (s) {
+            settings.forEach((s) => {
               if (s.key === settingParent.key) { found = true }
             })
 
             if (found === false) {
-              jobs.push(function (done) {
+              jobs.push((done) => {
                 api.models.Setting.create({
                   teamId: team.id,
                   key: settingParent.key,
                   value: settingParent.value,
                   description: settingParent.description
-                }).then(function () {
+                }).then(() => {
                   api.log(`[Team ${team.id}] set default setting for \`${settingParent.key}\` to \`${settingParent.value}\``)
                   done()
-                }).catch(function (error) {
+                }).catch((error) => {
                   // another instance created the setting for us; it's OK.
                   if (error.toString().match(/SequelizeUniqueConstraintError/)) {
                     return done()
