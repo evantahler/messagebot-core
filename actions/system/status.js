@@ -80,7 +80,7 @@ exports.status = {
           done()
         }).catch((error) => {
           console.error(error)
-          data.response.database.health = false
+          data.response.database.healthy = false
           done(error)
         })
       })
