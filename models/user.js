@@ -22,8 +22,8 @@ let loader = function (api) {
     name: 'User',
     model: api.sequelize.sequelize.define('user',
       {
-        'teamId': {
-          type: Sequelize.BIGINT,
+        'teamGuid': {
+          type: Sequelize.UUID,
           allowNull: false
         },
         'email': {
@@ -36,7 +36,7 @@ let loader = function (api) {
           allowNull: false
         },
         'personGuid': {
-          type: Sequelize.TEXT,
+          type: Sequelize.UUID,
           allowNull: false
         },
         'role': {

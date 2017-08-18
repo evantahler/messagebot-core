@@ -43,7 +43,7 @@ let loader = function (api) {
     name: 'Campaign',
     model: api.sequelize.sequelize.define('campaign',
       {
-        'teamId': {
+        'teamGuid': {
           type: Sequelize.BIGINT,
           allowNull: false
         },
@@ -75,12 +75,12 @@ let loader = function (api) {
           type: Sequelize.STRING,
           allowNull: false
         },
-        'listId': {
-          type: Sequelize.BIGINT,
+        'listGuid': {
+          type: Sequelize.UUID,
           allowNull: false
         },
-        'templateId': {
-          type: Sequelize.BIGINT,
+        'templateGuid': {
+          type: Sequelize.UUID,
           allowNull: false
         },
         'campaignVariables': {

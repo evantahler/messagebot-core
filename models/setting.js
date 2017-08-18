@@ -10,8 +10,8 @@ let loader = function (api) {
 
     model: api.sequelize.sequelize.define('setting',
       {
-        'teamId': {
-          type: Sequelize.BIGINT,
+        'teamGuid': {
+          type: Sequelize.UUID,
           allowNull: false
         },
 

@@ -1,5 +1,5 @@
 const Sequelize = require('sequelize')
-const uuid = require('uuid')
+// const uuid = require('uuid')
 const async = require('async')
 
 let loader = function (api) {
@@ -18,14 +18,14 @@ let loader = function (api) {
 
     model: api.sequelize.sequelize.define('person',
       {
-        guid: {
-          type: Sequelize.UUID,
-          primaryKey: true,
-          defaultValue: () => { return uuid.v4() }
-        },
-        teamId: {
+        // guid: {
+        //   type: Sequelize.UUID,
+        //   primaryKey: true,
+        //   defaultValue: () => { return uuid.v4() }
+        // },
+        teamGuid: {
           allowNull: false,
-          type: Sequelize.BIGINT
+          type: Sequelize.UUID
         },
 
         'listOptOuts': {

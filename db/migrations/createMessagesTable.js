@@ -8,9 +8,9 @@ module.exports = {
           primaryKey: true,
           defaultValue: Sequelize.UUIDV4
         },
-        teamId: {
+        teamGuid: {
           allowNull: false,
-          type: Sequelize.BIGINT
+          type: Sequelize.UUID
         },
         createdAt: {
           type: Sequelize.DATE
@@ -23,8 +23,8 @@ module.exports = {
           type: Sequelize.STRING,
           allowNull: false
         },
-        'campaignId': {
-          type: Sequelize.BIGINT,
+        'campaignGuid': {
+          type: Sequelize.UUID,
           allowNull: false
         },
         'transport': {
@@ -50,7 +50,7 @@ module.exports = {
       }
     ).then(() => {
       return queryInterface.addIndex(
-        'messages', ['teamId', 'guid'], {
+        'messages', ['teamGuid', 'guid'], {
           indicesType: 'UNIQUE'
         }
       )

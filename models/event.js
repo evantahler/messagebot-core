@@ -11,11 +11,11 @@ let loader = function (api) {
 
     model: api.sequelize.sequelize.define('event',
       {
-        guid: {
-          type: Sequelize.UUID,
-          primaryKey: true,
-          defaultValue: () => { return uuid.v4() }
-        },
+        // guid: {
+        //   type: Sequelize.UUID,
+        //   primaryKey: true,
+        //   defaultValue: () => { return uuid.v4() }
+        // },
         teamId: {
           allowNull: false,
           type: Sequelize.BIGINT
@@ -30,11 +30,11 @@ let loader = function (api) {
           allowNull: false
         },
         'personGuid': {
-          type: Sequelize.STRING,
+          type: Sequelize.UUID,
           allowNull: false
         },
         'messageGuid': {
-          type: Sequelize.STRING,
+          type: Sequelize.UUID,
           allowNull: true
         },
         'type': {

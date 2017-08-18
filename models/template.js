@@ -127,8 +127,8 @@ let loader = function (api) {
     name: 'Template',
     model: api.sequelize.sequelize.define('template',
       {
-        'teamId': {
-          type: Sequelize.BIGINT,
+        'teamGuid': {
+          type: Sequelize.UUID,
           allowNull: false
         },
         'name': {

@@ -14,8 +14,8 @@ let loader = function (api) {
           type: Sequelize.UUID,
           allowNull: false
         },
-        teamId: {
-          type: Sequelize.BIGINT,
+        teamGuid: {
+          type: Sequelize.UUID,
           allowNull: false
         },
 

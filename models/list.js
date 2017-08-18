@@ -12,8 +12,8 @@ let loader = function (api) {
     name: 'List',
     model: api.sequelize.sequelize.define('list',
       {
-        'teamId': {
-          type: Sequelize.BIGINT,
+        'teamGuid': {
+          type: Sequelize.UUID,
           allowNull: false
         },
         'name': {

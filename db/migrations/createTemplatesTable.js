@@ -3,10 +3,10 @@ module.exports = {
     return queryInterface.createTable(
       'templates',
       {
-        id: {
-          type: Sequelize.BIGINT,
+        guid: {
+          type: Sequelize.UUID,
           primaryKey: true,
-          autoIncrement: true
+          defaultValue: Sequelize.UUIDV4
         },
         createdAt: {
           type: Sequelize.DATE
@@ -15,8 +15,8 @@ module.exports = {
           type: Sequelize.DATE
         },
 
-        'teamId': {
-          type: Sequelize.BIGINT,
+        'teamGuid': {
+          type: Sequelize.UUID,
           allowNull: false
         },
 
@@ -40,10 +40,10 @@ module.exports = {
       }
     ).then(() => {
       return queryInterface.addIndex(
-        'templates', ['teamId']
+        'templates', ['teamGuid']
       ).then(() => {
         return queryInterface.addIndex(
-          'templates', ['teamId', 'name'], {
+          'templates', ['teamGuid', 'name'], {
             indicesType: 'UNIQUE'
           }
         )

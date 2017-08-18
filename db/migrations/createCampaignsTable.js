@@ -3,10 +3,10 @@ module.exports = {
     return queryInterface.createTable(
       'campaigns',
       {
-        id: {
-          type: Sequelize.BIGINT,
+        guid: {
+          type: Sequelize.UUID,
           primaryKey: true,
-          autoIncrement: true
+          defaultValue: Sequelize.UUIDV4
         },
         createdAt: {
           type: Sequelize.DATE
@@ -15,8 +15,8 @@ module.exports = {
           type: Sequelize.DATE
         },
 
-        'teamId': {
-          type: Sequelize.INTEGER,
+        'teamGuid': {
+          type: Sequelize.UUID,
           allowNull: false
         },
 
@@ -41,12 +41,12 @@ module.exports = {
           type: Sequelize.STRING,
           allowNull: false
         },
-        'listId': {
-          type: Sequelize.INTEGER,
+        'listGuid': {
+          type: Sequelize.UUID,
           allowNull: false
         },
-        'templateId': {
-          type: Sequelize.INTEGER,
+        'templateGuid': {
+          type: Sequelize.UUID,
           allowNull: false
         },
         'campaignVariables': {
@@ -82,10 +82,10 @@ module.exports = {
       }
     ).then(() => {
       return queryInterface.addIndex(
-        'campaigns', ['teamId']
+        'campaigns', ['teamGuid']
       ).then(() => {
         return queryInterface.addIndex(
-          'campaigns', ['teamId', 'name'], {
+          'campaigns', ['teamGuid', 'name'], {
             indicesType: 'UNIQUE'
           }
         )

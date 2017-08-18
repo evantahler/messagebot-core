@@ -3,10 +3,10 @@ module.exports = {
     return queryInterface.createTable(
       'eventData',
       {
-        id: {
-          type: Sequelize.BIGINT,
+        guid: {
+          type: Sequelize.UUID,
           primaryKey: true,
-          autoIncrement: true
+          defaultValue: Sequelize.UUIDV4
         },
         createdAt: {
           type: Sequelize.DATE
