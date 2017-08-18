@@ -131,7 +131,7 @@
 
   MESSAGEBOT.trackingDomain = '%%TRACKINGDOMAIN%%'
   MESSAGEBOT.apiRoute = '%%APIROUTE%%'
-  MESSAGEBOT.teamId = '%%TEAMID%%'
+  MESSAGEBOT.teamGuid = '%%teamGuid%%'
   MESSAGEBOT.cookieName = '%%CLIENT:TRACKING:WEB:COOKIENAME%%'
   MESSAGEBOT.initialized = false
   MESSAGEBOT.cookieExpiry = parseInt('%%CLIENT:TRACKING:WEB:COOKIEEXPIRY%%')
@@ -226,7 +226,7 @@
       if (!callback) { callback = MESSAGEBOT.loggerCallback }
       if (!MESSAGEBOT.data.person) { return callback(new Error('Not Initialized')) }
       var params = {guid: MESSAGEBOT.data.person.guid}
-      params.listId = data.listId
+      params.listGuid = data.listGuid
       params.global = data.global
       params.direction = data.direction
 

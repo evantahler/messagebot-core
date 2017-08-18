@@ -7,7 +7,7 @@ exports.personCreate = {
   middleware: ['require-team'],
 
   inputs: {
-    teamId: { required: false, formatter: function (p) { return parseInt(p) } },
+    teamGuid: { required: false },
     guid: { required: false },
     data: { required: false, default: {} },
     source: { required: true },
@@ -22,7 +22,7 @@ exports.personCreate = {
   run: function (api, data, next) {
     let person = api.models.Person.build(data.params)
     person.data = data.params.data
-    person.teamId = data.team.id
+    person.teamGuid = data.team.guid
 
     // location and device will be updated by events as they come in
     person.device = 'unknown'
@@ -30,7 +30,7 @@ exports.personCreate = {
     person.globalOptOut = false
 
     person.save().then(() => {
-      api.tasks.enqueueIn(1, 'people:buildCreateEvent', {guid: person.guid, teamId: data.team.id}, 'messagebot:people', function (error) {
+      api.tasks.enqueueIn(1, 'people:buildCreateEvent', {guid: person.guid, teamGuid: data.team.guid}, 'messagebot:people', function (error) {
         if (error) { return api.log('person creation error: ' + error, 'error', data.params) }
         data.response.person = person.apiData()
         next()
@@ -46,7 +46,7 @@ exports.personEdit = {
   middleware: ['require-team'],
 
   inputs: {
-    teamId: { required: false, formatter: function (p) { return parseInt(p) } },
+    teamGuid: { required: false },
     guid: { required: true },
     source: { required: false },
     data: { required: true }
@@ -55,7 +55,7 @@ exports.personEdit = {
   run: function (api, data, next) {
     api.models.Person.findOne({
       where: {
-        teamId: data.team.id,
+        teamGuid: data.team.guid,
         guid: data.params.guid
       }
     }).then((person) => {
@@ -87,7 +87,7 @@ exports.personView = {
   middleware: ['require-team'],
 
   inputs: {
-    teamId: { required: false, formatter: function (p) { return parseInt(p) } },
+    teamGuid: { required: false },
     guid: { required: true }
   },
 
@@ -96,7 +96,7 @@ exports.personView = {
     // Do we require-admin for person:view?
     api.models.Person.findOne({
       where: {
-        teamId: data.team.id,
+        teamGuid: data.team.guid,
         guid: data.params.guid
       }
     }).then((person) => {
@@ -151,7 +151,7 @@ exports.personOpt = {
         return null
       }
     },
-    listId: { required: false, formatter: function (p) { return parseInt(p) } },
+    listGuid: { required: false, formatter: function (p) { return parseInt(p) } },
     guid: { required: true }
   },
 
@@ -161,7 +161,7 @@ exports.personOpt = {
 
     jobs.push((done) => {
       api.models.Person.findOne({where: {
-        teamId: data.team.id,
+        teamGuid: data.team.guid,
         guid: data.params.guid
       }}).then((p) => {
         person = p
@@ -174,8 +174,8 @@ exports.personOpt = {
       jobs.push((done) => {
         api.models.List.findOne({
           where: {
-            id: data.params.listId,
-            teamId: data.team.id
+            id: data.params.listGuid,
+            teamGuid: data.team.guid
           }
         }).then((list) => {
           if (!list) { return done(new Error('List not found')) }
@@ -197,14 +197,14 @@ exports.personOpt = {
       jobs.push((done) => {
         let listOptOuts = Object.assign([], person.listOptOuts)
         if (data.params.direction === 'out') {
-          if (listOptOuts.indexOf(data.params.listId) < 0) {
-            listOptOuts.push(data.params.listId)
+          if (listOptOuts.indexOf(data.params.listGuid) < 0) {
+            listOptOuts.push(data.params.listGuid)
           }
         }
 
         if (data.params.direction === 'in') {
-          if (listOptOuts.indexOf(data.params.listId) >= 0) {
-            let idx = listOptOuts.indexOf(data.params.listId)
+          if (listOptOuts.indexOf(data.params.listGuid) >= 0) {
+            let idx = listOptOuts.indexOf(data.params.listGuid)
             listOptOuts.splice(idx, 1)
           }
         }
@@ -229,7 +229,7 @@ exports.personDelete = {
   middleware: ['require-team'],
 
   inputs: {
-    teamId: { required: false, formatter: function (p) { return parseInt(p) } },
+    teamGuid: { required: false },
     guid: { required: true }
   },
 
@@ -239,7 +239,7 @@ exports.personDelete = {
 
     jobs.push((done) => {
       api.models.Person.findOne({where: {
-        teamId: data.team.id,
+        teamGuid: data.team.guid,
         guid: data.params.guid
       }}).then((p) => {
         person = p

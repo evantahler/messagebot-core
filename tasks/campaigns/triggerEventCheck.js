@@ -15,9 +15,9 @@ exports.task = {
 
     jobs.push((done) => {
       api.models.List.findOne({
-        where: {id: params.listId}
+        where: {guid: params.listGuid}
       }).then((_list) => {
-        if (!_list) { return done(new Error(`List (${params.listId}) not found`)) }
+        if (!_list) { return done(new Error(`List (${params.listGuid}) not found`)) }
         list = _list
         done()
       }).catch(done)
@@ -33,9 +33,9 @@ exports.task = {
 
     jobs.push((done) => {
       api.models.ListPerson.findOne({where: {
-        teamId: params.teamId,
+        teamGuid: params.teamGuid,
         personGuid: params.personGuid,
-        listId: params.listId
+        listGuid: params.listGuid
       }}).then((listPerson) => {
         if (listPerson) { toSend = true }
         done()
@@ -45,8 +45,8 @@ exports.task = {
     jobs.push((done) => {
       if (toSend === true) {
         api.tasks.enqueue('campaigns:sendMessage', {
-          listId: params.listId,
-          campaignId: params.campaignId,
+          listGuid: params.listGuid,
+          campaignGuid: params.campaignGuid,
           personGuid: params.personGuid
         }, 'messagebot:campaigns', done)
       } else { done() }

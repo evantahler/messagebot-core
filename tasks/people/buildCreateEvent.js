@@ -23,7 +23,7 @@ exports.task = {
 
     jobs.push((done) => {
       api.models.Person.findOne({where: {
-        teamId: team.id,
+        teamGuid: team.guid,
         guid: params.guid
       }}).then((p) => {
         person = p
@@ -38,7 +38,7 @@ exports.task = {
 
     jobs.push((done) => {
       event = api.models.Event.build({
-        teamId: team.id,
+        teamGuid: team.guid,
         personGuid: person.guid,
         type: 'person_created',
         ip: 'internal',
@@ -52,7 +52,7 @@ exports.task = {
 
     jobs.push((done) => {
       api.tasks.enqueueIn(1, 'events:process', {
-        teamId: team.id,
+        teamGuid: team.guid,
         events: [event.guid]
       }, 'messagebot:events', done)
     })

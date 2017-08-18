@@ -1,5 +1,6 @@
 const Sequelize = require('sequelize')
 const async = require('async')
+const uuid = require('uuid')
 
 let loader = function (api) {
   /* --- Private Methods --- */
@@ -9,10 +10,10 @@ let loader = function (api) {
     if (campaign.sentAt) { return callback(new Error('campaign already sent')) }
     if (campaign.sendAt - new Date().getTime() >= 0) { return callback(new Error('campaign should not be sent yet')) }
 
-    api.utils.findInBatches(api.models.ListPerson, {where: {listId: list.id}}, (listPerson, done) => {
+    api.utils.findInBatches(api.models.ListPerson, {where: {listGuid: list.id}}, (listPerson, done) => {
       api.tasks.enqueue('campaigns:sendMessage', {
-        listId: list.id,
-        campaignId: campaign.id,
+        listGuid: list.id,
+        campaignGuid: campaign.guid,
         personGuid: listPerson.personGuid
       }, 'messagebot:campaigns', done)
     }, callback)
@@ -24,10 +25,10 @@ let loader = function (api) {
       return callback(new Error('campaign should not be sent yet'))
     }
 
-    api.utils.findInBatches(api.models.ListPerson, {where: {listId: list.id}}, (listPerson, done) => {
+    api.utils.findInBatches(api.models.ListPerson, {where: {listGuid: list.id}}, (listPerson, done) => {
       api.tasks.enqueue('campaigns:sendMessage', {
-        listId: list.id,
-        campaignId: campaign.id,
+        listGuid: list.id,
+        campaignGuid: campaign.guid,
         personGuid: listPerson.personGuid
       }, 'messagebot:campaigns', done)
     }, callback)
@@ -43,6 +44,11 @@ let loader = function (api) {
     name: 'Campaign',
     model: api.sequelize.sequelize.define('campaign',
       {
+        guid: {
+          type: Sequelize.UUID,
+          primaryKey: true,
+          defaultValue: () => { return uuid.v4() }
+        },
         'teamGuid': {
           type: Sequelize.BIGINT,
           allowNull: false
@@ -146,7 +152,7 @@ let loader = function (api) {
         hooks: {
           beforeDestroy: function (self) {
             return new Promise((resolve, reject) => {
-              api.models.Message.destroy({where: {campaignId: self.id}}).then(() => {
+              api.models.Message.destroy({where: {campaignGuid: self.id}}).then(() => {
                 resolve()
               }).catch(reject)
             })
@@ -164,14 +170,14 @@ let loader = function (api) {
             let terms = {sentAt: [], readAt: [], actedAt: []}
             let totals = {sentAt: 0, readAt: 0, actedAt: 0}
 
-            api.utils.determineActionsTeam({params: {teamId: campaign.teamId}}, (error, team) => {
+            api.utils.determineActionsTeam({params: {teamGuid: campaign.teamGuid}}, (error, team) => {
               if (error) { return callback(error) }
 
               Object.keys(totals).forEach((term) => {
                 jobs.push((done) => {
                   let where = {
-                    teamId: team.id,
-                    campaignId: campaign.id,
+                    teamGuid: team.guid,
+                    campaignGuid: campaign.guid,
                     createdAt: { $lte: end, $gte: start }
                   }
                   where[term] = { $not: null }
@@ -252,15 +258,15 @@ let loader = function (api) {
 
           apiData: function () {
             return {
-              id: this.id,
+              guid: this.guid,
               name: this.name,
               description: this.description,
               type: this.type,
               folder: this.folder,
 
               transport: this.transport,
-              listId: this.listId,
-              templateId: this.templateId,
+              listGuid: this.listGuid,
+              templateGuid: this.templateGuid,
               campaignVariables: this.campaignVariables,
               triggerEventMatch: this.triggerEventMatch,
 

@@ -20,7 +20,7 @@ exports.status = {
     /* ------ Node ------ */
 
     jobs.push((done) => {
-      api.models.Team.findOne({where: {id: data.session.teamId}}).then((_team) => {
+      api.models.Team.findOne({where: {guid: data.session.teamGuid}}).then((_team) => {
         if (!_team) { return done(new Error(`Team not found`)) }
         team = _team
         done()

@@ -6,7 +6,7 @@ module.exports = {
   description: 'edit a messagebot team',
 
   inputs: {
-    id: {required: true},
+    guid: {required: true},
     name: {required: false},
     trackingDomainRegexp: {required: false},
     trackingDomain: {required: false}
@@ -21,7 +21,7 @@ module.exports = {
     })
 
     jobs.push((done) => {
-      api.models.Team.findOne({where: {id: data.params.id}}).then((_team) => {
+      api.models.Team.findOne({where: {guid: data.params.guid}}).then((_team) => {
         if (!_team) { return done(new Error('Team not found')) }
         team = _team
         done()

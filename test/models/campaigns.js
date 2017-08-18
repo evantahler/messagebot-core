@@ -17,14 +17,14 @@ describe('models:campaigns', () => {
 
   it('can create new campaign with valid params', (done) => {
     campaign = api.models.Campaign.build({
-      teamId: 1,
+      teamGuid: 1,
       name: 'my campaign',
       description: 'my campaign',
       type: 'simple',
       folder: 'default',
       transport: 'smtp',
-      listId: 1,
-      templateId: 1
+      listGuid: 1,
+      templateGuid: 1
     })
 
     campaign.save().then(() => {
@@ -37,12 +37,12 @@ describe('models:campaigns', () => {
 
   it('will not create new campaign with invalid params (missing requirement)', (done) => {
     campaign = api.models.Campaign.build({
-      teamId: 1,
+      teamGuid: 1,
       type: 'simple',
       folder: 'default',
       transport: 'smtp',
-      listId: 1,
-      templateId: 1
+      listGuid: 1,
+      templateGuid: 1
     })
 
     campaign.save().then(() => {
@@ -57,26 +57,26 @@ describe('models:campaigns', () => {
 
   it('will not create new campaigns with invalid params (duplicate key)', (done) => {
     campaign = api.models.Campaign.build({
-      teamId: 1,
+      teamGuid: 1,
       name: 'my campaign',
       description: 'my campaign',
       type: 'simple',
       folder: 'default',
       transport: 'smtp',
-      listId: 1,
-      templateId: 1
+      listGuid: 1,
+      templateGuid: 1
     })
 
     campaign.save().then(() => {
       let otherCampaign = api.models.Campaign.build({
-        teamId: 1,
+        teamGuid: 1,
         name: 'my campaign',
         description: 'my campaign',
         type: 'simple',
         folder: 'default',
         transport: 'smtp',
-        listId: 1,
-        templateId: 1
+        listGuid: 1,
+        templateGuid: 1
       })
 
       otherCampaign.save().then(() => {
@@ -91,14 +91,14 @@ describe('models:campaigns', () => {
 
   it('will not create new campaigns with invalid params (bad type)', (done) => {
     campaign = api.models.Campaign.build({
-      teamId: 1,
+      teamGuid: 1,
       name: 'my campaign',
       description: 'my campaign',
       type: 'wacky',
       folder: 'default',
       transport: 'smtp',
-      listId: 1,
-      templateId: 1
+      listGuid: 1,
+      templateGuid: 1
     })
 
     campaign.save().then(() => {

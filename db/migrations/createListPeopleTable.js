@@ -40,7 +40,7 @@ module.exports = {
         ).then(() => {
           return queryInterface.addIndex(
             'listPeople', ['listGuid'], {
-              indexName: 'listIdIndex'
+              indexName: 'listGuidIndex'
             }
           ).then(() => {
             return queryInterface.addIndex(

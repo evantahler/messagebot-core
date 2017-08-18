@@ -2,6 +2,7 @@ const Sequelize = require('sequelize')
 const sanitizeHtml = require('sanitize-html')
 const mustache = require('mustache')
 const async = require('async')
+const uuid = require('uuid')
 
 let loader = function (api) {
   /* --- Priave Methods --- */
@@ -77,15 +78,15 @@ let loader = function (api) {
 
     view.optOutLink = function () {
       return function (val) {
-        let page = team.trackingDomain + '/tracking/' + team.id + '/optOut.html'
+        let page = team.trackingDomain + '/tracking/' + team.guid + '/optOut.html'
         if (val) { page = val }
 
         let url = ''
         url += page + '?'
         url += 'personGuid=' + person.guid + '&'
         url += 'messageGuid=%%MESSAGEGUID%%&' + '&'
-        if (view.campaign.id) { url += 'campaignId=' + view.campaign.id + '&' }
-        if (view.list.id) { url += 'listId=' + view.list.id + '&' }
+        if (view.campaign.guid) { url += 'campaignGuid=' + view.campaign.guid + '&' }
+        if (view.list.id) { url += 'listGuid=' + view.list.id + '&' }
         return url
       }
     }
@@ -127,6 +128,11 @@ let loader = function (api) {
     name: 'Template',
     model: api.sequelize.sequelize.define('template',
       {
+        guid: {
+          type: Sequelize.UUID,
+          primaryKey: true,
+          defaultValue: () => { return uuid.v4() }
+        },
         'teamGuid': {
           type: Sequelize.UUID,
           allowNull: false
@@ -175,7 +181,7 @@ let loader = function (api) {
             includedIds.push(template.id)
 
             jobs.push((done) => {
-              api.models.Team.findOne({where: {id: template.teamId}}).then((t) => {
+              api.models.Team.findOne({where: {id: template.teamGuid}}).then((t) => {
                 team = t
                 if (!team) { return done(new Error('team not found')) }
                 return done()
@@ -215,7 +221,7 @@ let loader = function (api) {
                   let or = {name: matcher}
                   if (parseInt(matcher, 10)) { or.id = parseInt(matcher, 10) }
                   api.models.Template.findOne({where: {
-                    teamId: team.id,
+                    teamGuid: team.guid,
                     $or: or
                   }}).then((_includedTemplate) => {
                     if (!_includedTemplate) { return includeDone(new Error('Cannot find template to include (' + matcher + ')')) }
@@ -249,7 +255,7 @@ let loader = function (api) {
 
           apiData: function () {
             return {
-              id: this.id,
+              guid: this.guid,
 
               name: this.name,
               description: this.description,

@@ -21,13 +21,11 @@ exports.campaignCreate = {
   inputs: {
     name: { required: true },
     description: { required: true },
-    listId: {
-      required: true,
-      formatter: function (p) { return parseInt(p) }
+    listGuid: {
+      required: true
     },
-    templateId: {
-      required: true,
-      formatter: function (p) { return parseInt(p) }
+    templateGuid: {
+      required: true
     },
     folder: {
       required: false,
@@ -62,7 +60,7 @@ exports.campaignCreate = {
 
   run: function (api, data, next) {
     let campaign = api.models.Campaign.build(data.params)
-    campaign.teamId = data.session.teamId
+    campaign.teamGuid = data.session.teamGuid
 
     campaign.save().then(() => {
       data.response.campaign = campaign.apiData()
@@ -80,9 +78,8 @@ exports.campaignView = {
   middleware: ['logged-in-session'],
 
   inputs: {
-    campaignId: {
-      required: true,
-      formatter: function (p) { return parseInt(p) }
+    campaignGuid: {
+      required: true
     }
   },
 
@@ -91,8 +88,8 @@ exports.campaignView = {
 
     jobs.push((done) => {
       api.models.Campaign.findOne({where: {
-        id: data.params.campaignId,
-        teamId: data.session.teamId
+        id: data.params.campaignGuid,
+        teamGuid: data.session.teamGuid
       }}).then((campaign) => {
         if (!campaign) { return done(new Error('campaign not found')) }
         data.response.campaign = campaign.apiData()
@@ -102,7 +99,7 @@ exports.campaignView = {
 
     jobs.push((done) => {
       api.models.Message.findOne({where: {
-        campaignId: data.params.campaignId
+        campaignGuid: data.params.campaignGuid
       }}).then((message) => {
         if (message) {
           data.response.sampleMessage = message.apiData()
@@ -123,16 +120,15 @@ exports.campaignCopy = {
 
   inputs: {
     name: { required: true },
-    campaignId: {
-      required: true,
-      formatter: function (p) { return parseInt(p) }
+    campaignGuid: {
+      required: true
     }
   },
 
   run: function (api, data, next) {
     api.models.Campaign.findOne({where: {
-      id: data.params.campaignId,
-      teamId: data.session.teamId
+      guid: data.params.campaignGuid,
+      teamGuid: data.session.teamGuid
     }}).then((campaign) => {
       if (!campaign) { return next(new Error('campaign not found')) }
       let newCampaign = api.models.Campaign.build({
@@ -140,9 +136,9 @@ exports.campaignCopy = {
         description: campaign.description,
         folder: campaign.folder,
         type: campaign.type,
-        listId: campaign.listId,
-        teamId: campaign.teamId,
-        templateId: campaign.templateId,
+        listGuid: campaign.listGuid,
+        teamGuid: campaign.teamGuid,
+        templateGuid: campaign.templateGuid,
         transport: campaign.transport,
         campaignVariables: campaign.campaignVariables,
         triggerEventMatch: campaign.triggerEventMatch
@@ -170,13 +166,11 @@ exports.campaignEdit = {
   inputs: {
     name: { required: false },
     description: { required: false },
-    listId: {
-      required: false,
-      formatter: function (p) { return parseInt(p) }
+    listGuid: {
+      required: false
     },
-    templateId: {
-      required: false,
-      formatter: function (p) { return parseInt(p) }
+    templateGuid: {
+      required: false
     },
     folder: {
       required: false,
@@ -207,16 +201,15 @@ exports.campaignEdit = {
       required: false,
       formatter: function (p) { return parseInt(p) }
     },
-    campaignId: {
-      required: true,
-      formatter: function (p) { return parseInt(p) }
+    campaignGuid: {
+      required: true
     }
   },
 
   run: function (api, data, next) {
     api.models.Campaign.findOne({where: {
-      id: data.params.campaignId,
-      teamId: data.session.teamId
+      guid: data.params.campaignGuid,
+      teamGuid: data.session.teamGuid
     }}).then((campaign) => {
       if (!campaign) { return next(new Error('campaign not found')) }
 
@@ -235,9 +228,8 @@ exports.campaignStats = {
   middleware: ['logged-in-session', 'role-required-admin', 'require-team'],
 
   inputs: {
-    campaignId: {
-      required: true,
-      formatter: function (p) { return parseInt(p) }
+    campaignGuid: {
+      required: true
     },
     start: {
       required: false,
@@ -256,8 +248,8 @@ exports.campaignStats = {
   },
   run: function (api, data, next) {
     api.models.Campaign.findOne({where: {
-      id: data.params.campaignId,
-      teamId: data.team.id
+      guid: data.params.campaignGuid,
+      teamGuid: data.team.guid
     }}).then((campaign) => {
       if (!campaign) { return next(new Error('campaign not found')) }
 
@@ -280,16 +272,15 @@ exports.campaignDelete = {
   middleware: ['logged-in-session', 'role-required-admin'],
 
   inputs: {
-    campaignId: {
-      required: true,
-      formatter: function (p) { return parseInt(p) }
+    campaignGuid: {
+      required: true
     }
   },
 
   run: function (api, data, next) {
     api.models.Campaign.findOne({where: {
-      id: data.params.campaignId,
-      teamId: data.session.teamId
+      guid: data.params.campaignGuid,
+      teamGuid: data.session.teamGuid
     }}).then((campaign) => {
       if (!campaign) { return next(new Error('campaign not found')) }
       campaign.destroy().then(() => {

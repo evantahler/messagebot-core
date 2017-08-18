@@ -16,7 +16,7 @@ exports.templateCreate = {
 
   run: function (api, data, next) {
     let template = api.models.Template.build(data.params)
-    template.teamId = data.session.teamId
+    template.teamGuid = data.session.teamGuid
 
     template.save().then(() => {
       data.response.template = template.apiData()
@@ -34,16 +34,15 @@ exports.templateView = {
   middleware: ['logged-in-session'],
 
   inputs: {
-    templateId: {
-      required: true,
-      formatter: function (p) { return parseInt(p) }
+    templateGuid: {
+      required: true
     }
   },
 
   run: function (api, data, next) {
     api.models.Template.findOne({where: {
-      id: data.params.templateId,
-      teamId: data.session.teamId
+      guid: data.params.templateGuid,
+      teamGuid: data.session.teamGuid
     }}).then((template) => {
       if (!template) { return next(new Error('template not found')) }
       data.response.template = template.apiData()
@@ -62,9 +61,8 @@ exports.templateRender = {
   inputs: {
     personGuid: { required: true },
     temporaryTemplate: { required: false },
-    templateId: {
-      required: true,
-      formatter: function (p) { return parseInt(p) }
+    templateGuid: {
+      required: true
     },
     trackBeacon: {
       required: false,
@@ -78,8 +76,8 @@ exports.templateRender = {
 
   run: function (api, data, next) {
     api.models.Template.findOne({where: {
-      id: data.params.templateId,
-      teamId: data.session.teamId
+      guid: data.params.templateGuid,
+      teamGuid: data.session.teamGuid
     }}).then((template) => {
       api.models.Person.findOne({
         where: {guid: data.params.personGuid}
@@ -124,21 +122,20 @@ exports.templateCopy = {
 
   inputs: {
     name: { required: true },
-    templateId: {
-      required: true,
-      formatter: function (p) { return parseInt(p) }
+    templateGuid: {
+      required: true
     }
   },
 
   run: function (api, data, next) {
     api.models.Template.findOne({where: {
-      id: data.params.templateId,
-      teamId: data.session.teamId
+      guid: data.params.templateGuid,
+      teamGuid: data.session.teamGuid
     }}).then((template) => {
       if (!template) { return next(new Error('template not found')) }
       let newTemplate = api.models.Template.build({
         name: data.params.name,
-        teamId: template.teamId,
+        teamGuid: template.teamGuid,
         description: template.description,
         folder: template.folder,
         template: template.template
@@ -160,9 +157,8 @@ exports.templateEdit = {
   middleware: ['logged-in-session', 'role-required-admin'],
 
   inputs: {
-    templateId: {
-      required: true,
-      formatter: function (p) { return parseInt(p) }
+    templateGuid: {
+      required: true
     },
     name: { required: false },
     description: { required: false },
@@ -172,8 +168,8 @@ exports.templateEdit = {
 
   run: function (api, data, next) {
     api.models.Template.findOne({where: {
-      id: data.params.templateId,
-      teamId: data.session.teamId
+      guid: data.params.templateGuid,
+      teamGuid: data.session.teamGuid
     }}).then((template) => {
       if (!template) { return next(new Error('template not found')) }
       template.updateAttributes(data.params).then(() => {
@@ -191,16 +187,15 @@ exports.templateDelete = {
   middleware: ['logged-in-session', 'role-required-admin'],
 
   inputs: {
-    templateId: {
-      required: true,
-      formatter: function (p) { return parseInt(p) }
+    templateGuid: {
+      required: true
     }
   },
 
   run: function (api, data, next) {
     api.models.Template.findOne({where: {
-      id: data.params.templateId,
-      teamId: data.session.teamId
+      guid: data.params.templateGuid,
+      teamGuid: data.session.teamGuid
     }}).then((template) => {
       if (!template) { return next(new Error('template not found')) }
       template.destroy().then(() => { next() }).catch(next)

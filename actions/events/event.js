@@ -7,7 +7,7 @@ exports.eventCreate = {
 
   inputs: {
     guid: { required: false },
-    teamId: { required: false, formatter: function (p) { return parseInt(p) } },
+    teamGuid: { required: false },
     ip: { required: false },
     device: { required: true },
     personGuid: { required: true },
@@ -32,7 +32,7 @@ exports.eventCreate = {
 
   run: function (api, data, next) {
     let event = api.models.Event.build(data.params)
-    if (!event.teamId) { event.teamId = data.team.id }
+    if (!event.teamGuid) { event.teamGuid = data.team.guid }
     event.data = data.params.data
 
     if (!event.ip) { event.ip = data.connection.remoteIP }
@@ -47,7 +47,7 @@ exports.eventCreate = {
         data.connection.sendFile('tracking/tracking.gif')
       }
 
-      api.tasks.enqueueIn(1, 'events:process', {teamId: data.team.id, events: [event.guid]}, 'messagebot:events', next)
+      api.tasks.enqueueIn(1, 'events:process', {teamGuid: data.team.guid, events: [event.guid]}, 'messagebot:events', next)
     }).catch(next)
   }
 }
@@ -59,7 +59,7 @@ exports.eventEdit = {
   middleware: ['require-team'],
 
   inputs: {
-    teamId: { required: false, formatter: function (p) { return parseInt(p) } },
+    teamGuid: { required: false },
     ip: { required: false },
     device: { required: false },
     guid: { required: true },
@@ -79,7 +79,7 @@ exports.eventEdit = {
 
   run: function (api, data, next) {
     api.models.Event.findOne({where: {
-      teamId: data.team.id,
+      teamGuid: data.team.guid,
       guid: data.params.guid
     }}).then((event) => {
       if (!event) { return next(new Error(`Event (${data.params.guid}) not found`)) }
@@ -98,7 +98,7 @@ exports.eventEdit = {
 
         event.save().then(() => {
           data.response.event = event.apiData()
-          api.tasks.enqueueIn(1, 'events:process', {teamId: data.team.id, events: [event.guid]}, 'messagebot:events', next)
+          api.tasks.enqueueIn(1, 'events:process', {teamGuid: data.team.guid, events: [event.guid]}, 'messagebot:events', next)
         }).catch(next)
       })
     }).catch(next)
@@ -112,13 +112,13 @@ exports.eventView = {
   middleware: ['require-team'],
 
   inputs: {
-    teamId: { required: false, formatter: function (p) { return parseInt(p) } },
+    teamGuid: { required: false },
     guid: { required: true }
   },
 
   run: function (api, data, next) {
     api.models.Event.findOne({where: {
-      teamId: data.team.id,
+      teamGuid: data.team.guid,
       guid: data.params.guid
     }}).then((event) => {
       if (!event) { return next(new Error(`Event (${data.params.guid}) not found`)) }
@@ -138,13 +138,13 @@ exports.eventDelete = {
   middleware: ['require-team'],
 
   inputs: {
-    teamId: { required: false, formatter: function (p) { return parseInt(p) } },
+    teamGuid: { required: false },
     guid: { required: true }
   },
 
   run: function (api, data, next) {
     api.models.Event.findOne({where: {
-      teamId: data.team.id,
+      teamGuid: data.team.guid,
       guid: data.params.guid
     }}).then((event) => {
       if (!event) { return next(new Error(`Event (${data.params.guid}) not found`)) }

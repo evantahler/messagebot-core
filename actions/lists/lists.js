@@ -39,7 +39,7 @@ exports.listsList = {
 
   run: function (api, data, next) {
     let query = {
-      where: { teamId: data.session.teamId },
+      where: { teamGuid: data.session.teamGuid },
       order: data.params.order,
       offset: data.params.from,
       limit: data.params.size
@@ -71,7 +71,7 @@ exports.listsFolders = {
   inputs: {},
 
   run: function (api, data, next) {
-    api.models.List.aggregate('folder', 'DISTINCT', {where: {teamId: data.session.teamId}, plain: false}).then((response) => {
+    api.models.List.aggregate('folder', 'DISTINCT', {where: {teamGuid: data.session.teamGuid}, plain: false}).then((response) => {
       data.response.folders = []
       response.forEach((r) => { data.response.folders.push(r.DISTINCT) })
       data.response.folders.sort()

@@ -17,7 +17,7 @@ describe('models:templates', () => {
 
   it('can create new template with valid params', (done) => {
     template = api.models.Template.build({
-      teamId: 1,
+      teamGuid: 1,
       name: 'my template',
       description: 'my template',
       type: 'simple',
@@ -34,7 +34,7 @@ describe('models:templates', () => {
 
   it('will not create new template with invalid params (missing requirement)', (done) => {
     template = api.models.Template.build({
-      teamId: 1,
+      teamGuid: 1,
       type: 'simple',
       folder: 'default'
     })
@@ -51,7 +51,7 @@ describe('models:templates', () => {
 
   it('will not create new templates with invalid params (duplicate key)', (done) => {
     template = api.models.Template.build({
-      teamId: 1,
+      teamGuid: 1,
       name: 'my template',
       description: 'my template',
       type: 'simple',
@@ -60,7 +60,7 @@ describe('models:templates', () => {
 
     template.save().then(() => {
       let otherTemplate = api.models.Template.build({
-        teamId: 1,
+        teamGuid: 1,
         name: 'my template',
         description: 'my template',
         type: 'simple',

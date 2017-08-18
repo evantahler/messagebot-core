@@ -15,7 +15,7 @@ describe('integartion:template', () => {
 
     before((done) => {
       template = api.models.Template.build({
-        teamId: 1,
+        teamGuid: 1,
         name: 'my template',
         description: 'my template',
         folder: 'default',
@@ -27,7 +27,7 @@ describe('integartion:template', () => {
 
     before((done) => {
       footerTemplate = api.models.Template.build({
-        teamId: 1,
+        teamGuid: 1,
         name: 'my footer',
         description: 'my footer',
         folder: 'default',
@@ -39,7 +39,7 @@ describe('integartion:template', () => {
 
     before((done) => {
       person = api.models.Person.build({
-        teamId: 1,
+        teamGuid: 1,
         source: 'tester',
         device: 'phone',
         listOptOuts: [],
@@ -57,10 +57,10 @@ describe('integartion:template', () => {
 
     before((done) => {
       message = api.models.Message.build({
-        teamId: 1,
+        teamGuid: 1,
         personGuid: person.guid,
         transport: 'smtp',
-        campaignId: '1',
+        campaignGuid: '1',
         body: '',
         view: {},
         sentAt: new Date()

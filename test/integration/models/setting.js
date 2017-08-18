@@ -15,7 +15,7 @@ describe('integartion:settings', () => {
   })
 
   it('seeded the settings for the team at boot', (done) => {
-    api.models.Setting.findAll({where: {teamId: team.id}}).then((settings) => {
+    api.models.Setting.findAll({where: {teamGuid: team.guid}}).then((settings) => {
       settings.length.should.be.above(0)
       done()
     })

@@ -30,7 +30,7 @@ describe('system:status', () => {
       response.node.uptime.should.be.above(0)
       response.node.avgEventLoopDelay.should.be.below(1)
       response.node.memoryUsedMB.should.be.below(150)
-      response.node.team.id.should.equal(1)
+      response.node.team.guid.should.equal(1)
       response.node.team.name.should.equal('TestTeam')
 
       done()

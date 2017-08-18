@@ -17,7 +17,7 @@ describe('models:users', () => {
 
   it('can create new users with valid params', (done) => {
     user = api.models.User.build({
-      teamId: 1,
+      teamGuid: 1,
       email: 'a@b.com',
       personGuid: Math.random(),
       passwordHash: 'xxx',
@@ -36,7 +36,7 @@ describe('models:users', () => {
 
   it('will not create new users with invalid params (missing requirement)', (done) => {
     user = api.models.User.build({
-      teamId: 1,
+      teamGuid: 1,
       passwordHash: 'xxx',
       lastName: 'lname'
     })
@@ -54,7 +54,7 @@ describe('models:users', () => {
 
   it('will not create new users with invalid params (duplicate key)', (done) => {
     user = api.models.User.build({
-      teamId: 1,
+      teamGuid: 1,
       email: 'admin@localhost.com',
       personGuid: Math.random(),
       passwordHash: 'xxx',
@@ -74,7 +74,7 @@ describe('models:users', () => {
 
   it('will not create new users with invalid params (bad role)', (done) => {
     user = api.models.User.build({
-      teamId: 1,
+      teamGuid: 1,
       email: 'admin5@localhost.com',
       personGuid: Math.random(),
       passwordHash: 'xxx',
@@ -94,7 +94,7 @@ describe('models:users', () => {
 
   it('passwords can be checked (success)', (done) => {
     user = api.models.User.build({
-      teamId: 1,
+      teamGuid: 1,
       personGuid: Math.random(),
       email: 'aaa@b.com',
       firstName: 'fname',
@@ -116,7 +116,7 @@ describe('models:users', () => {
 
   it('passwords can be checked (failure)', (done) => {
     user = api.models.User.build({
-      teamId: 1,
+      teamGuid: 1,
       personGuid: Math.random(),
       email: 'bbb@b.com',
       firstName: 'fname',

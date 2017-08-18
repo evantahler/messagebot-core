@@ -8,7 +8,7 @@ describe('general:seeds', () => {
 
   it('has the first team', (done) => {
     api.models.Team.findOne({where: {id: 1}}).then((team) => {
-      team.id.should.equal(1)
+      team.guid.should.equal(1)
       team.name.should.equal('TestTeam')
       team.trackingDomain.should.equal('http://tracking.site.com')
       team.trackingDomainRegexp.should.equal('^.*$')
@@ -20,7 +20,7 @@ describe('general:seeds', () => {
   it('has the first admin user', (done) => {
     api.models.User.findOne({where: {id: 1}}).then((user) => {
       user.id.should.equal(1)
-      user.teamId.should.equal(1)
+      user.teamGuid.should.equal(1)
       user.email.should.equal('admin@localhost.com')
       user.role.should.equal('admin')
 

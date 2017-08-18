@@ -23,7 +23,7 @@ describe('action:person', () => {
 
   before((done) => {
     otherPerson = api.models.Person.build({
-      teamId: team.id,
+      teamGuid: team.guid,
       source: 'tester',
       device: 'phone',
       listOptOuts: [],
@@ -42,7 +42,7 @@ describe('action:person', () => {
 
   before((done) => {
     list = api.models.List.build({
-      teamId: 1,
+      teamGuid: 1,
       name: 'my list',
       description: 'my list',
       type: 'static',
@@ -58,7 +58,7 @@ describe('action:person', () => {
   describe('person:create', () => {
     it('succeeds', (done) => {
       api.specHelper.runAction('person:create', {
-        teamId: team.id,
+        teamGuid: team.guid,
         source: 'tester',
         data: {
           firstName: 'fname',
@@ -90,7 +90,7 @@ describe('action:person', () => {
 
     it('succeeds (can run people:buildCreateEvent)', (done) => {
       api.specHelper.runTask('people:buildCreateEvent', {
-        teamId: team.id,
+        teamGuid: team.guid,
         guid: personGuid
       }, (error) => {
         should.not.exist(error)
@@ -111,7 +111,7 @@ describe('action:person', () => {
 
     it('fails (uniqueness failure)', (done) => {
       api.specHelper.runAction('person:create', {
-        teamId: team.id,
+        teamGuid: team.guid,
         source: 'tester',
         data: {
           firstName: 'fname',
@@ -126,7 +126,7 @@ describe('action:person', () => {
 
     it('fails (missing param)', (done) => {
       api.specHelper.runAction('person:create', {
-        teamId: team.id,
+        teamGuid: team.guid,
         data: {}
       }, (response) => {
         response.error.should.equal('Error: source is a required parameter for this action')
@@ -138,7 +138,7 @@ describe('action:person', () => {
   describe('person:view', () => {
     it('succeeds', (done) => {
       api.specHelper.runAction('person:view', {
-        teamId: team.id,
+        teamGuid: team.guid,
         guid: personGuid
       }, (response) => {
         should.not.exist(response.error)
@@ -150,12 +150,12 @@ describe('action:person', () => {
 
     it('succeeds (lists included)', (done) => {
       api.models.ListPerson.create({
-        teamId: team.id,
-        listId: list.id,
+        teamGuid: team.guid,
+        listGuid: list.id,
         personGuid: personGuid
       }).then(() => {
         api.specHelper.runAction('person:view', {
-          teamId: team.id,
+          teamGuid: team.guid,
           guid: personGuid
         }, (response) => {
           should.not.exist(response.error)
@@ -168,7 +168,7 @@ describe('action:person', () => {
 
     it('fails (not found)', (done) => {
       api.specHelper.runAction('person:view', {
-        teamId: team.id,
+        teamGuid: team.guid,
         guid: 'xxx'
       }, (response) => {
         response.error.should.equal('Error: Person (xxx) not found')
@@ -180,7 +180,7 @@ describe('action:person', () => {
   describe('person:edit', () => {
     it('succeeds', (done) => {
       api.specHelper.runAction('person:edit', {
-        teamId: team.id,
+        teamGuid: team.guid,
         guid: personGuid,
         data: {email: 'newEmail@faker.fake'}
       }, (response) => {
@@ -191,13 +191,13 @@ describe('action:person', () => {
 
     it('can add arbitrary data', (done) => {
       api.specHelper.runAction('person:edit', {
-        teamId: team.id,
+        teamGuid: team.guid,
         guid: personGuid,
         data: {thing: 'stuff'}
       }, (response) => {
         should.not.exist(response.error)
         api.specHelper.runAction('person:view', {
-          teamId: team.id,
+          teamGuid: team.guid,
           guid: personGuid
         }, (response) => {
           should.not.exist(response.error)
@@ -210,13 +210,13 @@ describe('action:person', () => {
 
     it('can remove arbitrary data', (done) => {
       api.specHelper.runAction('person:edit', {
-        teamId: team.id,
+        teamGuid: team.guid,
         guid: personGuid,
         data: {thing: '_delete'}
       }, (response) => {
         should.not.exist(response.error)
         api.specHelper.runAction('person:view', {
-          teamId: team.id,
+          teamGuid: team.guid,
           guid: personGuid
         }, (response) => {
           should.not.exist(response.error)
@@ -229,7 +229,7 @@ describe('action:person', () => {
 
     it('fails (uniqueness failure)', (done) => {
       api.specHelper.runAction('person:edit', {
-        teamId: team.id,
+        teamGuid: team.guid,
         guid: personGuid,
         data: {email: 'otherPerson@faker.fake'}
       }, (response) => {
@@ -240,7 +240,7 @@ describe('action:person', () => {
 
     it('fails (not found)', (done) => {
       api.specHelper.runAction('person:edit', {
-        teamId: team.id,
+        teamGuid: team.guid,
         guid: 'xxx',
         data: {email: 'otherPerson@faker.fake'}
       }, (response) => {
@@ -253,14 +253,14 @@ describe('action:person', () => {
   describe('person:opt', () => {
     it('can opt-out of a list (and check it)', (done) => {
       api.specHelper.runAction('person:opt', {
-        teamId: team.id,
+        teamGuid: team.guid,
         guid: personGuid,
         direction: 'out',
-        listId: list.id
+        listGuid: list.id
       }, (response) => {
         should.not.exist(response.error)
         api.specHelper.runAction('person:view', {
-          teamId: team.id,
+          teamGuid: team.guid,
           guid: personGuid
         }, (response) => {
           should.not.exist(response.error)
@@ -273,14 +273,14 @@ describe('action:person', () => {
 
     it('can opt back into a list (and check it)', (done) => {
       api.specHelper.runAction('person:opt', {
-        teamId: team.id,
+        teamGuid: team.guid,
         guid: personGuid,
         direction: 'in',
-        listId: list.id
+        listGuid: list.id
       }, (response) => {
         should.not.exist(response.error)
         api.specHelper.runAction('person:view', {
-          teamId: team.id,
+          teamGuid: team.guid,
           guid: personGuid
         }, (response) => {
           should.not.exist(response.error)
@@ -292,10 +292,10 @@ describe('action:person', () => {
 
     it('can opt-out of a list (fails, list not found)', (done) => {
       api.specHelper.runAction('person:opt', {
-        teamId: team.id,
+        teamGuid: team.guid,
         guid: personGuid,
         direction: 'in',
-        listId: 999999
+        listGuid: 999999
       }, (response) => {
         response.error.should.equal('Error: List not found')
         done()
@@ -304,14 +304,14 @@ describe('action:person', () => {
 
     it('can opt-out globally (and check it)', (done) => {
       api.specHelper.runAction('person:opt', {
-        teamId: team.id,
+        teamGuid: team.guid,
         guid: personGuid,
         direction: 'out',
         global: true
       }, (response) => {
         should.not.exist(response.error)
         api.specHelper.runAction('person:view', {
-          teamId: team.id,
+          teamGuid: team.guid,
           guid: personGuid
         }, (response) => {
           should.not.exist(response.error)
@@ -323,14 +323,14 @@ describe('action:person', () => {
 
     it('can opt-in globally (and check it)', (done) => {
       api.specHelper.runAction('person:opt', {
-        teamId: team.id,
+        teamGuid: team.guid,
         guid: personGuid,
         direction: 'in',
         global: true
       }, (response) => {
         should.not.exist(response.error)
         api.specHelper.runAction('person:view', {
-          teamId: team.id,
+          teamGuid: team.guid,
           guid: personGuid
         }, (response) => {
           should.not.exist(response.error)
@@ -401,7 +401,7 @@ describe('action:person', () => {
     before((done) => {
       event = api.models.Event.build({
         messageGuid: Math.random(),
-        teamId: team.id,
+        teamGuid: team.guid,
         personGuid: personGuid,
         ip: '0.0.0.0',
         device: 'phone',
@@ -415,10 +415,10 @@ describe('action:person', () => {
 
     before((done) => {
       message = api.models.Message.build({
-        teamId: team.id,
+        teamGuid: team.guid,
         transport: 'smtp',
         personGuid: personGuid,
-        campaignId: 1,
+        campaignGuid: 1,
         body: '',
         view: {},
         sentAt: new Date()
@@ -431,7 +431,7 @@ describe('action:person', () => {
 
     it('succeeds', (done) => {
       api.specHelper.runAction('person:delete', {
-        teamId: team.id,
+        teamGuid: team.guid,
         guid: personGuid
       }, (response) => {
         should.not.exist(response.error)
@@ -478,7 +478,7 @@ describe('action:person', () => {
       })
 
       jobs.push((next) => {
-        api.models.ListPerson.count({ where: { teamId: team.id, personGuid: personGuid } }).then((count) => {
+        api.models.ListPerson.count({ where: { teamGuid: team.guid, personGuid: personGuid } }).then((count) => {
           count.should.equal(0)
           next()
         }).catch(next)
@@ -492,7 +492,7 @@ describe('action:person', () => {
 
     it('fails (not found)', (done) => {
       api.specHelper.runAction('person:delete', {
-        teamId: team.id,
+        teamGuid: team.guid,
         guid: personGuid
       }, (response) => {
         response.error.should.equal('Error: Person (' + personGuid + ') not found')

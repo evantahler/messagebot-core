@@ -1,5 +1,5 @@
 const Sequelize = require('sequelize')
-// const uuid = require('uuid')
+const uuid = require('uuid')
 const async = require('async')
 
 let loader = function (api) {
@@ -18,11 +18,11 @@ let loader = function (api) {
 
     model: api.sequelize.sequelize.define('person',
       {
-        // guid: {
-        //   type: Sequelize.UUID,
-        //   primaryKey: true,
-        //   defaultValue: () => { return uuid.v4() }
-        // },
+        guid: {
+          type: Sequelize.UUID,
+          primaryKey: true,
+          defaultValue: () => { return uuid.v4() }
+        },
         teamGuid: {
           allowNull: false,
           type: Sequelize.UUID
@@ -79,7 +79,7 @@ let loader = function (api) {
                 api.models.ListPerson.destroy({
                   where: {
                     personGuid: self.guid,
-                    teamId: self.teamId
+                    teamGuid: self.teamGuid
                   }
                 }).then(() => {
                   done()

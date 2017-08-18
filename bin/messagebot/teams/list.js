@@ -13,7 +13,7 @@ module.exports = {
     })
 
     jobs.push((done) => {
-      api.models.Team.findAll({oder: ['id', 'asc']}).then((teams) => {
+      api.models.Team.findAll({oder: ['guid', 'asc']}).then((teams) => {
         let tableData = []
         teams.forEach((team) => { tableData.push(team.apiData()) })
 

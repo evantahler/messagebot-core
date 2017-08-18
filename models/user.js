@@ -1,5 +1,6 @@
 const Sequelize = require('sequelize')
 const bcrypt = require('bcrypt')
+const uuid = require('uuid')
 
 let loader = function (api) {
   /* --- Priave Methods --- */
@@ -22,6 +23,11 @@ let loader = function (api) {
     name: 'User',
     model: api.sequelize.sequelize.define('user',
       {
+        guid: {
+          type: Sequelize.UUID,
+          primaryKey: true,
+          defaultValue: () => { return uuid.v4() }
+        },
         'teamGuid': {
           type: Sequelize.UUID,
           allowNull: false
@@ -91,7 +97,7 @@ let loader = function (api) {
 
           apiData: function () {
             return {
-              id: this.id,
+              guid: this.guid,
               personGuid: this.personGuid,
               email: this.email,
               role: this.role,

@@ -4,7 +4,7 @@ const specHelper = require(path.join(__dirname, '/../specHelper'))
 let email = 'admin@localhost.com'
 let password = 'password'
 let api
-let templateId
+let templateGuid
 
 describe('actions:template', () => {
   beforeEach(() => { api = specHelper.api })
@@ -22,7 +22,7 @@ describe('actions:template', () => {
         should.not.exist(response.error)
         response.template.folder.should.equal('default')
         response.template.name.should.equal('test template')
-        templateId = response.template.id
+        templateGuid = response.template.id
         done()
       })
     })
@@ -52,7 +52,7 @@ describe('actions:template', () => {
   describe('template:view', () => {
     it('succeeds', (done) => {
       specHelper.requestWithLogin(email, password, 'template:view', {
-        templateId: templateId
+        templateGuid: templateGuid
       }, (response) => {
         should.not.exist(response.error)
         response.template.folder.should.equal('default')
@@ -63,7 +63,7 @@ describe('actions:template', () => {
 
     it('fails (not found)', (done) => {
       specHelper.requestWithLogin(email, password, 'template:view', {
-        templateId: 999
+        templateGuid: 999
       }, (response) => {
         response.error.should.equal('Error: template not found')
         done()
@@ -74,11 +74,11 @@ describe('actions:template', () => {
   describe('template:copy', () => {
     it('succeeds', (done) => {
       specHelper.requestWithLogin(email, password, 'template:copy', {
-        templateId: templateId,
+        templateGuid: templateGuid,
         name: 'new template'
       }, (response) => {
         should.not.exist(response.error)
-        response.template.id.should.not.equal(templateId)
+        response.template.id.should.not.equal(templateGuid)
         response.template.folder.should.equal('default')
         response.template.name.should.equal('new template')
         done()
@@ -87,7 +87,7 @@ describe('actions:template', () => {
 
     it('fails (uniqueness param)', (done) => {
       specHelper.requestWithLogin(email, password, 'template:copy', {
-        templateId: templateId,
+        templateGuid: templateGuid,
         name: 'test template'
       }, (response) => {
         response.error.should.match(/must be unique/)
@@ -97,7 +97,7 @@ describe('actions:template', () => {
 
     it('fails (missing param)', (done) => {
       specHelper.requestWithLogin(email, password, 'template:copy', {
-        templateId: templateId
+        templateGuid: templateGuid
       }, (response) => {
         response.error.should.equal('Error: name is a required parameter for this action')
         done()
@@ -108,7 +108,7 @@ describe('actions:template', () => {
   describe('template:edit', () => {
     it('succeeds', (done) => {
       specHelper.requestWithLogin(email, password, 'template:edit', {
-        templateId: templateId,
+        templateGuid: templateGuid,
         name: 'a better template name'
       }, (response) => {
         should.not.exist(response.error)
@@ -119,7 +119,7 @@ describe('actions:template', () => {
 
     it('fails (uniqueness failure)', (done) => {
       specHelper.requestWithLogin(email, password, 'template:edit', {
-        templateId: templateId,
+        templateGuid: templateGuid,
         name: 'new template'
       }, (response) => {
         response.error.should.equal('Error: Validation error')
@@ -142,15 +142,15 @@ describe('actions:template', () => {
     before((done) => {
       person = api.models.Person.build()
       person.source = 'tester'
-      person.teamId = team.id
+      person.teamGuid = team.guid
       person.device = 'phone'
       person.listOptOuts = []
       person.globalOptOut = false
       person.save().then(() => {
         let collection = [
-          {personGuid: person.guid, teamId: team.id, key: 'firstName', value: 'fname'},
-          {personGuid: person.guid, teamId: team.id, key: 'lastName', value: 'lame'},
-          {personGuid: person.guid, teamId: team.id, key: 'email', value: 'fake@faker.fake'}
+          {personGuid: person.guid, teamGuid: team.guid, key: 'firstName', value: 'fname'},
+          {personGuid: person.guid, teamGuid: team.guid, key: 'lastName', value: 'lame'},
+          {personGuid: person.guid, teamGuid: team.guid, key: 'email', value: 'fake@faker.fake'}
         ]
 
         api.models.PersonData.bulkCreate(collection).then(() => {
@@ -167,33 +167,33 @@ describe('actions:template', () => {
 
     it('succeeds (view; specHelper)', (done) => {
       specHelper.requestWithLogin(email, password, 'template:render', {
-        templateId: templateId,
+        templateGuid: templateGuid,
         personGuid: person.guid
       }, (response) => {
         should.not.exist(response.error)
         response.html.should.equal('<h1>Hello, fname</h1>')
         response.view.person.data.firstName.should.equal('fname')
-        response.view.template.id.should.equal(templateId)
+        response.view.template.id.should.equal(templateGuid)
         done()
       })
     })
 
     it('succeeds (view; web request)', (done) => {
       specHelper.WebRequestWithLogin(email, password, 'get', '/api/template/render', {
-        templateId: templateId,
+        templateGuid: templateGuid,
         personGuid: person.guid
       }, (response, res) => {
         should.not.exist(response.error)
         response.html.should.equal('<h1>Hello, fname</h1>')
         response.view.person.data.firstName.should.equal('fname')
-        response.view.template.id.should.equal(templateId)
+        response.view.template.id.should.equal(templateGuid)
         done()
       })
     })
 
     it('succeeds (rendered HTML; web request)', (done) => {
       specHelper.WebRequestWithLogin(email, password, 'get', '/api/template/render.html', {
-        templateId: templateId,
+        templateGuid: templateGuid,
         personGuid: person.guid
       }, (response, res) => {
         response.should.equal('<h1>Hello, fname</h1>')
@@ -231,7 +231,7 @@ describe('actions:template', () => {
   describe('template:delete', () => {
     it('succeeds', (done) => {
       specHelper.requestWithLogin(email, password, 'template:delete', {
-        templateId: templateId
+        templateGuid: templateGuid
       }, (response) => {
         should.not.exist(response.error)
         done()
@@ -240,7 +240,7 @@ describe('actions:template', () => {
 
     it('fails (not found)', (done) => {
       specHelper.requestWithLogin(email, password, 'template:delete', {
-        templateId: templateId
+        templateGuid: templateGuid
       }, (response) => {
         response.error.should.equal('Error: template not found')
         done()

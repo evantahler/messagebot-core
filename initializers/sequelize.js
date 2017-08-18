@@ -94,7 +94,7 @@ module.exports = {
       },
 
       buildCompoundWhere: function (data, leaderFK, FKTAble) {
-        let where = { teamId: data.team.id }
+        let where = { teamGuid: data.team.guid }
 
         if (data.params.start && data.params.end) {
           where.createdAt = {
@@ -145,7 +145,7 @@ module.exports = {
             if (uniqueDataKeys.indexOf(k) >= 0) {
               jobs.push((done) => {
                 let where = {
-                  teamId: self.teamId,
+                  teamGuid: self.teamGuid,
                   key: k,
                   value: self.data[k]
                 }
@@ -183,7 +183,7 @@ module.exports = {
                 if (typeof v === 'object') { v = JSON.stringify(v) }
                 jobs.push((done) => {
                   let o = {
-                    teamId: self.teamId,
+                    teamGuid: self.teamGuid,
                     key: k,
                     value: v
                   }

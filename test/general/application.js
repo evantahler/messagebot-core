@@ -27,7 +27,7 @@ describe('general:applicaiton', () => {
 
     describe('api.utils.determineActionsTeam', () => {
       it('works for id (success)', (done) => {
-        api.utils.determineActionsTeam({params: {teamId: 1}}, (error, team) => {
+        api.utils.determineActionsTeam({params: {teamGuid: 1}}, (error, team) => {
           should.not.exist(error)
           should.exist(team)
           done()
@@ -35,7 +35,7 @@ describe('general:applicaiton', () => {
       })
 
       it('works for id (failure)', (done) => {
-        api.utils.determineActionsTeam({params: {teamId: 99}}, (error, team) => {
+        api.utils.determineActionsTeam({params: {teamGuid: 99}}, (error, team) => {
           should.not.exist(error)
           should.not.exist(team)
           done()
@@ -43,7 +43,7 @@ describe('general:applicaiton', () => {
       })
 
       it('works for session (success)', (done) => {
-        api.utils.determineActionsTeam({session: {teamId: 1}}, (error, team) => {
+        api.utils.determineActionsTeam({session: {teamGuid: 1}}, (error, team) => {
           should.not.exist(error)
           should.exist(team)
           done()
@@ -51,7 +51,7 @@ describe('general:applicaiton', () => {
       })
 
       it('works for session (failure)', (done) => {
-        api.utils.determineActionsTeam({session: {teamId: 99}}, (error, team) => {
+        api.utils.determineActionsTeam({session: {teamGuid: 99}}, (error, team) => {
           should.not.exist(error)
           should.not.exist(team)
           done()

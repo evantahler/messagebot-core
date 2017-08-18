@@ -39,7 +39,7 @@ module.exports = {
     jobs.push((done) => {
       user = api.models.User.build({
         email: data.params.email,
-        teamId: team.id,
+        teamGuid: team.guid,
         role: 'admin',
         firstName: 'admin',
         lastName: 'admin'
@@ -55,7 +55,7 @@ module.exports = {
         lastName: user.lastName,
         source: 'admin',
         device: 'unknown',
-        teamId: team.id,
+        teamGuid: team.guid,
         listOptOuts: [],
         globalOptOut: false
       })
@@ -87,7 +87,7 @@ module.exports = {
     })
 
     async.series(jobs, (error) => {
-      if (error) api.log(error.toString(), 'error')
+      if (error) api.log(`Error creating team: ${error.toString()}`, 'error')
       next()
     })
   }

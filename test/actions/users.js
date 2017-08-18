@@ -5,8 +5,8 @@ const specHelper = require(path.join(__dirname, '/../specHelper'))
 let email = 'admin@localhost.com'
 let password = 'password'
 let api
-let userId
-let otherUserId
+let userGuid
+let otheruserGuid
 
 describe('actions:user', () => {
   before(() => { api = specHelper.api })
@@ -51,13 +51,13 @@ describe('actions:user', () => {
         response.user.email.should.equal('user@fake.com')
         response.user.role.should.equal('admin')
         should.not.exist(response.user.pasword)
-        userId = response.user.id
+        userGuid = response.user.id
         done()
       })
     })
 
     it('creates a person with each uesr', (done) => {
-      api.models.User.find({where: {id: userId}}).then((user) => {
+      api.models.User.find({where: {id: userGuid}}).then((user) => {
         api.models.Person.find({where: {guid: user.personGuid}}).then((person) => {
           person.hydrate((error) => {
             should.not.exist(error)
@@ -83,13 +83,13 @@ describe('actions:user', () => {
         response.user.email.should.equal('otherUser@fake.com')
         response.user.role.should.equal('marketer')
         should.not.exist(response.user.pasword)
-        otherUserId = response.user.id
+        otheruserGuid = response.user.id
         done()
       })
     })
 
     it('succeeds (creates the proper person)', (done) => {
-      api.models.User.find({where: {id: userId}}).then((user) => {
+      api.models.User.find({where: {id: userGuid}}).then((user) => {
         should.exist(user)
         api.models.Person.find({where: {guid: user.personGuid}}).then((person) => {
           person.hydrate((error) => {
@@ -155,7 +155,7 @@ describe('actions:user', () => {
 
     it('succeeds (admin, other user)', (done) => {
       specHelper.requestWithLogin(email, password, 'user:view', {
-        userId: userId
+        userGuid: userGuid
       }, (response) => {
         should.not.exist(response.error)
         response.user.email.should.equal('user@fake.com')
@@ -173,7 +173,7 @@ describe('actions:user', () => {
 
     it('fails (non-admin, other user)', (done) => {
       specHelper.requestWithLogin('otherUser@fake.com', 'abc123', 'user:view', {
-        userId: userId
+        userGuid: userGuid
       }, (response) => {
         should.not.exist(response.error)
         done()
@@ -182,7 +182,7 @@ describe('actions:user', () => {
 
     it('fails (not found)', (done) => {
       specHelper.requestWithLogin(email, password, 'user:view', {
-        userId: 999
+        userGuid: 999
       }, (response) => {
         response.error.should.equal('Error: user not found')
         done()
@@ -202,7 +202,7 @@ describe('actions:user', () => {
     })
 
     it('edits the person as well', (done) => {
-      api.models.User.find({where: {id: userId}}).then((user) => {
+      api.models.User.find({where: {id: userGuid}}).then((user) => {
         should.exist(user)
         api.models.Person.find({where: {guid: user.personGuid}}).then((person) => {
           person.hydrate((error) => {
@@ -219,7 +219,7 @@ describe('actions:user', () => {
 
     it('succeeds (admin, other user)', (done) => {
       specHelper.requestWithLogin('user@fake.com', 'abc123', 'user:edit', {
-        userId: otherUserId,
+        userGuid: otheruserGuid,
         firstName: 'new first name'
       }, (response) => {
         should.not.exist(response.error)
@@ -250,7 +250,7 @@ describe('actions:user', () => {
     it('succeeds (admin, can change other users password)', (done) => {
       specHelper.requestWithLogin('user@fake.com', 'abc123', 'user:edit', {
         password: 'abc123',
-        userId: otherUserId
+        userGuid: otheruserGuid
       }, (response) => {
         should.not.exist(response.error)
         done()
@@ -260,7 +260,7 @@ describe('actions:user', () => {
     it('succeeds (admin, can change other users role)', (done) => {
       specHelper.requestWithLogin('user@fake.com', 'abc123', 'user:edit', {
         role: 'analyst',
-        userId: otherUserId
+        userGuid: otheruserGuid
       }, (response) => {
         should.not.exist(response.error)
         response.user.role.should.equal('analyst')
@@ -271,7 +271,7 @@ describe('actions:user', () => {
     it('fails (non-admin, can change other users password)', (done) => {
       specHelper.requestWithLogin('otherUser@fake.com', 'abc123', 'user:edit', {
         password: 'xyz123',
-        userId: userId
+        userGuid: userGuid
       }, (response) => {
         response.error.should.equal('Error: only admin role can modify other users')
         done()
@@ -290,7 +290,7 @@ describe('actions:user', () => {
     it('fails (non-admin, other user, change role)', (done) => {
       specHelper.requestWithLogin('otherUser@fake.com', 'abc123', 'user:edit', {
         role: 'admin',
-        userId: userId
+        userGuid: userGuid
       }, (response) => {
         response.error.should.equal('Error: only admin role can modify role')
         done()
@@ -340,9 +340,9 @@ describe('actions:user', () => {
 
   describe('user:delete', () => {
     it('succeeds (admin, other user)', (done) => {
-      api.models.User.find({where: {id: userId}}).then((user) => {
+      api.models.User.find({where: {id: userGuid}}).then((user) => {
         specHelper.requestWithLogin(email, password, 'user:delete', {
-          userId: userId
+          userGuid: userGuid
         }, (response) => {
           should.not.exist(response.error)
           api.models.Person.find({where: {guid: user.personGuid}}).then((person) => {
@@ -358,14 +358,14 @@ describe('actions:user', () => {
 
     it('fails (admin, self (null))', (done) => {
       specHelper.requestWithLogin(email, password, 'user:delete', {}, (response) => {
-        response.error.should.equal('Error: userId is a required parameter for this action')
+        response.error.should.equal('Error: userGuid is a required parameter for this action')
         done()
       })
     })
 
     it('fails (admin, self (explicit))', (done) => {
       specHelper.requestWithLogin(email, password, 'user:delete', {
-        userId: 1
+        userGuid: 1
       }, (response) => {
         response.error.should.equal('Error: you cannot delete yourself')
         done()
@@ -374,7 +374,7 @@ describe('actions:user', () => {
 
     it('fails (admin, not-found)', (done) => {
       specHelper.requestWithLogin(email, password, 'user:delete', {
-        userId: 999
+        userGuid: 999
       }, (response) => {
         response.error.should.equal('Error: user not found')
         done()
@@ -383,7 +383,7 @@ describe('actions:user', () => {
 
     it('fails (non-admin, other user)', (done) => {
       specHelper.requestWithLogin('otherUser@fake.com', 'abc123', 'user:delete', {
-        userId: 1
+        userGuid: 1
       }, (response) => {
         response.error.should.equal('Error: admin role requried')
         done()

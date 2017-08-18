@@ -20,7 +20,7 @@ exports.task = {
     let team
 
     jobs.push((done) => {
-      api.models.Campaign.findOne({where: {id: params.campaignId}}).then((c) => {
+      api.models.Campaign.findOne({where: {guid: params.campaignGuid}}).then((c) => {
         campaign = c
         if (!campaign) { return done(new Error('campaign not found')) }
         done()
@@ -28,7 +28,7 @@ exports.task = {
     })
 
     jobs.push((done) => {
-      api.models.List.findOne({where: {id: params.listId}}).then((l) => {
+      api.models.List.findOne({where: {guid: params.listGuid}}).then((l) => {
         list = l
         if (!list) { return done(new Error('list not found')) }
         done()
@@ -38,7 +38,7 @@ exports.task = {
     jobs.push((done) => {
       api.models.ListPerson.findOne({where: {
         personGuid: params.personGuid,
-        listId: list.id
+        listGuid: list.id
       }}).then((lp) => {
         listPerson = lp
         if (!listPerson) { return done(new Error('listPerson not found')) }
@@ -47,7 +47,7 @@ exports.task = {
     })
 
     jobs.push((done) => {
-      api.models.Team.findOne({where: {id: campaign.teamId}}).then((t) => {
+      api.models.Team.findOne({where: {guid: campaign.teamGuid}}).then((t) => {
         team = t
         if (!team) { return done(new Error('team not found')) }
         done()
@@ -57,7 +57,7 @@ exports.task = {
     jobs.push((done) => {
       api.models.Person.findOne({where: {
         guid: listPerson.personGuid,
-        teamId: team.id
+        teamGuid: team.guid
       }}).then((_person) => {
         person = _person
         if (!person) { return done(new Error(`Person (${listPerson.personGuid}) not found`)) }
@@ -72,7 +72,7 @@ exports.task = {
     })
 
     jobs.push((done) => {
-      api.models.Template.find({where: {id: campaign.templateId}}).then((template) => {
+      api.models.Template.find({where: {guid: campaign.templateGuid}}).then((template) => {
         template.render(person, message, campaign, list, true, (error, _body, _view) => {
           if (error) { return done(error) }
           body = _body
@@ -110,10 +110,10 @@ exports.task = {
         message.data[k] = campaign.campaignVariables[k]
       })
 
-      message.teamId = team.id
+      message.teamGuid = team.guid
       message.personGuid = person.guid
       message.transport = transport.name
-      message.campaignId = campaign.id
+      message.campaignGuid = campaign.guid
       message.body = body
       message.sentAt = new Date()
 
@@ -135,7 +135,7 @@ exports.task = {
       }
 
       if (toSend && person.listOptOuts.indexOf(list.id) >= 0) {
-        api.log(`person #${person.guid} is opted-out of this list (#${list.id})`)
+        api.log(`person #${person.guid} is opted-out of this list (#${list.guid})`)
         toSend = false
       }
 

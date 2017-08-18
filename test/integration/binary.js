@@ -79,7 +79,7 @@
 //     })
 //
 //     it('succeeds (creating the user)', (done) => {
-//       api.models.User.findOne({where: {teamId: team.id}}).then(function (_user) {
+//       api.models.User.findOne({where: {teamGuid: team.guid}}).then(function (_user) {
 //         _user.email.should.equal('admin@app.com')
 //         user = _user
 //         done()
@@ -143,7 +143,7 @@
 //       let command = ''
 //       command += ' NODE_ENV=test'
 //       command += ' ./node_modules/.bin/actionhero messagebot team edit'
-//       command += ' --id ' + team.id
+//       command += ' --id ' + team.guid
 //       command += ' --name AnotherTestTeamNewName'
 //
 //       api.utils.doShell(command, (error, data) => {
@@ -159,7 +159,7 @@
 //       let command = ''
 //       command += ' NODE_ENV=test'
 //       command += ' ./node_modules/.bin/actionhero messagebot team edit'
-//       command += ' --id ' + team.id
+//       command += ' --id ' + team.guid
 //       command += ' --name TestTeam'
 //
 //       api.utils.doShell(command, (error, data) => {
@@ -192,7 +192,7 @@
 //       let command = ''
 //       command += ' NODE_ENV=test'
 //       command += ' ./node_modules/.bin/actionhero messagebot team delete'
-//       command += ' --id ' + team.id
+//       command += ' --id ' + team.guid
 //
 //       api.utils.doShell(command, (error, data) => {
 //         should.not.exist(error)
@@ -201,14 +201,14 @@
 //     })
 //
 //     it('succeeds (deletes the team)', (done) => {
-//       api.models.Team.findOne({where: {id: team.id}}).then((_team) => {
+//       api.models.Team.findOne({where: {id: team.guid}}).then((_team) => {
 //         should.not.exist(_team)
 //         done()
 //       }).catch(done)
 //     })
 //
 //     it('succeeds (deletes the user)', (done) => {
-//       api.models.User.findOne({where: {teamId: team.id}}).then(function (_user) {
+//       api.models.User.findOne({where: {teamGuid: team.guid}}).then(function (_user) {
 //         should.not.exist(_user)
 //         done()
 //       }).catch(done)
@@ -228,7 +228,7 @@
 //       let command = ''
 //       command += ' NODE_ENV=test'
 //       command += ' ./node_modules/.bin/actionhero messagebot team delete'
-//       command += ' --id ' + team.id
+//       command += ' --id ' + team.guid
 //
 //       api.utils.doShell(command, (error, data) => {
 //         error.message.should.containEql('Team not found')

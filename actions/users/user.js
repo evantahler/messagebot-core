@@ -21,7 +21,7 @@ exports.userCreate = {
 
     jobs.push((done) => {
       user = api.models.User.build(data.params)
-      user.teamId = data.session.teamId
+      user.teamGuid = data.session.teamGuid
       done()
     })
 
@@ -30,7 +30,7 @@ exports.userCreate = {
     })
 
     jobs.push((done) => {
-      person = api.models.Person.build({teamId: user.teamId})
+      person = api.models.Person.build({teamGuid: user.teamGuid})
       person.source = 'admin'
       person.device = 'unknown'
       person.listOptOuts = []
@@ -51,7 +51,7 @@ exports.userCreate = {
       user.personGuid = person.guid
       user.save().then(() => {
         data.response.user = user.apiData()
-        api.tasks.enqueueIn(1, 'people:buildCreateEvent', {guid: person.guid, teamId: data.team.id}, 'messagebot:people', done)
+        api.tasks.enqueueIn(1, 'people:buildCreateEvent', {guid: person.guid, teamGuid: data.team.guid}, 'messagebot:people', done)
       }).catch(done)
     })
 
@@ -66,21 +66,20 @@ exports.userView = {
   middleware: ['logged-in-session'],
 
   inputs: {
-    userId: {
-      required: false,
-      formatter: function (p) { return parseInt(p) }
+    userGuid: {
+      required: false
     }
   },
 
   run: function (api, data, next) {
-    let userId = data.session.userId
-    if (data.params.userId && data.session.role === 'admin') {
-      userId = data.params.userId
+    let userGuid = data.session.userGuid
+    if (data.params.userGuid && data.session.role === 'admin') {
+      userGuid = data.params.userGuid
     }
 
     api.models.User.findOne({where: {
-      id: userId,
-      teamId: data.session.teamId
+      guid: userGuid,
+      teamGuid: data.session.teamGuid
     }}).then((user) => {
       if (!user) { return next(new Error('user not found')) }
       data.response.user = user.apiData()
@@ -101,26 +100,25 @@ exports.userEdit = {
     firstName: { required: false },
     lastName: { required: false },
     role: { required: false },
-    userId: {
-      required: false,
-      formatter: function (p) { return parseInt(p) }
+    userGuid: {
+      required: false
     }
   },
 
   run: function (api, data, next) {
     let jobs = []
-    let userId = data.session.userId
+    let userGuid = data.session.userGuid
     let user
     let person
 
-    if (data.params.userId && data.session.role === 'admin') {
-      userId = data.params.userId
+    if (data.params.userGuid && data.session.role === 'admin') {
+      userGuid = data.params.userGuid
     }
 
     jobs.push((done) => {
       api.models.User.findOne({where: {
-        id: userId,
-        teamId: data.session.teamId
+        guid: userGuid,
+        teamGuid: data.session.teamGuid
       }}).then((u) => {
         user = u
 
@@ -130,7 +128,7 @@ exports.userEdit = {
           return done(new Error('only admin role can modify role'))
         }
 
-        if (data.params.userId && data.params.userId !== user.id && data.session.role !== 'admin') {
+        if (data.params.userGuid && data.params.userGuid !== user.guid && data.session.role !== 'admin') {
           return done(new Error('only admin role can modify other users'))
         }
 
@@ -187,9 +185,8 @@ exports.userDelete = {
   middleware: ['logged-in-session', 'require-team', 'role-required-admin'],
 
   inputs: {
-    userId: {
-      required: true,
-      formatter: function (p) { return parseInt(p) }
+    userGuid: {
+      required: true
     }
   },
 
@@ -200,12 +197,12 @@ exports.userDelete = {
 
     jobs.push((done) => {
       api.models.User.findOne({where: {
-        id: data.params.userId,
-        teamId: data.session.teamId
+        guid: data.params.userGuid,
+        teamGuid: data.session.teamGuid
       }}).then((u) => {
         user = u
         if (!user) { return done(new Error('user not found')) }
-        if (data.session.userId === user.id) { return done(new Error('you cannot delete yourself')) }
+        if (data.session.userGuid === user.guid) { return done(new Error('you cannot delete yourself')) }
         done()
       }).catch(done)
     })

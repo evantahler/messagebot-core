@@ -23,8 +23,8 @@ module.exports = {
         let key = api.session.prefix + connection.fingerprint
 
         let sessionData = {
-          userId: user.id,
-          teamId: user.teamId,
+          userGuid: user.guid,
+          teamGuid: user.teamGuid,
           role: user.role,
           sesionCreatedAt: new Date().getTime()
         }

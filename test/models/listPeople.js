@@ -17,14 +17,14 @@ describe('models:listPeople', () => {
 
   it('can create a new listPerson with valid params', (done) => {
     listPerson = api.models.ListPerson.build({
-      teamId: 1,
-      listId: 1,
+      teamGuid: 1,
+      listGuid: 1,
       personGuid: 'abc123'
     })
 
     listPerson.save().then(() => {
       api.models.ListPerson.findOne({where: {personGuid: 'abc123'}}).then((listPerson) => {
-        listPerson.teamId.should.equal(1)
+        listPerson.teamGuid.should.equal(1)
         done()
       })
     })
@@ -32,14 +32,14 @@ describe('models:listPeople', () => {
 
   it('will not create a new listPerson with invalid params (missing requirement)', (done) => {
     listPerson = api.models.ListPerson.build({
-      teamId: 1
+      teamGuid: 1
     })
 
     listPerson.save().then(() => {
       throw new Error('should not get here')
     }).catch((errors) => {
       errors.errors.length.should.be.above(1)
-      errors.errors[0].message.should.equal('listId cannot be null')
+      errors.errors[0].message.should.equal('listGuid cannot be null')
       errors.errors[1].message.should.equal('personGuid cannot be null')
       done()
     })
@@ -47,15 +47,15 @@ describe('models:listPeople', () => {
 
   it('will not create a new listPerson with invalid params (duplicate key)', (done) => {
     listPerson = api.models.ListPerson.build({
-      teamId: 1,
-      listId: 1,
+      teamGuid: 1,
+      listGuid: 1,
       personGuid: 'abc123'
     })
 
     listPerson.save().then(() => {
       let otherlistPerson = api.models.ListPerson.build({
-        teamId: 1,
-        listId: 1,
+        teamGuid: 1,
+        listGuid: 1,
         personGuid: 'abc123'
       })
 

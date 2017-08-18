@@ -9,9 +9,8 @@ exports.messageCreate = {
   inputs: {
     guid: { required: false },
     personGuid: { required: true },
-    campaignId: {
-      required: true,
-      formatter: function (p) { return parseInt(p) }
+    campaignGuid: {
+      required: true
     },
     transport: { required: true },
     body: { required: true },
@@ -30,7 +29,7 @@ exports.messageCreate = {
   run: function (api, data, next) {
     let message = api.models.Message.build(data.params)
     message.data = data.params.data
-    message.teamId = data.team.id
+    message.teamGuid = data.team.guid
 
     message.save().then(() => {
       data.response.message = message.apiData()
@@ -48,9 +47,8 @@ exports.messageEdit = {
   inputs: {
     guid: { required: true },
     personGuid: { required: false },
-    campaignId: {
-      required: false,
-      formatter: function (p) { return parseInt(p) }
+    campaignGuid: {
+      required: false
     },
     transport: { required: false },
     body: { required: false },
@@ -63,7 +61,7 @@ exports.messageEdit = {
   run: function (api, data, next) {
     api.models.Message.findOne({
       where: {
-        teamId: data.team.id,
+        teamGuid: data.team.guid,
         guid: data.params.guid
       }
     }).then((message) => {
@@ -71,7 +69,7 @@ exports.messageEdit = {
       message.hydrate((error) => {
         if (error) { return next(error) }
 
-        ['personGuid', 'campaignId', 'transport', 'body', 'sentAt', 'readAt', 'actedAt'].forEach((k) => {
+        ['personGuid', 'campaignGuid', 'transport', 'body', 'sentAt', 'readAt', 'actedAt'].forEach((k) => {
           if (data.params[k]) { message[k] = data.params[k] }
         })
 
@@ -104,7 +102,7 @@ exports.messageView = {
   run: function (api, data, next) {
     api.models.Message.findOne({
       where: {
-        teamId: data.team.id,
+        teamGuid: data.team.guid,
         guid: data.params.guid
       }
     }).then((message) => {
@@ -131,7 +129,7 @@ exports.messageDelete = {
   run: function (api, data, next) {
     api.models.Message.findOne({
       where: {
-        teamId: data.team.id,
+        teamGuid: data.team.guid,
         guid: data.params.guid
       }
     }).then((message) => {
@@ -197,7 +195,7 @@ exports.messageTrack = {
     jobs.push((done) => {
       api.models.Message.findOne({
         where: {
-          teamId: data.team.id,
+          teamGuid: data.team.guid,
           guid: data.params.guid
         }
       }).then((m) => {
@@ -234,7 +232,7 @@ exports.messageTrack = {
         type: eventType,
         ip: ip,
         device: data.params.device,
-        teamId: data.team.id
+        teamGuid: data.team.guid
       })
 
       event.data = {}
@@ -261,7 +259,7 @@ exports.messageTrack = {
       }
 
       api.tasks.enqueueIn(1, 'events:process', {
-        teamId: data.team.id,
+        teamGuid: data.team.guid,
         events: [event.guid]
       }, 'messagebot:events', (e) => {
         next(e)

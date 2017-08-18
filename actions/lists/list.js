@@ -49,13 +49,13 @@ exports.listCreate = {
 
   run: function (api, data, next) {
     let list = api.models.List.build(data.params)
-    list.teamId = data.session.teamId
+    list.teamGuid = data.session.teamGuid
 
     list.save().then(
       api.models.List.findOne({where: {name: data.params.name}})
     ).then((listObj) => {
       data.response.list = listObj.apiData()
-      api.tasks.enqueue('lists:peopleCount', {listId: listObj.id}, 'messagebot:lists', next)
+      api.tasks.enqueue('lists:peopleCount', {listGuid: listObj.guid}, 'messagebot:lists', next)
     }).catch((errors) => {
       next(errors.errors[0].message)
     })
@@ -69,9 +69,8 @@ exports.listView = {
   middleware: ['logged-in-session'],
 
   inputs: {
-    listId: {
-      required: true,
-      formatter: function (p) { return parseInt(p) }
+    listGuid: {
+      required: true
     },
     includeGuids: {
       required: true,
@@ -81,8 +80,8 @@ exports.listView = {
 
   run: function (api, data, next) {
     api.models.List.findOne({where: {
-      id: data.params.listId,
-      teamId: data.session.teamId
+      id: data.params.listGuid,
+      teamGuid: data.session.teamGuid
     }}).then((list) => {
       if (!list) { return next(new Error('list not found')) }
       data.response.list = list.apiData()
@@ -99,22 +98,21 @@ exports.listCopy = {
 
   inputs: {
     name: { required: true },
-    listId: {
-      required: true,
-      formatter: function (p) { return parseInt(p) }
+    listGuid: {
+      required: true
     }
   },
 
   run: function (api, data, next) {
     api.models.List.findOne({where: {
-      id: data.params.listId,
-      teamId: data.session.teamId
+      guid: data.params.listGuid,
+      teamGuid: data.session.teamGuid
     }}).then((list) => {
       if (!list) { return next(new Error('list not found')) }
       let newList = api.models.List.build({
         name: data.params.name,
         description: list.description,
-        teamId: list.teamId,
+        teamGuid: list.teamGuid,
         folder: list.folder,
         type: list.type,
         personQuery: list.personQuery,
@@ -124,10 +122,10 @@ exports.listCopy = {
       newList.save().then(() => {
         data.response.list = newList.apiData()
 
-        api.utils.findInBatches(api.models.ListPerson, {where: {listId: list.id}}, (listPerson, done) => {
+        api.utils.findInBatches(api.models.ListPerson, {where: {listGuid: list.guid}}, (listPerson, done) => {
           let newListPerson = api.models.ListPerson.build({
             personGuid: listPerson.personGuid,
-            listId: newList.id
+            listGuid: newList.guid
           })
           newListPerson.save().then(() => {
             done()
@@ -135,7 +133,7 @@ exports.listCopy = {
             done(errors.errors[0].message)
           })
         }, () => {
-          api.tasks.enqueue('lists:peopleCount', {listId: newList.id}, 'messagebot:lists', next)
+          api.tasks.enqueue('lists:peopleCount', {listGuid: newList.guid}, 'messagebot:lists', next)
         })
       }).catch((errors) => {
         next(errors.errors[0].message)
@@ -171,22 +169,21 @@ exports.listEdit = {
       validator: JSONValidator,
       formatter: JSONFormatter
     },
-    listId: {
-      required: true,
-      formatter: function (p) { return parseInt(p) }
+    listGuid: {
+      required: true
     }
   },
 
   run: function (api, data, next) {
     api.models.List.findOne({where: {
-      id: data.params.listId,
-      teamId: data.session.teamId
+      guid: data.params.listGuid,
+      teamGuid: data.session.teamGuid
     }}).then((list) => {
       if (!list) { return next(new Error('list not found')) }
 
       list.updateAttributes(data.params).then(() => {
         data.response.list = list.apiData()
-        api.tasks.enqueue('lists:peopleCount', {listId: list.id}, 'messagebot:lists', next)
+        api.tasks.enqueue('lists:peopleCount', {listGuid: list.guid}, 'messagebot:lists', next)
       }).catch(next)
     }).catch(next)
   }
@@ -199,19 +196,18 @@ exports.listDelete = {
   middleware: ['logged-in-session', 'role-required-admin'],
 
   inputs: {
-    listId: {
-      required: true,
-      formatter: function (p) { return parseInt(p) }
+    listGuid: {
+      required: true
     }
   },
 
   run: function (api, data, next) {
     api.models.List.findOne({where: {
-      id: data.params.listId,
-      teamId: data.session.teamId
+      guid: data.params.listGuid,
+      teamGuid: data.session.teamGuid
     }}).then((list) => {
       if (!list) { return next(new Error('list not found')) }
-      api.models.ListPerson.destroy({where: {listId: list.id}}).then(() => {
+      api.models.ListPerson.destroy({where: {listGuid: list.guid}}).then(() => {
         list.destroy().then(() => {
           next()
         }).catch(next)

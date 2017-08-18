@@ -17,7 +17,7 @@ describe('models:lists', () => {
 
   it('can create new list with valid params', (done) => {
     list = api.models.List.build({
-      teamId: 1,
+      teamGuid: 1,
       name: 'my list',
       description: 'my list',
       type: 'dynamic',
@@ -34,7 +34,7 @@ describe('models:lists', () => {
 
   it('will not create new list with invalid params (missing requirement)', (done) => {
     list = api.models.List.build({
-      teamId: 1,
+      teamGuid: 1,
       description: 'my list',
       folder: 'default'
     })
@@ -51,7 +51,7 @@ describe('models:lists', () => {
 
   it('will not create new lists with invalid params (duplicate key)', (done) => {
     list = api.models.List.build({
-      teamId: 1,
+      teamGuid: 1,
       name: 'my list',
       description: 'my list',
       type: 'dynamic',
@@ -60,7 +60,7 @@ describe('models:lists', () => {
 
     list.save().then(() => {
       let otherList = api.models.List.build({
-        teamId: 1,
+        teamGuid: 1,
         name: 'my list',
         description: 'my list',
         type: 'dynamic',
@@ -79,7 +79,7 @@ describe('models:lists', () => {
 
   it('will not create new lists with invalid params (bad type)', (done) => {
     list = api.models.List.build({
-      teamId: 1,
+      teamGuid: 1,
       name: 'my list',
       description: 'my list',
       type: 'wacky',

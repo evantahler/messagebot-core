@@ -5,7 +5,7 @@ const specHelper = require(path.join(__dirname, '/../specHelper'))
 let email = 'admin@localhost.com'
 let password = 'password'
 let api
-let listId
+let listGuid
 let team
 
 describe('actions:lists', () => {
@@ -33,7 +33,7 @@ describe('actions:lists', () => {
         should.not.exist(response.error)
         response.list.folder.should.equal('default')
         response.list.name.should.equal('test list')
-        listId = response.list.id
+        listGuid = response.list.id
         done()
       })
     })
@@ -63,7 +63,7 @@ describe('actions:lists', () => {
   describe('list:view', () => {
     it('succeeds', (done) => {
       specHelper.requestWithLogin(email, password, 'list:view', {
-        listId: listId
+        listGuid: listGuid
       }, (response) => {
         should.not.exist(response.error)
         response.list.folder.should.equal('default')
@@ -74,7 +74,7 @@ describe('actions:lists', () => {
 
     it('fails (not found)', (done) => {
       specHelper.requestWithLogin(email, password, 'list:view', {
-        listId: 999
+        listGuid: 999
       }, (response) => {
         response.error.should.equal('Error: list not found')
         done()
@@ -85,11 +85,11 @@ describe('actions:lists', () => {
   describe('list:copy', () => {
     it('succeeds', (done) => {
       specHelper.requestWithLogin(email, password, 'list:copy', {
-        listId: listId,
+        listGuid: listGuid,
         name: 'new list'
       }, (response) => {
         should.not.exist(response.error)
-        response.list.id.should.not.equal(listId)
+        response.list.id.should.not.equal(listGuid)
         response.list.folder.should.equal('default')
         response.list.name.should.equal('new list')
         done()
@@ -98,7 +98,7 @@ describe('actions:lists', () => {
 
     it('fails (uniqueness param)', (done) => {
       specHelper.requestWithLogin(email, password, 'list:copy', {
-        listId: listId,
+        listGuid: listGuid,
         name: 'test list'
       }, (response) => {
         response.error.should.match(/must be unique/)
@@ -108,7 +108,7 @@ describe('actions:lists', () => {
 
     it('fails (missing param)', (done) => {
       specHelper.requestWithLogin(email, password, 'list:copy', {
-        listId: listId
+        listGuid: listGuid
       }, (response) => {
         response.error.should.equal('Error: name is a required parameter for this action')
         done()
@@ -119,7 +119,7 @@ describe('actions:lists', () => {
   describe('list:edit', () => {
     it('succeeds', (done) => {
       specHelper.requestWithLogin(email, password, 'list:edit', {
-        listId: listId,
+        listGuid: listGuid,
         name: 'a better list name'
       }, (response) => {
         should.not.exist(response.error)
@@ -130,7 +130,7 @@ describe('actions:lists', () => {
 
     it('fails (uniqueness failure)', (done) => {
       specHelper.requestWithLogin(email, password, 'list:edit', {
-        listId: listId,
+        listGuid: listGuid,
         name: 'new list'
       }, (response) => {
         response.error.should.equal('Error: Validation error')
@@ -173,7 +173,7 @@ describe('actions:lists', () => {
   })
 
   describe('list:people', () => {
-    let dynamicListId
+    let dynamiclistGuid
     let person
     let csvPeople = []
 
@@ -184,14 +184,14 @@ describe('actions:lists', () => {
         type: 'dynamic'
       }, (response) => {
         should.not.exist(response.error)
-        dynamicListId = response.list.id
+        dynamiclistGuid = response.list.id
         done()
       })
     })
 
     before((done) => {
       person = api.models.Person.build({
-        teamId: team.id,
+        teamGuid: team.guid,
         source: 'tester',
         device: 'phone',
         listOptOuts: [],
@@ -214,7 +214,7 @@ describe('actions:lists', () => {
       csvPeople.forEach((guid) => {
         jobs.push((next) => {
           api.models.Person.destroy({where: {
-            teamId: team.id,
+            teamGuid: team.guid,
             guid: guid
           }}).then(() => {
             next()
@@ -228,7 +228,7 @@ describe('actions:lists', () => {
     describe('list:people:add', () => {
       it('succeeds with personGuids via Form', (done) => {
         specHelper.requestWithLogin(email, password, 'list:people:add', {
-          listId: listId,
+          listGuid: listGuid,
           personGuids: person.guid
         }, (response) => {
           should.not.exist(response.error)
@@ -239,7 +239,7 @@ describe('actions:lists', () => {
 
       it('fails (re-adding an existing person)', (done) => {
         specHelper.requestWithLogin(email, password, 'list:people:add', {
-          listId: listId,
+          listGuid: listGuid,
           personGuids: person.guid
         }, (response) => {
           should.not.exist(response.error)
@@ -250,7 +250,7 @@ describe('actions:lists', () => {
 
       it('succeeds with people via CSV Upload', (done) => {
         specHelper.requestWithLogin(email, password, 'list:people:add', {
-          listId: listId,
+          listGuid: listGuid,
           file: { path: path.join(__dirname, '/../../samples/email-upload.csv') }
         }, (response) => {
           let jobs = []
@@ -283,7 +283,7 @@ describe('actions:lists', () => {
 
       it('succeeds will update people with CSV upload', (done) => {
         specHelper.requestWithLogin(email, password, 'list:people:add', {
-          listId: listId,
+          listGuid: listGuid,
           file: { path: path.join(__dirname, '/../../samples/email-upload2.csv') }
         }, (response) => {
           should.not.exist(response.error)
@@ -310,7 +310,7 @@ describe('actions:lists', () => {
 
       it('fails (list is not found)', (done) => {
         specHelper.requestWithLogin(email, password, 'list:people:add', {
-          listId: 999,
+          listGuid: 999,
           personGuids: person.guid
         }, (response) => {
           response.error.should.equal('Error: list not found')
@@ -320,7 +320,7 @@ describe('actions:lists', () => {
 
       it('fails (no people provided)', (done) => {
         specHelper.requestWithLogin(email, password, 'list:people:add', {
-          listId: listId,
+          listGuid: listGuid,
           personGuids: ''
         }, (response) => {
           response.error.should.equal('Error: No people are provided via CSV')
@@ -330,7 +330,7 @@ describe('actions:lists', () => {
 
       it('fails (list is not static)', (done) => {
         specHelper.requestWithLogin(email, password, 'list:people:add', {
-          listId: dynamicListId,
+          listGuid: dynamiclistGuid,
           personGuids: person.guid
         }, (response) => {
           response.error.should.equal('Error: you cannot modify static list membership via this method')
@@ -342,7 +342,7 @@ describe('actions:lists', () => {
     describe('list:people:delete', () => {
       it('succeeds with personGuids', (done) => {
         specHelper.requestWithLogin(email, password, 'list:people:delete', {
-          listId: listId,
+          listGuid: listGuid,
           personGuids: person.guid
         }, (response) => {
           should.not.exist(response.error)
@@ -354,7 +354,7 @@ describe('actions:lists', () => {
 
       it('fails (person not in list)', (done) => {
         specHelper.requestWithLogin(email, password, 'list:people:delete', {
-          listId: listId,
+          listGuid: listGuid,
           personGuids: 'abc123'
         }, (response) => {
           response.error.should.equal('Error: List Person (guid abc123) not found in this list')
@@ -364,7 +364,7 @@ describe('actions:lists', () => {
 
       it('fails (list is not found)', (done) => {
         specHelper.requestWithLogin(email, password, 'list:people:delete', {
-          listId: 999,
+          listGuid: 999,
           personGuids: person.guid
         }, (response) => {
           response.error.should.equal('Error: list not found')
@@ -374,7 +374,7 @@ describe('actions:lists', () => {
 
       it('fails (list is not static)', (done) => {
         specHelper.requestWithLogin(email, password, 'list:people:add', {
-          listId: dynamicListId,
+          listGuid: dynamiclistGuid,
           personGuids: person.guid
         }, (response) => {
           response.error.should.equal('Error: you cannot modify static list membership via this method')
@@ -386,7 +386,7 @@ describe('actions:lists', () => {
     describe('list:people:count', () => {
       it('succeeds with personGuids', (done) => {
         specHelper.requestWithLogin(email, password, 'list:people:count', {
-          listId: listId
+          listGuid: listGuid
         }, (response) => {
           should.not.exist(response.error)
           done()
@@ -395,7 +395,7 @@ describe('actions:lists', () => {
 
       it('fails (list is not found)', (done) => {
         specHelper.requestWithLogin(email, password, 'list:people:count', {
-          listId: 999
+          listGuid: 999
         }, (response) => {
           response.error.should.equal('Error: list not found')
           done()
@@ -406,7 +406,7 @@ describe('actions:lists', () => {
     describe('list:people:view', () => {
       it('succeeds with all', (done) => {
         specHelper.requestWithLogin(email, password, 'list:people:view', {
-          listId: listId
+          listGuid: listGuid
         }, (response) => {
           should.not.exist(response.error)
           response.total.should.equal(4)
@@ -421,7 +421,7 @@ describe('actions:lists', () => {
 
       it('succeeds with from/size', (done) => {
         specHelper.requestWithLogin(email, password, 'list:people:view', {
-          listId: listId,
+          listGuid: listGuid,
           from: 1,
           size: 1
         }, (response) => {
@@ -435,7 +435,7 @@ describe('actions:lists', () => {
 
       it('fails (list is not found)', (done) => {
         specHelper.requestWithLogin(email, password, 'list:people:view', {
-          listId: 999
+          listGuid: 999
         }, (response) => {
           response.error.should.equal('Error: list not found')
           done()
@@ -447,7 +447,7 @@ describe('actions:lists', () => {
   describe('list:delete', () => {
     it('succeeds', (done) => {
       specHelper.requestWithLogin(email, password, 'list:delete', {
-        listId: listId
+        listGuid: listGuid
       }, (response) => {
         should.not.exist(response.error)
         done()
@@ -456,7 +456,7 @@ describe('actions:lists', () => {
 
     it('fails (not found)', (done) => {
       specHelper.requestWithLogin(email, password, 'list:delete', {
-        listId: listId
+        listGuid: listGuid
       }, (response) => {
         response.error.should.equal('Error: list not found')
         done()

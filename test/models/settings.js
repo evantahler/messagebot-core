@@ -17,14 +17,14 @@ describe('models:settings', () => {
 
   it('can create a new setting with valid params', (done) => {
     setting = api.models.Setting.build({
-      teamId: 1,
+      teamGuid: 1,
       key: 'some:key',
       value: 'abc123',
       description: 'this is a test key'
     })
 
     setting.save().then(() => {
-      api.models.Setting.findOne({where: {teamId: 1, key: 'some:key'}}).then((setting) => {
+      api.models.Setting.findOne({where: {teamGuid: 1, key: 'some:key'}}).then((setting) => {
         setting.value.should.equal('abc123')
         done()
       })
@@ -33,7 +33,7 @@ describe('models:settings', () => {
 
   it('will not create a new setting with invalid params (missing requirement)', (done) => {
     setting = api.models.Setting.build({
-      teamId: 1
+      teamGuid: 1
     })
 
     setting.save().then(() => {
@@ -49,7 +49,7 @@ describe('models:settings', () => {
 
   it('will not create a new setting with invalid params (duplicate key)', (done) => {
     setting = api.models.Setting.build({
-      teamId: 1,
+      teamGuid: 1,
       key: 'some:key',
       value: 'abc123',
       description: 'this is a test key'
@@ -57,7 +57,7 @@ describe('models:settings', () => {
 
     setting.save().then(() => {
       let otherSetting = api.models.Setting.build({
-        teamId: 1,
+        teamGuid: 1,
         key: 'some:key',
         value: 'abc123',
         description: 'this is a test key'

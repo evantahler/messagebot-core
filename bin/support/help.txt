@@ -48,8 +48,8 @@ team edit:
           Description:
             Edit the properties of an existing team
           Options:
-            --teamId:
-              The ID of the team in question
+            --guid:
+              The guid of the team in question
             --name (optional)
                 The name of the team
             --trackingDomainRegexp (optional)
@@ -65,8 +65,8 @@ team delete:
             Deletes a team and all associated data from your relational database and ElasticSearch.
             ** This is unrecoverable! **
           Options:
-            --teamId:
-              The ID of the team in question
+            --guid:
+              The guid of the team in question
           Example:
             ./bin/messagebot team delete  --id 1
 
