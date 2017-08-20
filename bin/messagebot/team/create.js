@@ -29,8 +29,8 @@ module.exports = {
       team.save().then(() => {
         let tableData = [team.apiData()]
 
-        api.log('New Team\r\n')
-        api.log(Table.print(tableData))
+        console.log('New Team\r\n')
+        console.log(Table.print(tableData))
 
         done()
       }).catch(done)
@@ -77,17 +77,17 @@ module.exports = {
       user.save().then(() => {
         let tableData = [user.apiData()]
 
-        api.log('New User')
-        api.log('Email: ' + data.params.email)
-        api.log('Password: ' + data.params.password + '\r\n')
-        api.log(Table.print(tableData))
+        console.log('New User')
+        console.log('Email: ' + data.params.email)
+        console.log('Password: ' + data.params.password + '\r\n')
+        console.log(Table.print(tableData))
 
         done()
       }).catch(done)
     })
 
     async.series(jobs, (error) => {
-      if (error) api.log(`Error creating team: ${error.toString()}`, 'error')
+      if (error) console.error(`Error creating team: ${error.toString()}`)
       next()
     })
   }

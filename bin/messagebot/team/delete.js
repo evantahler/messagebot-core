@@ -22,9 +22,9 @@ module.exports = {
         if (!_team) { return done(new Error('Team not found')) }
         team = _team
 
-        api.log('About to Delete Team\r\n')
+        console.log('About to Delete Team\r\n')
         let tableData = [team.apiData()]
-        api.log(Table.print(tableData))
+        console.log(Table.print(tableData))
 
         done()
       }).catch(done)
@@ -33,7 +33,7 @@ module.exports = {
     ['Event', 'EventData', 'Person', 'PersonData', 'Message', 'MessageData', 'User', 'ListPerson', 'List', 'Campaign', 'Template'].forEach((model) => {
       jobs.push((done) => {
         api.models[model].count({where: {teamGuid: team.guid}}).then((count) => {
-          api.log('Delting all (' + count + ') objects for team from table `' + model + '`')
+          console.log('Delting all (' + count + ') objects for team from table `' + model + '`')
           api.models[model].destroy({where: {teamGuid: team.guid}}).then(() => {
             done()
           }).catch(done)
@@ -42,12 +42,12 @@ module.exports = {
     })
 
     jobs.push((done) => {
-      api.log('Deleting team')
+      console.log(`Deleting team ${team.guid}`)
       team.destroy().then(() => { done() }).catch(done)
     })
 
     async.series(jobs, (error) => {
-      if (error) api.log(error.toString(), 'error')
+      if (error) console.error(error.toString())
       next()
     })
   }

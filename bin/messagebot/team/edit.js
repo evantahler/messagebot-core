@@ -37,14 +37,14 @@ module.exports = {
     })
 
     jobs.push((done) => {
-      api.log('Updated Team\r\n')
+      console.log('Updated Team\r\n')
       let tableData = [team.apiData()]
-      api.log(Table.print(tableData))
+      console.log(Table.print(tableData))
       done()
     })
 
     async.series(jobs, (error) => {
-      if (error) api.log(error.toString(), 'error')
+      if (error) console.error(error.toString())
       next()
     })
   }

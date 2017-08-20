@@ -17,14 +17,14 @@ describe('models:listPeople', () => {
 
   it('can create a new listPerson with valid params', (done) => {
     listPerson = api.models.ListPerson.build({
-      teamGuid: 1,
-      listGuid: 1,
+      teamGuid: 'abc',
+      listGuid: 'abc',
       personGuid: 'abc123'
     })
 
     listPerson.save().then(() => {
       api.models.ListPerson.findOne({where: {personGuid: 'abc123'}}).then((listPerson) => {
-        listPerson.teamGuid.should.equal(1)
+        listPerson.teamGuid.should.equal('abc')
         done()
       })
     })
@@ -32,7 +32,7 @@ describe('models:listPeople', () => {
 
   it('will not create a new listPerson with invalid params (missing requirement)', (done) => {
     listPerson = api.models.ListPerson.build({
-      teamGuid: 1
+      teamGuid: 'abc'
     })
 
     listPerson.save().then(() => {
@@ -47,15 +47,15 @@ describe('models:listPeople', () => {
 
   it('will not create a new listPerson with invalid params (duplicate key)', (done) => {
     listPerson = api.models.ListPerson.build({
-      teamGuid: 1,
-      listGuid: 1,
+      teamGuid: 'abc',
+      listGuid: 'abc',
       personGuid: 'abc123'
     })
 
     listPerson.save().then(() => {
       let otherlistPerson = api.models.ListPerson.build({
-        teamGuid: 1,
-        listGuid: 1,
+        teamGuid: 'abc',
+        listGuid: 'abc',
         personGuid: 'abc123'
       })
 

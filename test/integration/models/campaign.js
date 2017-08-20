@@ -24,7 +24,7 @@ describe('integartion:campaigns', () => {
 
     before((done) => {
       campaign = api.models.Campaign.build({
-        teamGuid: 1,
+        teamGuid: team.guid,
         name: 'my campaign',
         description: 'my campaign',
         type: 'simple',
@@ -44,7 +44,7 @@ describe('integartion:campaigns', () => {
         jobs.push((next) => {
           let message = api.models.Message.build({
             transport: 'smtp',
-            teamGuid: 1,
+            teamGuid: team.guid,
             personGuid: `${i}-${Math.random()}`,
             campaignGuid: campaign.guid,
             body: 'hello',
@@ -149,7 +149,7 @@ describe('integartion:campaigns', () => {
 
     before((done) => {
       person = api.models.Person.build({
-        teamGuid: 1,
+        teamGuid: team.guid,
         source: 'tester',
         device: 'phone',
         listOptOuts: [],
@@ -167,7 +167,7 @@ describe('integartion:campaigns', () => {
 
     before((done) => {
       list = api.models.List.build({
-        teamGuid: 1,
+        teamGuid: team.guid,
         name: 'my list',
         description: 'my list',
         type: 'static',
@@ -179,7 +179,7 @@ describe('integartion:campaigns', () => {
 
     before((done) => {
       template = api.models.Template.build({
-        teamGuid: 1,
+        teamGuid: team.guid,
         name: 'my template',
         description: 'my template',
         folder: 'default',
@@ -191,8 +191,8 @@ describe('integartion:campaigns', () => {
 
     before((done) => {
       listPerson = api.models.ListPerson.build({
-        teamGuid: 1,
-        listGuid: list.id,
+        teamGuid: team.guid,
+        listGuid: list.guid,
         personGuid: person.guid
       })
 
@@ -228,7 +228,7 @@ describe('integartion:campaigns', () => {
     describe('send#simple', () => {
       before((done) => {
         campaign = api.models.Campaign.build({
-          teamGuid: 1,
+          teamGuid: team.guid,
           name: 'my campaign',
           description: 'my campaign',
           type: 'simple',
@@ -284,7 +284,7 @@ describe('integartion:campaigns', () => {
     describe('send#recurring', () => {
       before((done) => {
         campaign = api.models.Campaign.build({
-          teamGuid: 1,
+          teamGuid: team.guid,
           name: 'my campaign',
           description: 'my campaign',
           type: 'recurring',
@@ -372,7 +372,7 @@ describe('integartion:campaigns', () => {
     describe('send#trigger', () => {
       before((done) => {
         campaign = api.models.Campaign.build({
-          teamGuid: 1,
+          teamGuid: team.guid,
           name: 'my campaign',
           description: 'my campaign',
           type: 'trigger',
@@ -406,7 +406,7 @@ describe('integartion:campaigns', () => {
     describe('triggered messages', () => {
       before((done) => {
         campaign = api.models.Campaign.build({
-          teamGuid: 1,
+          teamGuid: team.guid,
           name: 'my campaign',
           description: 'my campaign',
           type: 'trigger',
