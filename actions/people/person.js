@@ -151,7 +151,7 @@ exports.personOpt = {
         return null
       }
     },
-    listGuid: { required: false, formatter: function (p) { return parseInt(p) } },
+    listGuid: { required: false },
     guid: { required: true }
   },
 
@@ -174,7 +174,7 @@ exports.personOpt = {
       jobs.push((done) => {
         api.models.List.findOne({
           where: {
-            id: data.params.listGuid,
+            guid: data.params.listGuid,
             teamGuid: data.team.guid
           }
         }).then((list) => {

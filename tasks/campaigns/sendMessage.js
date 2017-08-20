@@ -38,7 +38,7 @@ exports.task = {
     jobs.push((done) => {
       api.models.ListPerson.findOne({where: {
         personGuid: params.personGuid,
-        listGuid: list.id
+        listGuid: list.guid
       }}).then((lp) => {
         listPerson = lp
         if (!listPerson) { return done(new Error('listPerson not found')) }

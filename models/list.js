@@ -196,7 +196,7 @@ let loader = function (api) {
 
               jobs.push((done) => {
                 api.models.ListPerson.destroy({
-                  where: {listGuid: list.id}
+                  where: {listGuid: list.guid}
                 }).then(() => {
                   done()
                 }).catch(done)
@@ -216,7 +216,7 @@ let loader = function (api) {
                   api.models.ListPerson.create({
                     personGuid: person.guid,
                     teamGuid: list.teamGuid,
-                    listGuid: list.id
+                    listGuid: list.guid
                   }).then(() => { next() }).catch(done)
                 }, done)
               })

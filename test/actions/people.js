@@ -42,7 +42,7 @@ describe('action:person', () => {
 
   before((done) => {
     list = api.models.List.build({
-      teamGuid: 1,
+      teamGuid: team.guid,
       name: 'my list',
       description: 'my list',
       type: 'static',
@@ -151,7 +151,7 @@ describe('action:person', () => {
     it('succeeds (lists included)', (done) => {
       api.models.ListPerson.create({
         teamGuid: team.guid,
-        listGuid: list.id,
+        listGuid: list.guid,
         personGuid: personGuid
       }).then(() => {
         api.specHelper.runAction('person:view', {
@@ -163,7 +163,7 @@ describe('action:person', () => {
           response.lists[0].name.should.equal('my list')
           done()
         })
-      })
+      }).catch((error) => { throw error })
     })
 
     it('fails (not found)', (done) => {
@@ -256,7 +256,7 @@ describe('action:person', () => {
         teamGuid: team.guid,
         guid: personGuid,
         direction: 'out',
-        listGuid: list.id
+        listGuid: list.guid
       }, (response) => {
         should.not.exist(response.error)
         api.specHelper.runAction('person:view', {
@@ -265,7 +265,7 @@ describe('action:person', () => {
         }, (response) => {
           should.not.exist(response.error)
           response.person.listOptOuts.length.should.equal(1)
-          response.person.listOptOuts[0].should.equal(list.id)
+          response.person.listOptOuts[0].should.equal(list.guid)
           done()
         })
       })
@@ -276,7 +276,7 @@ describe('action:person', () => {
         teamGuid: team.guid,
         guid: personGuid,
         direction: 'in',
-        listGuid: list.id
+        listGuid: list.guid
       }, (response) => {
         should.not.exist(response.error)
         api.specHelper.runAction('person:view', {

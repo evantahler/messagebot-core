@@ -165,7 +165,7 @@ let loader = function (api) {
       {
         instanceMethods: {
 
-          render: function (person, message, campaign, list, trackBeacon, callback, includedIds) {
+          render: function (person, message, campaign, list, trackBeacon, callback, includedGuids) {
             let template = this
             let jobs = []
             let events = [] // TODO: Do we load in the events?  How many?
@@ -176,12 +176,12 @@ let loader = function (api) {
             if (!template.template || template.template.length === 0) { return callback(new Error('template empty')) }
 
             // Recusion saftey!
-            if (!includedIds) { includedIds = [] }
-            if (includedIds.indexOf(template.id) >= 0) { return callback(new Error('Cannot include template into itself')) }
-            includedIds.push(template.id)
+            if (!includedGuids) { includedGuids = [] }
+            if (includedGuids.indexOf(template.guid) >= 0) { return callback(new Error('Cannot include template into itself')) }
+            includedGuids.push(template.guid)
 
             jobs.push((done) => {
-              api.models.Team.findOne({where: {id: template.teamGuid}}).then((t) => {
+              api.models.Team.findOne({where: {guid: template.teamGuid}}).then((t) => {
                 team = t
                 if (!team) { return done(new Error('team not found')) }
                 return done()
@@ -235,7 +235,7 @@ let loader = function (api) {
                     if (error) { return includeDone(error) }
                     html = html.replace(match, includedHtml)
                     includeDone()
-                  }, includedIds)
+                  }, includedGuids)
                 })
               })
 

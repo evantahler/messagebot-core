@@ -22,7 +22,7 @@ describe('actions:template', () => {
         should.not.exist(response.error)
         response.template.folder.should.equal('default')
         response.template.name.should.equal('test template')
-        templateGuid = response.template.id
+        templateGuid = response.template.guid
         done()
       })
     })
@@ -78,7 +78,7 @@ describe('actions:template', () => {
         name: 'new template'
       }, (response) => {
         should.not.exist(response.error)
-        response.template.id.should.not.equal(templateGuid)
+        response.template.guid.should.not.equal(templateGuid)
         response.template.folder.should.equal('default')
         response.template.name.should.equal('new template')
         done()
@@ -173,7 +173,7 @@ describe('actions:template', () => {
         should.not.exist(response.error)
         response.html.should.equal('<h1>Hello, fname</h1>')
         response.view.person.data.firstName.should.equal('fname')
-        response.view.template.id.should.equal(templateGuid)
+        response.view.template.guid.should.equal(templateGuid)
         done()
       })
     })
@@ -186,7 +186,7 @@ describe('actions:template', () => {
         should.not.exist(response.error)
         response.html.should.equal('<h1>Hello, fname</h1>')
         response.view.person.data.firstName.should.equal('fname')
-        response.view.template.id.should.equal(templateGuid)
+        response.view.template.guid.should.equal(templateGuid)
         done()
       })
     })

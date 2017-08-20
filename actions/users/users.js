@@ -21,7 +21,7 @@ exports.usersList = {
   run: function (api, data, next) {
     api.models.User.findAll({
       where: { teamGuid: data.session.teamGuid },
-      order: [['guid', 'asc']]
+      order: [['createdAt', 'desc']]
     }).then((users) => {
       data.response.users = []
       users.forEach((user) => { data.response.users.push(user.apiData()) })

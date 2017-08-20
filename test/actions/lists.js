@@ -33,7 +33,7 @@ describe('actions:lists', () => {
         should.not.exist(response.error)
         response.list.folder.should.equal('default')
         response.list.name.should.equal('test list')
-        listGuid = response.list.id
+        listGuid = response.list.guid
         done()
       })
     })
@@ -89,7 +89,7 @@ describe('actions:lists', () => {
         name: 'new list'
       }, (response) => {
         should.not.exist(response.error)
-        response.list.id.should.not.equal(listGuid)
+        response.list.guid.should.not.equal(listGuid)
         response.list.folder.should.equal('default')
         response.list.name.should.equal('new list')
         done()
@@ -184,7 +184,7 @@ describe('actions:lists', () => {
         type: 'dynamic'
       }, (response) => {
         should.not.exist(response.error)
-        dynamiclistGuid = response.list.id
+        dynamiclistGuid = response.list.guid
         done()
       })
     })

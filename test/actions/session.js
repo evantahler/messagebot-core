@@ -14,7 +14,7 @@ describe('actions:session', () => {
     }, (response) => {
       should.not.exist(response.error)
       response.success.should.equal(true)
-      response.user.id.should.equal(1)
+      should.exist(response.user.guid)
       response.user.email.should.equal('admin@localhost.com')
       done()
     })
@@ -41,7 +41,7 @@ describe('actions:session', () => {
       api.redis.clients.client.get(key, (error, data) => {
         should.not.exist(error)
         data = JSON.parse(data)
-        data.userGuid.should.equal(1)
+        should.exist(data.userGuid)
         data.role.should.equal('admin')
         api.redis.clients.client.ttl(key, (error, ttl) => {
           should.not.exist(error)

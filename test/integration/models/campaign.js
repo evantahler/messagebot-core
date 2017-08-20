@@ -234,8 +234,8 @@ describe('integartion:campaigns', () => {
           type: 'simple',
           folder: 'default',
           transport: 'smtp',
-          listGuid: list.id,
-          templateGuid: template.id
+          listGuid: list.guid,
+          templateGuid: template.guid
         })
 
         campaign.save().then(() => { done() })
@@ -291,8 +291,8 @@ describe('integartion:campaigns', () => {
           reSendDelay: 1,
           folder: 'default',
           transport: 'smtp',
-          listGuid: list.id,
-          templateGuid: template.id
+          listGuid: list.guid,
+          templateGuid: template.guid
         })
 
         campaign.save().then(() => { done() }).catch(done)

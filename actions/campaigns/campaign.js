@@ -88,7 +88,7 @@ exports.campaignView = {
 
     jobs.push((done) => {
       api.models.Campaign.findOne({where: {
-        id: data.params.campaignGuid,
+        guid: data.params.campaignGuid,
         teamGuid: data.session.teamGuid
       }}).then((campaign) => {
         if (!campaign) { return done(new Error('campaign not found')) }

@@ -79,9 +79,9 @@ exports.templateRender = {
       guid: data.params.templateGuid,
       teamGuid: data.session.teamGuid
     }}).then((template) => {
-      api.models.Person.findOne({
-        where: {guid: data.params.personGuid}
-      }).then((person) => {
+      api.models.Person.findOne({where: {
+        guid: data.params.personGuid
+      }}).then((person) => {
         if (!person) { return next(new Error('person not found')) }
         person.hydrate((error) => {
           if (error) { return next(error) }

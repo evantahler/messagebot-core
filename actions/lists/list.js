@@ -80,7 +80,7 @@ exports.listView = {
 
   run: function (api, data, next) {
     api.models.List.findOne({where: {
-      id: data.params.listGuid,
+      guid: data.params.listGuid,
       teamGuid: data.session.teamGuid
     }}).then((list) => {
       if (!list) { return next(new Error('list not found')) }
