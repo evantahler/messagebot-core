@@ -4,11 +4,27 @@ const specHelper = require(path.join(__dirname, '/../specHelper'))
 let api
 
 describe('general:seeds', () => {
-  beforeEach(() => { api = specHelper.api })
+  before(() => { api = specHelper.api })
+
+  let teamGuid
+  before((done) => {
+    api.models.Team.findOne().then((team) => {
+      teamGuid = team.guid
+      done()
+    }).catch(done)
+  })
+
+  let userGuid
+  before((done) => {
+    api.models.User.findOne().then((user) => {
+      userGuid = user.guid
+      done()
+    }).catch(done)
+  })
 
   it('has the first team', (done) => {
-    api.models.Team.findOne({where: {id: 1}}).then((team) => {
-      team.guid.should.equal(1)
+    api.models.Team.findOne({where: {guid: teamGuid}}).then((team) => {
+      team.guid.should.equal(teamGuid)
       team.name.should.equal('TestTeam')
       team.trackingDomain.should.equal('http://tracking.site.com')
       team.trackingDomainRegexp.should.equal('^.*$')
@@ -18,9 +34,9 @@ describe('general:seeds', () => {
   })
 
   it('has the first admin user', (done) => {
-    api.models.User.findOne({where: {id: 1}}).then((user) => {
-      user.id.should.equal(1)
-      user.teamGuid.should.equal(1)
+    api.models.User.findOne({where: {guid: userGuid}}).then((user) => {
+      user.guid.should.equal(userGuid)
+      user.teamGuid.should.equal(teamGuid)
       user.email.should.equal('admin@localhost.com')
       user.role.should.equal('admin')
 

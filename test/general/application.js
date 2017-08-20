@@ -26,8 +26,16 @@ describe('general:applicaiton', () => {
     })
 
     describe('api.utils.determineActionsTeam', () => {
+      let teamGuid
+      before((done) => {
+        api.models.Team.findOne().then((team) => {
+          teamGuid = team.guid
+          done()
+        }).catch(done)
+      })
+
       it('works for id (success)', (done) => {
-        api.utils.determineActionsTeam({params: {teamGuid: 1}}, (error, team) => {
+        api.utils.determineActionsTeam({params: {teamGuid: teamGuid}}, (error, team) => {
           should.not.exist(error)
           should.exist(team)
           done()
@@ -43,7 +51,7 @@ describe('general:applicaiton', () => {
       })
 
       it('works for session (success)', (done) => {
-        api.utils.determineActionsTeam({session: {teamGuid: 1}}, (error, team) => {
+        api.utils.determineActionsTeam({session: {teamGuid: teamGuid}}, (error, team) => {
           should.not.exist(error)
           should.exist(team)
           done()
