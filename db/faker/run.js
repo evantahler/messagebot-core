@@ -1,7 +1,7 @@
 const async = require('async')
 const path = require('path')
 const common = require(path.join(__dirname, 'common.js'))
-const sleep = parseInt(process.env.SLEEP) || (1000 * 2.2)
+const sleep = parseInt(process.env.SLEEP) || (1000)
 
 const run = function (api) {
   let routeBase = process.env.PUBLIC_URL || 'http://' + api.config.servers.web.bindIP + ':' + api.config.servers.web.port
