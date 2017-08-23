@@ -1,0 +1,1 @@
+../node_modules/actionhero/bin/methods/start.js
