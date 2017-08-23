@@ -86,7 +86,7 @@ let loader = function (api) {
         url += 'personGuid=' + person.guid + '&'
         url += 'messageGuid=%%MESSAGEGUID%%&' + '&'
         if (view.campaign.guid) { url += 'campaignGuid=' + view.campaign.guid + '&' }
-        if (view.list.id) { url += 'listGuid=' + view.list.id + '&' }
+        if (view.list.guid) { url += 'listGuid=' + view.list.guid + '&' }
         return url
       }
     }
@@ -218,8 +218,7 @@ let loader = function (api) {
                 let includedTemplate
 
                 includeJobs.push((includeDone) => {
-                  let or = {name: matcher}
-                  if (parseInt(matcher, 10)) { or.id = parseInt(matcher, 10) }
+                  let or = {name: matcher, guid: matcher}
                   api.models.Template.findOne({where: {
                     teamGuid: team.guid,
                     $or: or
@@ -248,7 +247,7 @@ let loader = function (api) {
               if (error) { return callback(error) }
               let logData = {}
               if (message) { logData = {messageGuid: message.guid} }
-              api.log('rendered template #' + template.id + ' for person #' + person.guid, 'debug', logData)
+              api.log('rendered template #' + template.guid + ' for person #' + person.guid, 'debug', logData)
               return callback(null, html, view)
             })
           },

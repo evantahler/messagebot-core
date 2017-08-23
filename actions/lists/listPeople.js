@@ -198,7 +198,7 @@ exports.listPeopleDelete = {
 
       async.series(jobs, (error) => {
         if (!error) {
-          return api.tasks.enqueue('lists:peopleCount', {listGuid: list.id}, 'messagebot:lists', next)
+          return api.tasks.enqueue('lists:peopleCount', {listGuid: list.guid}, 'messagebot:lists', next)
         } else {
           return next(error)
         }

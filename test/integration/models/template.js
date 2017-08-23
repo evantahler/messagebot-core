@@ -3,6 +3,7 @@ const async = require('async')
 const path = require('path')
 const specHelper = require(path.join(__dirname, '/../../specHelper'))
 let api
+let team
 
 describe('integartion:template', () => {
   describe('#render', () => {
@@ -14,8 +15,15 @@ describe('integartion:template', () => {
     before(() => { api = specHelper.api })
 
     before((done) => {
+      api.models.Team.findOne().then((_team) => {
+        team = _team
+        done()
+      })
+    })
+
+    before((done) => {
       template = api.models.Template.build({
-        teamGuid: 1,
+        teamGuid: team.guid,
         name: 'my template',
         description: 'my template',
         folder: 'default',
@@ -27,7 +35,7 @@ describe('integartion:template', () => {
 
     before((done) => {
       footerTemplate = api.models.Template.build({
-        teamGuid: 1,
+        teamGuid: team.guid,
         name: 'my footer',
         description: 'my footer',
         folder: 'default',
@@ -39,7 +47,7 @@ describe('integartion:template', () => {
 
     before((done) => {
       person = api.models.Person.build({
-        teamGuid: 1,
+        teamGuid: team.guid,
         source: 'tester',
         device: 'phone',
         listOptOuts: [],
@@ -57,7 +65,7 @@ describe('integartion:template', () => {
 
     before((done) => {
       message = api.models.Message.build({
-        teamGuid: 1,
+        teamGuid: team.guid,
         personGuid: person.guid,
         transport: 'smtp',
         campaignGuid: '1',
@@ -81,7 +89,7 @@ describe('integartion:template', () => {
         should.not.exist(error)
         html.should.equal('Hello there, fname')
         view.person.data.firstName.should.equal('fname')
-        view.template.id.should.equal(template.id)
+        view.template.guid.should.equal(template.guid)
         view.beaconLink.should.equal('http://tracking.site.com/api/message/track.gif?verb=read&guid=%%MESSAGEGUID%%')
         view.beacon.should.equal('<img src="http://tracking.site.com/api/message/track.gif?verb=read&guid=%%MESSAGEGUID%%" >')
         done()
@@ -93,7 +101,7 @@ describe('integartion:template', () => {
         should.not.exist(error)
         html.should.equal('Hello there, fname')
         view.person.data.firstName.should.equal('fname')
-        view.template.id.should.equal(template.id)
+        view.template.guid.should.equal(template.guid)
         view.beaconLink.should.equal('http://tracking.site.com/api/message/track.gif?verb=read&guid=' + message.guid)
         view.beacon.should.equal('<img src="http://tracking.site.com/api/message/track.gif?verb=read&guid=' + message.guid + '" >')
         done()
@@ -145,7 +153,7 @@ describe('integartion:template', () => {
     describe('includes sub-templates', (done) => {
       let year = new Date().getFullYear()
 
-      it('(happy, by id)', (done) => {
+      it('(happy, by name)', (done) => {
         let jobs = []
 
         jobs.push((next) => {
@@ -167,12 +175,12 @@ describe('integartion:template', () => {
         async.series(jobs, done)
       })
 
-      it('(happy, by name)', (done) => {
+      it('(happy, by guid)', (done) => {
         let jobs = []
 
         jobs.push((next) => {
           template.updateAttributes({
-            template: 'Hello there, {{ person.data.firstName }} {{#include}}' + footerTemplate.id + '{{/include}}'
+            template: 'Hello there, {{ person.data.firstName }} {{#include}}' + footerTemplate.guid + '{{/include}}'
           }).then(() => {
             next()
           }).catch(next)
@@ -215,7 +223,7 @@ describe('integartion:template', () => {
 
         jobs.push((next) => {
           template.updateAttributes({
-            template: 'Hello there, {{ person.data.firstName }} {{#include}}' + template.id + '{{/include}}'
+            template: 'Hello there, {{ person.data.firstName }} {{#include}}' + template.guid + '{{/include}}'
           }).then(() => {
             next()
           }).catch(next)

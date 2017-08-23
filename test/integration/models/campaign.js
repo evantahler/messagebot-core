@@ -174,7 +174,7 @@ describe('integartion:campaigns', () => {
         folder: 'default'
       })
 
-      list.save().then(() => { done() })
+      list.save().then(() => { done() }).catch(done)
     })
 
     before((done) => {
@@ -186,7 +186,7 @@ describe('integartion:campaigns', () => {
         template: 'Hello there, {{ person.data.firstName }}'
       })
 
-      template.save().then(() => { done() })
+      template.save().then(() => { done() }).catch(done)
     })
 
     before((done) => {
@@ -378,8 +378,8 @@ describe('integartion:campaigns', () => {
           type: 'trigger',
           folder: 'default',
           transport: 'smtp',
-          listGuid: list.id,
-          templateGuid: template.id,
+          listGuid: list.guid,
+          templateGuid: template.guid,
           triggerDelay: 10,
           triggerEventMatch: {'type': 'person_created'}
         })
@@ -412,8 +412,8 @@ describe('integartion:campaigns', () => {
           type: 'trigger',
           folder: 'default',
           transport: 'smtp',
-          listGuid: list.id,
-          templateGuid: template.id,
+          listGuid: list.guid,
+          templateGuid: template.guid,
           triggerDelay: 1,
           sendAt: new Date(),
           triggerEventMatch: {'type': '^pageView$', 'page': '^/some/page/.*$'}

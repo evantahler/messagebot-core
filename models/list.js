@@ -132,7 +132,7 @@ let loader = function (api) {
 
             if (list.type === 'static') {
               jobs.push((done) => {
-                api.models.ListPerson.count({where: {listGuid: list.id}}).then((_count) => {
+                api.models.ListPerson.count({where: {listGuid: list.guid}}).then((_count) => {
                   count = _count
                   done()
                 }).catch(done)
@@ -232,7 +232,7 @@ let loader = function (api) {
             })
 
             async.series(jobs, (error) => {
-              if (!error) { api.log(`counted ${count} people in list #${list.id}, ${list.name} (team #${list.teamGuid})`) }
+              if (!error) { api.log(`counted ${count} people in list #${list.guid}, ${list.name} (team #${list.teamGuid})`) }
               callback(error, count)
             })
           },

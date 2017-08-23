@@ -134,7 +134,7 @@ exports.task = {
         toSend = false
       }
 
-      if (toSend && person.listOptOuts.indexOf(list.id) >= 0) {
+      if (toSend && person.listOptOuts.indexOf(list.guid) >= 0) {
         api.log(`person #${person.guid} is opted-out of this list (#${list.guid})`)
         toSend = false
       }

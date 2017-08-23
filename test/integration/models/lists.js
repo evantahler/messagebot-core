@@ -95,7 +95,7 @@ describe('integartion:lists', () => {
 
     afterEach((done) => {
       api.models.ListPerson.destroy({
-        where: {listGuid: list.id}
+        where: {listGuid: list.guid}
       }).then(() => {
         done()
       }).catch(done)
@@ -107,7 +107,7 @@ describe('integartion:lists', () => {
       list.associateListPeople((error, count) => {
         should.not.exist(error)
         count.should.equal(1)
-        api.models.ListPerson.findAll({where: {listGuid: list.id}}).then((listPeople) => {
+        api.models.ListPerson.findAll({where: {listGuid: list.guid}}).then((listPeople) => {
           listPeople.length.should.equal(1)
           listPeople[0].personGuid.should.equal(people[4].guid)
           done()
@@ -121,7 +121,7 @@ describe('integartion:lists', () => {
       list.associateListPeople((error, count) => {
         should.not.exist(error)
         count.should.equal(4)
-        api.models.ListPerson.findAll({where: {listGuid: list.id}}).then((listPeople) => {
+        api.models.ListPerson.findAll({where: {listGuid: list.guid}}).then((listPeople) => {
           listPeople.length.should.equal(4)
           done()
         })
@@ -135,7 +135,7 @@ describe('integartion:lists', () => {
       list.associateListPeople((error, count) => {
         should.not.exist(error)
         count.should.equal(1)
-        api.models.ListPerson.findAll({where: {listGuid: list.id}}).then((listPeople) => {
+        api.models.ListPerson.findAll({where: {listGuid: list.guid}}).then((listPeople) => {
           listPeople.length.should.equal(1)
           listPeople[0].personGuid.should.equal(people[0].guid)
           done()
@@ -148,7 +148,7 @@ describe('integartion:lists', () => {
 
       let listPerson = api.models.ListPerson.build({
         teamGuid: team.guid,
-        listGuid: list.id,
+        listGuid: list.guid,
         personGuid: people[3].guid
       })
 
@@ -156,11 +156,11 @@ describe('integartion:lists', () => {
         list.associateListPeople((error, count) => {
           should.not.exist(error)
           count.should.equal(1)
-          api.models.ListPerson.findAll({where: {listGuid: list.id}}).then((listPeople) => {
+          api.models.ListPerson.findAll({where: {listGuid: list.guid}}).then((listPeople) => {
             listPeople.length.should.equal(1)
             listPeople[0].personGuid.should.equal(people[3].guid)
             listPerson.destroy().then(() => { done() })
-          })
+          }).catch(done)
         })
       }).catch(done)
     })

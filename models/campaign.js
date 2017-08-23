@@ -10,9 +10,9 @@ let loader = function (api) {
     if (campaign.sentAt) { return callback(new Error('campaign already sent')) }
     if (campaign.sendAt - new Date().getTime() >= 0) { return callback(new Error('campaign should not be sent yet')) }
 
-    api.utils.findInBatches(api.models.ListPerson, {where: {listGuid: list.id}}, (listPerson, done) => {
+    api.utils.findInBatches(api.models.ListPerson, {where: {listGuid: list.guid}}, (listPerson, done) => {
       api.tasks.enqueue('campaigns:sendMessage', {
-        listGuid: list.id,
+        listGuid: list.guid,
         campaignGuid: campaign.guid,
         personGuid: listPerson.personGuid
       }, 'messagebot:campaigns', done)
@@ -25,9 +25,9 @@ let loader = function (api) {
       return callback(new Error('campaign should not be sent yet'))
     }
 
-    api.utils.findInBatches(api.models.ListPerson, {where: {listGuid: list.id}}, (listPerson, done) => {
+    api.utils.findInBatches(api.models.ListPerson, {where: {listGuid: list.guid}}, (listPerson, done) => {
       api.tasks.enqueue('campaigns:sendMessage', {
-        listGuid: list.id,
+        listGuid: list.guid,
         campaignGuid: campaign.guid,
         personGuid: listPerson.personGuid
       }, 'messagebot:campaigns', done)
@@ -152,7 +152,7 @@ let loader = function (api) {
         hooks: {
           beforeDestroy: function (self) {
             return new Promise((resolve, reject) => {
-              api.models.Message.destroy({where: {campaignGuid: self.id}}).then(() => {
+              api.models.Message.destroy({where: {campaignGuid: self.guid}}).then(() => {
                 resolve()
               }).catch(reject)
             })
