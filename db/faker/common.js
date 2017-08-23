@@ -45,12 +45,12 @@ exports.buildPerson = function (start, end, routeBase, callback) {
   }
 
   request.post((routeBase + '/api/person'), {form: payload}, function (error, data, response) {
+    try { response = JSON.parse(response) } catch (e) { }
+    if (!error && response.error) { error = response.error }
     if (error) { return callback(error) }
-    response = JSON.parse(response)
-    if (response.error) { error = response.error }
     person = payload
     person.data = payloadData
-    person.guid = JSON.parse(data.body).person.guid
+    person.guid = response.person.guid
     person.createdAt = new Date(person.createdAt)
     callback(error, person)
   })
