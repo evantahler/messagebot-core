@@ -17,7 +17,7 @@ module.exports = {
 
         api.models.Campaign.findAll({
           where: {
-            teamId: team.id,
+            teamGuid: team.guid,
             type: 'trigger'
           }
         }).then((campaigns) => {
@@ -41,11 +41,11 @@ module.exports = {
                 let delay = 1
                 if (campaign.triggerDelay) { delay = campaign.triggerDelay * 1000 }
                 api.tasks.enqueueIn(delay, 'campaigns:triggerEventCheck', {
-                  teamId: team.id,
+                  teamGuid: team.guid,
                   eventGuid: event.guid,
                   personGuid: event.personGuid,
-                  campaignId: campaign.id,
-                  listId: campaign.listId,
+                  campaignGuid: campaign.guid,
+                  listGuid: campaign.listGuid,
                   enqueuedAt: new Date().getTime()
                 }, 'messagebot:campaigns', done)
               })
@@ -60,7 +60,7 @@ module.exports = {
         if (!event.lat || !event.lng) { return callback() }
 
         api.models.Person.findOne({where: {
-          teamId: team.id,
+          teamGuid: team.guid,
           guid: event.personGuid
         }}).then((person) => {
           if (!person) { return callback(new Error(`Person (${event.personGuid}) not found`)) }

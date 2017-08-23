@@ -21,7 +21,7 @@ describe('actions:event', () => {
 
   before((done) => {
     person = api.models.Person.build({
-      teamId: team.id,
+      teamGuid: team.guid,
       source: 'someSource',
       device: 'unknown',
       listOptOuts: [],
@@ -43,7 +43,7 @@ describe('actions:event', () => {
   describe('event:create', () => {
     it('succeeds', (done) => {
       api.specHelper.runAction('event:create', {
-        teamId: team.id,
+        teamGuid: team.guid,
         device: 'tester',
         type: 'tester',
         personGuid: person.guid,
@@ -59,7 +59,7 @@ describe('actions:event', () => {
 
     it('succeeds (GIF)', (done) => {
       specHelper.WebRequestWithLogin(email, password, 'get', '/api/event/create.gif', {
-        teamId: team.id,
+        teamGuid: team.guid,
         device: 'tester',
         type: 'tester',
         personGuid: person.guid
@@ -74,7 +74,7 @@ describe('actions:event', () => {
 
     it('succeeds (geocoding)', (done) => {
       api.specHelper.runAction('event:create', {
-        teamId: team.id,
+        teamGuid: team.guid,
         device: 'tester',
         type: 'tester',
         personGuid: person.guid,
@@ -107,7 +107,7 @@ describe('actions:event', () => {
       should.not.exist(person.location)
 
       api.specHelper.runTask('events:process', {
-        teamId: team.id,
+        teamGuid: team.guid,
         events: [eventGuid]
       }, (error) => {
         should.not.exist(error)
@@ -125,7 +125,7 @@ describe('actions:event', () => {
 
     it('fails (missing param)', (done) => {
       api.specHelper.runAction('event:create', {
-        teamId: team.id,
+        teamGuid: team.guid,
         type: 'tester',
         personGuid: person.guid,
         data: {thing: 'stuff'}
@@ -142,7 +142,7 @@ describe('actions:event', () => {
 
     it('succeeds', (done) => {
       api.specHelper.runAction('event:view', {
-        teamId: team.id,
+        teamGuid: team.guid,
         guid: eventGuid
       }, (response) => {
         should.not.exist(response.error)
@@ -156,7 +156,7 @@ describe('actions:event', () => {
 
     it('fails (not found)', (done) => {
       api.specHelper.runAction('event:view', {
-        teamId: team.id,
+        teamGuid: team.guid,
         guid: '123abc'
       }, (response) => {
         response.error.should.equal('Error: Event (123abc) not found')
@@ -168,7 +168,7 @@ describe('actions:event', () => {
   describe('event:edit', () => {
     it('succeeds', (done) => {
       api.specHelper.runAction('event:edit', {
-        teamId: team.id,
+        teamGuid: team.guid,
         guid: eventGuid,
         device: 'new_device'
       }, (response) => {
@@ -179,7 +179,7 @@ describe('actions:event', () => {
 
     it('fails (not found)', (done) => {
       api.specHelper.runAction('event:edit', {
-        teamId: team.id,
+        teamGuid: team.guid,
         guid: '123abc',
         device: 'new_device'
       }, (response) => {
@@ -246,7 +246,7 @@ describe('actions:event', () => {
   describe('event:delete', () => {
     it('succeeds', (done) => {
       api.specHelper.runAction('event:delete', {
-        teamId: team.id,
+        teamGuid: team.guid,
         guid: eventGuid
       }, (response) => {
         should.not.exist(response.error)
@@ -256,7 +256,7 @@ describe('actions:event', () => {
 
     it('fails (not found)', (done) => {
       api.specHelper.runAction('event:delete', {
-        teamId: team.id,
+        teamGuid: team.guid,
         guid: eventGuid
       }, (response) => {
         response.error.should.equal('Error: Event (' + eventGuid + ') not found')

@@ -20,7 +20,7 @@ exports.templatesList = {
 
   run: function (api, data, next) {
     let query = {
-      where: { teamId: data.session.teamId },
+      where: { teamGuid: data.session.teamGuid },
       order: [
         ['folder', 'asc'],
         ['name', 'asc']
@@ -55,7 +55,7 @@ exports.campaignsFolders = {
   inputs: {},
 
   run: function (api, data, next) {
-    api.models.Template.aggregate('folder', 'DISTINCT', {where: {teamId: data.session.teamId}, plain: false}).then((response) => {
+    api.models.Template.aggregate('folder', 'DISTINCT', {where: {teamGuid: data.session.teamGuid}, plain: false}).then((response) => {
       data.response.folders = []
       response.forEach((r) => { data.response.folders.push(r.DISTINCT) })
       data.response.folders.sort()

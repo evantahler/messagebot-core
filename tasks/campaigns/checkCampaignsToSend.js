@@ -50,7 +50,7 @@ exports.task = {
       campaigns.forEach((campaign) => {
         campaignJobs.push((more) => {
           api.tasks.enqueue('campaigns:sendCampaign', {
-            campaignId: campaign.id
+            campaignGuid: campaign.guid
           }, 'messagebot:campaigns', more)
         })
       })
@@ -59,9 +59,9 @@ exports.task = {
     })
 
     async.series(searchJobs, (error) => {
-      let campaignIds = []
-      campaigns.forEach((campaign) => { campaignIds.push(campaign.id) })
-      return next(error, campaignIds)
+      let campaignGuids = []
+      campaigns.forEach((campaign) => { campaignGuids.push(campaign.guid) })
+      return next(error, campaignGuids)
     })
   }
 }

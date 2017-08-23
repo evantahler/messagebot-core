@@ -1,11 +1,12 @@
 const Sequelize = require('sequelize')
+const uuid = require('uuid')
 
 let loader = function (api) {
   /* --- Priave Methods --- */
 
   let destorySettings = function (team) {
     return api.models.Setting.destroy({
-      where: { teamId: team.id }
+      where: { teamGuid: team.guid }
     })
   }
 
@@ -15,6 +16,11 @@ let loader = function (api) {
     name: 'Team',
     model: api.sequelize.sequelize.define('team',
       {
+        guid: {
+          type: Sequelize.UUID,
+          primaryKey: true,
+          defaultValue: () => { return uuid.v4() }
+        },
         'name': {
           type: Sequelize.STRING,
           allowNull: false
@@ -49,7 +55,7 @@ let loader = function (api) {
         instanceMethods: {
           apiData: function () {
             return {
-              id: this.id,
+              guid: this.guid,
               name: this.name,
               trackingDomainRegexp: this.trackingDomainRegexp,
               trackingDomain: this.trackingDomain,

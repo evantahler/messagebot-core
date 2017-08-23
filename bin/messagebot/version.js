@@ -6,9 +6,9 @@ module.exports = {
 
   run: function (api, data, next) {
     const pkg = require(path.join(__dirname, '/../../package.json'))
-    api.log('Name: ' + pkg.name)
-    api.log('Description: ' + pkg.description)
-    api.log('Version: ' + pkg.version)
+    console.log('Name: ' + pkg.name)
+    console.log('Description: ' + pkg.description)
+    console.log('Version: ' + pkg.version)
 
     next(null)
   }

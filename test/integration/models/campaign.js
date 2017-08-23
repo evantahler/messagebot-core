@@ -24,14 +24,14 @@ describe('integartion:campaigns', () => {
 
     before((done) => {
       campaign = api.models.Campaign.build({
-        teamId: 1,
+        teamGuid: team.guid,
         name: 'my campaign',
         description: 'my campaign',
         type: 'simple',
         folder: 'default',
         transport: 'smtp',
-        listId: 1,
-        templateId: 1
+        listGuid: 1,
+        templateGuid: 1
       })
 
       campaign.save().then(() => { done() })
@@ -44,9 +44,9 @@ describe('integartion:campaigns', () => {
         jobs.push((next) => {
           let message = api.models.Message.build({
             transport: 'smtp',
-            teamId: 1,
+            teamGuid: team.guid,
             personGuid: `${i}-${Math.random()}`,
-            campaignId: campaign.id,
+            campaignGuid: campaign.guid,
             body: 'hello',
             view: {},
             sentAt: new Date()
@@ -95,7 +95,7 @@ describe('integartion:campaigns', () => {
 
     it('has messages', (done) => {
       api.models.Message.count({where: {
-        campaignId: campaign.id
+        campaignGuid: campaign.guid
       }}).then((count) => {
         count.should.equal(10)
         done()
@@ -104,10 +104,10 @@ describe('integartion:campaigns', () => {
 
     it('will return a sample message when viewing the campaign', (done) => {
       specHelper.requestWithLogin(email, password, 'campaign:view', {
-        campaignId: campaign.id
+        campaignGuid: campaign.guid
       }, (response) => {
         should.not.exist(response.error)
-        response.campaign.id.should.equal(campaign.id)
+        response.campaign.guid.should.equal(campaign.guid)
         response.sampleMessage.body.should.equal('hello')
         done()
       })
@@ -149,7 +149,7 @@ describe('integartion:campaigns', () => {
 
     before((done) => {
       person = api.models.Person.build({
-        teamId: 1,
+        teamGuid: team.guid,
         source: 'tester',
         device: 'phone',
         listOptOuts: [],
@@ -167,32 +167,32 @@ describe('integartion:campaigns', () => {
 
     before((done) => {
       list = api.models.List.build({
-        teamId: 1,
+        teamGuid: team.guid,
         name: 'my list',
         description: 'my list',
         type: 'static',
         folder: 'default'
       })
 
-      list.save().then(() => { done() })
+      list.save().then(() => { done() }).catch(done)
     })
 
     before((done) => {
       template = api.models.Template.build({
-        teamId: 1,
+        teamGuid: team.guid,
         name: 'my template',
         description: 'my template',
         folder: 'default',
         template: 'Hello there, {{ person.data.firstName }}'
       })
 
-      template.save().then(() => { done() })
+      template.save().then(() => { done() }).catch(done)
     })
 
     before((done) => {
       listPerson = api.models.ListPerson.build({
-        teamId: 1,
-        listId: list.id,
+        teamGuid: team.guid,
+        listGuid: list.guid,
         personGuid: person.guid
       })
 
@@ -228,14 +228,14 @@ describe('integartion:campaigns', () => {
     describe('send#simple', () => {
       before((done) => {
         campaign = api.models.Campaign.build({
-          teamId: 1,
+          teamGuid: team.guid,
           name: 'my campaign',
           description: 'my campaign',
           type: 'simple',
           folder: 'default',
           transport: 'smtp',
-          listId: list.id,
-          templateId: template.id
+          listGuid: list.guid,
+          templateGuid: template.guid
         })
 
         campaign.save().then(() => { done() })
@@ -258,7 +258,7 @@ describe('integartion:campaigns', () => {
           should.not.exist(error)
 
           api.models.Message.findAll({where: {
-            campaignId: campaign.id
+            campaignGuid: campaign.guid
           }}).then((messages) => {
             messages.length.should.equal(1)
             messages[0].body.should.equal('Hello there, fname')
@@ -284,15 +284,15 @@ describe('integartion:campaigns', () => {
     describe('send#recurring', () => {
       before((done) => {
         campaign = api.models.Campaign.build({
-          teamId: 1,
+          teamGuid: team.guid,
           name: 'my campaign',
           description: 'my campaign',
           type: 'recurring',
           reSendDelay: 1,
           folder: 'default',
           transport: 'smtp',
-          listId: list.id,
-          templateId: template.id
+          listGuid: list.guid,
+          templateGuid: template.guid
         })
 
         campaign.save().then(() => { done() }).catch(done)
@@ -312,7 +312,7 @@ describe('integartion:campaigns', () => {
         async.series(jobs, (error) => {
           should.not.exist(error)
           api.models.Message.findAll({where: {
-            campaignId: campaign.id
+            campaignGuid: campaign.guid
           }}).then((messages) => {
             messages.length.should.equal(1)
             messages[0].body.should.equal('Hello there, fname')
@@ -337,7 +337,7 @@ describe('integartion:campaigns', () => {
         async.series(jobs, (error) => {
           should.not.exist(error)
           api.models.Message.findAll({where: {
-            campaignId: campaign.id
+            campaignGuid: campaign.guid
           }}).then((messages) => {
             messages.length.should.equal(2)
             messages[0].body.should.equal('Hello there, fname')
@@ -372,14 +372,14 @@ describe('integartion:campaigns', () => {
     describe('send#trigger', () => {
       before((done) => {
         campaign = api.models.Campaign.build({
-          teamId: 1,
+          teamGuid: team.guid,
           name: 'my campaign',
           description: 'my campaign',
           type: 'trigger',
           folder: 'default',
           transport: 'smtp',
-          listId: list.id,
-          templateId: template.id,
+          listGuid: list.guid,
+          templateGuid: template.guid,
           triggerDelay: 10,
           triggerEventMatch: {'type': 'person_created'}
         })
@@ -406,14 +406,14 @@ describe('integartion:campaigns', () => {
     describe('triggered messages', () => {
       before((done) => {
         campaign = api.models.Campaign.build({
-          teamId: 1,
+          teamGuid: team.guid,
           name: 'my campaign',
           description: 'my campaign',
           type: 'trigger',
           folder: 'default',
           transport: 'smtp',
-          listId: list.id,
-          templateId: template.id,
+          listGuid: list.guid,
+          templateGuid: template.guid,
           triggerDelay: 1,
           sendAt: new Date(),
           triggerEventMatch: {'type': '^pageView$', 'page': '^/some/page/.*$'}
@@ -429,7 +429,7 @@ describe('integartion:campaigns', () => {
 
         jobs.push((next) => {
           api.specHelper.runAction('event:create', {
-            teamId: team.id,
+            teamGuid: team.guid,
             device: 'tester',
             type: 'pageView',
             page: 'myPage',
@@ -447,7 +447,7 @@ describe('integartion:campaigns', () => {
         async.series(jobs, (error) => {
           should.not.exist(error)
           api.models.Message.findAll({where: {
-            campaignId: campaign.id
+            campaignGuid: campaign.guid
           }}).then((messages) => {
             messages.length.should.equal(1)
             messages[0].body.should.equal('Hello there, fname')
@@ -461,7 +461,7 @@ describe('integartion:campaigns', () => {
 
         jobs.push((next) => {
           api.specHelper.runAction('event:create', {
-            teamId: team.id,
+            teamGuid: team.guid,
             device: 'tester',
             type: 'pageView',
             page: 'myPage',
@@ -479,7 +479,7 @@ describe('integartion:campaigns', () => {
         async.series(jobs, (error) => {
           should.not.exist(error)
           api.models.Message.findAll({where: {
-            campaignId: campaign.id
+            campaignGuid: campaign.guid
           }}).then((messages) => {
             messages.length.should.equal(1)
             messages[0].body.should.equal('Hello there, fname')

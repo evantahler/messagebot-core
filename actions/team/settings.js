@@ -10,7 +10,7 @@ exports.settingsView = {
     data.response.team = data.team.apiData()
 
     api.models.Setting.findAll({
-      where: { teamId: data.team.id },
+      where: { teamGuid: data.team.guid },
       order: [['key', 'desc']]
     }).then((settings) => {
       data.response.settings = {}
@@ -38,7 +38,7 @@ exports.settingsEdit = {
   run: function (api, data, next) {
     api.models.Setting.findOne({
       where: {
-        teamId: data.team.id,
+        teamGuid: data.team.guid,
         key: data.params.key
       }
     }).then((setting) => {

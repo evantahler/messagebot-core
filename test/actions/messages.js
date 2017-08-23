@@ -21,10 +21,10 @@ describe('actions:message', () => {
   describe('message:create', () => {
     it('succeeds', (done) => {
       api.specHelper.runAction('message:create', {
-        teamId: team.id,
+        teamGuid: team.guid,
         personGuid: 'messagesTestPersonGuid',
         transport: 'smtp',
-        campaignId: 1,
+        campaignGuid: 1,
         body: 'hello',
         view: {},
         sentAt: new Date()
@@ -38,11 +38,11 @@ describe('actions:message', () => {
 
     it('fails (uniqueness failure)', (done) => {
       api.specHelper.runAction('message:create', {
-        teamId: team.id,
+        teamGuid: team.guid,
         guid: messageGuid,
         personGuid: 'messagesTestPersonGuid',
         transport: 'smtp',
-        campaignId: 1,
+        campaignGuid: 1,
         body: 'hello',
         view: {},
         sentAt: new Date()
@@ -54,9 +54,9 @@ describe('actions:message', () => {
 
     it('fails (missing param)', (done) => {
       api.specHelper.runAction('message:create', {
-        teamId: team.id,
+        teamGuid: team.guid,
         transport: 'smtp',
-        campaignId: 1,
+        campaignGuid: 1,
         body: 'hello',
         view: {},
         sentAt: new Date()
@@ -70,7 +70,7 @@ describe('actions:message', () => {
   describe('message:view', () => {
     it('succeeds', (done) => {
       api.specHelper.runAction('message:view', {
-        teamId: team.id,
+        teamGuid: team.guid,
         guid: messageGuid
       }, (response) => {
         should.not.exist(response.error)
@@ -81,7 +81,7 @@ describe('actions:message', () => {
 
     it('fails (not found)', (done) => {
       api.specHelper.runAction('message:view', {
-        teamId: team.id,
+        teamGuid: team.guid,
         guid: 'xxx'
       }, (response) => {
         response.error.should.equal('Error: Message (xxx) not found')
@@ -93,7 +93,7 @@ describe('actions:message', () => {
   describe('message:edit', () => {
     it('succeeds', (done) => {
       api.specHelper.runAction('message:edit', {
-        teamId: team.id,
+        teamGuid: team.guid,
         guid: messageGuid,
         body: 'hello again'
       }, (response) => {
@@ -104,7 +104,7 @@ describe('actions:message', () => {
 
     it('fails (not found)', (done) => {
       api.specHelper.runAction('message:edit', {
-        teamId: team.id,
+        teamGuid: team.guid,
         guid: 'xxx'
       }, (response) => {
         response.error.should.equal('Error: Message (xxx) not found')
@@ -131,7 +131,7 @@ describe('actions:message', () => {
 
     it('succeeds (read, json)', (done) => {
       api.specHelper.runAction('message:track', {
-        teamId: team.id,
+        teamGuid: team.guid,
         guid: messageGuid,
         verb: 'read'
       }, (response) => {
@@ -144,7 +144,7 @@ describe('actions:message', () => {
 
     it('succeeds (act, json)', (done) => {
       api.specHelper.runAction('message:track', {
-        teamId: team.id,
+        teamGuid: team.guid,
         guid: messageGuid,
         verb: 'act'
       }, (response) => {
@@ -157,7 +157,7 @@ describe('actions:message', () => {
 
     it('succeeds (read, html)', (done) => {
       specHelper.WebRequestWithLogin(email, password, 'get', '/api/message/track', {
-        teamId: team.id,
+        teamGuid: team.guid,
         guid: messageGuid,
         verb: 'read'
       }, (response, res) => {
@@ -171,7 +171,7 @@ describe('actions:message', () => {
 
     it('succeeds (act, html)', (done) => {
       specHelper.WebRequestWithLogin(email, password, 'get', '/api/message/track', {
-        teamId: team.id,
+        teamGuid: team.guid,
         guid: messageGuid,
         verb: 'act'
       }, (response, res) => {
@@ -185,7 +185,7 @@ describe('actions:message', () => {
 
     it('succeeds (read, gif)', (done) => {
       specHelper.WebRequestWithLogin(email, password, 'get', '/api/message/track.gif', {
-        teamId: team.id,
+        teamGuid: team.guid,
         guid: messageGuid,
         verb: 'read'
       }, (response, res) => {
@@ -199,7 +199,7 @@ describe('actions:message', () => {
 
     it('succeeds (act, gif)', (done) => {
       specHelper.WebRequestWithLogin(email, password, 'get', '/api/message/track.gif', {
-        teamId: team.id,
+        teamGuid: team.guid,
         guid: messageGuid,
         verb: 'act'
       }, (response, res) => {
@@ -213,7 +213,7 @@ describe('actions:message', () => {
 
     it('succeeds (message timestamps updated)', (done) => {
       api.specHelper.runAction('message:view', {
-        teamId: team.id,
+        teamGuid: team.guid,
         guid: messageGuid
       }, (response) => {
         should.not.exist(response.error)
@@ -226,7 +226,7 @@ describe('actions:message', () => {
 
     it('fails (bad verb)', (done) => {
       api.specHelper.runAction('message:track', {
-        teamId: team.id,
+        teamGuid: team.guid,
         guid: messageGuid,
         verb: 'did-it'
       }, (response) => {
@@ -237,7 +237,7 @@ describe('actions:message', () => {
 
     it('fails (not found)', (done) => {
       api.specHelper.runAction('message:track', {
-        teamId: team.id,
+        teamGuid: team.guid,
         guid: 'a-fake-guid',
         verb: 'act'
       }, (response) => {
@@ -303,7 +303,7 @@ describe('actions:message', () => {
   describe('message:delete', () => {
     it('succeeds', (done) => {
       api.specHelper.runAction('message:delete', {
-        teamId: team.id,
+        teamGuid: team.guid,
         guid: messageGuid
       }, (response) => {
         should.not.exist(response.error)
@@ -313,7 +313,7 @@ describe('actions:message', () => {
 
     it('fails (not found)', (done) => {
       api.specHelper.runAction('message:delete', {
-        teamId: team.id,
+        teamGuid: team.guid,
         guid: messageGuid
       }, (response) => {
         response.error.should.equal('Error: Message (' + messageGuid + ') not found')

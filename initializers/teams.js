@@ -9,7 +9,7 @@ module.exports = {
 
       ensureSettings: function (team, callback) {
         let jobs = []
-        api.models.Setting.findAll({where: {teamId: team.id}}).then((settings) => {
+        api.models.Setting.findAll({where: {teamGuid: team.guid}}).then((settings) => {
           api.teams.settings.forEach((settingParent) => {
             let found = false
             settings.forEach((s) => {
@@ -19,12 +19,12 @@ module.exports = {
             if (found === false) {
               jobs.push((done) => {
                 api.models.Setting.create({
-                  teamId: team.id,
+                  teamGuid: team.guid,
                   key: settingParent.key,
                   value: settingParent.value,
                   description: settingParent.description
                 }).then(() => {
-                  api.log(`[Team ${team.id}] set default setting for \`${settingParent.key}\` to \`${settingParent.value}\``)
+                  api.log(`[Team ${team.guid}] set default setting for \`${settingParent.key}\` to \`${settingParent.value}\``)
                   done()
                 }).catch((error) => {
                   // another instance created the setting for us; it's OK.

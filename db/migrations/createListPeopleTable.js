@@ -3,10 +3,10 @@ module.exports = {
     return queryInterface.createTable(
       'listPeople',
       {
-        id: {
-          type: Sequelize.BIGINT,
+        guid: {
+          type: Sequelize.UUID,
           primaryKey: true,
-          autoIncrement: true
+          defaultValue: Sequelize.UUIDV4
         },
         createdAt: {
           type: Sequelize.DATE
@@ -15,13 +15,13 @@ module.exports = {
           type: Sequelize.DATE
         },
 
-        'teamId': {
-          type: Sequelize.BIGINT,
+        'teamGuid': {
+          type: Sequelize.UUID,
           allowNull: false
         },
 
-        'listId': {
-          type: Sequelize.BIGINT,
+        'listGuid': {
+          type: Sequelize.UUID,
           allowNull: false
         },
         'personGuid': {
@@ -31,7 +31,7 @@ module.exports = {
       }
     ).then(() => {
       return queryInterface.addIndex(
-        'listPeople', ['teamId']
+        'listPeople', ['teamGuid']
       ).then(() => {
         return queryInterface.addIndex(
           'listPeople', ['personGuid'], {
@@ -39,12 +39,12 @@ module.exports = {
           }
         ).then(() => {
           return queryInterface.addIndex(
-            'listPeople', ['listId'], {
-              indexName: 'listIdIndex'
+            'listPeople', ['listGuid'], {
+              indexName: 'listGuidIndex'
             }
           ).then(() => {
             return queryInterface.addIndex(
-              'listPeople', ['listId', 'personGuid'], {
+              'listPeople', ['listGuid', 'personGuid'], {
                 indicesType: 'UNIQUE'
               }
             )

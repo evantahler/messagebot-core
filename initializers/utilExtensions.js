@@ -29,15 +29,15 @@ module.exports = {
       api.models.Team.findAll().then((teams) => {
         // leave this as an option for explicit tasks/internal use
         // no action should have this allowed as a param
-        if (!team && data.params && data.params.teamId) {
+        if (!team && data.params && data.params.teamGuid) {
           teams.forEach((_team) => {
-            if (_team.id === data.params.teamId) { team = _team }
+            if (_team.guid === data.params.teamGuid) { team = _team }
           })
         }
 
-        if (!team && data.session && data.session.teamId) {
+        if (!team && data.session && data.session.teamGuid) {
           teams.forEach((_team) => {
-            if (_team.id === data.session.teamId) { team = _team }
+            if (_team.guid === data.session.teamGuid) { team = _team }
           })
         }
 

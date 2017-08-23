@@ -232,9 +232,9 @@ MESSAGEBOT.person.delete();
 
 // People can opt in/out of your communications as well
 // Opt Out of one list:
-MESSAGEBOT.person.opt({direction: 'out', listId: 123});
+MESSAGEBOT.person.opt({direction: 'out', listGuid: 123});
 // Opt back in:
-MESSAGEBOT.person.opt({direction: 'in', listId: 123});
+MESSAGEBOT.person.opt({direction: 'in', listGuid: 123});
 // Opt out of all communications all together:
 MESSAGEBOT.person.opt({direction: 'out', global: true});
 ```

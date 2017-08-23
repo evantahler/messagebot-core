@@ -16,7 +16,7 @@ let loader = function (api) {
           primaryKey: true,
           defaultValue: () => { return uuid.v4() }
         },
-        teamId: {
+        teamGuid: {
           allowNull: false,
           type: Sequelize.BIGINT
         },
@@ -30,11 +30,11 @@ let loader = function (api) {
           allowNull: false
         },
         'personGuid': {
-          type: Sequelize.STRING,
+          type: Sequelize.UUID,
           allowNull: false
         },
         'messageGuid': {
-          type: Sequelize.STRING,
+          type: Sequelize.UUID,
           allowNull: true
         },
         'type': {

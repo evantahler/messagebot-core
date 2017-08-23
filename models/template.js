@@ -2,6 +2,7 @@ const Sequelize = require('sequelize')
 const sanitizeHtml = require('sanitize-html')
 const mustache = require('mustache')
 const async = require('async')
+const uuid = require('uuid')
 
 let loader = function (api) {
   /* --- Priave Methods --- */
@@ -77,15 +78,15 @@ let loader = function (api) {
 
     view.optOutLink = function () {
       return function (val) {
-        let page = team.trackingDomain + '/tracking/' + team.id + '/optOut.html'
+        let page = team.trackingDomain + '/tracking/' + team.guid + '/optOut.html'
         if (val) { page = val }
 
         let url = ''
         url += page + '?'
         url += 'personGuid=' + person.guid + '&'
         url += 'messageGuid=%%MESSAGEGUID%%&' + '&'
-        if (view.campaign.id) { url += 'campaignId=' + view.campaign.id + '&' }
-        if (view.list.id) { url += 'listId=' + view.list.id + '&' }
+        if (view.campaign.guid) { url += 'campaignGuid=' + view.campaign.guid + '&' }
+        if (view.list.guid) { url += 'listGuid=' + view.list.guid + '&' }
         return url
       }
     }
@@ -127,8 +128,13 @@ let loader = function (api) {
     name: 'Template',
     model: api.sequelize.sequelize.define('template',
       {
-        'teamId': {
-          type: Sequelize.BIGINT,
+        guid: {
+          type: Sequelize.UUID,
+          primaryKey: true,
+          defaultValue: () => { return uuid.v4() }
+        },
+        'teamGuid': {
+          type: Sequelize.UUID,
           allowNull: false
         },
         'name': {
@@ -159,7 +165,7 @@ let loader = function (api) {
       {
         instanceMethods: {
 
-          render: function (person, message, campaign, list, trackBeacon, callback, includedIds) {
+          render: function (person, message, campaign, list, trackBeacon, callback, includedGuids) {
             let template = this
             let jobs = []
             let events = [] // TODO: Do we load in the events?  How many?
@@ -170,12 +176,12 @@ let loader = function (api) {
             if (!template.template || template.template.length === 0) { return callback(new Error('template empty')) }
 
             // Recusion saftey!
-            if (!includedIds) { includedIds = [] }
-            if (includedIds.indexOf(template.id) >= 0) { return callback(new Error('Cannot include template into itself')) }
-            includedIds.push(template.id)
+            if (!includedGuids) { includedGuids = [] }
+            if (includedGuids.indexOf(template.guid) >= 0) { return callback(new Error('Cannot include template into itself')) }
+            includedGuids.push(template.guid)
 
             jobs.push((done) => {
-              api.models.Team.findOne({where: {id: template.teamId}}).then((t) => {
+              api.models.Team.findOne({where: {guid: template.teamGuid}}).then((t) => {
                 team = t
                 if (!team) { return done(new Error('team not found')) }
                 return done()
@@ -212,10 +218,9 @@ let loader = function (api) {
                 let includedTemplate
 
                 includeJobs.push((includeDone) => {
-                  let or = {name: matcher}
-                  if (parseInt(matcher, 10)) { or.id = parseInt(matcher, 10) }
+                  let or = {name: matcher, guid: matcher}
                   api.models.Template.findOne({where: {
-                    teamId: team.id,
+                    teamGuid: team.guid,
                     $or: or
                   }}).then((_includedTemplate) => {
                     if (!_includedTemplate) { return includeDone(new Error('Cannot find template to include (' + matcher + ')')) }
@@ -229,7 +234,7 @@ let loader = function (api) {
                     if (error) { return includeDone(error) }
                     html = html.replace(match, includedHtml)
                     includeDone()
-                  }, includedIds)
+                  }, includedGuids)
                 })
               })
 
@@ -242,14 +247,14 @@ let loader = function (api) {
               if (error) { return callback(error) }
               let logData = {}
               if (message) { logData = {messageGuid: message.guid} }
-              api.log('rendered template #' + template.id + ' for person #' + person.guid, 'debug', logData)
+              api.log('rendered template #' + template.guid + ' for person #' + person.guid, 'debug', logData)
               return callback(null, html, view)
             })
           },
 
           apiData: function () {
             return {
-              id: this.id,
+              guid: this.guid,
 
               name: this.name,
               description: this.description,

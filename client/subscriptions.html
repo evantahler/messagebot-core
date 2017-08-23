@@ -63,8 +63,8 @@
 
     MESSAGEBOT.data.personGuid  = MESSAGEBOT.getURLParameter('personGuid') || MESSAGEBOT.cookies.read(MESSAGEBOT.cookieName);
     MESSAGEBOT.data.messageGuid = MESSAGEBOT.getURLParameter('messageGuid');
-    MESSAGEBOT.data.listId      = MESSAGEBOT.getURLParameter('listId');
-    MESSAGEBOT.data.campaignId  = MESSAGEBOT.getURLParameter('campaignId');
+    MESSAGEBOT.data.listGuid      = MESSAGEBOT.getURLParameter('listGuid');
+    MESSAGEBOT.data.campaignGuid  = MESSAGEBOT.getURLParameter('campaignGuid');
 
     MESSAGEBOT.init(MESSAGEBOT.data.personGuid, function(error){
       if(error){ alert(error); }
@@ -80,25 +80,25 @@
       };
 
       $('#listOutButton').click(function(){
-        MESSAGEBOT.person.opt({direction: 'out', listId: MESSAGEBOT.data.listId}, handleButtonResponse);
+        MESSAGEBOT.person.opt({direction: 'out', listGuid: MESSAGEBOT.data.listGuid}, handleButtonResponse);
         MESSAGEBOT.track({
           type: 'opt',
           data: {
             direction: 'out',
             mode: 'list',
-            listId: MESSAGEBOT.data.listId
+            listGuid: MESSAGEBOT.data.listGuid
           }
         });
       });
 
       $('#listInButton').click(function(){
-        MESSAGEBOT.person.opt({direction: 'in', listId: MESSAGEBOT.data.listId}, handleButtonResponse);
+        MESSAGEBOT.person.opt({direction: 'in', listGuid: MESSAGEBOT.data.listGuid}, handleButtonResponse);
         MESSAGEBOT.track({
           type: 'opt',
           data: {
             direction: 'in',
             mode: 'list',
-            listId: MESSAGEBOT.data.listId
+            listGuid: MESSAGEBOT.data.listGuid
           }
         });
       });
@@ -125,9 +125,9 @@
         });
       });
 
-      if(MESSAGEBOT.data.listId){
-        MESSAGEBOT.data.listId = parseInt(MESSAGEBOT.data.listId);
-        if(MESSAGEBOT.data.person.listOptOuts.indexOf(MESSAGEBOT.data.listId) >= 0){
+      if(MESSAGEBOT.data.listGuid){
+        MESSAGEBOT.data.listGuid = parseInt(MESSAGEBOT.data.listGuid);
+        if(MESSAGEBOT.data.person.listOptOuts.indexOf(MESSAGEBOT.data.listGuid) >= 0){
           $('#listInButton').show();
         }else{
           $('#listOutButton').show();

@@ -1,5 +1,6 @@
 const Sequelize = require('sequelize')
 const async = require('async')
+const uuid = require('uuid')
 
 let loader = function (api) {
   /* --- Priave Methods --- */
@@ -12,8 +13,13 @@ let loader = function (api) {
     name: 'List',
     model: api.sequelize.sequelize.define('list',
       {
-        'teamId': {
-          type: Sequelize.BIGINT,
+        guid: {
+          type: Sequelize.UUID,
+          primaryKey: true,
+          defaultValue: () => { return uuid.v4() }
+        },
+        'teamGuid': {
+          type: Sequelize.UUID,
           allowNull: false
         },
         'name': {
@@ -126,7 +132,7 @@ let loader = function (api) {
 
             if (list.type === 'static') {
               jobs.push((done) => {
-                api.models.ListPerson.count({where: {listId: list.id}}).then((_count) => {
+                api.models.ListPerson.count({where: {listGuid: list.guid}}).then((_count) => {
                   count = _count
                   done()
                 }).catch(done)
@@ -135,7 +141,7 @@ let loader = function (api) {
               [
                 {q: 'personQuery', parentProps: ['source', 'device', 'lat', 'lng']},
                 {q: 'eventQuery', parentProps: ['ip', 'device', 'type', 'lat', 'lng']},
-                {q: 'messageQuery', parentProps: ['campaignId', 'transport', 'body']}
+                {q: 'messageQuery', parentProps: ['campaignGuid', 'transport', 'body']}
               ].forEach((collection) => {
                 for (let k in this[collection.q]) {
                   this[collection.q][k].forEach((v) => {
@@ -190,7 +196,7 @@ let loader = function (api) {
 
               jobs.push((done) => {
                 api.models.ListPerson.destroy({
-                  where: {listId: list.id}
+                  where: {listGuid: list.guid}
                 }).then(() => {
                   done()
                 }).catch(done)
@@ -209,8 +215,8 @@ let loader = function (api) {
                   count++
                   api.models.ListPerson.create({
                     personGuid: person.guid,
-                    teamId: list.teamId,
-                    listId: list.id
+                    teamGuid: list.teamGuid,
+                    listGuid: list.guid
                   }).then(() => { next() }).catch(done)
                 }, done)
               })
@@ -226,14 +232,14 @@ let loader = function (api) {
             })
 
             async.series(jobs, (error) => {
-              if (!error) { api.log(`counted ${count} people in list #${list.id}, ${list.name} (team #${list.teamId})`) }
+              if (!error) { api.log(`counted ${count} people in list #${list.guid}, ${list.name} (team #${list.teamGuid})`) }
               callback(error, count)
             })
           },
 
           apiData: function () {
             return {
-              id: this.id,
+              guid: this.guid,
               name: this.name,
               description: this.description,
               folder: this.folder,

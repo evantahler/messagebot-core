@@ -8,9 +8,9 @@ module.exports = {
           primaryKey: true,
           defaultValue: Sequelize.UUIDV4
         },
-        teamId: {
+        teamGuid: {
           allowNull: false,
-          type: Sequelize.BIGINT
+          type: Sequelize.UUID
         },
         createdAt: {
           type: Sequelize.DATE
@@ -46,7 +46,7 @@ module.exports = {
       }
     ).then(() => {
       return queryInterface.addIndex(
-        'people', ['teamId', 'guid'], {
+        'people', ['teamGuid', 'guid'], {
           indicesType: 'UNIQUE'
         }
       )

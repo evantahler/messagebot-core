@@ -1,4 +1,5 @@
 const Sequelize = require('sequelize')
+const uuid = require('uuid')
 
 let loader = function (api) {
   /* --- Priave Methods --- */
@@ -10,8 +11,13 @@ let loader = function (api) {
 
     model: api.sequelize.sequelize.define('setting',
       {
-        'teamId': {
-          type: Sequelize.BIGINT,
+        guid: {
+          type: Sequelize.UUID,
+          primaryKey: true,
+          defaultValue: () => { return uuid.v4() }
+        },
+        'teamGuid': {
+          type: Sequelize.UUID,
           allowNull: false
         },
 
@@ -32,7 +38,7 @@ let loader = function (api) {
         instanceMethods: {
           apiData: function () {
             return {
-              id: this.id,
+              guid: this.guid,
               key: this.key,
               value: this.value,
               description: this.description,

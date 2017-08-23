@@ -2,11 +2,11 @@ const async = require('async')
 const Table = require('easy-table')
 
 module.exports = {
-  name: 'messagebot version',
-  description: 'show messagebot version',
+  name: 'messagebot team delete',
+  description: 'delete a messagebot team',
 
   inputs: {
-    id: {required: true}
+    guid: {required: true}
   },
 
   run: function (api, data, next) {
@@ -18,13 +18,13 @@ module.exports = {
     })
 
     jobs.push((done) => {
-      api.models.Team.findOne({where: {id: data.params.id}}).then((_team) => {
+      api.models.Team.findOne({where: {guid: data.params.guid}}).then((_team) => {
         if (!_team) { return done(new Error('Team not found')) }
         team = _team
 
-        api.log('About to Delete Team\r\n')
+        console.log('About to Delete Team\r\n')
         let tableData = [team.apiData()]
-        api.log(Table.print(tableData))
+        console.log(Table.print(tableData))
 
         done()
       }).catch(done)
@@ -32,9 +32,9 @@ module.exports = {
 
     ['Event', 'EventData', 'Person', 'PersonData', 'Message', 'MessageData', 'User', 'ListPerson', 'List', 'Campaign', 'Template'].forEach((model) => {
       jobs.push((done) => {
-        api.models[model].count({where: {teamId: team.id}}).then((count) => {
-          api.log('Delting all (' + count + ') objects for team from table `' + model + '`')
-          api.models[model].destroy({where: {teamId: team.id}}).then(() => {
+        api.models[model].count({where: {teamGuid: team.guid}}).then((count) => {
+          console.log('Delting all (' + count + ') objects for team from table `' + model + '`')
+          api.models[model].destroy({where: {teamGuid: team.guid}}).then(() => {
             done()
           }).catch(done)
         }).catch(done)
@@ -42,12 +42,12 @@ module.exports = {
     })
 
     jobs.push((done) => {
-      api.log('Deleting team')
+      console.log(`Deleting team ${team.guid}`)
       team.destroy().then(() => { done() }).catch(done)
     })
 
     async.series(jobs, (error) => {
-      if (error) api.log(error.toString(), 'error')
+      if (error) console.error(error.toString())
       next()
     })
   }

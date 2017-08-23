@@ -22,7 +22,7 @@ describe('integartion:lists', () => {
 
   before((done) => {
     list = api.models.List.build({
-      teamId: team.id,
+      teamGuid: team.guid,
       name: 'my list',
       description: 'my list',
       type: 'static',
@@ -48,7 +48,7 @@ describe('integartion:lists', () => {
       before((done) => {
         person = api.models.Person.build({
           source: 'tester',
-          teamId: team.id,
+          teamGuid: team.guid,
           device: 'phone',
           listOptOuts: [],
           globalOptOut: false
@@ -69,7 +69,7 @@ describe('integartion:lists', () => {
 
     before((done) => {
       event = api.models.Event.build({
-        teamId: team.id,
+        teamGuid: team.guid,
         messageGuid: Math.random(),
         personGuid: people[0].guid,
         type: 'boughtTheThing',
@@ -95,7 +95,7 @@ describe('integartion:lists', () => {
 
     afterEach((done) => {
       api.models.ListPerson.destroy({
-        where: {listId: list.id}
+        where: {listGuid: list.guid}
       }).then(() => {
         done()
       }).catch(done)
@@ -107,7 +107,7 @@ describe('integartion:lists', () => {
       list.associateListPeople((error, count) => {
         should.not.exist(error)
         count.should.equal(1)
-        api.models.ListPerson.findAll({where: {listId: list.id}}).then((listPeople) => {
+        api.models.ListPerson.findAll({where: {listGuid: list.guid}}).then((listPeople) => {
           listPeople.length.should.equal(1)
           listPeople[0].personGuid.should.equal(people[4].guid)
           done()
@@ -121,7 +121,7 @@ describe('integartion:lists', () => {
       list.associateListPeople((error, count) => {
         should.not.exist(error)
         count.should.equal(4)
-        api.models.ListPerson.findAll({where: {listId: list.id}}).then((listPeople) => {
+        api.models.ListPerson.findAll({where: {listGuid: list.guid}}).then((listPeople) => {
           listPeople.length.should.equal(4)
           done()
         })
@@ -135,7 +135,7 @@ describe('integartion:lists', () => {
       list.associateListPeople((error, count) => {
         should.not.exist(error)
         count.should.equal(1)
-        api.models.ListPerson.findAll({where: {listId: list.id}}).then((listPeople) => {
+        api.models.ListPerson.findAll({where: {listGuid: list.guid}}).then((listPeople) => {
           listPeople.length.should.equal(1)
           listPeople[0].personGuid.should.equal(people[0].guid)
           done()
@@ -147,8 +147,8 @@ describe('integartion:lists', () => {
       list.type = 'static'
 
       let listPerson = api.models.ListPerson.build({
-        teamId: team.id,
-        listId: list.id,
+        teamGuid: team.guid,
+        listGuid: list.guid,
         personGuid: people[3].guid
       })
 
@@ -156,11 +156,11 @@ describe('integartion:lists', () => {
         list.associateListPeople((error, count) => {
           should.not.exist(error)
           count.should.equal(1)
-          api.models.ListPerson.findAll({where: {listId: list.id}}).then((listPeople) => {
+          api.models.ListPerson.findAll({where: {listGuid: list.guid}}).then((listPeople) => {
             listPeople.length.should.equal(1)
             listPeople[0].personGuid.should.equal(people[3].guid)
             listPerson.destroy().then(() => { done() })
-          })
+          }).catch(done)
         })
       }).catch(done)
     })

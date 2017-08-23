@@ -23,9 +23,9 @@ let loader = function (api) {
           primaryKey: true,
           defaultValue: () => { return uuid.v4() }
         },
-        teamId: {
+        teamGuid: {
           allowNull: false,
-          type: Sequelize.BIGINT
+          type: Sequelize.UUID
         },
 
         'listOptOuts': {
@@ -79,7 +79,7 @@ let loader = function (api) {
                 api.models.ListPerson.destroy({
                   where: {
                     personGuid: self.guid,
-                    teamId: self.teamId
+                    teamGuid: self.teamGuid
                   }
                 }).then(() => {
                   done()

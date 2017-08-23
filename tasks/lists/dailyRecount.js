@@ -14,7 +14,7 @@ exports.task = {
     api.models.List.findAll().then((lists) => {
       lists.forEach((list) => {
         jobs.push((done) => {
-          api.tasks.enqueue('lists:peopleCount', {listId: list.id}, 'messagebot:lists', done)
+          api.tasks.enqueue('lists:peopleCount', {listGuid: list.guid}, 'messagebot:lists', done)
         })
       })
 

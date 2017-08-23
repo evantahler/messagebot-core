@@ -8,7 +8,7 @@ let prepareFile = function (api, data, file, mime, next) {
   let source = ''
 
   jobs.push((done) => {
-    api.models.Setting.findAll({where: {teamId: data.team.id}}).then((_settings) => {
+    api.models.Setting.findAll({where: {teamGuid: data.team.guid}}).then((_settings) => {
       settings = _settings
       done()
     }).catch(done)
@@ -24,7 +24,7 @@ let prepareFile = function (api, data, file, mime, next) {
 
   jobs.push((done) => {
     source = source.replace(/%%TRACKINGDOMAIN%%/g, data.team.trackingDomain)
-    source = source.replace(/%%TEAMID%%/g, data.team.id)
+    source = source.replace(/%%teamGuid%%/g, data.team.guid)
     source = source.replace(/%%APIROUTE%%/g, api.config.servers.web.urlPathForActions)
     done()
   })
@@ -58,7 +58,7 @@ exports.client = {
   middleware: ['require-team'],
 
   inputs: {
-    teamId: { required: false, formatter: function (p) { return parseInt(p) } }
+    teamGuid: { required: false }
   },
 
   run: function (api, data, next) {
@@ -74,7 +74,7 @@ exports.subscriptions = {
   middleware: ['require-team'],
 
   inputs: {
-    teamId: { required: false, formatter: function (p) { return parseInt(p) } }
+    teamGuid: { required: false }
   },
 
   run: function (api, data, next) {

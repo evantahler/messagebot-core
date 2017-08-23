@@ -16,17 +16,17 @@ let loader = function (api) {
           primaryKey: true,
           defaultValue: () => { return uuid.v4() }
         },
-        teamId: {
+        teamGuid: {
           allowNull: false,
           type: Sequelize.BIGINT
         },
 
         'personGuid': {
-          type: Sequelize.STRING,
+          type: Sequelize.UUID,
           allowNull: false
         },
-        'campaignId': {
-          type: Sequelize.BIGINT,
+        'campaignGuid': {
+          type: Sequelize.UUID,
           allowNull: false
         },
         'transport': {
@@ -71,7 +71,7 @@ let loader = function (api) {
             return {
               guid: this.guid,
               personGuid: this.personGuid,
-              campaignId: this.campaignId,
+              campaignGuid: this.campaignGuid,
               transport: this.transport,
               body: this.body,
               sentAt: this.sentAt,

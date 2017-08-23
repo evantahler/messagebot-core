@@ -56,7 +56,7 @@ exports.sessionCheck = {
       } else if (!sessionData) {
         return next(new Error('Please log in to continue'))
       } else {
-        api.models.User.findOne({where: {id: sessionData.userId}}).then((user) => {
+        api.models.User.findOne({where: {guid: sessionData.userGuid}}).then((user) => {
           if (!user) { return next(new Error('user not found')) }
           data.response.user = user.apiData()
           data.response.success = true

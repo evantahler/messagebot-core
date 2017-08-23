@@ -7,7 +7,7 @@ module.exports = {
     api.teams.settings.push({
       key: 'client:tracking:web:cookieExpiry',
       value: (1000 * 60 * 60 * 24 * 365), // 1 year
-      description: 'How long to store the personId cookie in the browser for (ms)'
+      description: 'How long to store the personGuid cookie in the browser for (ms)'
     })
 
     api.teams.settings.push({
