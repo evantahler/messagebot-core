@@ -50,7 +50,7 @@ exports.buildPerson = function (start, end, routeBase, callback) {
     if (response.error) { error = response.error }
     person = payload
     person.data = payloadData
-    person.guid = JSON.parse(data.body).guid
+    person.guid = JSON.parse(data.body).person.guid
     person.createdAt = new Date(person.createdAt)
     callback(error, person)
   })
