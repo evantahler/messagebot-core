@@ -175,7 +175,7 @@
   MESSAGEBOT.person = {
     create: function (callback) {
       if (!callback) { callback = MESSAGEBOT.loggerCallback }
-      if (MESSAGEBOT.data.person.guid) { return callback() }
+      if (MESSAGEBOT.data.person && MESSAGEBOT.data.person.guid) { return callback() }
 
       var params = {}
       if (MESSAGEBOT.data.person) {
