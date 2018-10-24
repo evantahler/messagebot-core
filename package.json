@@ -34,8 +34,9 @@
     "request": "^2.81.0",
     "sanitize-html": "^1.14.1",
     "sequelize": "^3.30.4",
-    "sequelize-cli": "^2.8.0",
-    "ws": "^3.1.0"
+    "sequelize-cli": "^3.0.0",
+    "ws": "^3.1.0",
+    "snyk": "^1.104.2"
   },
   "devDependencies": {
     "mocha": "^3.5.0",
@@ -66,6 +67,9 @@
     "postinstall": "./bin/postinstall",
     "migrate": "sequelize db:migrate",
     "faker:run": "node db/faker/run.js",
-    "faker:seed": "node db/faker/seed.js"
-  }
+    "faker:seed": "node db/faker/seed.js",
+    "snyk-protect": "snyk protect",
+    "prepare": "npm run snyk-protect"
+  },
+  "snyk": true
 }
