@@ -15,8 +15,8 @@
     "actionhero": "^17.1.0",
     "ah-resque-ui": "^0.4.0",
     "ah-swagger-plugin": "^1.0.1",
-    "async": "^2.4.1",
-    "bcrypt": "^1.0.2",
+    "async": "^2.5.0",
+    "bcrypt": "^1.0.3",
     "easy-table": "^1.1.0",
     "faker": "^4.1.0",
     "fakeredis": "^2.0.0",
@@ -29,13 +29,13 @@
     "mkdirp": "^0.5.1",
     "mustache": "^2.2.1",
     "mysql": "^2.14.1",
-    "pg": "^6.4.0",
+    "pg": "^6.4.2",
     "qs": "^6.4.0",
-    "request": "^2.81.0",
+    "request": "^2.84.0",
     "sanitize-html": "^1.14.1",
-    "sequelize": "^3.30.4",
+    "sequelize": "^3.33.0",
     "sequelize-cli": "^2.8.0",
-    "ws": "^3.1.0"
+    "ws": "^3.3.1"
   },
   "devDependencies": {
     "mocha": "^3.5.0",
